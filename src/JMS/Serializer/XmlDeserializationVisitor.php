@@ -63,11 +63,11 @@ class XmlDeserializationVisitor extends AbstractVisitor
         $dom->loadXML($data);
         foreach ($dom->childNodes as $child) {
             if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
-                $internalSubset = $this->getDomDocumentTypeEntitySubset($child, $data);
-                if ( ! in_array($internalSubset, $this->doctypeWhitelist, true)) {
+                $doctype = $this->getDomDocumentType($data);
+                if ( ! in_array($doctype, $this->doctypeWhitelist, true)) {
                     throw new InvalidArgumentException(sprintf(
                         'The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.',
-                        $internalSubset
+                        $doctype
                     ));
                 }
             }
@@ -350,16 +350,11 @@ class XmlDeserializationVisitor extends AbstractVisitor
     /**
      * Retrieves internalSubset even in bugfixed php versions
      *
-     * @param \DOMDocumentType $child
      * @param string $data
      * @return string
      */
-    private function getDomDocumentTypeEntitySubset(\DOMDocumentType $child, $data)
+    private function getDomDocumentType($data)
     {
-        if (null !== $child->internalSubset) {
-            return str_replace(array("\n", "\r"), '', $child->internalSubset);
-        }
-        
         $startPos = $endPos = stripos($data, '<!doctype');
         $braces = 0;
         do {
