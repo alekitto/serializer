@@ -30,7 +30,7 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
 {
     public function onPreSerialize(PreSerializeEvent $event)
     {
-        $object = $event->getObject();
+        $object = $event->getData();
         $type = $event->getType();
 
         // If the set type name is not an actual class, but a faked type for which a custom handler exists, we do not

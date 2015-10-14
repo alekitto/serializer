@@ -112,13 +112,15 @@ class ContextTest extends \PHPUnit_Framework_TestCase
                 $stack = $context->getMetadataStack();
 
                 if ($object === $context->getObject()) {
-                    $self->assertEquals(0, $stack->count());
+                    $self->assertEquals(1, $stack->count());
+                    $self->assertEquals('JMS\Serializer\Tests\Fixtures\Node', $stack[0]->name);
                 }
 
                 if ($child === $context->getObject()) {
-                    $self->assertEquals(2, $stack->count());
-                    $self->assertEquals('JMS\Serializer\Tests\Fixtures\Node', $stack[1]->name);
-                    $self->assertEquals('children', $stack[0]->name);
+                    $self->assertEquals(3, $stack->count());
+                    $self->assertEquals('JMS\Serializer\Tests\Fixtures\Node', $stack[2]->name);
+                    $self->assertEquals('children', $stack[1]->name);
+                    $self->assertEquals('JMS\Serializer\Tests\Fixtures\InlineChild', $stack[0]->name);
                 }
 
                 return false;

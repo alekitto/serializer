@@ -18,6 +18,6 @@
 
 namespace JMS\Serializer\EventDispatcher;
 
-class PreSerializeEvent extends Event
+class PostSerializeEvent extends Event
 {
 }

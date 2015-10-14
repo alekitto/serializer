@@ -221,6 +221,8 @@ abstract class Context
         if ( ! $metadata instanceof PropertyMetadata) {
             throw new RuntimeException('Context metadataStack not working well');
         }
+
+        return $metadata;
     }
 
     public function popClassMetadata()
@@ -230,6 +232,8 @@ abstract class Context
         if ( ! $metadata instanceof ClassMetadata) {
             throw new RuntimeException('Context metadataStack not working well');
         }
+
+        return $metadata;
     }
 
     public function getMetadataStack()

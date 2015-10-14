@@ -215,7 +215,7 @@ class LinkAddingSubscriber implements EventSubscriberInterface
 {
     public function onPostSerialize(Event $event)
     {
-        $author = $event->getObject();
+        $author = $event->getData();
 
         $event->getVisitor()->addData('_links', array(
             'details' => 'http://foo.bar/details/'.$author->getName(),

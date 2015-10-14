@@ -24,11 +24,13 @@ class Event
 {
     protected $type;
     private $context;
+    private $data;
 
-    public function __construct(Context $context, array $type)
+    public function __construct(Context $context, $data, array $type)
     {
         $this->context = $context;
         $this->type = $type;
+        $this->data = $data;
     }
 
     public function getVisitor()
@@ -44,5 +46,20 @@ class Event
     public function getType()
     {
         return $this->type;
+    }
+
+    public function setType($name, array $params = array())
+    {
+        $this->type = array('name' => $name, 'params' => $params);
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
     }
 }

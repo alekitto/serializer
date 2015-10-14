@@ -22,6 +22,7 @@ use JMS\Serializer\Context;
 use JMS\Serializer\DeserializationContext;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\EventDispatcher\ObjectEvent;
+use JMS\Serializer\EventDispatcher\PostSerializeEvent;
 use JMS\Serializer\EventDispatcher\Subscriber\SymfonyValidatorSubscriber;
 use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\Tests\Fixtures\AuthorList;
@@ -49,7 +50,7 @@ class SymfonyValidatorSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $context = DeserializationContext::create()->setAttribute('validation_groups', array('foo'));
 
-        $this->subscriber->onPostDeserialize(new ObjectEvent($context, $obj, array()));
+        $this->subscriber->onPostDeserialize(new PostSerializeEvent($context, $obj, array()));
     }
 
     /**
@@ -67,7 +68,7 @@ class SymfonyValidatorSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $context = DeserializationContext::create()->setAttribute('validation_groups', array('foo'));
 
-        $this->subscriber->onPostDeserialize(new ObjectEvent($context, $obj, array()));
+        $this->subscriber->onPostDeserialize(new PostSerializeEvent($context, $obj, array()));
     }
 
     public function testValidatorIsNotCalledWhenNoGroupsAreSet()
@@ -75,7 +76,7 @@ class SymfonyValidatorSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->validator->expects($this->never())
             ->method('validate');
 
-        $this->subscriber->onPostDeserialize(new ObjectEvent(DeserializationContext::create(), new \stdClass, array()));
+        $this->subscriber->onPostDeserialize(new PostSerializeEvent(DeserializationContext::create(), new \stdClass, array()));
     }
 
     public function testValidationIsOnlyPerformedOnRootObject()
