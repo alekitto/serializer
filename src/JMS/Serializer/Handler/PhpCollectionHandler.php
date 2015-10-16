@@ -60,7 +60,13 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
     {
         $type['name'] = 'array';
 
-        return $visitor->visitArray(iterator_to_array($map), $type, $context);
+        // Pop out the class metadata of the sequence before calling visitor:
+        // The map should count as a plain array (a property, not an object itself)
+        $classMetadata = $context->getMetadataStack()->pop();
+        $rs = $visitor->visitArray(iterator_to_array($map), $type, $context);
+        $context->getMetadataStack()->push($classMetadata);
+
+        return $rs;
     }
 
     public function deserializeMap(VisitorInterface $visitor, $data, array $type, Context $context)
@@ -75,7 +81,13 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
         // We change the base type, and pass through possible parameters.
         $type['name'] = 'array';
 
-        return $visitor->visitArray($sequence->all(), $type, $context);
+        // Pop out the class metadata of the sequence before calling visitor:
+        // The sequence should count as a plain array (a property, not an object itself)
+        $classMetadata = $context->getMetadataStack()->pop();
+        $rs = $visitor->visitArray($sequence->all(), $type, $context);
+        $context->getMetadataStack()->push($classMetadata);
+
+        return $rs;
     }
 
     public function deserializeSequence(VisitorInterface $visitor, $data, array $type, Context $context)

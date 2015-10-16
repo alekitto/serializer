@@ -60,7 +60,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['log'] = '{"author_list":[{"full_name":"Johannes Schmitt"},{"full_name":"John Doe"}],"comments":[{"author":{"full_name":"Foo Bar"},"text":"foo"},{"author":{"full_name":"Foo Bar"},"text":"bar"},{"author":{"full_name":"Foo Bar"},"text":"baz"}]}';
             $outputs['lifecycle_callbacks'] = '{"name":"Foo Bar"}';
             $outputs['form_errors'] = '["This is the form error","Another error"]';
-            $outputs['nested_form_errors'] = '{"errors":["This is the form error"],"children":{"bar":{"errors":["Error of the child form"]}}}';
+            $outputs['nested_form_errors'] = '{"errors":["This is the form error"],"children":[{"errors":["Error of the child form"],"children":[],"name":"bar"}],"name":"foo"}';
             $outputs['constraint_violation'] = '{"property_path":"foo","message":"Message of violation"}';
             $outputs['constraint_violation_list'] = '[{"property_path":"foo","message":"Message of violation"},{"property_path":"bar","message":"Message of another violation"}]';
             $outputs['article'] = '{"custom":"serialized"}';
@@ -202,7 +202,7 @@ class JsonSerializationTest extends BaseSerializationTest
 
     public function testSerializeArrayWithEmptyObject()
     {
-        $this->assertEquals('{"0":{}}', $this->serialize(array(new \stdClass())));
+        $this->assertEquals('[{}]', $this->serialize(array(new \stdClass())));
     }
 
     protected function getFormat()

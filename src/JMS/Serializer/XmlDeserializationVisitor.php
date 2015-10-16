@@ -25,33 +25,14 @@ use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\Metadata\PropertyMetadata;
 use JMS\Serializer\Metadata\ClassMetadata;
 
-class XmlDeserializationVisitor extends AbstractVisitor
+class XmlDeserializationVisitor extends GenericDeserializationVisitor
 {
-    private $objectStack;
-    private $metadataStack;
-    private $currentObject;
-    private $currentMetadata;
-    private $result;
-    private $navigator;
     private $disableExternalEntities = true;
     private $doctypeWhitelist = array();
 
     public function enableExternalEntities()
     {
         $this->disableExternalEntities = false;
-    }
-
-    public function setNavigator(GraphNavigator $navigator)
-    {
-        $this->navigator = $navigator;
-        $this->objectStack = new \SplStack;
-        $this->metadataStack = new \SplStack;
-        $this->result = null;
-    }
-
-    public function getNavigator()
-    {
-        return $this->navigator;
     }
 
     public function prepare($data)
@@ -84,22 +65,6 @@ class XmlDeserializationVisitor extends AbstractVisitor
         return $doc;
     }
 
-    public function visitNull($data, array $type, Context $context)
-    {
-        return null;
-    }
-
-    public function visitString($data, array $type, Context $context)
-    {
-        $data = (string) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
     public function visitBoolean($data, array $type, Context $context)
     {
         $data = (string) $data;
@@ -112,97 +77,51 @@ class XmlDeserializationVisitor extends AbstractVisitor
             throw new RuntimeException(sprintf('Could not convert data to boolean. Expected "true", "false", "1" or "0", but got %s.', json_encode($data)));
         }
 
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
-    public function visitInteger($data, array $type, Context $context)
-    {
-        $data = (integer) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
-    public function visitDouble($data, array $type, Context $context)
-    {
-        $data = (double) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
+        return parent::visitBoolean($data, $type, $context);
     }
 
     public function visitArray($data, array $type, Context $context)
     {
-        $entryName = null !== $this->currentMetadata && $this->currentMetadata->xmlEntryName ? $this->currentMetadata->xmlEntryName : 'entry';
+        $metadataStack = $context->getMetadataStack();
+        $currentMetadata = ($metadataStack->count() && $metadataStack->top() instanceof PropertyMetadata) ? $metadataStack->top() : null;
 
-        if ( ! isset($data->$entryName)) {
-            if (null === $this->result) {
-                return $this->result = array();
-            }
-
-            return array();
-        }
+        $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
+        $result = array();
 
         switch (count($type['params'])) {
             case 0:
                 throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
 
             case 1:
-                $result = array();
-                if (null === $this->result) {
-                    $this->result = &$result;
-                }
-
                 foreach ($data->$entryName as $v) {
-                    $result[] = $this->navigator->accept($v, $type['params'][0], $context);
+                    $result[] = $this->getNavigator()->accept($v, $type['params'][0], $context);
                 }
 
-                return $result;
+                break;
 
             case 2:
-                if (null === $this->currentMetadata) {
+                if (null === $currentMetadata) {
                     throw new RuntimeException('Maps are not supported on top-level without metadata.');
                 }
 
                 list($keyType, $entryType) = $type['params'];
-                $result = array();
-                if (null === $this->result) {
-                    $this->result = &$result;
-                }
-
                 foreach ($data->$entryName as $v) {
-                    if ( ! isset($v[$this->currentMetadata->xmlKeyAttribute])) {
-                        throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $this->currentMetadata->xmlKeyAttribute));
+                    if ( ! isset($v[$currentMetadata->xmlKeyAttribute])) {
+                        throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
                     }
 
-                    $k = $this->navigator->accept($v[$this->currentMetadata->xmlKeyAttribute], $keyType, $context);
-                    $result[$k] = $this->navigator->accept($v, $entryType, $context);
+                    $k = $this->getNavigator()->accept($v[$currentMetadata->xmlKeyAttribute], $keyType, $context);
+                    $result[$k] = $this->getNavigator()->accept($v, $entryType, $context);
                 }
 
-                return $result;
+                break;
 
             default:
                 throw new LogicException(sprintf('The array type does not support more than 2 parameters, but got %s.', json_encode($type['params'])));
         }
-    }
 
-    public function startVisitingObject(ClassMetadata $metadata, $object, array $type, Context $context)
-    {
-        $this->setCurrentObject($object);
-
-        if (null === $this->result) {
-            $this->result = $this->currentObject;
-        }
+        $this->setData($result);
+        return $result;
     }
 
     public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
@@ -223,23 +142,17 @@ class XmlDeserializationVisitor extends AbstractVisitor
                 $attributeName = ($prefix === '') ? $name : $prefix.':'.$name;
                 $nodes = $data->xpath('./@'.$attributeName);
                 if ( ! empty($nodes)) {
-                    $v = (string) reset($nodes);
-                    $metadata->getReflection()->setValue($this->currentObject, $v);
+                    return (string) reset($nodes);
                 }
-
             } elseif (isset($data[$name])) {
-                $v = $this->navigator->accept($data[$name], $metadata->type, $context);
-                $metadata->getReflection()->setValue($this->currentObject, $v);
+                return $this->getNavigator()->accept($data[$name], $metadata->type, $context);
             }
 
-            return;
+            return null;
         }
 
         if ($metadata->xmlValue) {
-            $v = $this->navigator->accept($data, $metadata->type, $context);
-            $metadata->getReflection()->setValue($this->currentObject, $v);
-
-            return;
+            return $this->getNavigator()->accept($data, $metadata->type, $context);
         }
 
         if ($metadata->xmlCollection) {
@@ -248,12 +161,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
                 $enclosingElem = $data->$name;
             }
 
-            $this->setCurrentMetadata($metadata);
-            $v = $this->navigator->accept($enclosingElem, $metadata->type, $context);
-            $this->revertCurrentMetadata();
-            $metadata->getReflection()->setValue($this->currentObject, $v);
-
-            return;
+            return $this->getNavigator()->accept($enclosingElem, $metadata->type, $context);
         }
 
         if ('' !== $namespace = (string) $metadata->xmlNamespace) {
@@ -265,74 +173,21 @@ class XmlDeserializationVisitor extends AbstractVisitor
             $elementName = ($prefix === '') ? $name : $prefix.':'.$name;
             $nodes = $data->xpath('./'.$elementName);
             if (empty($nodes)) {
-                return;
+                return null;
             }
             $node = reset($nodes);
         } else {
             if ( ! isset($data->$name)) {
-                return;
+                return null;
             }
             $node = $data->$name;
         }
 
-        $v = $this->navigator->accept($node, $metadata->type, $context);
-
-        if (null === $metadata->setter) {
-            $metadata->getReflection()->setValue($this->currentObject, $v);
-
-            return;
-        }
-
-        $this->currentObject->{$metadata->setter}($v);
-    }
-
-    public function endVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
-    {
-        $rs = $this->currentObject;
-        $this->revertCurrentObject();
-
-        return $rs;
-    }
-
-    public function setCurrentObject($object)
-    {
-        $this->objectStack->push($this->currentObject);
-        $this->currentObject = $object;
-    }
-
-    public function getCurrentObject()
-    {
-        return $this->currentObject;
-    }
-
-    public function revertCurrentObject()
-    {
-        return $this->currentObject = $this->objectStack->pop();
-    }
-
-    public function setCurrentMetadata(PropertyMetadata $metadata)
-    {
-        $this->metadataStack->push($this->currentMetadata);
-        $this->currentMetadata = $metadata;
-    }
-
-    public function getCurrentMetadata()
-    {
-        return $this->currentMetadata;
-    }
-
-    public function revertCurrentMetadata()
-    {
-        return $this->currentMetadata = $this->metadataStack->pop();
-    }
-
-    public function getResult()
-    {
-        return $this->result;
+        return $this->getNavigator()->accept($node, $metadata->type, $context);
     }
 
     /**
-     * @param array<string> $doctypeWhitelist
+     * @param string[] $doctypeWhitelist
      */
     public function setDoctypeWhitelist(array $doctypeWhitelist)
     {
@@ -340,7 +195,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
     }
 
     /**
-     * @return array<string>
+     * @return string[]
      */
     public function getDoctypeWhitelist()
     {

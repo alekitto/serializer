@@ -604,11 +604,8 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $form = new Form($fooConfig);
         $form->add('save', 'submit');
 
-        try {
-            $this->serialize($form);
-        } catch (\Exception $e) {
-            $this->assertTrue(false, 'Serialization should not throw an exception');
-        }
+        $this->serialize($form);
+        $this->assertTrue(true);  // Exception not thrown
     }
 
     public function testConstraintViolation()

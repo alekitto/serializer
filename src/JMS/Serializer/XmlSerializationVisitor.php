@@ -17,7 +17,7 @@
  */
 
 namespace JMS\Serializer;
-
+use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
@@ -27,375 +27,341 @@ use JMS\Serializer\Metadata\PropertyMetadata;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class XmlSerializationVisitor extends AbstractVisitor
+class XmlSerializationVisitor extends GenericSerializationVisitor
 {
+    /**
+     * @var \DOMDocument
+     */
     public $document;
 
-    private $navigator;
-    private $defaultRootName = 'result';
-    private $defaultRootNamespace;
     private $defaultVersion = '1.0';
     private $defaultEncoding = 'UTF-8';
-    private $stack;
-    private $metadataStack;
-    private $currentNode;
-    private $currentMetadata;
-    private $hasValue;
-    private $nullWasVisited;
-
-    public function setDefaultRootName($name, $namespace = null)
-    {
-        $this->defaultRootName = $name;
-        $this->defaultRootNamespace = $namespace;
-    }
+    private $attachNullNamespace = false;
 
     /**
-     * @return boolean
+     * @var \SplStack
      */
-    public function hasDefaultRootName()
-    {
-        return 'result' === $this->defaultRootName;
-    }
+    private $nodeStack;
 
-    public function setDefaultVersion($version)
-    {
-        $this->defaultVersion = $version;
-    }
-
-    public function setDefaultEncoding($encoding)
-    {
-        $this->defaultEncoding = $encoding;
-    }
-
-    public function setNavigator(GraphNavigator $navigator)
-    {
-        $this->navigator = $navigator;
-        $this->document = null;
-        $this->stack = new \SplStack;
-        $this->metadataStack = new \SplStack;
-    }
-
-    public function getNavigator()
-    {
-        return $this->navigator;
-    }
+    /**
+     * @var \DOMNode
+     */
+    private $currentNode;
 
     public function visitNull($data, array $type, Context $context)
     {
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, true);
-            $node = $this->document->createAttribute('xsi:nil');
-            $node->value = 'true';
-            $this->currentNode->appendChild($node);
-
-            $this->attachNullNamespace();
-
-            return;
-        }
+        $this->attachNullNamespace = true;
 
         $node = $this->document->createAttribute('xsi:nil');
         $node->value = 'true';
-        $this->attachNullNamespace();
+        $this->currentNode = $node;
 
-        return $node;
-    }
-
-    public function visitString($data, array $type, Context $context)
-    {
-
-        if (null !== $this->currentMetadata) {
-            $doCData = $this->currentMetadata->xmlElementCData;
-        } else {
-            $doCData = true;
-        }
-
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, true);
-            $this->currentNode->appendChild($doCData ? $this->document->createCDATASection($data) : $this->document->createTextNode((string) $data));
-
-            return;
-        }
-
-        return $doCData ? $this->document->createCDATASection($data) : $this->document->createTextNode((string) $data);
+        return parent::visitNull($data, $type, $context);
     }
 
     public function visitSimpleString($data, array $type, Context $context)
     {
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, true);
-            $this->currentNode->appendChild($this->document->createTextNode((string) $data));
+        $this->currentNode = $this->createTextNode((string) $data);
 
-            return;
-        }
-
-        return $this->document->createTextNode((string) $data);
+        return parent::visitString($data, $type, $context);
     }
 
-    public function visitBoolean($data, array $type, Context $context)
+    public function visitString($data, array $type, Context $context)
     {
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, true);
-            $this->currentNode->appendChild($this->document->createTextNode($data ? 'true' : 'false'));
+        /** @var PropertyMetadata $metadata */
+        $metadata = $this->getCurrentPropertyMetadata($context);
+        $this->currentNode = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
 
-            return;
-        }
-
-        return $this->document->createTextNode($data ? 'true' : 'false');
+        return parent::visitString($data, $type, $context);
     }
 
     public function visitInteger($data, array $type, Context $context)
     {
-        return $this->visitNumeric($data, $type);
+        $this->currentNode = $this->createTextNode($data);
+
+        return parent::visitInteger($data, $type, $context);
+    }
+
+    public function visitBoolean($data, array $type, Context $context)
+    {
+        $this->currentNode = $this->createTextNode($data ? 'true' : 'false');
+
+        return parent::visitBoolean($data, $type, $context);
     }
 
     public function visitDouble($data, array $type, Context $context)
     {
-        return $this->visitNumeric($data, $type);
+        $this->currentNode = $this->createTextNode($data);
+
+        return parent::visitDouble($data, $type, $context);
     }
 
-    public function visitArray($data, array $type, Context $context)
+    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, true);
-        }
+        if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
+            $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+            $this->currentNode = $data->$callback($this, null, $context);
 
-        $entryName = (null !== $this->currentMetadata && null !== $this->currentMetadata->xmlEntryName) ? $this->currentMetadata->xmlEntryName : 'entry';
-        $keyAttributeName = (null !== $this->currentMetadata && null !== $this->currentMetadata->xmlKeyAttribute) ? $this->currentMetadata->xmlKeyAttribute : null;
-
-        foreach ($data as $k => $v) {
-            $tagName = (null !== $this->currentMetadata && $this->currentMetadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? $k : $entryName;
-
-            $entryNode = $this->document->createElement($tagName);
-            $this->currentNode->appendChild($entryNode);
-            $this->setCurrentNode($entryNode);
-
-            if (null !== $keyAttributeName) {
-                $entryNode->setAttribute($keyAttributeName, (string) $k);
+            if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
+                $this->document->appendChild($this->currentNode);
+                $this->currentNode = [];
             }
 
-            if (null !== $node = $this->navigator->accept($v, $this->getElementType($type), $context)) {
-                $this->currentNode->appendChild($node);
-            }
-
-            $this->revertCurrentNode();
+            return $this->getData();
         }
-    }
 
-    public function startVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
-    {
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, false);
-            if ($metadata->xmlRootName) {
-                $rootName = $metadata->xmlRootName;
-                $rootNamespace = $metadata->xmlRootNamespace;
+        $properties = $this->getNonSkippedProperties($metadata, $context);
+        $this->validateObjectProperties($metadata, $properties);
+
+        if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
+            $rootName = $metadata->xmlRootName ?: 'result';
+            if (($rootNamespace = $metadata->xmlRootNamespace)) {
+                $rootNode = $this->document->createElementNS($rootNamespace, $rootName);
             } else {
-                $rootName = $this->defaultRootName;
-                $rootNamespace = $this->defaultRootNamespace;
+                $rootNode = $this->document->createElement($rootName);
             }
-            if ($rootNamespace) {
-                $this->currentNode = $this->document->createElementNS($rootNamespace, $rootName);
-            } else {
-                $this->currentNode = $this->document->createElement($rootName);
-            }
-            $this->document->appendChild($this->currentNode);
-        }
-        
-        $this->addNamespaceAttributes($metadata, $this->currentNode);
 
-        $this->hasValue = false;
+            $this->document->appendChild($rootNode);
+
+            $this->nodeStack->pop();
+            $this->nodeStack->push($rootNode);
+        }
+
+        $nodes = array();
+        $this->setData(array());
+
+        /** @var \DOMElement $prevNode */
+        $prevNode = $this->nodeStack->top();
+        foreach ($metadata->xmlNamespaces as $prefix => $uri) {
+            $attribute = 'xmlns';
+            if ($prefix !== '') {
+                $attribute .= ':'.$prefix;
+            }
+
+            $prevNode->setAttributeNS('http://www.w3.org/2000/xmlns/', $attribute, $uri);
+        }
+
+        /** @var PropertyMetadata $propertyMetadata */
+        foreach ($properties as $propertyMetadata) {
+            $context->pushPropertyMetadata($propertyMetadata);
+            $this->visitProperty($propertyMetadata, $data, $context);
+            $context->popPropertyMetadata();
+
+            $currentNode = $this->currentNode;
+
+            if (null === $currentNode) {
+                continue;
+            } elseif (is_array($currentNode)) {
+                $nodes = array_merge($nodes, $currentNode);
+            } else {
+                $nodes[] = $currentNode;
+            }
+        }
+
+        $this->currentNode = $nodes;
+        return $this->getData();
     }
 
-    public function visitProperty(PropertyMetadata $metadata, $object, Context $context)
+    public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
-        $v = $metadata->getValue($object);
+        $v = $metadata->getValue($data);
+
+        /** @var PropertyMetadata $metadata */
+        $metadata = $this->getCurrentPropertyMetadata($context);
+
+        if ($metadata->xmlAttribute) {
+            $attributeName = $this->namingStrategy->translateName($metadata);
+
+            $this->currentNode = $this->document->createElement('tmp');
+            $this->getNavigator()->accept($v, $metadata->type, $context);
+
+            $node = $this->createAttributeNode($metadata, $attributeName);
+            $node->appendChild($this->createTextNode((string) $this->currentNode->nodeValue));
+
+            $this->currentNode = $node;
+            return;
+        }
+
+        if ($metadata->xmlValue) {
+            $this->currentNode = $this->document->createElement('tmp');
+            $this->getNavigator()->accept($v, $metadata->type, $context);
+
+            $node = $this->currentNode->childNodes[0];
+            $this->currentNode->removeChild($node);
+
+            $this->currentNode = $node;
+            return;
+        }
+
+        if ($metadata->xmlAttributeMap) {
+            if (! is_array($v)) {
+                throw new RuntimeException(sprintf('Unsupported value type for XML attribute map. Expected array but got %s.', gettype($v)));
+            }
+
+            $attributes = [];
+            foreach ($v as $key => $value) {
+                $node = $this->createAttributeNode($metadata, $key);
+                $node->appendChild($this->createTextNode((string) $value));
+
+                $attributes[] = $node;
+            }
+
+            $this->currentNode = $attributes;
+            return;
+        }
 
         if (null === $v && ! $context->shouldSerializeNull()) {
             return;
         }
 
-        if ($metadata->xmlAttribute) {
-            $this->setCurrentMetadata($metadata);
-            $node = $this->navigator->accept($v, $metadata->type, $context);
-            $this->revertCurrentMetadata();
-
-            if ( ! $node instanceof \DOMCharacterData) {
-                throw new RuntimeException(sprintf('Unsupported value for XML attribute. Expected character data, but got %s.', json_encode($v)));
+        $elementName = $this->namingStrategy->translateName($metadata);
+        if ('' !== $namespace = (string) $metadata->xmlNamespace) {
+            $prevNode = $this->nodeStack->top();
+            if ( ! $prefix = $prevNode->lookupPrefix($namespace)) {
+                $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
             }
-            $attributeName = $this->namingStrategy->translateName($metadata);
-            if ('' !== $namespace = (string) $metadata->xmlNamespace) {
-                if ( ! $prefix = $this->currentNode->lookupPrefix($namespace)) {
-                    $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
-                }
-                $this->currentNode->setAttributeNS($namespace, $prefix.':'.$attributeName, $node->nodeValue);
-            } else {
-                $this->currentNode->setAttribute($attributeName, $node->nodeValue);
-            }
+            $this->currentNode = $this->document->createElementNS($namespace, $prefix.':'.$elementName);
+        } else {
+            $this->currentNode = $this->document->createElement($elementName);
+        }
 
+        parent::visitProperty($metadata, $data, $context);
+
+        if (is_object($v) && null !== $v && $context->isVisiting($v)) {
+            $this->currentNode = null;
             return;
         }
 
-        if (($metadata->xmlValue && $this->currentNode->childNodes->length > 0)
-            || ( ! $metadata->xmlValue && $this->hasValue)) {
-            throw new RuntimeException(sprintf('If you make use of @XmlValue, all other properties in the class must have the @XmlAttribute annotation. Invalid usage detected in class %s.', $metadata->class));
-        }
-
-        if ($metadata->xmlValue) {
-            $this->hasValue = true;
-
-            $this->setCurrentMetadata($metadata);
-            $node = $this->navigator->accept($v, $metadata->type, $context);
-            $this->revertCurrentMetadata();
-
-            if ( ! $node instanceof \DOMCharacterData) {
-                throw new RuntimeException(sprintf('Unsupported value for property %s::$%s. Expected character data, but got %s.', $metadata->getReflection()->class, $metadata->getReflection()->name, is_object($node) ? get_class($node) : gettype($node)));
+        if ($metadata->xmlCollectionInline || $metadata->inline) {
+            $children = iterator_to_array($this->currentNode->childNodes);
+            foreach ($children as $childNode) {
+                $this->currentNode->removeChild($childNode);
             }
 
-            $this->currentNode->appendChild($node);
-
-            return;
+            $this->currentNode = $children;
         }
-
-        if ($metadata->xmlAttributeMap) {
-            if ( ! is_array($v)) {
-                throw new RuntimeException(sprintf('Unsupported value type for XML attribute map. Expected array but got %s.', gettype($v)));
-            }
-
-            foreach ($v as $key => $value) {
-                $this->setCurrentMetadata($metadata);
-                $node = $this->navigator->accept($value, null, $context);
-                $this->revertCurrentMetadata();
-
-                if ( ! $node instanceof \DOMCharacterData) {
-                    throw new RuntimeException(sprintf('Unsupported value for a XML attribute map value. Expected character data, but got %s.', json_encode($v)));
-                }
-
-                if ('' !== $namespace = (string) $metadata->xmlNamespace) {
-                    if ( ! $prefix = $this->currentNode->lookupPrefix($namespace)) {
-                        $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
-                    }
-                    $this->currentNode->setAttributeNS($namespace, $prefix.':'.$key, $node->nodeValue);
-                } else {
-                    $this->currentNode->setAttribute($key, $node->nodeValue);
-                }
-            }
-
-            return;
-        }
-
-        if ($addEnclosingElement = ( ! $metadata->xmlCollection || ! $metadata->xmlCollectionInline) && ! $metadata->inline) {
-            $elementName = $this->namingStrategy->translateName($metadata);
-            if ('' !== $namespace = (string) $metadata->xmlNamespace) {
-                if ( ! $prefix = $this->currentNode->lookupPrefix($namespace)) {
-                    $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
-                }
-                $element = $this->document->createElementNS($namespace, $prefix.':'.$elementName);
-            } else {
-                $element = $this->document->createElement($elementName);
-            }
-            $this->setCurrentNode($element);
-        }
-
-        $this->setCurrentMetadata($metadata);
-
-        if (null !== $node = $this->navigator->accept($v, $metadata->type, $context)) {
-            $this->currentNode->appendChild($node);
-        }
-
-        $this->revertCurrentMetadata();
-
-        if ($addEnclosingElement) {
-            $this->revertCurrentNode();
-
-            if ($element->hasChildNodes() || $element->hasAttributes()
-                || (isset($metadata->type['name']) && $metadata->type['name'] === 'array' && isset($metadata->type['params'][1]))) {
-                $this->currentNode->appendChild($element);
-            }
-        }
-
-        $this->hasValue = false;
     }
 
-    public function endVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
+    public function visitArray($data, array $type, Context $context)
     {
+        /** @var PropertyMetadata $metadata */
+        $nodeName = 'entry';
+        if (($metadata = $this->getCurrentPropertyMetadata($context)) && ! empty($metadata->xmlEntryName)) {
+            $nodeName = $metadata->xmlEntryName;
+        }
+
+        $attributeName = null !== $metadata ? $metadata->xmlKeyAttribute : null;
+
+        $nodes = [];
+        $rs = [];
+        foreach ($data as $k => $v) {
+            $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string)$k : $nodeName;
+            $this->currentNode = $this->document->createElement($elementName);
+
+            $v = $this->getNavigator()->accept($v, $this->getElementType($type), $context);
+            if (null !== $attributeName) {
+                $this->currentNode->setAttribute($attributeName, (string)$k);
+            }
+
+            $nodes[$k] = $this->currentNode;
+            $rs[$k] = $v;
+        }
+
+        $this->currentNode = array_values($nodes);
+        return $rs;
+    }
+
+    public function setNavigator(GraphNavigator $navigator = null)
+    {
+        parent::setNavigator($navigator);
+
+        $this->currentNode = $this->document = $this->createDocument();
+        $this->nodeStack = new \SplStack();
+        $this->attachNullNamespace = false;
+    }
+
+    public function startVisiting($data, array $type, Context $context)
+    {
+        $this->nodeStack->push($this->currentNode);
+        $this->currentNode = null;
+
+        parent::startVisiting($data, $type, $context);
+    }
+
+    public function endVisiting($data, array $type, Context $context)
+    {
+        $nodes = $this->currentNode ?: [];
+        $this->currentNode = $this->nodeStack->pop();
+        if ($this->nodeStack->count() == 0 && $this->document->documentElement === null) {
+            $rootNode = $this->document->createElement('result');
+            $this->document->appendChild($rootNode);
+
+            $this->currentNode = $rootNode;
+        }
+
+        if (! is_array($nodes) && ! $nodes instanceof \DOMNodeList) {
+            $nodes = array($nodes);
+        }
+
+        foreach ($nodes as $node) {
+            $this->currentNode->appendChild($node);
+        }
+
+        return parent::endVisiting($data, $type, $context);
     }
 
     public function getResult()
     {
+        $this->attachNullNS();
         return $this->document->saveXML();
     }
 
-    public function getCurrentNode()
+    private function createTextNode($data, $cdata = false)
     {
-        return $this->currentNode;
+        if (! $cdata) {
+            return $this->document->createTextNode($data);
+        }
+
+        return $this->document->createCDATASection($data);
     }
 
-    public function getCurrentMetadata()
-    {
-        return $this->currentMetadata;
-    }
-
-    public function getDocument()
-    {
-        return $this->document;
-    }
-
-    public function setCurrentMetadata(PropertyMetadata $metadata)
-    {
-        $this->metadataStack->push($this->currentMetadata);
-        $this->currentMetadata = $metadata;
-    }
-
-    public function setCurrentNode(\DOMNode $node)
-    {
-        $this->stack->push($this->currentNode);
-        $this->currentNode = $node;
-    }
-
-    public function revertCurrentNode()
-    {
-        return $this->currentNode = $this->stack->pop();
-    }
-
-    public function revertCurrentMetadata()
-    {
-        return $this->currentMetadata = $this->metadataStack->pop();
-    }
-
-    public function createDocument($version = null, $encoding = null, $addRoot = true)
+    /**
+     * Create a new document object
+     *
+     * @param null $version
+     * @param null $encoding
+     *
+     * @return \DOMDocument
+     */
+    public function createDocument($version = null, $encoding = null)
     {
         $doc = new \DOMDocument($version ?: $this->defaultVersion, $encoding ?: $this->defaultEncoding);
         $doc->formatOutput = true;
 
-        if ($addRoot) {
-            if ($this->defaultRootNamespace) {
-                $rootNode = $doc->createElementNS($this->defaultRootNamespace, $this->defaultRootName);
-            } else {
-                $rootNode = $doc->createElement($this->defaultRootName);
-            }
-            $this->setCurrentNode($rootNode);
-            $doc->appendChild($rootNode);
-        }
-
         return $doc;
     }
 
-    public function prepare($data)
+    private function attachNullNS()
     {
-        $this->nullWasVisited = false;
-
-        return $data;
-    }
-
-    private function visitNumeric($data, array $type)
-    {
-        if (null === $this->document) {
-            $this->document = $this->createDocument(null, null, true);
-            $this->currentNode->appendChild($textNode = $this->document->createTextNode((string) $data));
-
-            return $textNode;
+        if (! $this->attachNullNamespace) {
+            return;
         }
 
-        return $this->document->createTextNode((string) $data);
+        $this->document->documentElement->setAttributeNS(
+            'http://www.w3.org/2000/xmlns/',
+            'xmlns:xsi',
+            'http://www.w3.org/2001/XMLSchema-instance'
+        );
+    }
+
+    public function getCurrentPropertyMetadata(Context $context)
+    {
+        $stack = $context->getMetadataStack();
+        if ($stack->count() == 0) {
+            return null;
+        }
+
+        return $stack->top() instanceof PropertyMetadata ? $stack->top() : null;
     }
 
     /**
@@ -410,32 +376,84 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $name && false === strpos($name, ' ') && preg_match('#^[\pL_][\pL0-9._-]*$#ui', $name);
     }
 
-    private function attachNullNamespace()
+    /**
+     * Get the array of properties that should be serialized
+     * in an object
+     *
+     * @param ClassMetadata $metadata
+     * @param Context $context
+     *
+     * @return PropertyMetadata[]
+     */
+    private function getNonSkippedProperties(ClassMetadata $metadata, Context $context)
     {
-        if ( ! $this->nullWasVisited) {
-            $this->document->documentElement->setAttributeNS(
-                'http://www.w3.org/2000/xmlns/',
-                'xmlns:xsi',
-                'http://www.w3.org/2001/XMLSchema-instance'
+        $properties = $metadata->getAttributesMetadata();
+        if (null !== ($exclusionStrategy = $context->getExclusionStrategy())) {
+            /** @var PropertyMetadata[] $properties */
+            $properties = array_filter(
+                $properties,
+                function (PropertyMetadata $propertyMetadata) use ($exclusionStrategy, $context) {
+                    $context->pushPropertyMetadata($propertyMetadata);
+                    $result = !$exclusionStrategy->shouldSkipProperty($propertyMetadata, $context);
+                    $context->popPropertyMetadata();
+
+                    return $result;
+                }
             );
-            $this->nullWasVisited = true;
+        }
+
+        return $properties;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     * @param $properties
+     */
+    private function validateObjectProperties(ClassMetadata $metadata, $properties)
+    {
+        $has_xml_value = false;
+        foreach ($properties as $property) {
+            if ($property->xmlValue && !$has_xml_value) {
+                $has_xml_value = true;
+            } elseif ($property->xmlValue) {
+                throw new RuntimeException(sprintf(
+                    "Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s",
+                    $metadata->getName()
+                ));
+            }
+        }
+
+        if ($has_xml_value) {
+            foreach ($properties as $property) {
+                if (!$property->xmlValue && !$property->xmlAttribute) {
+                    throw new RuntimeException(sprintf(
+                        'If you make use of @XmlValue, all other properties in the class must have the @XmlAttribute annotation. Invalid usage detected in class %s.',
+                        $metadata->getName()
+                    ));
+                }
+            }
         }
     }
-    
+
     /**
-     * Adds namespace attributes to the XML root element
+     * @param PropertyMetadata $metadata
+     * @param $attributeName
      *
-     * @param \JMS\Serializer\Metadata\ClassMetadata $metadata
-     * @param \DOMElement $element
+     * @return \DOMAttr
      */
-    private function addNamespaceAttributes(ClassMetadata $metadata, \DOMElement $element)
+    private function createAttributeNode(PropertyMetadata $metadata, $attributeName)
     {
-        foreach ($metadata->xmlNamespaces as $prefix => $uri) {
-            $attribute = 'xmlns';
-            if ($prefix !== '') {
-                $attribute .= ':'.$prefix;
+        if ('' !== $namespace = (string)$metadata->xmlNamespace) {
+            $prevNode = $this->nodeStack->top();
+            if (! $prefix = $prevNode->lookupPrefix($namespace)) {
+                $prefix = 'ns-' . substr(sha1($namespace), 0, 8);
             }
-            $element->setAttributeNS('http://www.w3.org/2000/xmlns/', $attribute, $uri);
+
+            $node = $this->document->createAttributeNS($namespace, $prefix . ':' . $attributeName);
+        } else {
+            $node = $this->document->createAttribute($attributeName);
         }
+
+        return $node;
     }
 }

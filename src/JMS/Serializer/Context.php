@@ -25,6 +25,7 @@ use JMS\Serializer\Exclusion\ExclusionStrategyInterface;
 use JMS\Serializer\Exclusion\GroupsExclusionStrategy;
 use JMS\Serializer\Exclusion\VersionExclusionStrategy;
 use JMS\Serializer\Metadata\ClassMetadata;
+use JMS\Serializer\Metadata\MetadataFactory;
 use JMS\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use PhpCollection\Map;

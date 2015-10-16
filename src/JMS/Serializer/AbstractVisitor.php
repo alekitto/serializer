@@ -27,6 +27,7 @@ abstract class AbstractVisitor implements VisitorInterface
     public function __construct(PropertyNamingStrategyInterface $namingStrategy)
     {
         $this->namingStrategy = $namingStrategy;
+        $this->setNavigator(null);
     }
 
     public function getNamingStrategy()

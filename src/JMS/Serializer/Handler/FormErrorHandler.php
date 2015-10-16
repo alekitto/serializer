@@ -18,14 +18,14 @@
 
 namespace JMS\Serializer\Handler;
 
-use JMS\Serializer\YamlSerializationVisitor;
-use JMS\Serializer\JsonSerializationVisitor;
+use JMS\Serializer\Construction\UnserializeObjectConstructor;
+use JMS\Serializer\Context;
+use JMS\Serializer\Util\SerializableForm;
+use JMS\Serializer\VisitorInterface;
 use JMS\Serializer\GraphNavigator;
-use JMS\Serializer\GenericSerializationVisitor;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Translation\TranslatorInterface;
-use JMS\Serializer\XmlSerializationVisitor;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
@@ -39,11 +39,13 @@ class FormErrorHandler implements SubscribingHandlerInterface
                 'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\Form',
                 'format' => $format,
+                'method' => 'serializeForm'
             );
             $methods[] = array(
                 'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\FormError',
                 'format' => $format,
+                'method' => 'serializeFormError'
             );
         }
 
@@ -55,65 +57,17 @@ class FormErrorHandler implements SubscribingHandlerInterface
         $this->translator = $translator;
     }
 
-    public function serializeFormToXml(XmlSerializationVisitor $visitor, Form $form, array $type)
+    public function serializeForm(VisitorInterface $visitor, Form $form, array $type, Context $context)
     {
-        if (null === $visitor->document) {
-            $visitor->document = $visitor->createDocument(null, null, false);
-            $visitor->document->appendChild($formNode = $visitor->document->createElement('form'));
-            $visitor->setCurrentNode($formNode);
-        } else {
-            $visitor->getCurrentNode()->appendChild(
-                $formNode = $visitor->document->createElement('form')
-            );
-        }
+        $serializableForm = new SerializableForm($form);
+        $metadata = $context->getMetadataFactory()->getMetadataFor($serializableForm);
 
-        $formNode->setAttribute('name', $form->getName());
-
-        $formNode->appendChild($errorsNode = $visitor->document->createElement('errors'));
-        foreach ($form->getErrors() as $error) {
-            $errorNode = $visitor->document->createElement('entry');
-            $errorNode->appendChild($this->serializeFormErrorToXml($visitor, $error, array()));
-            $errorsNode->appendChild($errorNode);
-        }
-
-        foreach ($form->all() as $child) {
-            if ($child instanceof Form) {
-                if (null !== $node = $this->serializeFormToXml($visitor, $child, array())) {
-                    $formNode->appendChild($node);
-                }
-            }
-        }
-
-        return $formNode;
+        return $visitor->visitObject($metadata, $serializableForm, $type, $context);
     }
 
-    public function serializeFormToJson(JsonSerializationVisitor $visitor, Form $form, array $type)
+    public function serializeFormError(VisitorInterface $visitor, FormError $formError, array $type, Context $context)
     {
-        return $this->convertFormToArray($visitor, $form);
-    }
-
-    public function serializeFormToYml(YamlSerializationVisitor $visitor, Form $form, array $type)
-    {
-        return $this->convertFormToArray($visitor, $form);
-    }
-
-    public function serializeFormErrorToXml(XmlSerializationVisitor $visitor, FormError $formError, array $type)
-    {
-        if (null === $visitor->document) {
-            $visitor->document = $visitor->createDocument(null, null, true);
-        }
-
-        return $visitor->document->createCDATASection($this->getErrorMessage($formError));
-    }
-
-    public function serializeFormErrorToJson(JsonSerializationVisitor $visitor, FormError $formError, array $type)
-    {
-        return $this->getErrorMessage($formError);
-    }
-
-    public function serializeFormErrorToYml(YamlSerializationVisitor $visitor, FormError $formError, array $type)
-    {
-        return $this->getErrorMessage($formError);
+        return $visitor->visitString($this->getErrorMessage($formError), $type, $context);
     }
 
     private function getErrorMessage(FormError $error)
@@ -123,37 +77,5 @@ class FormErrorHandler implements SubscribingHandlerInterface
         }
 
         return $this->translator->trans($error->getMessageTemplate(), $error->getMessageParameters(), 'validators');
-    }
-
-    private function convertFormToArray(GenericSerializationVisitor $visitor, Form $data)
-    {
-        $isRoot = null === $visitor->getRoot();
-
-        $form = new \ArrayObject();
-        $errors = array();
-        foreach ($data->getErrors() as $error) {
-            $errors[] = $this->getErrorMessage($error);
-        }
-
-        if ($errors) {
-            $form['errors'] = $errors;
-        }
-
-        $children = array();
-        foreach ($data->all() as $child) {
-            if ($child instanceof Form) {
-                $children[$child->getName()] = $this->convertFormToArray($visitor, $child);
-            }
-        }
-
-        if ($children) {
-            $form['children'] = $children;
-        }
-
-        if ($isRoot) {
-            $visitor->setRoot($form);
-        }
-
-        return $form;
     }
 }

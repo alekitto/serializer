@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <post>
-  <comments author-name="Foo" count="2">
+  <comments count="2" author-name="Foo">
     <comment>
       <author>
         <full_name><![CDATA[Foo]]></full_name>

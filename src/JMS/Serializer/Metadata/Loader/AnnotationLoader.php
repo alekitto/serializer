@@ -234,10 +234,6 @@ class AnnotationLoader implements LoaderInterface
                     $metadata->xmlElementCData = $annotation->cdata;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlElement): {
-                    $metadata->xmlElementCData = $annotation->cdata;
-                } break;
-
                 case ($annotation instanceof Annotation\AccessType): {
                     $accessType = $annotation->type;
                 } break;

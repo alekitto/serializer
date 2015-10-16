@@ -28,8 +28,15 @@ use JMS\Serializer\Metadata\PropertyMetadata;
  */
 class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 {
+    protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
+    {
+        return false;
+    }
+
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
     {
+        /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
+
         if (empty($classMetadata->discriminatorMap) && ! $classMetadata->discriminatorDisabled
             && ! empty($doctrineMetadata->discriminatorMap) && $doctrineMetadata->isRootEntity()
         ) {
@@ -42,6 +49,8 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
+        /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
+
         $propertyName = $propertyMetadata->name;
         if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
             $propertyMetadata->setType($fieldType);

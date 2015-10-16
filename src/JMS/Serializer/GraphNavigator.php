@@ -183,7 +183,20 @@ final class GraphNavigator
             }
         }
 
-        $rs = $this->callVisitor($data, $type, $context, $metadata);
+        $context->getVisitor()->startVisiting($data, $type, $context);
+        $this->callVisitor($data, $type, $context, $metadata);
+
+        if (null !== $metadata) {
+            foreach ($metadata->postSerializeMethods as $method) {
+                $method->getReflection()->invoke($data);
+            }
+        }
+
+        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_serialize', $type['name'], $context->getFormat())) {
+            $this->dispatcher->dispatch('serializer.post_serialize', $type['name'], $context->getFormat(), new PostSerializeEvent($context, $data, $type));
+        }
+
+        $rs = $context->getVisitor()->endVisiting($data, $type, $context);
 
         if (null !== $metadata) {
             $context->popClassMetadata();
@@ -213,7 +226,20 @@ final class GraphNavigator
             }
         }
 
+        $context->getVisitor()->startVisiting($data, $type, $context);
         $rs = $this->callVisitor($data, $type, $context, $metadata);
+
+        if (null !== $metadata) {
+            foreach ($metadata->postDeserializeMethods as $method) {
+                $method->getReflection()->invoke($rs);
+            }
+        }
+
+        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_deserialize', $type['name'], $context->getFormat())) {
+            $this->dispatcher->dispatch('serializer.post_deserialize', $type['name'], $context->getFormat(), new PostDeserializeEvent($context, $rs, $type));
+        }
+
+        $rs = $context->getVisitor()->endVisiting($rs, $type, $context);
         $context->decreaseDepth();
 
         return $rs;
@@ -225,7 +251,7 @@ final class GraphNavigator
 
         // First, try whether a custom handler exists for the given type
         if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type['name'], $context->getFormat())) {
-            return call_user_func($handler, $visitor, $data, $type, $context);
+            return $visitor->visitCustom($handler, $data, $type, $context);
         }
 
         switch ($type['name']) {
@@ -263,50 +289,7 @@ final class GraphNavigator
                     return null;
                 }
 
-                $object = $data;
-                if ($context instanceof DeserializationContext) {
-                    $object = $this->objectConstructor->construct($visitor, $metadata, $data, $type, $context);
-                }
-
-                if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
-                    $rs = $object->{$metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()]}(
-                        $visitor,
-                        $context instanceof SerializationContext ? null : $data,
-                        $context
-                    );
-
-                    $this->afterVisitingObject($metadata, $object, $type, $context);
-                    return $context instanceof SerializationContext ? $rs : $object;
-                }
-
-                $visitor->startVisitingObject($metadata, $object, $type, $context);
-                foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
-                    if (! $propertyMetadata instanceof PropertyMetadata) {
-                        continue;
-                    }
-
-                    if (null !== $exclusionStrategy && $exclusionStrategy->shouldSkipProperty($propertyMetadata, $context)) {
-                        continue;
-                    }
-
-                    if ($context instanceof DeserializationContext && $propertyMetadata->readOnly) {
-                        continue;
-                    }
-
-                    $context->pushPropertyMetadata($propertyMetadata);
-                    $visitor->visitProperty($propertyMetadata, $data, $context);
-                    $context->popPropertyMetadata();
-                }
-
-                if ($context instanceof SerializationContext) {
-                    $this->afterVisitingObject($metadata, $data, $type, $context);
-                    return $visitor->endVisitingObject($metadata, $data, $type, $context);
-                }
-
-                $rs = $visitor->endVisitingObject($metadata, $data, $type, $context);
-                $this->afterVisitingObject($metadata, $rs, $type, $context);
-
-                return $rs;
+                return $visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
         }
     }
 
@@ -334,14 +317,6 @@ final class GraphNavigator
             }
 
             return;
-        }
-
-        foreach ($metadata->postDeserializeMethods as $method) {
-            $method->getReflection()->invoke($object);
-        }
-
-        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_deserialize', $type['name'], $context->getFormat())) {
-            $this->dispatcher->dispatch('serializer.post_deserialize', $type['name'], $context->getFormat(), new PostDeserializeEvent($context, $object, $type));
         }
     }
 }

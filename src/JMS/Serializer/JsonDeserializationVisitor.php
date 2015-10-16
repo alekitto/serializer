@@ -22,7 +22,7 @@ use JMS\Serializer\Exception\RuntimeException;
 
 class JsonDeserializationVisitor extends GenericDeserializationVisitor
 {
-    protected function decode($str)
+    public function prepare($str)
     {
         $decoded = json_decode($str, true);
 
@@ -48,5 +48,10 @@ class JsonDeserializationVisitor extends GenericDeserializationVisitor
             default:
                 throw new RuntimeException('Could not decode JSON.');
         }
+    }
+
+    public function getResult()
+    {
+        return $this->getRoot();
     }
 }

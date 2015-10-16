@@ -20,6 +20,9 @@ namespace JMS\Serializer\Tests\Fixtures;
 
 use JMS\Serializer\Context;
 use JMS\Serializer\JsonDeserializationVisitor;
+use JMS\Serializer\Metadata\PropertyMetadata;
+use JMS\Serializer\Metadata\VirtualPropertyMetadata;
+use JMS\Serializer\VisitorInterface;
 use JMS\Serializer\XmlDeserializationVisitor;
 use Symfony\Component\Yaml\Inline;
 use JMS\Serializer\YamlSerializationVisitor;
@@ -35,23 +38,17 @@ class Article
     /** @HandlerCallback("xml", direction = "serialization") */
     public function serializeToXml(XmlSerializationVisitor $visitor, $data, Context $context)
     {
-        if (null === $visitor->document) {
-            $visitor->document = $visitor->createDocument(null, null, false);
-        }
-
-        $visitor->document->appendChild($visitor->document->createElement($this->element, $this->value));
+        return $visitor->document->createElement($this->element, $this->value);
     }
 
-    /** @HandlerCallback("json", direction = "serialization") */
-    public function serializeToJson(JsonSerializationVisitor $visitor)
+    /**
+     * @HandlerCallback("json", direction = "serialization")
+     * @HandlerCallback("yml", direction = "serialization")
+     */
+    public function serializeToYamlAndJson(VisitorInterface $visitor, $data, Context $context)
     {
-        $visitor->setRoot(array($this->element => $this->value));
-    }
-
-    /** @HandlerCallback("yml", direction = "serialization") */
-    public function serializeToYml(YamlSerializationVisitor $visitor)
-    {
-        $visitor->writer->writeln(Inline::dump($this->element).': '.Inline::dump($this->value));
+        $visitor->addData($this->element, $this->value);
+        return [$this->element => $this->value];
     }
 
     /** @HandlerCallback("xml", direction = "deserialization") */

@@ -110,18 +110,25 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         return $classMetadata;
     }
 
-    protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
-    {
-    }
+    /**
+     * @param DoctrineClassMetadata $doctrineMetadata
+     * @param ClassMetadata $classMetadata
+     */
+    abstract protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata);
 
-    protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
-    {
-        return false;
-    }
+    /**
+     * @param DoctrineClassMetadata $doctrineMetadata
+     * @param PropertyMetadata $propertyMetadata
+     *
+     * @return bool
+     */
+    abstract protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata);
 
-    protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
-    {
-    }
+    /**
+     * @param DoctrineClassMetadata $doctrineMetadata
+     * @param PropertyMetadata $propertyMetadata
+     */
+    abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata);
 
     /**
      * @param string $className

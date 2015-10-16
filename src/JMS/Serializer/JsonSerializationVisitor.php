@@ -18,6 +18,7 @@
 
 namespace JMS\Serializer;
 
+use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\Metadata\ClassMetadata;
 
 class JsonSerializationVisitor extends GenericSerializationVisitor
@@ -54,26 +55,22 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
     {
         $result = parent::visitArray($data, $type, $context);
 
-        if (null !== $this->getRoot() && isset($type['params'][1]) && 0 === count($result)) {
+        if (isset($type['params'][1]) && 0 === count($result)) {
             // ArrayObject is specially treated by the json_encode function and
             // serialized to { } while a mere array would be serialized to [].
-            return new \ArrayObject();
+            $this->setData($result = new \ArrayObject());
         }
 
         return $result;
     }
 
-    public function endVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
+    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
-        $rs = parent::endVisitingObject($metadata, $data, $type, $context);
+        $rs = parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
 
         // Force JSON output to "{}" instead of "[]" if it contains either no properties or all properties are null.
         if (empty($rs)) {
-            $rs = new \ArrayObject();
-
-            if (array() === $this->getRoot()) {
-                $this->setRoot(clone $rs);
-            }
+            $this->setData($rs = new \ArrayObject());
         }
 
         return $rs;

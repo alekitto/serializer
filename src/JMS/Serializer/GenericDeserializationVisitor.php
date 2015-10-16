@@ -18,6 +18,7 @@
 
 namespace JMS\Serializer;
 
+use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\Metadata\PropertyMetadata;
 use JMS\Serializer\Metadata\ClassMetadata;
@@ -27,79 +28,8 @@ use JMS\Serializer\Metadata\ClassMetadata;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class GenericDeserializationVisitor extends AbstractVisitor
+abstract class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
-    private $navigator;
-    private $result;
-    private $objectStack;
-    private $currentObject;
-
-    public function setNavigator(GraphNavigator $navigator)
-    {
-        $this->navigator = $navigator;
-        $this->result = null;
-        $this->objectStack = new \SplStack;
-    }
-
-    public function getNavigator()
-    {
-        return $this->navigator;
-    }
-
-    public function prepare($data)
-    {
-        return $this->decode($data);
-    }
-
-    public function visitNull($data, array $type, Context $context)
-    {
-        return null;
-    }
-
-    public function visitString($data, array $type, Context $context)
-    {
-        $data = (string) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
-    public function visitBoolean($data, array $type, Context $context)
-    {
-        $data = (Boolean) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
-    public function visitInteger($data, array $type, Context $context)
-    {
-        $data = (integer) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
-    public function visitDouble($data, array $type, Context $context)
-    {
-        $data = (double) $data;
-
-        if (null === $this->result) {
-            $this->result = $data;
-        }
-
-        return $data;
-    }
-
     public function visitArray($data, array $type, Context $context)
     {
         if ( ! is_array($data)) {
@@ -108,10 +38,7 @@ abstract class GenericDeserializationVisitor extends AbstractVisitor
 
         // If no further parameters were given, keys/values are just passed as is.
         if ( ! $type['params']) {
-            if (null === $this->result) {
-                $this->result = $data;
-            }
-
+            $this->setData($data);
             return $data;
         }
 
@@ -120,28 +47,22 @@ abstract class GenericDeserializationVisitor extends AbstractVisitor
                 $listType = $type['params'][0];
 
                 $result = array();
-                if (null === $this->result) {
-                    $this->result = &$result;
-                }
-
                 foreach ($data as $v) {
-                    $result[] = $this->navigator->accept($v, $listType, $context);
+                    $result[] = $this->getNavigator()->accept($v, $listType, $context);
                 }
 
+                $this->setData($result);
                 return $result;
 
             case 2: // Array is a map.
                 list($keyType, $entryType) = $type['params'];
 
                 $result = array();
-                if (null === $this->result) {
-                    $this->result = &$result;
-                }
-
                 foreach ($data as $k => $v) {
-                    $result[$this->navigator->accept($k, $keyType, $context)] = $this->navigator->accept($v, $entryType, $context);
+                    $result[$this->getNavigator()->accept($k, $keyType, $context)] = $this->getNavigator()->accept($v, $entryType, $context);
                 }
 
+                $this->setData($result);
                 return $result;
 
             default:
@@ -149,13 +70,43 @@ abstract class GenericDeserializationVisitor extends AbstractVisitor
         }
     }
 
-    public function startVisitingObject(ClassMetadata $metadata, $object, array $type, Context $context)
+    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
-        $this->setCurrentObject($object);
+        $exclusionStrategy = $context->getExclusionStrategy();
 
-        if (null === $this->result) {
-            $this->result = $this->currentObject;
+        $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
+        if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
+            $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+            $object->$callback($this, $data, $context);
+
+            $this->setData($object);
+            return $object;
         }
+
+        /** @var PropertyMetadata $propertyMetadata */
+        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+            if (null !== $exclusionStrategy && $exclusionStrategy->shouldSkipProperty($propertyMetadata, $context)) {
+                continue;
+            }
+
+            if ($propertyMetadata->readOnly) {
+                continue;
+            }
+
+            $context->pushPropertyMetadata($propertyMetadata);
+            $v = $this->visitProperty($propertyMetadata, $data, $context);
+            $context->popPropertyMetadata();
+
+            if (null === $propertyMetadata->setter) {
+                $propertyMetadata->getReflection()->setValue($object, $v);
+                continue;
+            }
+
+            $object->{$propertyMetadata->setter}($v);
+        }
+
+        $this->setData($object);
+        return $object;
     }
 
     public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
@@ -163,52 +114,21 @@ abstract class GenericDeserializationVisitor extends AbstractVisitor
         $name = $this->namingStrategy->translateName($metadata);
 
         if (null === $data || ! array_key_exists($name, $data)) {
-            return;
+            return null;
         }
 
         if ( ! $metadata->type) {
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
-        $v = $data[$name] !== null ? $this->navigator->accept($data[$name], $metadata->type, $context) : null;
+        $v = $data[$name] !== null ? $this->getNavigator()->accept($data[$name], $metadata->type, $context) : null;
 
-        if (null === $metadata->setter) {
-            $metadata->getReflection()->setValue($this->currentObject, $v);
-
-            return;
-        }
-
-        $this->currentObject->{$metadata->setter}($v);
-    }
-
-    public function endVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
-    {
-        $obj = $this->currentObject;
-        $this->revertCurrentObject();
-
-        return $obj;
+        $this->addData($name, $v);
+        return $v;
     }
 
     public function getResult()
     {
-        return $this->result;
+        return $this->getRoot();
     }
-
-    public function setCurrentObject($object)
-    {
-        $this->objectStack->push($this->currentObject);
-        $this->currentObject = $object;
-    }
-
-    public function getCurrentObject()
-    {
-        return $this->currentObject;
-    }
-
-    public function revertCurrentObject()
-    {
-        return $this->currentObject = $this->objectStack->pop();
-    }
-
-    abstract protected function decode($str);
 }

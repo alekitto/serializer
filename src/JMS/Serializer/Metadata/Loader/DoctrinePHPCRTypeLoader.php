@@ -19,6 +19,7 @@
 namespace JMS\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
+use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
 
 /**
@@ -27,8 +28,15 @@ use JMS\Serializer\Metadata\PropertyMetadata;
  */
 class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 {
+    protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
+    {
+        // Do nothing
+    }
+
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
+        /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+
         return 'lazyPropertiesDefaults' === $propertyMetadata->name
             || $doctrineMetadata->parentMapping === $propertyMetadata->name
             || $doctrineMetadata->node === $propertyMetadata->name;
@@ -36,6 +44,8 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
+        /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+
         $propertyName = $propertyMetadata->name;
         if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
             $field = $doctrineMetadata->getField($propertyName);

@@ -18,6 +18,7 @@
 
 namespace JMS\Serializer;
 
+use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Exception\InvalidArgumentException;
 use JMS\Serializer\Metadata\PropertyMetadata;
@@ -29,7 +30,7 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
     private $dataStack;
     private $data;
 
-    public function setNavigator(GraphNavigator $navigator)
+    public function setNavigator(GraphNavigator $navigator = null)
     {
         $this->navigator = $navigator;
         $this->root = null;
@@ -46,58 +47,32 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
 
     public function visitNull($data, array $type, Context $context)
     {
-        return null;
+        return $this->data = null;
     }
 
     public function visitString($data, array $type, Context $context)
     {
-        if (null === $this->root) {
-            $this->root = $data;
-        }
-
-        return (string) $data;
+        return $this->data = (string) $data;
     }
 
     public function visitBoolean($data, array $type, Context $context)
     {
-        if (null === $this->root) {
-            $this->root = $data;
-        }
-
-        return (boolean) $data;
+        return $this->data = (boolean) $data;
     }
 
     public function visitInteger($data, array $type, Context $context)
     {
-        if (null === $this->root) {
-            $this->root = $data;
-        }
-
-        return (int) $data;
+        return $this->data = (int) $data;
     }
 
     public function visitDouble($data, array $type, Context $context)
     {
-        if (null === $this->root) {
-            $this->root = $data;
-        }
-
-        return (float) $data;
+        return $this->data = (float) $data;
     }
 
-    /**
-     * @param array $data
-     * @param array $type
-     */
     public function visitArray($data, array $type, Context $context)
     {
-        if (null === $this->root) {
-            $this->root = array();
-            $rs = &$this->root;
-        } else {
-            $rs = array();
-        }
-
+        $rs = array();
         foreach ($data as $k => $v) {
             $v = $this->navigator->accept($v, $this->getElementType($type), $context);
 
@@ -108,25 +83,45 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
             $rs[$k] = $v;
         }
 
-        return $rs;
+        return $this->data = $rs;
     }
 
-    public function startVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
+    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
-        if (null === $this->root) {
-            $this->root = new \stdClass;
+        $this->data = array();
+
+        $exclusionStrategy = $context->getExclusionStrategy();
+        if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
+            $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+            return $this->data = $data->$callback($this, null, $context);
         }
 
-        $this->dataStack->push($this->data);
-        $this->data = array();
+        /** @var PropertyMetadata $propertyMetadata */
+        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+            if (null !== $exclusionStrategy && $exclusionStrategy->shouldSkipProperty($propertyMetadata, $context)) {
+                continue;
+            }
+
+            $context->pushPropertyMetadata($propertyMetadata);
+            $this->visitProperty($propertyMetadata, $data, $context);
+            $context->popPropertyMetadata();
+        }
+
+        return $this->data;
     }
 
-    public function endVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context)
+    public function startVisiting($data, array $type, Context $context)
+    {
+        $this->dataStack->push($this->data);
+        $this->data = null;
+    }
+
+    public function endVisiting($data, array $type, Context $context)
     {
         $rs = $this->data;
         $this->data = $this->dataStack->pop();
 
-        if ($this->root instanceof \stdClass && 0 === $this->dataStack->count()) {
+        if (null === $this->root && 0 === $this->dataStack->count()) {
             $this->root = $rs;
         }
 
@@ -153,12 +148,21 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
         }
     }
 
+    public function visitCustom(callable $handler, $data, array $type, Context $context)
+    {
+        $args = func_get_args();
+
+        $handler = array_shift($args);
+        array_unshift($args, $this);
+        return $this->data = call_user_func_array($handler, $args);
+    }
+
     /**
      * Allows you to add additional data to the current object/root element.
      *
      * @param string $key
-     * @param scalar|array $value This value must either be a regular scalar, or an array.
-     *                            It must not contain any objects anymore.
+     * @param mixed $value This value must either be a regular scalar, or an array.
+     *                     It must not contain any objects anymore.
      */
     public function addData($key, $value)
     {
@@ -180,5 +184,18 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
     public function setRoot($data)
     {
         $this->root = $data;
+    }
+
+    protected function setData($data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * @internal
+     */
+    protected function getData()
+    {
+        return $this->data;
     }
 }

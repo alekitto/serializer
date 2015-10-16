@@ -18,6 +18,7 @@
 
 namespace JMS\Serializer;
 
+use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
 
@@ -90,15 +91,12 @@ interface VisitorInterface
     public function visitArray($data, array $type, Context $context);
 
     /**
-     * Called before the properties of the object are being visited.
-     *
-     * @param ClassMetadata $metadata
-     * @param mixed $data
+     * @param $data
      * @param array $type
      *
-     * @return void
+     * @return mixed
      */
-    public function startVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context);
+    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null);
 
     /**
      * @param PropertyMetadata $metadata
@@ -109,15 +107,34 @@ interface VisitorInterface
     public function visitProperty(PropertyMetadata $metadata, $data, Context $context);
 
     /**
+     * @param callable $handler
+     * @param $data
+     * @param array $type
+     * @param Context $context
+     *
+     * @return mixed
+     */
+    public function visitCustom(callable $handler, $data, array $type, Context $context);
+
+    /**
+     * Called before the properties of the object are being visited.
+     *
+     * @param mixed $data
+     * @param array $type
+     *
+     * @return void
+     */
+    public function startVisiting($data, array $type, Context $context);
+
+    /**
      * Called after all properties of the object have been visited.
      *
-     * @param ClassMetadata $metadata
      * @param mixed $data
      * @param array $type
      *
      * @return mixed
      */
-    public function endVisitingObject(ClassMetadata $metadata, $data, array $type, Context $context);
+    public function endVisiting($data, array $type, Context $context);
 
     /**
      * Called before serialization/deserialization starts.
@@ -126,7 +143,7 @@ interface VisitorInterface
      *
      * @return void
      */
-    public function setNavigator(GraphNavigator $navigator);
+    public function setNavigator(GraphNavigator $navigator = null);
 
     /**
      * @deprecated use Context::getNavigator/Context::accept instead
