@@ -23,7 +23,7 @@ use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\Handler\HandlerRegistryInterface;
 use JMS\Serializer\EventDispatcher\EventDispatcherInterface;
 use JMS\Serializer\Exception\UnsupportedFormatException;
-use Metadata\MetadataFactoryInterface;
+use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use PhpCollection\MapInterface;
 
 /**
@@ -50,7 +50,7 @@ class Serializer implements SerializerInterface
     /**
      * Constructor.
      *
-     * @param \Metadata\MetadataFactoryInterface $factory
+     * @param MetadataFactoryInterface $factory
      * @param Handler\HandlerRegistryInterface $handlerRegistry
      * @param Construction\ObjectConstructorInterface $objectConstructor
      * @param \PhpCollection\MapInterface $serializationVisitors of VisitorInterface

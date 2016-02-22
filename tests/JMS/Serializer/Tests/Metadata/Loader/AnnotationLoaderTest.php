@@ -16,17 +16,15 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Tests\Metadata\Driver;
+namespace JMS\Serializer\Tests\Metadata\Loader;
 
-use Metadata\Driver\FileLocator;
-use JMS\Serializer\Metadata\Driver\PhpDriver;
+use Doctrine\Common\Annotations\AnnotationReader;
+use JMS\Serializer\Metadata\Loader\AnnotationLoader;
 
-class PhpDriverTest extends BaseDriverTest
+class AnnotationLoaderTest extends BaseLoaderTest
 {
-    protected function getDriver()
+    protected function getLoader()
     {
-        return new PhpDriver(new FileLocator(array(
-            'JMS\Serializer\Tests\Fixtures' => __DIR__.'/php',
-        )));
+        return new AnnotationLoader(new AnnotationReader());
     }
 }

@@ -46,22 +46,6 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $serializer->deserialize('<?xml version="1.0" encoding="UTF-8"?><result><![CDATA[foo]]></result>', 'string', 'xml'));
     }
 
-    public function testWithCache()
-    {
-        $this->assertFileNotExists($this->tmpDir);
-
-        $this->assertSame($this->builder, $this->builder->setCacheDir($this->tmpDir));
-        $serializer = $this->builder->build();
-
-        $this->assertFileExists($this->tmpDir);
-        $this->assertFileExists($this->tmpDir.'/annotations');
-        $this->assertFileExists($this->tmpDir.'/metadata');
-
-        $factory = $this->getField($serializer, 'factory');
-        $this->assertAttributeSame(false, 'debug', $factory);
-        $this->assertAttributeNotSame(null, 'cache', $factory);
-    }
-
     public function testDoesAddDefaultHandlers()
     {
         $serializer = $this->builder->build();
@@ -91,42 +75,9 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
         $this->builder->build()->serialize('foo', 'xml');
     }
 
-    public function testIncludeInterfaceMetadata()
-    {
-        $this->assertFalse(
-            $this->getIncludeInterfaces($this->builder),
-            'Interface metadata are not included by default'
-        );
-
-        $this->assertTrue(
-            $this->getIncludeInterfaces($this->builder->includeInterfaceMetadata(true)),
-            'Force including interface metadata'
-        );
-
-        $this->assertFalse(
-            $this->getIncludeInterfaces($this->builder->includeInterfaceMetadata(false)),
-            'Force not including interface metadata'
-        );
-
-        $this->assertSame(
-            $this->builder,
-            $this->builder->includeInterfaceMetadata(true)
-        );
-    }
-
     protected function setUp()
     {
         $this->builder = SerializerBuilder::create();
-        $this->fs = new Filesystem();
-
-        $this->tmpDir = sys_get_temp_dir().'/serializer';
-        $this->fs->remove($this->tmpDir);
-        clearstatcache();
-    }
-
-    protected function tearDown()
-    {
-        $this->fs->remove($this->tmpDir);
     }
 
     private function getField($obj, $name)
@@ -135,12 +86,5 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
         $ref->setAccessible(true);
 
         return $ref->getValue($obj);
-    }
-
-    private function getIncludeInterfaces(SerializerBuilder $builder)
-    {
-        $factory = $this->getField($builder->build(), 'factory');
-
-        return $this->getField($factory, 'includeInterfaces');
     }
 }

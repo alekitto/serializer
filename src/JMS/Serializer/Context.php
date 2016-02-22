@@ -26,8 +26,7 @@ use JMS\Serializer\Exclusion\GroupsExclusionStrategy;
 use JMS\Serializer\Exclusion\VersionExclusionStrategy;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
-use Metadata\MetadataFactory;
-use Metadata\MetadataFactoryInterface;
+use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use PhpCollection\Map;
 
 abstract class Context
@@ -64,9 +63,6 @@ abstract class Context
         $this->attributes = new Map();
     }
 
-    /**
-     * @param string $format
-     */
     public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
     {
         if ($this->initialized) {

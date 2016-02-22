@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Metadata\Driver;
+namespace JMS\Serializer\Metadata\Loader;
 
 use JMS\Serializer\Metadata\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
@@ -26,7 +26,7 @@ use JMS\Serializer\Metadata\PropertyMetadata;
  * This class decorates any other driver. If the inner driver does not provide a
  * a property type, the decorator will guess based on Doctrine 2 metadata.
  */
-class DoctrineTypeDriver extends AbstractDoctrineTypeDriver
+class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 {
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
     {

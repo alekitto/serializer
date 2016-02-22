@@ -23,9 +23,9 @@ use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use Doctrine\Common\Annotations\AnnotationReader;
 use JMS\Serializer\Handler\SubscribingHandlerInterface;
-use JMS\Serializer\Metadata\Driver\AnnotationDriver;
+use JMS\Serializer\Metadata\Loader\AnnotationLoader;
 use JMS\Serializer\GraphNavigator;
-use Metadata\MetadataFactory;
+use JMS\Serializer\Metadata\MetadataFactory;
 
 class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,7 +53,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
     {
         $context = $this->getMock('JMS\Serializer\SerializationContext');
         $object = new SerializableClass;
-        $metadata = $this->metadataFactory->getMetadataForClass(get_class($object));
+        $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
 
         $self = $this;
         $exclusionStrategy = $this->getMock('JMS\Serializer\Exclusion\ExclusionStrategyInterface');
@@ -66,7 +66,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $exclusionStrategy->expects($this->once())
             ->method('shouldSkipProperty')
             ->will($this->returnCallback(function($propertyMetadata, $passedContext) use ($context, $metadata, $self) {
-                $self->assertSame($metadata->propertyMetadata['foo'], $propertyMetadata);
+                $self->assertSame($metadata->getAttributeMetadata('foo'), $propertyMetadata);
                 $self->assertSame($context, $passedContext);
             }));
 
@@ -89,7 +89,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
     public function testNavigatorPassesNullOnDeserialization()
     {
         $class = __NAMESPACE__.'\SerializableClass';
-        $metadata = $this->metadataFactory->getMetadataForClass($class);
+        $metadata = $this->metadataFactory->getMetadataFor($class);
 
         $context = $this->getMock('JMS\Serializer\DeserializationContext');
         $exclusionStrategy = $this->getMock('JMS\Serializer\Exclusion\ExclusionStrategyInterface');
@@ -101,7 +101,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
         $exclusionStrategy->expects($this->once())
             ->method('shouldSkipProperty')
-            ->with($metadata->propertyMetadata['foo'], $this->callback(function ($navigatorContext) use ($context) {
+            ->with($metadata->getAttributeMetadata('foo'), $this->callback(function ($navigatorContext) use ($context) {
                 return $navigatorContext === $context;
             }));
 
@@ -153,7 +153,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $this->handlerRegistry = new HandlerRegistry();
         $this->objectConstructor = new UnserializeObjectConstructor();
 
-        $this->metadataFactory = new MetadataFactory(new AnnotationDriver(new AnnotationReader()));
+        $this->metadataFactory = new MetadataFactory(new AnnotationLoader(new AnnotationReader()));
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
     }
 }

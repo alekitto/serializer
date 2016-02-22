@@ -30,7 +30,7 @@ class UnserializeObjectConstructor implements ObjectConstructorInterface
 
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
     {
-        return $this->getInstantiator()->instantiate($metadata->name);
+        return $this->getInstantiator()->instantiate($metadata->getName());
     }
 
     /**

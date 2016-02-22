@@ -210,7 +210,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
         $name = $this->namingStrategy->translateName($metadata);
 
         if ( ! $metadata->type) {
-            throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->reflection->class, $metadata->name));
+            throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
         if ($metadata->xmlAttribute) {
@@ -224,12 +224,12 @@ class XmlDeserializationVisitor extends AbstractVisitor
                 $nodes = $data->xpath('./@'.$attributeName);
                 if ( ! empty($nodes)) {
                     $v = (string) reset($nodes);
-                    $metadata->reflection->setValue($this->currentObject, $v);
+                    $metadata->getReflection()->setValue($this->currentObject, $v);
                 }
 
             } elseif (isset($data[$name])) {
                 $v = $this->navigator->accept($data[$name], $metadata->type, $context);
-                $metadata->reflection->setValue($this->currentObject, $v);
+                $metadata->getReflection()->setValue($this->currentObject, $v);
             }
 
             return;
@@ -237,7 +237,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
 
         if ($metadata->xmlValue) {
             $v = $this->navigator->accept($data, $metadata->type, $context);
-            $metadata->reflection->setValue($this->currentObject, $v);
+            $metadata->getReflection()->setValue($this->currentObject, $v);
 
             return;
         }
@@ -251,7 +251,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
             $this->setCurrentMetadata($metadata);
             $v = $this->navigator->accept($enclosingElem, $metadata->type, $context);
             $this->revertCurrentMetadata();
-            $metadata->reflection->setValue($this->currentObject, $v);
+            $metadata->getReflection()->setValue($this->currentObject, $v);
 
             return;
         }
@@ -278,7 +278,7 @@ class XmlDeserializationVisitor extends AbstractVisitor
         $v = $this->navigator->accept($node, $metadata->type, $context);
 
         if (null === $metadata->setter) {
-            $metadata->reflection->setValue($this->currentObject, $v);
+            $metadata->getReflection()->setValue($this->currentObject, $v);
 
             return;
         }

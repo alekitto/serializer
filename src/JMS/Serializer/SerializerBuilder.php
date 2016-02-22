@@ -18,22 +18,16 @@
 
 namespace JMS\Serializer;
 
+use Doctrine\Common\Cache\Cache;
 use JMS\Serializer\Builder\DefaultDriverFactory;
 use JMS\Serializer\Builder\DriverFactoryInterface;
 use JMS\Serializer\Handler\PhpCollectionHandler;
 use JMS\Serializer\Handler\PropelCollectionHandler;
-use JMS\Serializer\Exception\RuntimeException;
-use Metadata\Driver\DriverInterface;
-use Metadata\MetadataFactory;
-use JMS\Serializer\Metadata\Driver\AnnotationDriver;
 use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\Construction\UnserializeObjectConstructor;
+use JMS\Serializer\Metadata\MetadataFactory;
 use PhpCollection\Map;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
-use Metadata\Driver\DriverChain;
-use JMS\Serializer\Metadata\Driver\YamlDriver;
-use JMS\Serializer\Metadata\Driver\XmlDriver;
-use Metadata\Driver\FileLocator;
 use JMS\Serializer\Handler\DateHandler;
 use JMS\Serializer\Handler\ArrayCollectionHandler;
 use JMS\Serializer\Construction\ObjectConstructorInterface;
@@ -42,8 +36,6 @@ use JMS\Serializer\Naming\CamelCaseNamingStrategy;
 use JMS\Serializer\Naming\PropertyNamingStrategyInterface;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\FileCacheReader;
-use Metadata\Cache\FileCache;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
 use JMS\Serializer\Exception\InvalidArgumentException;
 
@@ -68,7 +60,7 @@ class SerializerBuilder
     private $visitorsAdded = false;
     private $propertyNamingStrategy;
     private $debug = false;
-    private $cacheDir;
+    private $cache = null;
     private $annotationReader;
     private $includeInterfaceMetadata = false;
     private $driverFactory;
@@ -101,17 +93,9 @@ class SerializerBuilder
         return $this;
     }
 
-    public function setCacheDir($dir)
+    public function setCache(Cache $cache = null)
     {
-        if ( ! is_dir($dir)) {
-            $this->createDir($dir);
-        }
-        if ( ! is_writable($dir)) {
-            throw new InvalidArgumentException(sprintf('The cache directory "%s" is not writable.', $dir));
-        }
-
-        $this->cacheDir = $dir;
-
+        $this->cache = $cache;
         return $this;
     }
 
@@ -338,22 +322,10 @@ class SerializerBuilder
         $annotationReader = $this->annotationReader;
         if (null === $annotationReader) {
             $annotationReader = new AnnotationReader();
-
-            if (null !== $this->cacheDir) {
-                $this->createDir($this->cacheDir.'/annotations');
-                $annotationReader = new FileCacheReader($annotationReader, $this->cacheDir.'/annotations', $this->debug);
-            }
         }
 
         $metadataDriver = $this->driverFactory->createDriver($this->metadataDirs, $annotationReader);
-        $metadataFactory = new MetadataFactory($metadataDriver, null, $this->debug);
-
-        $metadataFactory->setIncludeInterfaces($this->includeInterfaceMetadata);
-
-        if (null !== $this->cacheDir) {
-            $this->createDir($this->cacheDir.'/metadata');
-            $metadataFactory->setCache(new FileCache($this->cacheDir.'/metadata'));
-        }
+        $metadataFactory = new MetadataFactory($metadataDriver, null, $this->cache);
 
         if ( ! $this->handlersConfigured) {
             $this->addDefaultHandlers();
@@ -385,16 +357,5 @@ class SerializerBuilder
         }
 
         $this->propertyNamingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
-    }
-
-    private function createDir($dir)
-    {
-        if (is_dir($dir)) {
-            return;
-        }
-
-        if (false === @mkdir($dir, 0777, true)) {
-            throw new RuntimeException(sprintf('Could not create directory "%s".', $dir));
-        }
     }
 }

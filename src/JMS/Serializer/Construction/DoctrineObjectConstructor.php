@@ -49,7 +49,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
     {
         // Locate possible ObjectManager
-        $objectManager = $this->managerRegistry->getManagerForClass($metadata->name);
+        $objectManager = $this->managerRegistry->getManagerForClass($metadata->getName());
 
         if ( ! $objectManager) {
             // No ObjectManager found, proceed with normal deserialization
@@ -59,7 +59,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         // Locate possible ClassMetadata
         $classMetadataFactory = $objectManager->getMetadataFactory();
 
-        if ($classMetadataFactory->isTransient($metadata->name)) {
+        if ($classMetadataFactory->isTransient($metadata->getName())) {
             // No ClassMetadata found, proceed with normal deserialization
             return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
         }
@@ -67,11 +67,11 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         // Managed entity, check for proxy load
         if ( ! is_array($data)) {
             // Single identifier, load proxy
-            return $objectManager->getReference($metadata->name, $data);
+            return $objectManager->getReference($metadata->getName(), $data);
         }
 
         // Fallback to default constructor if missing identifier(s)
-        $classMetadata  = $objectManager->getClassMetadata($metadata->name);
+        $classMetadata  = $objectManager->getClassMetadata($metadata->getName());
         $identifierList = array();
 
         foreach ($classMetadata->getIdentifierFieldNames() as $name) {
@@ -83,7 +83,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         }
 
         // Entity update, load it from database
-        $object = $objectManager->find($metadata->name, $identifierList);
+        $object = $objectManager->find($metadata->getName(), $identifierList);
 
         $objectManager->initializeObject($object);
 

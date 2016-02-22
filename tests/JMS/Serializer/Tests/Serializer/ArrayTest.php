@@ -19,14 +19,14 @@
 namespace JMS\Serializer\Tests\Serializer;
 
 use JMS\Serializer\Handler\HandlerRegistry;
+use JMS\Serializer\Metadata\MetadataFactory;
 use JMS\Serializer\Tests\Fixtures\Author;
 use JMS\Serializer\Tests\Fixtures\AuthorList;
 use JMS\Serializer\Tests\Fixtures\Order;
 use JMS\Serializer\Tests\Fixtures\Price;
 use PhpCollection\Map;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
-use Metadata\MetadataFactory;
-use JMS\Serializer\Metadata\Driver\AnnotationDriver;
+use JMS\Serializer\Metadata\Loader\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use JMS\Serializer\Construction\UnserializeObjectConstructor;
 use JMS\Serializer\JsonSerializationVisitor;
@@ -43,7 +43,7 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
         $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
 
         $this->serializer = new Serializer(
-            new MetadataFactory(new AnnotationDriver(new AnnotationReader())),
+            new MetadataFactory(new AnnotationLoader(new AnnotationReader())),
             new HandlerRegistry(),
             new UnserializeObjectConstructor(),
             new Map(array('json' => new JsonSerializationVisitor($namingStrategy))),

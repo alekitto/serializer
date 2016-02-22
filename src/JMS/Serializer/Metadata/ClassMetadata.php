@@ -18,30 +18,34 @@
 
 namespace JMS\Serializer\Metadata;
 
+use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Exception\InvalidArgumentException;
-use Metadata\MergeableInterface;
-use Metadata\MethodMetadata;
-use Metadata\MergeableClassMetadata;
-use Metadata\PropertyMetadata as BasePropertyMetadata;
+use Kcs\Metadata\ClassMetadata as BaseClassMetadata;
+use Kcs\Metadata\MetadataInterface;
+use Kcs\Metadata\MethodMetadata;
 
 /**
  * Class Metadata used to customize the serialization process.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ClassMetadata extends MergeableClassMetadata
+class ClassMetadata extends BaseClassMetadata
 {
     const ACCESSOR_ORDER_UNDEFINED = 'undefined';
     const ACCESSOR_ORDER_ALPHABETICAL = 'alphabetical';
     const ACCESSOR_ORDER_CUSTOM = 'custom';
 
-    /** @var \ReflectionMethod[] */
+    public $exclusionPolicy = ExclusionPolicy::NONE;
+    public $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+    public $readOnly = false;
+
+    /** @var MethodMetadata[] */
     public $preSerializeMethods = array();
 
-    /** @var \ReflectionMethod[] */
+    /** @var MethodMetadata[] */
     public $postSerializeMethods = array();
 
-    /** @var \ReflectionMethod[] */
+    /** @var MethodMetadata[] */
     public $postDeserializeMethods = array();
 
     public $xmlRootName;
@@ -67,7 +71,7 @@ class ClassMetadata extends MergeableClassMetadata
             throw new \InvalidArgumentException('The discriminator map cannot be empty.');
         }
 
-        $this->discriminatorBaseClass = $this->name;
+        $this->discriminatorBaseClass = $this->getName();
         $this->discriminatorFieldName = $fieldName;
         $this->discriminatorMap = $map;
     }
@@ -98,11 +102,12 @@ class ClassMetadata extends MergeableClassMetadata
         $this->sortProperties();
     }
 
-    public function addPropertyMetadata(BasePropertyMetadata $metadata)
+    public function addAttributeMetadata(MetadataInterface $metadata)
     {
-        parent::addPropertyMetadata($metadata);
+        parent::addAttributeMetadata($metadata);
         $this->sortProperties();
     }
+
 
     public function addPreSerializeMethod(MethodMetadata $method)
     {
@@ -129,65 +134,58 @@ class ClassMetadata extends MergeableClassMetadata
         $this->handlerCallbacks[$direction][$format] = $methodName;
     }
 
-    public function merge(MergeableInterface $object)
+    public function merge(MetadataInterface $object)
     {
-        if ( ! $object instanceof ClassMetadata) {
+        if ( ! $object instanceof self) {
             throw new InvalidArgumentException('$object must be an instance of ClassMetadata.');
         }
+
         parent::merge($object);
 
-        $this->preSerializeMethods = array_merge($this->preSerializeMethods, $object->preSerializeMethods);
-        $this->postSerializeMethods = array_merge($this->postSerializeMethods, $object->postSerializeMethods);
-        $this->postDeserializeMethods = array_merge($this->postDeserializeMethods, $object->postDeserializeMethods);
-        $this->xmlRootName = $object->xmlRootName;
-        $this->xmlRootNamespace = $object->xmlRootNamespace;
-        $this->xmlNamespaces = array_merge($this->xmlNamespaces, $object->xmlNamespaces);
+        $this->preSerializeMethods = array_merge($object->preSerializeMethods, $this->preSerializeMethods);
+        $this->postSerializeMethods = array_merge($object->postSerializeMethods, $this->postSerializeMethods);
+        $this->postDeserializeMethods = array_merge($object->postDeserializeMethods, $this->postDeserializeMethods);
+        $this->xmlRootName = $this->xmlRootName ?: $object->xmlRootName;
+        $this->xmlRootNamespace = $this->xmlRootNamespace ?: $object->xmlRootNamespace;
+        $this->xmlNamespaces = array_merge($object->xmlNamespaces, $this->xmlNamespaces);
 
-        // Handler methods are taken from the outer class completely.
-        $this->handlerCallbacks = $object->handlerCallbacks;
+        // Handler methods are not inherited
 
-        if ($object->accessorOrder) {
+        if (! $this->accessorOrder && $object->accessorOrder) {
             $this->accessorOrder = $object->accessorOrder;
             $this->customOrder = $object->customOrder;
         }
 
-        if ($object->discriminatorFieldName && $this->discriminatorFieldName) {
+        if ($this->discriminatorFieldName && $object->discriminatorFieldName &&
+            $this->discriminatorFieldName !== $object->discriminatorFieldName) {
             throw new \LogicException(sprintf(
                 'The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.',
-                $object->name,
-                $this->discriminatorBaseClass,
-                $this->discriminatorBaseClass
+                $this->getName(),
+                $object->discriminatorBaseClass,
+                $object->discriminatorBaseClass
             ));
         }
 
-        if ($this->discriminatorMap && ! $this->reflection->isAbstract()) {
-            if (false === $typeValue = array_search($this->name, $this->discriminatorMap, true)) {
+        if ($object->discriminatorMap && ! $this->getReflectionClass()->isAbstract()) {
+            if (false === $typeValue = array_search($this->getName(), $object->discriminatorMap, true)) {
                 throw new \LogicException(sprintf(
                     'The sub-class "%s" is not listed in the discriminator of the base class "%s".',
-                    $this->name,
+                    $this->getName(),
                     $this->discriminatorBaseClass
                 ));
             }
 
             $this->discriminatorValue = $typeValue;
-
-            if (isset($this->propertyMetadata[$this->discriminatorFieldName])
-                    && ! $this->propertyMetadata[$this->discriminatorFieldName] instanceof StaticPropertyMetadata) {
-                throw new \LogicException(sprintf(
-                    'The discriminator field name "%s" of the base-class "%s" conflicts with a regular property of the sub-class "%s".',
-                    $this->discriminatorFieldName,
-                    $this->discriminatorBaseClass,
-                    $this->name
-                ));
-            }
+            $this->discriminatorFieldName = $object->discriminatorFieldName;
 
             $discriminatorProperty = new StaticPropertyMetadata(
-                $this->name,
+                $this->getName(),
                 $this->discriminatorFieldName,
                 $typeValue
             );
             $discriminatorProperty->serializedName = $this->discriminatorFieldName;
-            $this->propertyMetadata[$this->discriminatorFieldName] = $discriminatorProperty;
+
+            $this->addAttributeMetadata($discriminatorProperty);
         }
 
         $this->sortProperties();
@@ -211,62 +209,21 @@ class ClassMetadata extends MergeableClassMetadata
 
     }
 
-    public function serialize()
+    public function __wakeup()
     {
         $this->sortProperties();
-
-        return serialize(array(
-            $this->preSerializeMethods,
-            $this->postSerializeMethods,
-            $this->postDeserializeMethods,
-            $this->xmlRootName,
-            $this->xmlRootNamespace,
-            $this->xmlNamespaces,
-            $this->accessorOrder,
-            $this->customOrder,
-            $this->handlerCallbacks,
-            $this->discriminatorDisabled,
-            $this->discriminatorBaseClass,
-            $this->discriminatorFieldName,
-            $this->discriminatorValue,
-            $this->discriminatorMap,
-            parent::serialize(),
-        ));
-    }
-
-    public function unserialize($str)
-    {
-        list(
-            $this->preSerializeMethods,
-            $this->postSerializeMethods,
-            $this->postDeserializeMethods,
-            $this->xmlRootName,
-            $this->xmlRootNamespace,
-            $this->xmlNamespaces,
-            $this->accessorOrder,
-            $this->customOrder,
-            $this->handlerCallbacks,
-            $this->discriminatorDisabled,
-            $this->discriminatorBaseClass,
-            $this->discriminatorFieldName,
-            $this->discriminatorValue,
-            $this->discriminatorMap,
-            $parentStr
-        ) = unserialize($str);
-
-        parent::unserialize($parentStr);
     }
 
     private function sortProperties()
     {
         switch ($this->accessorOrder) {
             case self::ACCESSOR_ORDER_ALPHABETICAL:
-                ksort($this->propertyMetadata);
+                ksort($this->attributesMetadata);
                 break;
 
             case self::ACCESSOR_ORDER_CUSTOM:
                 $order = $this->customOrder;
-                uksort($this->propertyMetadata, function($a, $b) use ($order) {
+                uksort($this->attributesMetadata, function($a, $b) use ($order) {
                     $existsA = isset($order[$a]);
                     $existsB = isset($order[$b]);
 

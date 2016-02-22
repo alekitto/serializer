@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Metadata\Driver;
+namespace JMS\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
@@ -25,12 +25,8 @@ use JMS\Serializer\Metadata\PropertyMetadata;
  * This class decorates any other driver. If the inner driver does not provide a
  * a property type, the decorator will guess based on Doctrine 2 metadata.
  */
-class DoctrinePHPCRTypeDriver extends AbstractDoctrineTypeDriver
+class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 {
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata $propertyMetadata
-     */
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
         return 'lazyPropertiesDefaults' === $propertyMetadata->name

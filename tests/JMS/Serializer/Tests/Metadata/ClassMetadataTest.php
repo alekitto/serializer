@@ -25,28 +25,28 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetAccessorOrder()
     {
-        $metadata = new ClassMetadata('JMS\Serializer\Tests\Metadata\PropertyMetadataOrder');
-        $metadata->addPropertyMetadata(new PropertyMetadata('JMS\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
-        $metadata->addPropertyMetadata(new PropertyMetadata('JMS\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->propertyMetadata));
+        $metadata = new ClassMetadata(new \ReflectionClass('JMS\Serializer\Tests\Metadata\PropertyMetadataOrder'));
+        $metadata->addAttributeMetadata(new PropertyMetadata('JMS\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
+        $metadata->addAttributeMetadata(new PropertyMetadata('JMS\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
+        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL);
-        $this->assertEquals(array('a', 'b'), array_keys($metadata->propertyMetadata));
+        $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('b', 'a'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->propertyMetadata));
+        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('a', 'b'));
-        $this->assertEquals(array('a', 'b'), array_keys($metadata->propertyMetadata));
+        $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('b'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->propertyMetadata));
+        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('a'));
-        $this->assertEquals(array('a', 'b'), array_keys($metadata->propertyMetadata));
+        $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('foo', 'bar'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->propertyMetadata));
+        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
     }
 
     /**

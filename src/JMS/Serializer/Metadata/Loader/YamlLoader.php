@@ -16,32 +16,32 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Metadata\Driver;
+namespace JMS\Serializer\Metadata\Loader;
 
 use JMS\Serializer\GraphNavigator;
 use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\Annotation\ExclusionPolicy;
-use Metadata\MethodMetadata;
+use Kcs\Metadata\ClassMetadataInterface;
+use Kcs\Metadata\Loader\FileLoader;
 use JMS\Serializer\Metadata\PropertyMetadata;
 use JMS\Serializer\Metadata\VirtualPropertyMetadata;
 use JMS\Serializer\Metadata\ClassMetadata;
+use Kcs\Metadata\MethodMetadata;
 use Symfony\Component\Yaml\Yaml;
-use Metadata\Driver\AbstractFileDriver;
 
-class YamlDriver extends AbstractFileDriver
+class YamlLoader extends FileLoader
 {
-    protected function loadMetadataFromFile(\ReflectionClass $class, $file)
+    protected function loadClassMetadataFromFile($file_content, ClassMetadataInterface $metadata)
     {
-        $config = Yaml::parse(file_get_contents($file));
+        /** @var ClassMetadata $metadata */
+        $class = $metadata->getReflectionClass();
+        $config = Yaml::parse($file_content);
 
         if ( ! isset($config[$name = $class->name])) {
-            throw new RuntimeException(sprintf('Expected metadata for class %s to be defined in %s.', $class->name, $file));
+            return false;
         }
 
         $config = $config[$name];
-        $metadata = new ClassMetadata($name);
-        $metadata->fileResources[] = $file;
-        $metadata->fileResources[] = $class->getFileName();
         $exclusionPolicy = isset($config['exclusion_policy']) ? strtoupper($config['exclusion_policy']) : 'NONE';
         $excludeAll = isset($config['exclude']) ? (Boolean) $config['exclude'] : false;
         $classAccessType = isset($config['access_type']) ? $config['access_type'] : PropertyMetadata::ACCESS_TYPE_PROPERTY;
@@ -188,7 +188,7 @@ class YamlDriver extends AbstractFileDriver
                 }
                 if ((ExclusionPolicy::NONE === $exclusionPolicy && ! $isExclude)
                         || (ExclusionPolicy::ALL === $exclusionPolicy && $isExpose)) {
-                    $metadata->addPropertyMetadata($pMetadata);
+                    $metadata->addAttributeMetadata($pMetadata);
                 }
             }
         }

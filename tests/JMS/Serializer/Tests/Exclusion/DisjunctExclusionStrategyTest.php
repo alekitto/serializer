@@ -27,7 +27,7 @@ class DisjunctExclusionStrategyTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldSkipClassShortCircuiting()
     {
-        $metadata = new ClassMetadata('stdClass');
+        $metadata = new ClassMetadata(new \ReflectionClass('stdClass'));
         $context = SerializationContext::create();
 
         $strat = new DisjunctExclusionStrategy(array(
@@ -48,7 +48,7 @@ class DisjunctExclusionStrategyTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSkipClassDisjunctBehavior()
     {
-        $metadata = new ClassMetadata('stdClass');
+        $metadata = new ClassMetadata(new \ReflectionClass('stdClass'));
         $context = SerializationContext::create();
 
         $strat = new DisjunctExclusionStrategy(array(
@@ -71,7 +71,7 @@ class DisjunctExclusionStrategyTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldSkipClassReturnsFalseIfNoPredicateMatched()
     {
-        $metadata = new ClassMetadata('stdClass');
+        $metadata = new ClassMetadata(new \ReflectionClass('stdClass'));
         $context = SerializationContext::create();
 
         $strat = new DisjunctExclusionStrategy(array(

@@ -44,57 +44,10 @@ class StaticPropertyMetadata extends PropertyMetadata
     {
     }
 
-    public function serialize()
+    public function __sleep()
     {
-        return serialize(array(
-            $this->sinceVersion,
-            $this->untilVersion,
-            $this->groups,
-            $this->serializedName,
-            $this->type,
-            $this->xmlCollection,
-            $this->xmlCollectionInline,
-            $this->xmlEntryName,
-            $this->xmlKeyAttribute,
-            $this->xmlAttribute,
-            $this->xmlValue,
-            $this->xmlNamespace,
-            $this->xmlKeyValuePairs,
-            $this->xmlElementCData,
-            $this->getter,
-            $this->setter,
-            $this->inline,
-            $this->readOnly,
-            $this->class,
-            $this->name,
-            $this->value
-        ));
-    }
-
-    public function unserialize($str)
-    {
-        list(
-            $this->sinceVersion,
-            $this->untilVersion,
-            $this->groups,
-            $this->serializedName,
-            $this->type,
-            $this->xmlCollection,
-            $this->xmlCollectionInline,
-            $this->xmlEntryName,
-            $this->xmlKeyAttribute,
-            $this->xmlAttribute,
-            $this->xmlValue,
-            $this->xmlNamespace,
-            $this->xmlKeyValuePairs,
-            $this->xmlElementCData,
-            $this->getter,
-            $this->setter,
-            $this->inline,
-            $this->readOnly,
-            $this->class,
-            $this->name,
-            $this->value
-        ) = unserialize($str);
+        return parent::__sleep() + [
+            'value'
+        ];
     }
 }

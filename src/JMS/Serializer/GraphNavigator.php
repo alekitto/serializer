@@ -18,7 +18,6 @@
 
 namespace JMS\Serializer;
 
-use JMS\Serializer\EventDispatcher\ObjectEvent;
 use JMS\Serializer\EventDispatcher\PostDeserializeEvent;
 use JMS\Serializer\EventDispatcher\PostSerializeEvent;
 use JMS\Serializer\EventDispatcher\PreDeserializeEvent;
@@ -28,8 +27,9 @@ use JMS\Serializer\Construction\ObjectConstructorInterface;
 use JMS\Serializer\Handler\HandlerRegistryInterface;
 use JMS\Serializer\EventDispatcher\EventDispatcherInterface;
 use JMS\Serializer\Metadata\ClassMetadata;
-use Metadata\MetadataFactoryInterface;
 use JMS\Serializer\Exception\InvalidArgumentException;
+use JMS\Serializer\Metadata\PropertyMetadata;
+use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
 /**
  * Handles traversal along the object graph.
@@ -133,7 +133,7 @@ final class GraphNavigator
                 throw new \LogicException(sprintf(
                     'The discriminator field name "%s" for base-class "%s" was not found in input data.',
                     $metadata->discriminatorFieldName,
-                    $metadata->name
+                    $metadata->getName()
                 ));
         }
 
@@ -141,12 +141,12 @@ final class GraphNavigator
             throw new \LogicException(sprintf(
                 'The type value "%s" does not exist in the discriminator map of class "%s". Available types: %s',
                 $typeValue,
-                $metadata->name,
+                $metadata->getName(),
                 implode(', ', array_keys($metadata->discriminatorMap))
             ));
         }
 
-        return $this->metadataFactory->getMetadataForClass($metadata->discriminatorMap[$typeValue]);
+        return $this->metadataFactory->getMetadataFor($metadata->discriminatorMap[$typeValue]);
     }
 
     private function serialize($data, array $type, SerializationContext $context)
@@ -179,7 +179,7 @@ final class GraphNavigator
             $context->pushClassMetadata($metadata);
 
             foreach ($metadata->preSerializeMethods as $method) {
-                $method->invoke($data);
+                $method->getReflection()->invoke($data);
             }
         }
 
@@ -280,7 +280,11 @@ final class GraphNavigator
                 }
 
                 $visitor->startVisitingObject($metadata, $object, $type, $context);
-                foreach ($metadata->propertyMetadata as $propertyMetadata) {
+                foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+                    if (! $propertyMetadata instanceof PropertyMetadata) {
+                        continue;
+                    }
+
                     if (null !== $exclusionStrategy && $exclusionStrategy->shouldSkipProperty($propertyMetadata, $context)) {
                         continue;
                     }
@@ -315,14 +319,14 @@ final class GraphNavigator
             return null;
         }
 
-        return $this->metadataFactory->getMetadataForClass($type['name']);
+        return $this->metadataFactory->getMetadataFor($type['name']);
     }
 
     private function afterVisitingObject($metadata, $object, array $type, Context $context)
     {
         if ($context instanceof SerializationContext) {
             foreach ($metadata->postSerializeMethods as $method) {
-                $method->invoke($object);
+                $method->getReflection()->invoke($object);
             }
 
             if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_serialize', $type['name'], $context->getFormat())) {
@@ -333,7 +337,7 @@ final class GraphNavigator
         }
 
         foreach ($metadata->postDeserializeMethods as $method) {
-            $method->invoke($object);
+            $method->getReflection()->invoke($object);
         }
 
         if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_deserialize', $type['name'], $context->getFormat())) {

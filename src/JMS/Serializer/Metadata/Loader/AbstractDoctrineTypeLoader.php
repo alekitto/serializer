@@ -16,19 +16,21 @@
  * limitations under the License.
  */
 
-namespace JMS\Serializer\Metadata\Driver;
+namespace JMS\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use JMS\Serializer\Metadata\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
 use JMS\Serializer\Metadata\PropertyMetadata;
-use Metadata\Driver\DriverInterface;
+use Kcs\Metadata\ClassMetadataInterface;
+use Kcs\Metadata\Loader\LoaderInterface;
+use Kcs\Metadata\NullMetadata;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
  * a property type, the decorator will guess based on Doctrine 2 metadata.
  */
-abstract class AbstractDoctrineTypeDriver implements DriverInterface
+abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 {
     /**
      * Map of doctrine 2 field types to JMS\Serializer types
@@ -59,7 +61,7 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
     );
 
     /**
-     * @var DriverInterface
+     * @var LoaderInterface
      */
     protected $delegate;
 
@@ -68,19 +70,19 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
      */
     protected $registry;
 
-    public function __construct(DriverInterface $delegate, ManagerRegistry $registry)
+    public function __construct(LoaderInterface $delegate, ManagerRegistry $registry)
     {
         $this->delegate = $delegate;
         $this->registry = $registry;
     }
 
-    public function loadMetadataForClass(\ReflectionClass $class)
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
     {
         /** @var $classMetadata ClassMetadata */
-        $classMetadata = $this->delegate->loadMetadataForClass($class);
+        $this->delegate->loadClassMetadata($classMetadata);
 
         // Abort if the given class is not a mapped entity
-        if ( ! $doctrineMetadata = $this->tryLoadingDoctrineMetadata($class->name)) {
+        if ( ! $doctrineMetadata = $this->tryLoadingDoctrineMetadata($classMetadata->getName())) {
             return $classMetadata;
         }
 
@@ -88,8 +90,10 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
 
         // We base our scan on the internal driver's property list so that we
         // respect any internal white/blacklisting like in the AnnotationDriver
-        foreach ($classMetadata->propertyMetadata as $key => $propertyMetadata) {
-            /** @var $propertyMetadata PropertyMetadata */
+        foreach ($classMetadata->getAttributesMetadata() as $key => $propertyMetadata) {
+            if (! $propertyMetadata instanceof PropertyMetadata) {
+                continue;
+            }
 
             // If the inner driver provides a type, don't guess anymore.
             if ($propertyMetadata->type) {
@@ -97,7 +101,7 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
             }
 
             if ($this->hideProperty($doctrineMetadata, $propertyMetadata)) {
-                unset($classMetadata->propertyMetadata[$key]);
+                $classMetadata->addAttributeMetadata(new NullMetadata($key));
             }
 
             $this->setPropertyType($doctrineMetadata, $propertyMetadata);
@@ -106,27 +110,15 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
         return $classMetadata;
     }
 
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param ClassMetadata $classMetadata
-     */
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
     {
     }
 
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata $propertyMetadata
-     */
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
         return false;
     }
 
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata $propertyMetadata
-     */
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
     }
@@ -149,13 +141,10 @@ abstract class AbstractDoctrineTypeDriver implements DriverInterface
         return $manager->getClassMetadata($className);
     }
 
-    /**
-     * @param string $type
-     */
     protected function normalizeFieldType($type)
     {
         if ( ! isset($this->fieldMapping[$type])) {
-            return;
+            return null;
         }
 
         return $this->fieldMapping[$type];

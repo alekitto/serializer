@@ -3,11 +3,10 @@
 namespace JMS\Serializer\Builder;
 
 use Doctrine\Common\Annotations\Reader;
-use JMS\Serializer\Metadata\Driver\AnnotationDriver;
-use JMS\Serializer\Metadata\Driver\XmlDriver;
+use JMS\Serializer\Metadata\Loader\AnnotationLoader;
+use JMS\Serializer\Metadata\Loader\XmlLoader;
 use JMS\Serializer\Metadata\Driver\YamlDriver;
-use Metadata\Driver\DriverChain;
-use Metadata\Driver\FileLocator;
+use Kcs\Metadata\Loader\ChainLoader;
 
 class DefaultDriverFactory implements DriverFactoryInterface
 {
@@ -16,13 +15,13 @@ class DefaultDriverFactory implements DriverFactoryInterface
         if ( ! empty($metadataDirs)) {
             $fileLocator = new FileLocator($metadataDirs);
 
-            return new DriverChain(array(
+            return new ChainLoader(array(
                 new YamlDriver($fileLocator),
-                new XmlDriver($fileLocator),
-                new AnnotationDriver($annotationReader),
+                new XmlLoader($fileLocator),
+                new AnnotationLoader($annotationReader),
             ));
         }
 
-        return new AnnotationDriver($annotationReader);
+        return new AnnotationLoader($annotationReader);
     }
 }

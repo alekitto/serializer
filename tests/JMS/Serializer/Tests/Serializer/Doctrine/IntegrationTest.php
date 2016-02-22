@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 use JMS\Serializer\Builder\CallbackDriverFactory;
 use JMS\Serializer\Builder\DefaultDriverFactory;
-use JMS\Serializer\Metadata\Driver\DoctrineTypeDriver;
+use JMS\Serializer\Metadata\Loader\DoctrineTypeLoader;
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerBuilder;
 use Doctrine\ORM\EntityManager;
@@ -81,7 +81,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
                 function(array $metadataDirs, Reader $annotationReader) use($registry) {
                     $defaultFactory = new DefaultDriverFactory();
 
-                    return new DoctrineTypeDriver($defaultFactory->createDriver($metadataDirs, $annotationReader), $registry);
+                    return new DoctrineTypeLoader($defaultFactory->createDriver($metadataDirs, $annotationReader), $registry);
                 }
             ))
             ->build()

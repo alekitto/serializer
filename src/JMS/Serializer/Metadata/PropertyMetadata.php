@@ -19,7 +19,8 @@
 namespace JMS\Serializer\Metadata;
 
 use JMS\Serializer\TypeParser;
-use Metadata\PropertyMetadata as BasePropertyMetadata;
+use Kcs\Metadata\MetadataInterface;
+use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
 use JMS\Serializer\Exception\RuntimeException;
 
 class PropertyMetadata extends BasePropertyMetadata
@@ -29,7 +30,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public $sinceVersion;
     public $untilVersion;
-    public $groups;
+    public $groups = array ();
     public $serializedName;
     public $type;
     public $xmlCollection = false;
@@ -50,10 +51,24 @@ class PropertyMetadata extends BasePropertyMetadata
 
     private static $typeParser;
 
+    public function __construct($class, $name)
+    {
+        parent::__construct($class, $name);
+
+        $this->getReflection()->setAccessible(true);
+    }
+
+    public function __wakeup()
+    {
+        parent::__wakeup();
+
+        $this->getReflection()->setAccessible(true);
+    }
+
     public function setAccessor($type, $getter = null, $setter = null)
     {
         if (self::ACCESS_TYPE_PUBLIC_METHOD === $type) {
-            $class = $this->reflection->getDeclaringClass();
+            $class = $this->getReflection()->getDeclaringClass();
 
             if (empty($getter)) {
                 if ($class->hasMethod('get'.$this->name) && $class->getMethod('get'.$this->name)->isPublic()) {
@@ -83,7 +98,10 @@ class PropertyMetadata extends BasePropertyMetadata
     public function getValue($obj)
     {
         if (null === $this->getter) {
-            return parent::getValue($obj);
+            $reflector = $this->getReflection();
+            $reflector->setAccessible(true);
+
+            return $reflector->getValue($obj);
         }
 
         return $obj->{$this->getter}();
@@ -96,61 +114,5 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         $this->type = self::$typeParser->parse($type);
-    }
-
-    public function serialize()
-    {
-        return serialize(array(
-            $this->sinceVersion,
-            $this->untilVersion,
-            $this->groups,
-            $this->serializedName,
-            $this->type,
-            $this->xmlCollection,
-            $this->xmlCollectionInline,
-            $this->xmlEntryName,
-            $this->xmlKeyAttribute,
-            $this->xmlAttribute,
-            $this->xmlValue,
-            $this->xmlNamespace,
-            $this->xmlKeyValuePairs,
-            $this->xmlElementCData,
-            $this->getter,
-            $this->setter,
-            $this->inline,
-            $this->readOnly,
-            $this->xmlAttributeMap,
-            $this->maxDepth,
-            parent::serialize(),
-        ));
-    }
-
-    public function unserialize($str)
-    {
-        list(
-            $this->sinceVersion,
-            $this->untilVersion,
-            $this->groups,
-            $this->serializedName,
-            $this->type,
-            $this->xmlCollection,
-            $this->xmlCollectionInline,
-            $this->xmlEntryName,
-            $this->xmlKeyAttribute,
-            $this->xmlAttribute,
-            $this->xmlValue,
-            $this->xmlNamespace,
-            $this->xmlKeyValuePairs,
-            $this->xmlElementCData,
-            $this->getter,
-            $this->setter,
-            $this->inline,
-            $this->readOnly,
-            $this->xmlAttributeMap,
-            $this->maxDepth,
-            $parentStr
-        ) = unserialize($str);
-
-        parent::unserialize($parentStr);
     }
 }

@@ -42,7 +42,7 @@ class CircularReferenceParent
     }
 
     /** @PostDeserialize */
-    private function afterDeserialization()
+    public function afterDeserialization()
     {
         if (!$this->collection) {
             $this->collection = array();
