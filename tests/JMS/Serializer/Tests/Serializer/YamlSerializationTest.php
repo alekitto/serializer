@@ -53,6 +53,10 @@ class YamlSerializationTest extends BaseSerializationTest
             throw new RuntimeException(sprintf('The content with key "%s" does not exist.', $key));
         }
 
+        if (PHP_VERSION_ID >= 70000 && file_exists(__DIR__.'/yml/php7/'.$key.'.yml')) {
+            $file = __DIR__.'/xml/php7/'.$key.'.yml';
+        }
+
         return file_get_contents($file);
     }
 

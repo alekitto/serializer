@@ -46,7 +46,13 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('foo', 'bar'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
+
+        if (PHP_VERSION_ID >= 70000) {
+            // PHP 7 behaves differently on uksort when returning 0
+            $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
+        } else {
+            $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
+        }
     }
 
     /**

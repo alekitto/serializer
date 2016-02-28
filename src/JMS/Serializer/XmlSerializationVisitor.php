@@ -186,7 +186,7 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
             $this->currentNode = $this->document->createElement('tmp');
             $this->getNavigator()->accept($v, $metadata->type, $context);
 
-            $node = $this->currentNode->childNodes[0];
+            $node = $this->currentNode->childNodes->item(0);
             $this->currentNode->removeChild($node);
 
             $this->currentNode = $node;

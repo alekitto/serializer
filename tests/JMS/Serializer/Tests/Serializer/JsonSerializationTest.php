@@ -95,6 +95,10 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['tree'] = '{"tree":{"children":[{"children":[{"children":[],"foo":"bar"}],"foo":"bar"}],"foo":"bar"}}';
         }
 
+        if (PHP_VERSION_ID >= 70000) {
+            $outputs['virtual_properties'] = '{"exist_field":"value","virtual_value":"value","test":"other-name","typed_virtual_property":1}';
+        }
+
         if (!isset($outputs[$key])) {
             throw new RuntimeException(sprintf('The key "%s" is not supported.', $key));
         }

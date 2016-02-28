@@ -47,7 +47,7 @@ class AnnotationLoader implements LoaderInterface
         /** @var ClassMetadata $classMetadata */
         $class = $classMetadata->getReflectionClass();
 
-        $excludeAnnotation = $this->reader->getClassAnnotation($class, Annotation\Exclude::class);
+        $excludeAnnotation = $this->reader->getClassAnnotation($class, 'JMS\Serializer\Annotation\Exclude');
         if (null !== $excludeAnnotation) {
             return true;
         }
@@ -153,7 +153,7 @@ class AnnotationLoader implements LoaderInterface
             }
         }
 
-        if (null !== $this->reader->getMethodAnnotation($method, Annotation\VirtualProperty::class)) {
+        if (null !== $this->reader->getMethodAnnotation($method, 'JMS\Serializer\Annotation\VirtualProperty')) {
             $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
             $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
         }
@@ -168,9 +168,9 @@ class AnnotationLoader implements LoaderInterface
 
         if (
             ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::NONE &&
-            null === $this->reader->getPropertyAnnotation($property, Annotation\Exclude::class)) ||
+            null === $this->reader->getPropertyAnnotation($property, 'JMS\Serializer\Annotation\Exclude')) ||
             ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::ALL &&
-            null !== $this->reader->getPropertyAnnotation($property, Annotation\Expose::class))
+            null !== $this->reader->getPropertyAnnotation($property, 'JMS\Serializer\Annotation\Expose'))
         ) {
             $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
         }

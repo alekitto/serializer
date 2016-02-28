@@ -266,6 +266,10 @@ class XmlSerializationTest extends BaseSerializationTest
             throw new InvalidArgumentException(sprintf('The key "%s" is not supported.', $key));
         }
 
+        if (PHP_VERSION_ID >= 70000 && file_exists(__DIR__.'/xml/php7/'.$key.'.xml')) {
+            $file = __DIR__.'/xml/php7/'.$key.'.xml';
+        }
+
         return file_get_contents($file);
     }
 
