@@ -94,7 +94,11 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
             case 1:
                 foreach ($data->$entryName as $v) {
-                    $result[] = $this->getNavigator()->accept($v, $type['params'][0], $context);
+                    if ($this->isNullNode($v)) {
+                        $result[] = $this->visitNull(null, array(), $context);
+                    } else {
+                        $result[] = $this->getNavigator()->accept($v, $type['params'][0], $context);
+                    }
                 }
 
                 break;
@@ -111,7 +115,12 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                     }
 
                     $k = $this->getNavigator()->accept($v[$currentMetadata->xmlKeyAttribute], $keyType, $context);
-                    $result[$k] = $this->getNavigator()->accept($v, $entryType, $context);
+
+                    if ($this->isNullNode($v)) {
+                        $result[$k] = $this->visitNull(null, array(), $context);
+                    } else {
+                        $result[$k] = $this->getNavigator()->accept($v, $entryType, $context);
+                    }
                 }
 
                 break;
@@ -183,7 +192,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             $node = $data->$name;
         }
 
-        if (($nilNodes = $node->xpath('./@xsi:nil')) && 'true' === (string) reset($nilNodes)) {
+        if ($this->isNullNode($node)) {
             return $this->visitNull(null, array(), $context);
         }
 
@@ -232,5 +241,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $internalSubset = str_replace(array("[ <!", "> ]>"), array('[<!', '>]>'), $internalSubset);
 
         return $internalSubset;
+    }
+
+    private function isNullNode($node)
+    {
+        return ($nilNodes = $node->xpath('./@xsi:nil')) && 'true' === (string) reset($nilNodes);
     }
 }
