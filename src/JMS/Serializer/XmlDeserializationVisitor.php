@@ -183,6 +183,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             $node = $data->$name;
         }
 
+        if (($nilNodes = $node->xpath('./@xsi:nil')) && 'true' === (string) reset($nilNodes)) {
+            return $this->visitNull(null, array(), $context);
+        }
+
         return $this->getNavigator()->accept($node, $metadata->type, $context);
     }
 
