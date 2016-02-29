@@ -1,0 +1,9 @@
+errors:
+    - 'This is the form error'
+children:
+    -
+        errors:
+            - 'Error of the child form'
+        children: {  }
+        name: bar
+name: foo

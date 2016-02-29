@@ -22,31 +22,6 @@ use JMS\Serializer\Exception\RuntimeException;
 
 class YamlSerializationTest extends BaseSerializationTest
 {
-    public function testConstraintViolation()
-    {
-        $this->markTestSkipped('This is not available for the YAML format.');
-    }
-
-    public function testConstraintViolationList()
-    {
-        $this->markTestSkipped('This is not available for the YAML format.');
-    }
-
-    public function testFormErrors()
-    {
-        $this->markTestSkipped('This is not available for the YAML format.');
-    }
-
-    public function testNestedFormErrors()
-    {
-        $this->markTestSkipped('This is not available for the YAML format.');
-    }
-
-    public function testFormErrorsWithNonFormComponents()
-    {
-        $this->markTestSkipped('This is not available for the YAML format.');
-    }
-
     protected function getContent($key)
     {
         if (!file_exists($file = __DIR__.'/yml/'.$key.'.yml')) {
@@ -54,7 +29,7 @@ class YamlSerializationTest extends BaseSerializationTest
         }
 
         if (PHP_VERSION_ID >= 70000 && file_exists(__DIR__.'/yml/php7/'.$key.'.yml')) {
-            $file = __DIR__.'/xml/php7/'.$key.'.yml';
+            $file = __DIR__.'/yml/php7/'.$key.'.yml';
         }
 
         return file_get_contents($file);
