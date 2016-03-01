@@ -216,7 +216,7 @@ class YamlLoader extends FileLoader
             }
         }
 
-        return $metadata;
+        return true;
     }
 
     protected function getExtension()

@@ -83,7 +83,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
         // Abort if the given class is not a mapped entity
         if ( ! $doctrineMetadata = $this->tryLoadingDoctrineMetadata($classMetadata->getName())) {
-            return $classMetadata;
+            return true;
         }
 
         $this->setDiscriminator($doctrineMetadata, $classMetadata);
@@ -107,7 +107,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
             $this->setPropertyType($doctrineMetadata, $propertyMetadata);
         }
 
-        return $classMetadata;
+        return true;
     }
 
     /**
