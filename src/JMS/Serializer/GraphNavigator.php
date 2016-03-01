@@ -294,7 +294,11 @@ final class GraphNavigator
     }
 
     /**
-     * @return ClassMetadata
+     * Get ClassMetadata instance for type. Returns null if class does not exist
+     *
+     * @param array $type
+     *
+     * @return null|ClassMetadata
      */
     private function getMetadataForType(array $type)
     {
@@ -303,20 +307,5 @@ final class GraphNavigator
         }
 
         return $this->metadataFactory->getMetadataFor($type['name']);
-    }
-
-    private function afterVisitingObject($metadata, $object, array $type, Context $context)
-    {
-        if ($context instanceof SerializationContext) {
-            foreach ($metadata->postSerializeMethods as $method) {
-                $method->getReflection()->invoke($object);
-            }
-
-            if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_serialize', $type['name'], $context->getFormat())) {
-                $this->dispatcher->dispatch('serializer.post_serialize', $type['name'], $context->getFormat(), new PostSerializeEvent($context, $object, $type));
-            }
-
-            return;
-        }
     }
 }

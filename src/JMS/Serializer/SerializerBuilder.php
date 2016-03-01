@@ -19,13 +19,13 @@
 namespace JMS\Serializer;
 
 use Doctrine\Common\Cache\Cache;
-use JMS\Serializer\Builder\DefaultDriverFactory;
-use JMS\Serializer\Builder\DriverFactoryInterface;
 use JMS\Serializer\Handler\PhpCollectionHandler;
 use JMS\Serializer\Handler\PropelCollectionHandler;
 use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\Construction\UnserializeObjectConstructor;
+use JMS\Serializer\Metadata\Loader\AnnotationLoader;
 use JMS\Serializer\Metadata\MetadataFactory;
+use Kcs\Metadata\Loader\LoaderInterface;
 use PhpCollection\Map;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\Handler\DateHandler;
@@ -49,7 +49,6 @@ use JMS\Serializer\Exception\InvalidArgumentException;
  */
 class SerializerBuilder
 {
-    private $metadataDirs = array();
     private $handlerRegistry;
     private $handlersConfigured = false;
     private $eventDispatcher;
@@ -62,8 +61,7 @@ class SerializerBuilder
     private $debug = false;
     private $cache = null;
     private $annotationReader;
-    private $includeInterfaceMetadata = false;
-    private $driverFactory;
+    private $metadataLoader = null;
 
     public static function create()
     {
@@ -74,7 +72,6 @@ class SerializerBuilder
     {
         $this->handlerRegistry = new HandlerRegistry();
         $this->eventDispatcher = new EventDispatcher();
-        $this->driverFactory = new DefaultDriverFactory();
         $this->serializationVisitors = new Map();
         $this->deserializationVisitors = new Map();
     }
@@ -96,6 +93,12 @@ class SerializerBuilder
     public function setCache(Cache $cache = null)
     {
         $this->cache = $cache;
+        return $this;
+    }
+
+    public function setMetadataLoader(LoaderInterface $metadataLoader)
+    {
+        $this->metadataLoader = $metadataLoader;
         return $this;
     }
 
@@ -191,132 +194,6 @@ class SerializerBuilder
         return $this;
     }
 
-    /**
-     * @param Boolean $include Whether to include the metadata from the interfaces
-     *
-     * @return SerializerBuilder
-     */
-    public function includeInterfaceMetadata($include)
-    {
-        $this->includeInterfaceMetadata = (Boolean) $include;
-
-        return $this;
-    }
-
-    /**
-     * Sets a map of namespace prefixes to directories.
-     *
-     * This method overrides any previously defined directories.
-     *
-     * @param array<string,string> $namespacePrefixToDirMap
-     *
-     * @return SerializerBuilder
-     *
-     * @throws InvalidArgumentException When a directory does not exist
-     */
-    public function setMetadataDirs(array $namespacePrefixToDirMap)
-    {
-        foreach ($namespacePrefixToDirMap as $dir) {
-            if ( ! is_dir($dir)) {
-                throw new InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
-            }
-        }
-
-        $this->metadataDirs = $namespacePrefixToDirMap;
-
-        return $this;
-    }
-
-    /**
-     * Adds a directory where the serializer will look for class metadata.
-     *
-     * The namespace prefix will make the names of the actual metadata files a bit shorter. For example, let's assume
-     * that you have a directory where you only store metadata files for the ``MyApplication\Entity`` namespace.
-     *
-     * If you use an empty prefix, your metadata files would need to look like:
-     *
-     * ``my-dir/MyApplication.Entity.SomeObject.yml``
-     * ``my-dir/MyApplication.Entity.OtherObject.xml``
-     *
-     * If you use ``MyApplication\Entity`` as prefix, your metadata files would need to look like:
-     *
-     * ``my-dir/SomeObject.yml``
-     * ``my-dir/OtherObject.yml``
-     *
-     * Please keep in mind that you currently may only have one directory per namespace prefix.
-     *
-     * @param string $dir The directory where metadata files are located.
-     * @param string $namespacePrefix An optional prefix if you only store metadata for specific namespaces in this directory.
-     *
-     * @return SerializerBuilder
-     *
-     * @throws InvalidArgumentException When a directory does not exist
-     * @throws InvalidArgumentException When a directory has already been registered
-     */
-    public function addMetadataDir($dir, $namespacePrefix = '')
-    {
-        if ( ! is_dir($dir)) {
-            throw new InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
-        }
-
-        if (isset($this->metadataDirs[$namespacePrefix])) {
-            throw new InvalidArgumentException(sprintf('There is already a directory configured for the namespace prefix "%s". Please use replaceMetadataDir() to override directories.', $namespacePrefix));
-        }
-
-        $this->metadataDirs[$namespacePrefix] = $dir;
-
-        return $this;
-    }
-
-    /**
-     * Adds a map of namespace prefixes to directories.
-     *
-     * @param array<string,string> $namespacePrefixToDirMap
-     *
-     * @return SerializerBuilder
-     */
-    public function addMetadataDirs(array $namespacePrefixToDirMap)
-    {
-        foreach ($namespacePrefixToDirMap as $prefix => $dir) {
-            $this->addMetadataDir($dir, $prefix);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Similar to addMetadataDir(), but overrides an existing entry.
-     *
-     * @param string $dir
-     * @param string $namespacePrefix
-     *
-     * @return SerializerBuilder
-     *
-     * @throws InvalidArgumentException When a directory does not exist
-     * @throws InvalidArgumentException When no directory is configured for the ns prefix
-     */
-    public function replaceMetadataDir($dir, $namespacePrefix = '')
-    {
-        if ( ! is_dir($dir)) {
-            throw new InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
-        }
-
-        if ( ! isset($this->metadataDirs[$namespacePrefix])) {
-            throw new InvalidArgumentException(sprintf('There is no directory configured for namespace prefix "%s". Please use addMetadataDir() for adding new directories.', $namespacePrefix));
-        }
-
-        $this->metadataDirs[$namespacePrefix] = $dir;
-
-        return $this;
-    }
-
-    public function setMetadataDriverFactory(DriverFactoryInterface $driverFactory)
-    {
-        $this->driverFactory = $driverFactory;
-
-        return $this;
-    }
-
     public function build()
     {
         $annotationReader = $this->annotationReader;
@@ -324,8 +201,12 @@ class SerializerBuilder
             $annotationReader = new AnnotationReader();
         }
 
-        $metadataDriver = $this->driverFactory->createDriver($this->metadataDirs, $annotationReader);
-        $metadataFactory = new MetadataFactory($metadataDriver, null, $this->cache);
+        $metadataLoader = $this->metadataLoader;
+        if (null === $metadataLoader) {
+            $metadataLoader = new AnnotationLoader($annotationReader);
+        }
+
+        $metadataFactory = new MetadataFactory($metadataLoader, null, $this->cache);
 
         if ( ! $this->handlersConfigured) {
             $this->addDefaultHandlers();
