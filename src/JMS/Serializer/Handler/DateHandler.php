@@ -42,6 +42,7 @@ class DateHandler implements SubscribingHandlerInterface
                 'type' => 'DateTime',
                 'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
                 'format' => $format,
+                'method' => 'deserializeDateTime'
             );
 
             foreach ($types as $type) {
@@ -66,52 +67,38 @@ class DateHandler implements SubscribingHandlerInterface
 
     public function serializeDateTime(VisitorInterface $visitor, \DateTime $date, array $type, Context $context)
     {
-        if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
-            return $visitor->visitSimpleString($date->format($this->getFormat($type)), $type, $context);
-        }
-        return $visitor->visitString($date->format($this->getFormat($type)), $type, $context);
+        return $this->serialize($visitor, $date->format($this->getFormat($type)), $type, $context);
     }
 
     public function serializeDateInterval(VisitorInterface $visitor, \DateInterval $date, array $type, Context $context)
     {
-        $iso8601DateIntervalString = $this->format($date);
-
-        if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
-            return $visitor->visitSimpleString($iso8601DateIntervalString, $type, $context);
-        }
-
-        return $visitor->visitString($iso8601DateIntervalString, $type, $context);
+        return $this->serialize($visitor, $this->formatInterval($date), $type, $context);
     }
 
-    public function deserializeDateTimeFromXml(XmlDeserializationVisitor $visitor, $data, array $type)
-    {
-        $attributes = $data->attributes('xsi', true);
-        if (isset($attributes['nil'][0]) && (string) $attributes['nil'][0] === 'true') {
-            return null;
-        }
-
-        return $this->parseDateTime($data, $type);
-    }
-
-    public function deserializeDateTimeFromJson(JsonDeserializationVisitor $visitor, $data, array $type)
+    public function deserializeDateTime(VisitorInterface $visitor, $data, array $type)
     {
         if (null === $data) {
             return null;
         }
 
-        return $this->parseDateTime($data, $type);
-    }
-
-    private function parseDateTime($data, array $type)
-    {
         $timezone = isset($type['params'][1]) ? new \DateTimeZone($type['params'][1]) : $this->defaultTimezone;
         $format = $this->getFormat($type);
         $datetime = \DateTime::createFromFormat($format, (string) $data, $timezone);
+
         if (false === $datetime) {
             throw new RuntimeException(sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
         }
 
         return $datetime;
+    }
+
+    private function serialize(VisitorInterface $visitor, $data, array $type, Context $context)
+    {
+        if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
+            return $visitor->visitSimpleString($data, $type, $context);
+        }
+
+        return $visitor->visitString($data, $type, $context);
     }
 
     /**
@@ -127,7 +114,7 @@ class DateHandler implements SubscribingHandlerInterface
      * @param \DateInterval $dateInterval
      * @return string
      */
-    public function format(\DateInterval $dateInterval)
+    public function formatInterval(\DateInterval $dateInterval)
     {
         $format = 'P';
 

@@ -199,6 +199,15 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $this->getNavigator()->accept($node, $metadata->type, $context);
     }
 
+    public function visitCustom(callable $handler, $data, array $type, Context $context)
+    {
+        if ($this->isNullNode($data)) {
+            return $this->visitNull(null, array(), $context);
+        }
+
+        return parent::visitCustom($handler, $data, $type, $context);
+    }
+
     /**
      * @param string[] $doctypeWhitelist
      */
