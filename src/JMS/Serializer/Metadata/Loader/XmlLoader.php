@@ -166,7 +166,7 @@ class XmlLoader extends FileLoader
             }
         }
 
-        return $metadata;
+        return true;
     }
 
     private function processPropertyMetadata(PropertyMetadata $pMetadata, $pElem, ClassMetadata $metadata)

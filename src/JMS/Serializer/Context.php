@@ -25,7 +25,6 @@ use JMS\Serializer\Exclusion\ExclusionStrategyInterface;
 use JMS\Serializer\Exclusion\GroupsExclusionStrategy;
 use JMS\Serializer\Exclusion\VersionExclusionStrategy;
 use JMS\Serializer\Metadata\ClassMetadata;
-use JMS\Serializer\Metadata\MetadataFactory;
 use JMS\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use PhpCollection\Map;
@@ -45,7 +44,7 @@ abstract class Context
     /** @var GraphNavigator */
     private $navigator;
 
-    /** @var MetadataFactory */
+    /** @var MetadataFactoryInterface */
     private $metadataFactory;
 
     /** @var ExclusionStrategyInterface */
@@ -144,9 +143,6 @@ abstract class Context
         return $this;
     }
 
-    /**
-     * @param integer $version
-     */
     public function setVersion($version)
     {
         if (null === $version) {
@@ -159,9 +155,6 @@ abstract class Context
         return $this;
     }
 
-    /**
-     * @param array|string $groups
-     */
     public function setGroups($groups)
     {
         if (empty($groups)) {
@@ -193,9 +186,6 @@ abstract class Context
         return $this->serializeNull;
     }
 
-    /**
-     * @return string
-     */
     public function getFormat()
     {
         return $this->format;
