@@ -168,7 +168,7 @@ final class GraphNavigator
             }
         }
 
-        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.pre_serialize', $type['name'], $context->getFormat())) {
+        if (null !== $this->dispatcher) {
             $this->dispatcher->dispatch('serializer.pre_serialize', $type['name'], $context->getFormat(), $event = new PreSerializeEvent($context, $data, $type));
             $type = $event->getType();
             $data = $event->getData();
@@ -192,7 +192,7 @@ final class GraphNavigator
             }
         }
 
-        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_serialize', $type['name'], $context->getFormat())) {
+        if (null !== $this->dispatcher) {
             $this->dispatcher->dispatch('serializer.post_serialize', $type['name'], $context->getFormat(), new PostSerializeEvent($context, $data, $type));
         }
 
@@ -213,7 +213,7 @@ final class GraphNavigator
     {
         $context->increaseDepth();
 
-        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.pre_deserialize', $type['name'], $context->getFormat())) {
+        if (null !== $this->dispatcher) {
             $this->dispatcher->dispatch('serializer.pre_deserialize', $type['name'], $context->getFormat(), $event = new PreDeserializeEvent($context, $data, $type));
             $type = $event->getType();
             $data = $event->getData();
@@ -235,7 +235,7 @@ final class GraphNavigator
             }
         }
 
-        if (null !== $this->dispatcher && $this->dispatcher->hasListeners('serializer.post_deserialize', $type['name'], $context->getFormat())) {
+        if (null !== $this->dispatcher) {
             $this->dispatcher->dispatch('serializer.post_deserialize', $type['name'], $context->getFormat(), new PostDeserializeEvent($context, $rs, $type));
         }
 

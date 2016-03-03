@@ -27,7 +27,7 @@ use JMS\Serializer\Metadata\PropertyMetadata;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class XmlSerializationVisitor extends GenericSerializationVisitor
+class XmlSerializationVisitor extends AbstractVisitor
 {
     /**
      * @var \DOMDocument
@@ -54,46 +54,34 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
 
         $node = $this->document->createAttribute('xsi:nil');
         $node->value = 'true';
-        $this->currentNodes = $node;
-
-        return parent::visitNull($data, $type, $context);
+        return $this->currentNodes = $node;
     }
 
     public function visitSimpleString($data, array $type, Context $context)
     {
-        $this->currentNodes = $this->createTextNode((string) $data);
-
-        return GenericSerializationVisitor::visitString($data, $type, $context);
+        return $this->currentNodes = $this->createTextNode((string) $data);
     }
 
     public function visitString($data, array $type, Context $context)
     {
         /** @var PropertyMetadata $metadata */
         $metadata = $this->getCurrentPropertyMetadata($context);
-        $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
-
-        return parent::visitString($data, $type, $context);
+        return $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
     }
 
     public function visitInteger($data, array $type, Context $context)
     {
-        $this->currentNodes = $this->createTextNode($data);
-
-        return parent::visitInteger($data, $type, $context);
+        return $this->currentNodes = $this->createTextNode($data);
     }
 
     public function visitBoolean($data, array $type, Context $context)
     {
-        $this->currentNodes = $this->createTextNode($data ? 'true' : 'false');
-
-        return parent::visitBoolean($data, $type, $context);
+        return $this->currentNodes = $this->createTextNode($data ? 'true' : 'false');
     }
 
     public function visitDouble($data, array $type, Context $context)
     {
-        $this->currentNodes = $this->createTextNode($data);
-
-        return parent::visitDouble($data, $type, $context);
+        return $this->currentNodes = $this->createTextNode($data);
     }
 
     public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
@@ -107,7 +95,7 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
                 $this->currentNodes = [];
             }
 
-            return $this->getData();
+            return $this->currentNodes;
         }
 
         $properties = $this->getNonSkippedProperties($metadata, $context);
@@ -128,7 +116,6 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
         }
 
         $nodes = array();
-        $this->setData(array());
 
         /** @var \DOMElement $prevNode */
         $prevNode = $this->nodeStack->top();
@@ -158,8 +145,7 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
             }
         }
 
-        $this->currentNodes = $nodes;
-        return $this->getData();
+        return $this->currentNodes = $nodes;
     }
 
     public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
@@ -173,24 +159,22 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
             $attributeName = $this->namingStrategy->translateName($metadata);
 
             $this->currentNodes = $this->document->createElement('tmp');
-            $this->getNavigator()->accept($v, $metadata->type, $context);
+            $context->accept($v, $metadata->type);
 
             $node = $this->createAttributeNode($metadata, $attributeName);
             $node->appendChild($this->createTextNode((string) $this->currentNodes->nodeValue));
 
-            $this->currentNodes = $node;
-            return;
+            return $this->currentNodes = $node;
         }
 
         if ($metadata->xmlValue) {
             $this->currentNodes = $this->document->createElement('tmp');
-            $this->getNavigator()->accept($v, $metadata->type, $context);
+            $context->accept($v, $metadata->type);
 
             $node = $this->currentNodes->childNodes->item(0);
             $this->currentNodes->removeChild($node);
 
-            $this->currentNodes = $node;
-            return;
+            return $this->currentNodes = $node;
         }
 
         if ($metadata->xmlAttributeMap) {
@@ -206,12 +190,11 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
                 $attributes[] = $node;
             }
 
-            $this->currentNodes = $attributes;
-            return;
+            return $this->currentNodes = $attributes;
         }
 
         if (null === $v && ! $context->shouldSerializeNull()) {
-            return;
+            return null;
         }
 
         $elementName = $this->namingStrategy->translateName($metadata);
@@ -225,11 +208,10 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
             $this->currentNodes = $this->document->createElement($elementName);
         }
 
-        parent::visitProperty($metadata, $data, $context);
+        $context->accept($v, $metadata->type);
 
         if (is_object($v) && null !== $v && $context->isVisiting($v)) {
-            $this->currentNodes = null;
-            return;
+            return $this->currentNodes = null;
         }
 
         if ($metadata->xmlCollectionInline || $metadata->inline) {
@@ -240,10 +222,19 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
 
             $this->currentNodes = $children;
         }
+
+        return $this->currentNodes;
     }
 
     public function visitArray($data, array $type, Context $context)
     {
+        if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
+            $this->document->appendChild($rootNode = $this->document->createElement('result'));
+
+            $this->nodeStack->pop();
+            $this->nodeStack->push($rootNode);
+        }
+
         /** @var PropertyMetadata $metadata */
         $nodeName = 'entry';
         if (($metadata = $this->getCurrentPropertyMetadata($context)) && ! empty($metadata->xmlEntryName)) {
@@ -254,28 +245,32 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
 
         /** @var \DOMNode[] $nodes */
         $nodes = [];
-        $rs = [];
         foreach ($data as $k => $v) {
             $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string)$k : $nodeName;
             $this->currentNodes = $this->document->createElement($elementName);
 
-            $v = $this->getNavigator()->accept($v, $this->getElementType($type), $context);
+            $context->accept($v, $this->getElementType($type));
             if (null !== $attributeName) {
                 $this->currentNodes->setAttribute($attributeName, (string)$k);
             }
 
             $nodes[$k] = $this->currentNodes;
-            $rs[$k] = $v;
         }
 
-        $this->currentNodes = array_values($nodes);
-        return $rs;
+        return $this->currentNodes = array_values($nodes);
+    }
+
+    public function visitCustom(callable $handler, $data, array $type, Context $context)
+    {
+        $args = func_get_args();
+
+        $handler = array_shift($args);
+        array_unshift($args, $this);
+        return call_user_func_array($handler, $args);
     }
 
     public function setNavigator(GraphNavigator $navigator = null)
     {
-        parent::setNavigator($navigator);
-
         $this->currentNodes = $this->document = $this->createDocument();
         $this->nodeStack = new \SplStack();
         $this->attachNullNamespace = false;
@@ -285,8 +280,6 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
-
-        parent::startVisiting($data, $type, $context);
     }
 
     public function endVisiting($data, array $type, Context $context)
@@ -307,8 +300,6 @@ class XmlSerializationVisitor extends GenericSerializationVisitor
         foreach ($nodes as $node) {
             $this->currentNodes->appendChild($node);
         }
-
-        return parent::endVisiting($data, $type, $context);
     }
 
     public function getResult()

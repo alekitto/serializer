@@ -86,7 +86,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                     if ($this->isNullNode($v)) {
                         $result[] = $this->visitNull(null, array(), $context);
                     } else {
-                        $result[] = $this->getNavigator()->accept($v, $type['params'][0], $context);
+                        $result[] = $context->accept($v, $type['params'][0]);
                     }
                 }
 
@@ -103,12 +103,12 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                         throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
                     }
 
-                    $k = $this->getNavigator()->accept($v[$currentMetadata->xmlKeyAttribute], $keyType, $context);
+                    $k = $context->accept($v[$currentMetadata->xmlKeyAttribute], $keyType);
 
                     if ($this->isNullNode($v)) {
                         $result[$k] = $this->visitNull(null, array(), $context);
                     } else {
-                        $result[$k] = $this->getNavigator()->accept($v, $entryType, $context);
+                        $result[$k] = $context->accept($v, $entryType);
                     }
                 }
 
@@ -143,14 +143,14 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                     return (string) reset($nodes);
                 }
             } elseif (isset($data[$name])) {
-                return $this->getNavigator()->accept($data[$name], $metadata->type, $context);
+                return $context->accept($data[$name], $metadata->type);
             }
 
             return null;
         }
 
         if ($metadata->xmlValue) {
-            return $this->getNavigator()->accept($data, $metadata->type, $context);
+            return $context->accept($data, $metadata->type);
         }
 
         if ($metadata->xmlCollection) {
@@ -159,7 +159,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 $enclosingElem = $data->$name;
             }
 
-            return $this->getNavigator()->accept($enclosingElem, $metadata->type, $context);
+            return $context->accept($enclosingElem, $metadata->type);
         }
 
         if ('' !== $namespace = (string) $metadata->xmlNamespace) {
@@ -185,7 +185,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             return $this->visitNull(null, array(), $context);
         }
 
-        return $this->getNavigator()->accept($node, $metadata->type, $context);
+        return $context->accept($node, $metadata->type);
     }
 
     public function visitBoolean($data, array $type, Context $context)

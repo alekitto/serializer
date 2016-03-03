@@ -33,19 +33,14 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         $object = $event->getData();
         $type = $event->getType();
 
-        // If the set type name is not an actual class, but a faked type for which a custom handler exists, we do not
-        // modify it with this subscriber. Also, we forgo autoloading here as an instance of this type is already created,
-        // so it must be loaded if its a real class.
-        $virtualType = ! class_exists($type['name'], false);
-
-        if ($object instanceof PersistentCollection
-            || $object instanceof MongoDBPersistentCollection
-            || $object instanceof PHPCRPersistentCollection
+        if (
+            (
+                $object instanceof PersistentCollection ||
+                $object instanceof MongoDBPersistentCollection ||
+                $object instanceof PHPCRPersistentCollection
+            ) && $type['name'] === get_class($object)
         ) {
-            if ( ! $virtualType) {
-                $event->setType('ArrayCollection');
-            }
-
+            $event->setType('ArrayCollection');
             return;
         }
 
@@ -54,8 +49,7 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         }
 
         $object->__load();
-
-        if ( ! $virtualType) {
+        if ($type['name'] === get_class($object)) {
             $event->setType(get_parent_class($object));
         }
     }

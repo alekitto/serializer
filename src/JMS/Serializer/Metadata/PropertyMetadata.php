@@ -99,8 +99,6 @@ class PropertyMetadata extends BasePropertyMetadata
     {
         if (null === $this->getter) {
             $reflector = $this->getReflection();
-            $reflector->setAccessible(true);
-
             return $reflector->getValue($obj);
         }
 

@@ -48,7 +48,7 @@ abstract class GenericDeserializationVisitor extends GenericSerializationVisitor
 
                 $result = array();
                 foreach ($data as $v) {
-                    $result[] = $this->getNavigator()->accept($v, $listType, $context);
+                    $result[] = $context->accept($v, $listType);
                 }
 
                 $this->setData($result);
@@ -59,7 +59,7 @@ abstract class GenericDeserializationVisitor extends GenericSerializationVisitor
 
                 $result = array();
                 foreach ($data as $k => $v) {
-                    $result[$this->getNavigator()->accept($k, $keyType, $context)] = $this->getNavigator()->accept($v, $entryType, $context);
+                    $result[$context->accept($k, $keyType)] = $context->accept($v, $entryType);
                 }
 
                 $this->setData($result);
@@ -121,7 +121,7 @@ abstract class GenericDeserializationVisitor extends GenericSerializationVisitor
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
-        $v = $data[$name] !== null ? $this->getNavigator()->accept($data[$name], $metadata->type, $context) : null;
+        $v = $data[$name] !== null ? $context->accept($data[$name], $metadata->type) : null;
 
         $this->addData($name, $v);
         return $v;
