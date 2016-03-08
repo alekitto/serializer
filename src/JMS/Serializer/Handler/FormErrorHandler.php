@@ -18,7 +18,6 @@
 
 namespace JMS\Serializer\Handler;
 
-use JMS\Serializer\Construction\UnserializeObjectConstructor;
 use JMS\Serializer\Context;
 use JMS\Serializer\Util\SerializableForm;
 use JMS\Serializer\VisitorInterface;

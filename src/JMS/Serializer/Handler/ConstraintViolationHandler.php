@@ -22,12 +22,9 @@ use JMS\Serializer\Context;
 use JMS\Serializer\Util\SerializableConstraintViolation;
 use JMS\Serializer\Util\SerializableConstraintViolationList;
 use JMS\Serializer\VisitorInterface;
-use JMS\Serializer\YamlSerializationVisitor;
-use JMS\Serializer\JsonSerializationVisitor;
 use JMS\Serializer\GraphNavigator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use JMS\Serializer\XmlSerializationVisitor;
 
 class ConstraintViolationHandler implements SubscribingHandlerInterface
 {

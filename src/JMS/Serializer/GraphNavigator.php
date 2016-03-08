@@ -28,7 +28,6 @@ use JMS\Serializer\Handler\HandlerRegistryInterface;
 use JMS\Serializer\EventDispatcher\EventDispatcherInterface;
 use JMS\Serializer\Metadata\ClassMetadata;
 use JMS\Serializer\Exception\InvalidArgumentException;
-use JMS\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
 /**
