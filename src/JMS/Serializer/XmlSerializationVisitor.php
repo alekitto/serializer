@@ -57,7 +57,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $node;
     }
 
-    public function visitSimpleString($data, array $type, Context $context)
+    public function visitSimpleString($data)
     {
         return $this->currentNodes = $this->createTextNode((string) $data);
     }
@@ -350,7 +350,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             return null;
         }
 
-        return $stack->top() instanceof PropertyMetadata ? $stack->top() : null;
+        return $stack->top();
     }
 
     /**

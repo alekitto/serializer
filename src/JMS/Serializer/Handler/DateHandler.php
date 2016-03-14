@@ -93,7 +93,7 @@ class DateHandler implements SubscribingHandlerInterface
     private function serialize(VisitorInterface $visitor, $data, array $type, Context $context)
     {
         if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
-            return $visitor->visitSimpleString($data, $type, $context);
+            return $visitor->visitSimpleString($data);
         }
 
         return $visitor->visitString($data, $type, $context);
