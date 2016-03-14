@@ -38,64 +38,20 @@ class ContextTest extends \PHPUnit_Framework_TestCase
         ));
         $objects = array($object, $object->children[0], $object->children[1], $object->children[1]->children[0]);
 
-        $self = $this;
+        $context = new SerializationContext();
+        $context->initialize(
+            'json',
+            $this->getMock('JMS\Serializer\VisitorInterface'),
+            $this->getMockWithoutInvokingTheOriginalConstructor('JMS\Serializer\GraphNavigator'),
+            $this->getMock('Kcs\Metadata\Factory\MetadataFactoryInterface')
+        );
 
-        $exclusionStrategy = $this->getMock('JMS\Serializer\Exclusion\ExclusionStrategyInterface');
-        $exclusionStrategy->expects($this->any())
-            ->method('shouldSkipClass')
-            ->with($this->anything(), $this->callback(function (SerializationContext $context) use ($self, $objects) {
-                $expectedDepth = $expectedPath = null;
-
-                if ($context->getObject() === $objects[0]) {
-                    $expectedDepth = 1;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node';
-                } elseif ($context->getObject() === $objects[1]) {
-                    $expectedDepth = 2;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node';
-                } elseif ($context->getObject() === $objects[2]) {
-                    $expectedDepth = 2;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node';
-                } elseif ($context->getObject() === $objects[3]) {
-                    $expectedDepth = 3;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node';
-                }
-
-                $self->assertEquals($expectedDepth, $context->getDepth(), 'shouldSkipClass depth');
-                $self->assertEquals($expectedPath, $context->getPath(), 'shouldSkipClass path');
-
-                return true;
-            }))
-            ->will($this->returnValue(false));
-
-        $exclusionStrategy->expects($this->any())
-            ->method('shouldSkipProperty')
-            ->with($this->anything(), $this->callback(function (SerializationContext $context) use ($self, $objects) {
-                $expectedDepth = $expectedPath = null;
-
-                if ($context->getObject() === $objects[0]) {
-                    $expectedDepth = 1;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node';
-                } elseif ($context->getObject() === $objects[1]) {
-                    $expectedDepth = 2;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node';
-                } elseif ($context->getObject() === $objects[2]) {
-                    $expectedDepth = 2;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node';
-                } elseif ($context->getObject() === $objects[3]) {
-                    $expectedDepth = 3;
-                    $expectedPath = 'JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node -> JMS\Serializer\Tests\Fixtures\Node';
-                }
-
-                $self->assertEquals($expectedDepth, $context->getDepth(), 'shouldSkipProperty depth');
-                $self->assertEquals($expectedPath, $context->getPath(), 'shouldSkipProperty path');
-
-                return true;
-            }))
-            ->will($this->returnValue(false));
-
-        $serializer = SerializerBuilder::create()->build();
-
-        $serializer->serialize($object, 'json', SerializationContext::create()->addExclusionStrategy($exclusionStrategy));
+        $context->startVisiting($objects[0]);
+        $this->assertEquals(1, $context->getDepth());
+        $context->startVisiting($objects[1]);
+        $this->assertEquals(2, $context->getDepth());
+        $context->startVisiting($objects[2]);
+        $this->assertEquals(3, $context->getDepth());
     }
 
     public function testSerializationMetadataStack()
@@ -108,20 +64,7 @@ class ContextTest extends \PHPUnit_Framework_TestCase
         $exclusionStrategy = $this->getMock('JMS\Serializer\Exclusion\ExclusionStrategyInterface');
         $exclusionStrategy->expects($this->any())
             ->method('shouldSkipClass')
-            ->will($this->returnCallback(function (ClassMetadata $classMetadata, SerializationContext $context) use ($self, $object, $child) {
-                $stack = $context->getMetadataStack();
-
-                if ($object === $context->getObject()) {
-                    $self->assertEquals(0, $stack->count());
-                }
-
-                if ($child === $context->getObject()) {
-                    $self->assertEquals(1, $stack->count());
-                    $self->assertEquals('children', $stack[0]->getName());
-                }
-
-                return false;
-            }));
+            ->will($this->returnValue(false));
 
         $exclusionStrategy->expects($this->any())
             ->method('shouldSkipProperty')

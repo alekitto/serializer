@@ -24,11 +24,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
 class SerializationContext extends Context
 {
-    /** @var \SplObjectStorage */
     private $visitingSet;
-
-    /** @var \SplStack */
-    private $visitingStack;
 
     public static function create()
     {
@@ -39,47 +35,25 @@ class SerializationContext extends Context
     {
         parent::initialize($format, $visitor, $navigator, $factory);
 
-        $this->visitingSet = new \SplObjectStorage();
-        $this->visitingStack = new \SplStack();
+        $this->visitingSet = array();
     }
 
     public function startVisiting($object)
     {
-        $this->visitingSet->attach($object);
-        $this->visitingStack->push($object);
+        $hash = spl_object_hash($object);
+        $this->visitingSet[$hash] = true;
     }
 
     public function stopVisiting($object)
     {
-        $this->visitingSet->detach($object);
-        $poppedObject = $this->visitingStack->pop();
-
-        if ($object !== $poppedObject) {
-            throw new RuntimeException('Context visitingStack not working well');
-        }
+        $hash = spl_object_hash($object);
+        unset ($this->visitingSet[$hash]);
     }
 
     public function isVisiting($object)
     {
-        if ( ! is_object($object)) {
-            throw new LogicException('Expected object but got '.gettype($object).'. Do you have the wrong @Type mapping or could this be a Doctrine many-to-many relation?');
-        }
-
-        return $this->visitingSet->contains($object);
-    }
-
-    public function getPath()
-    {
-        $path = array();
-        foreach ($this->visitingStack as $obj) {
-            $path[] = get_class($obj);
-        }
-
-        if ( ! $path) {
-            return null;
-        }
-
-        return implode(' -> ', $path);
+        $hash = spl_object_hash($object);
+        return isset ($this->visitingSet[$hash]);
     }
 
     public function getDirection()
@@ -89,17 +63,7 @@ class SerializationContext extends Context
 
     public function getDepth()
     {
-        return $this->visitingStack->count();
-    }
-
-    public function getObject()
-    {
-        return ! $this->visitingStack->isEmpty() ? $this->visitingStack->top() : null;
-    }
-
-    public function getVisitingStack()
-    {
-        return $this->visitingStack;
+        return count($this->visitingSet);
     }
 
     public function getVisitingSet()

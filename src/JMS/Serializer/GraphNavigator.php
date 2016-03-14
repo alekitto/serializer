@@ -38,7 +38,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-final class GraphNavigator
+/* final */ class GraphNavigator
 {
     const DIRECTION_SERIALIZATION = 1;
     const DIRECTION_DESERIALIZATION = 2;
@@ -269,10 +269,6 @@ final class GraphNavigator
 
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
-                if ($context instanceof SerializationContext && null !== $path = $context->getPath()) {
-                    $msg .= ' Path: '.$path;
-                }
-
                 throw new RuntimeException($msg);
 
             default:
