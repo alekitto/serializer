@@ -38,11 +38,15 @@ class ContextTest extends \PHPUnit_Framework_TestCase
         ));
         $objects = array($object, $object->children[0], $object->children[1], $object->children[1]->children[0]);
 
+        $navigator = $this->getMockBuilder('JMS\Serializer\GraphNavigator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $context = new SerializationContext();
         $context->initialize(
             'json',
             $this->getMock('JMS\Serializer\VisitorInterface'),
-            $this->getMockWithoutInvokingTheOriginalConstructor('JMS\Serializer\GraphNavigator'),
+            $navigator,
             $this->getMock('Kcs\Metadata\Factory\MetadataFactoryInterface')
         );
 
