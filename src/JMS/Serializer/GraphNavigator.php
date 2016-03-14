@@ -175,8 +175,6 @@ final class GraphNavigator
 
         $metadata = $this->getMetadataForType($type);
         if (null !== $metadata) {
-            $context->pushClassMetadata($metadata);
-
             foreach ($metadata->preSerializeMethods as $method) {
                 $method->getReflection()->invoke($data);
             }
@@ -196,10 +194,6 @@ final class GraphNavigator
         }
 
         $rs = $context->getVisitor()->endVisiting($data, $type, $context);
-
-        if (null !== $metadata) {
-            $context->popClassMetadata();
-        }
 
         if ($inVisitingStack) {
             $context->stopVisiting($data);

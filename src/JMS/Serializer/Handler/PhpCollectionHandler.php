@@ -59,12 +59,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
     public function serializeMap(VisitorInterface $visitor, Map $map, array $type, Context $context)
     {
         $type['name'] = 'array';
-
-        // Pop out the class metadata of the sequence before calling visitor:
-        // The map should count as a plain array (a property, not an object itself)
-        $classMetadata = $context->getMetadataStack()->pop();
         $rs = $visitor->visitArray(iterator_to_array($map), $type, $context);
-        $context->getMetadataStack()->push($classMetadata);
 
         return $rs;
     }
@@ -80,12 +75,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
     {
         // We change the base type, and pass through possible parameters.
         $type['name'] = 'array';
-
-        // Pop out the class metadata of the sequence before calling visitor:
-        // The sequence should count as a plain array (a property, not an object itself)
-        $classMetadata = $context->getMetadataStack()->pop();
         $rs = $visitor->visitArray($sequence->all(), $type, $context);
-        $context->getMetadataStack()->push($classMetadata);
 
         return $rs;
     }

@@ -52,13 +52,11 @@ class DepthExclusionStrategy implements ExclusionStrategyInterface
         // iterate from the first added items to the lasts
         for ($i = $metadataStack->count() - 1; $i > 0; $i--) {
             $metadata = $metadataStack[$i];
-            if ($metadata instanceof PropertyMetadata) {
-                $nthProperty++;
-                $relativeDepth = $depth - $nthProperty;
+            $nthProperty++;
+            $relativeDepth = $depth - $nthProperty;
 
-                if (null !== $metadata->maxDepth && $relativeDepth > $metadata->maxDepth) {
-                    return true;
-                }
+            if (null !== $metadata->maxDepth && $relativeDepth > $metadata->maxDepth) {
+                return true;
             }
         }
 
