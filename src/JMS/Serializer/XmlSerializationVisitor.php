@@ -152,9 +152,6 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         $v = $metadata->getValue($data);
 
-        /** @var PropertyMetadata $metadata */
-        $metadata = $this->getCurrentPropertyMetadata($context);
-
         if ($metadata->xmlAttribute) {
             $attributeName = $this->namingStrategy->translateName($metadata);
 
