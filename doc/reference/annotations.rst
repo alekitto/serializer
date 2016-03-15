@@ -67,7 +67,7 @@ set the value via reflection, but you may change this to use a public method ins
 .. code-block :: php
 
     <?php
-    use JMS\Serializer\Annotation\AccessType;
+    use Kcs\Serializer\Annotation\AccessType;
 
     /** @AccessType("public_method") */
     class User
@@ -93,7 +93,7 @@ be called to retrieve, or set the value of the given property:
 .. code-block :: php
 
     <?php
-    use JMS\Serializer\Annotation\Accessor;
+    use Kcs\Serializer\Annotation\Accessor;
 
     class User
     {
@@ -123,7 +123,7 @@ default the order is undefined, but you may change it to either "alphabetical", 
 .. code-block :: php
 
     <?php
-    use JMS\Serializer\Annotation\AccessorOrder;
+    use Kcs\Serializer\Annotation\AccessorOrder;
 
     /**
      * @AccessorOrder("alphabetical")
@@ -231,9 +231,6 @@ by the object iself.
 @Discriminator
 ~~~~~~~~~~~~~~
 
-.. versionadded : 0.12
-    @Discriminator was added
-
 This annotation allows deserialization of relations which are polymorphic, but
 where a common base class exists. The ``@Discriminator`` annotation has to be applied
 to the least super type::
@@ -299,7 +296,7 @@ Examples:
 
     namespace MyNamespace;
 
-    use JMS\Serializer\Annotation\Type;
+    use Kcs\Serializer\Annotation\Type;
 
     class BlogPost
     {
@@ -347,7 +344,7 @@ This allows you to specify the name of the top-level element.
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlRoot;
+    use Kcs\Serializer\Annotation\XmlRoot;
 
     /** @XmlRoot("user") */
     class User
@@ -378,7 +375,7 @@ and not as child elements.
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlAttribute;
+    use Kcs\Serializer\Annotation\XmlAttribute;
 
     class User
     {
@@ -407,9 +404,9 @@ XMLElement.
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlAttribute;
-    use JMS\Serializer\Annotation\XmlValue;
-    use JMS\Serializer\Annotation\XmlRoot;
+    use Kcs\Serializer\Annotation\XmlAttribute;
+    use Kcs\Serializer\Annotation\XmlValue;
+    use Kcs\Serializer\Annotation\XmlRoot;
 
     /** @XmlRoot("price") */
     class Price
@@ -437,8 +434,8 @@ keys of the array are not important.
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlList;
-    use JMS\Serializer\Annotation\XmlRoot;
+    use Kcs\Serializer\Annotation\XmlList;
+    use Kcs\Serializer\Annotation\XmlRoot;
 
     /** @XmlRoot("post") */
     class Post
@@ -496,7 +493,7 @@ This is similar to the @XmlKeyValuePairs, but instead of creating child elements
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlAttribute;
+    use Kcs\Serializer\Annotation\XmlAttribute;
 
     class Input
     {
@@ -521,7 +518,7 @@ This annotation can be defined on a property to add additional xml serialization
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlElement;
+    use Kcs\Serializer\Annotation\XmlElement;
 
     /**
      * @XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
@@ -548,7 +545,7 @@ This annotation allows you to specify Xml namespace/s and prefix used.
 
     <?php
 
-    use JMS\Serializer\Annotation\XmlNamespace;
+    use Kcs\Serializer\Annotation\XmlNamespace;
 
     /**
      * @XmlNamespace(uri="http://example.com/namespace")
@@ -557,7 +554,7 @@ This annotation allows you to specify Xml namespace/s and prefix used.
     class BlogPost
     {
         /**
-         * @Type("JMS\Serializer\Tests\Fixtures\Author")
+         * @Type("Kcs\Serializer\Tests\Fixtures\Author")
          * @Groups({"post"})
          * @XmlElement(namespace="http://www.w3.org/2005/Atom")
          */

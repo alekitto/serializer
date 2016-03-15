@@ -31,20 +31,20 @@ function createCollection()
 
 function createObject()
 {
-    $post = new \JMS\Serializer\Tests\Fixtures\BlogPost(
+    $post = new \Kcs\Serializer\Tests\Fixtures\BlogPost(
         'FooooooooooooooooooooooBAR',
-        new \JMS\Serializer\Tests\Fixtures\Author('Foo'),
+        new \Kcs\Serializer\Tests\Fixtures\Author('Foo'),
         new \DateTime,
-        new \JMS\Serializer\Tests\Fixtures\Publisher('Bar')
+        new \Kcs\Serializer\Tests\Fixtures\Publisher('Bar')
     );
     for ($i=0; $i<10; $i++) {
-        $post->addComment(new \JMS\Serializer\Tests\Fixtures\Comment(new \JMS\Serializer\Tests\Fixtures\Author('foo'), 'foobar'));
+        $post->addComment(new \Kcs\Serializer\Tests\Fixtures\Comment(new \Kcs\Serializer\Tests\Fixtures\Author('foo'), 'foobar'));
     }
 
     return $post;
 }
 
-$serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+$serializer = \Kcs\Serializer\SerializerBuilder::create()->build();
 $collection = createCollection();
 $metrics = array();
 $f = function() use ($serializer, $collection, $format) {

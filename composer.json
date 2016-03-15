@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-0": {
-            "JMS\\Serializer": "src/"
+            "Kcs\\Serializer": "src/"
         }
     },
     "extra": {

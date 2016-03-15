@@ -19,8 +19,8 @@ then it is easier to change the exclusion policy, and only mark these few proper
 
     <?php
 
-    use JMS\Serializer\Annotation\ExclusionPolicy;
-    use JMS\Serializer\Annotation\Expose;
+    use Kcs\Serializer\Annotation\ExclusionPolicy;
+    use Kcs\Serializer\Annotation\Expose;
 
     /**
      * The following annotations tells the serializer to skip all properties which
@@ -46,7 +46,7 @@ then it is easier to change the exclusion policy, and only mark these few proper
 
 Versioning Objects
 ------------------
-JMSSerializerBundle comes by default with a very neat feature which allows
+KcsSerializerBundle comes by default with a very neat feature which allows
 you to add versioning support to your objects, e.g. if you want to
 expose them via an API that is consumed by a third-party:
 
@@ -75,7 +75,7 @@ expose them via an API that is consumed by a third-party:
 If you have annotated your objects like above, you can serializing different
 versions like this::
 
-    use JMS\Serializer\SerializationContext;
+    use Kcs\Serializer\SerializationContext;
 
     $serializer->serialize(new VersionObject(), 'json', SerializationContext::create()->setVersion(1));
 
@@ -90,7 +90,7 @@ You can achieve that by using the ``@Groups`` annotation on your properties.
 
 .. code-block :: php
 
-    use JMS\Serializer\Annotation\Groups;
+    use Kcs\Serializer\Annotation\Groups;
 
     class BlogPost
     {
@@ -111,7 +111,7 @@ You can achieve that by using the ``@Groups`` annotation on your properties.
 
 You can then tell the serializer which groups to serialize in your controller::
 
-    use JMS\Serializer\SerializationContext;
+    use Kcs\Serializer\SerializationContext;
 
     $serializer->serialize(new BlogPost(), 'json', SerializationContext::create()->setGroups(array('list')));
     
@@ -131,7 +131,7 @@ annotation to.
 
 .. code-block :: php
 
-    use JMS\Serializer\Annotation\MaxDepth;
+    use Kcs\Serializer\Annotation\MaxDepth;
 
     class User
     {
@@ -158,6 +158,6 @@ be serialized, and their author would also be serialized.
 
 You need to tell the serializer to take into account MaxDepth checks::
 
-    use JMS\Serializer\SerializationContext;
+    use Kcs\Serializer\SerializationContext;
 
     $serializer->serialize($data, 'json', SerializationContext::create()->enableMaxDepthChecks());

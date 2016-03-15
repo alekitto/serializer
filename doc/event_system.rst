@@ -13,7 +13,7 @@ on the other hand, can be simple callables and do not require a dedicated class.
 
 .. code-block :: php
 
-    class MyEventSubscriber implements JMS\Serializer\EventDispatcher\EventSubscriberInterface
+    class MyEventSubscriber implements Kcs\Serializer\EventDispatcher\EventSubscriberInterface
     {
         public static function getSubscribedEvents()
         {
@@ -22,16 +22,16 @@ on the other hand, can be simple callables and do not require a dedicated class.
             );
         }
 
-        public function onPreSerialize(JMS\Serializer\EventDispatcher\PreSerializeEvent $event)
+        public function onPreSerialize(Kcs\Serializer\EventDispatcher\PreSerializeEvent $event)
         {
             // do something
         }
     }
 
     $builder
-        ->configureListeners(function(JMS\Serializer\EventDispatcher\EventDispatcher $dispatcher) {
+        ->configureListeners(function(Kcs\Serializer\EventDispatcher\EventDispatcher $dispatcher) {
             $dispatcher->addListener('serializer.pre_serialize',
-                function(JMS\Serializer\EventDispatcher\PreSerializeEvent $event) {
+                function(Kcs\Serializer\EventDispatcher\PreSerializeEvent $event) {
                     // do something
                 }
             );
@@ -49,7 +49,7 @@ This is dispatched before a type is visited. You have access to the visitor,
 data, and type. Listeners may modify the type that is being used for
 serialization.
 
-**Event Object**: ``JMS\Serializer\EventDispatcher\PreSerializeEvent``
+**Event Object**: ``Kcs\Serializer\EventDispatcher\PreSerializeEvent``
 
 serializer.post_serialize
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,18 +57,15 @@ This is dispatched right before a type is left. You can for example use this
 to add additional data for an object that you normally do not save inside
 objects such as links.
 
-**Event Object**: ``JMS\Serializer\EventDispatcher\ObjectEvent``
+**Event Object**: ``Kcs\Serializer\EventDispatcher\ObjectEvent``
 
 serializer.pre_deserialize
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. versionadded : 0.12
-    Event was added
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is dispatched before an object is deserialized. You can use this to
 modify submitted data, or modify the type that is being used for deserialization.
 
-**Event Object**: ``JMS\Serializer\EventDispatcher\PreDeserializeEvent``
+**Event Object**: ``Kcs\Serializer\EventDispatcher\PreDeserializeEvent``
 
 serializer.post_deserialize
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,4 +73,4 @@ This is dispatched after a type is processed. You can use it to normalize
 submitted data if you require external services for example, or also to
 perform validation of the submitted data.
 
-**Event Object**: ``JMS\Serializer\EventDispatcher\ObjectEvent``
+**Event Object**: ``Kcs\Serializer\EventDispatcher\ObjectEvent``

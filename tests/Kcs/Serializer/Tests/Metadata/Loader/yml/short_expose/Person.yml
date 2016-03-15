@@ -1,0 +1,4 @@
+Kcs\Serializer\Tests\Fixtures\Person:
+    exclusion_policy: ALL
+    properties:
+        name: ~

@@ -21,7 +21,7 @@ This library can be easily installed via composer
 
 .. code-block :: bash
 
-    composer require jms/serializer
+    composer require kcs/serializer
 
 or just add it to your ``composer.json`` file directly.
 
@@ -29,7 +29,7 @@ Usage
 -----
 For standalone projects usage of the provided builder is encouraged::
 
-    $serializer = JMS\Serializer\SerializerBuilder::create()->build();
+    $serializer = Kcs\Serializer\SerializerBuilder::create()->build();
     $jsonContent = $serializer->serialize($data, 'json');
     echo $jsonContent; // or return it in a Response
 
