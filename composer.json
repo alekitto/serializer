@@ -1,11 +1,14 @@
 {
-    "name": "jms/serializer",
+    "name": "kcs/serializer",
     "type": "library",
     "description": "Library for (de-)serializing data of any complexity; supports XML, JSON, and YAML.",
     "keywords": ["serialization", "deserialization", "json", "jaxb", "xml"],
-    "homepage": "http://jmsyst.com/libs/serializer",
     "license": "Apache2",
     "authors": [
+        {
+            "name": "Alessandro Chitolina",
+            "email": "alekitto@gmail.com"
+        },
         {
             "name": "Johannes M. Schmitt",
             "email": "schmittjoh@gmail.com"
@@ -46,7 +49,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }
