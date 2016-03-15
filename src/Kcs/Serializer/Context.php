@@ -25,6 +25,7 @@ use Kcs\Serializer\Exclusion\DisjunctExclusionStrategy;
 use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
 use Kcs\Serializer\Exclusion\GroupsExclusionStrategy;
 use Kcs\Serializer\Exclusion\VersionExclusionStrategy;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use PhpCollection\Map;
@@ -58,6 +59,11 @@ abstract class Context
     /** @var \SplStack */
     private $metadataStack;
 
+    /**
+     * @var array
+     */
+    private $nonSkippedProperties;
+
     public function __construct()
     {
         $this->attributes = new Map();
@@ -75,6 +81,7 @@ abstract class Context
         $this->navigator = $navigator;
         $this->metadataFactory = $factory;
         $this->metadataStack = new \SplStack();
+        $this->nonSkippedProperties = array ();
     }
 
     public function accept($data, array $type = null)
@@ -117,6 +124,15 @@ abstract class Context
         }
 
         throw new \LogicException('This context was already initialized and is immutable; you cannot modify it anymore.');
+    }
+
+    private function assertInitialized()
+    {
+        if ($this->initialized) {
+            return;
+        }
+
+        throw new \LogicException('This context is not initialized.');
     }
 
     public function addExclusionStrategy(ExclusionStrategyInterface $strategy)
@@ -210,6 +226,40 @@ abstract class Context
     public function getMetadataStack()
     {
         return $this->metadataStack;
+    }
+
+    /**
+     * Get the array of properties that should be serialized in an object
+     *
+     * @param ClassMetadata $metadata
+     *
+     * @return PropertyMetadata[]
+     */
+    public function getNonSkippedProperties(ClassMetadata $metadata)
+    {
+        $this->assertInitialized();
+
+        $class = $metadata->getName();
+        if (isset($this->nonSkippedProperties[$class])) {
+            return $this->nonSkippedProperties[$class];
+        }
+
+        $properties = $metadata->getAttributesMetadata();
+        if (null !== $this->exclusionStrategy) {
+            /** @var PropertyMetadata[] $properties */
+            $properties = array_filter(
+                $properties,
+                function (PropertyMetadata $propertyMetadata){
+                    $this->pushPropertyMetadata($propertyMetadata);
+                    $result = ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
+                    $this->popPropertyMetadata();
+
+                    return $result;
+                }
+            );
+        }
+
+        return $this->nonSkippedProperties[$class] = $properties;
     }
 
     abstract public function getDepth();

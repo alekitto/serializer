@@ -50,6 +50,11 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private $currentNodes;
 
+    /**
+     * @var array
+     */
+    private $validatedMetadata;
+
     public function visitNull($data, array $type, Context $context)
     {
         $this->attachNullNamespace = true;
@@ -100,7 +105,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             return $this->currentNodes;
         }
 
-        $properties = $this->getNonSkippedProperties($metadata, $context);
+        $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
 
         if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
@@ -177,10 +182,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         if ($metadata->xmlAttributeMap) {
-            if (! is_array($v)) {
-                throw new RuntimeException(sprintf('Unsupported value type for XML attribute map. Expected array but got %s.', gettype($v)));
-            }
-
             $attributes = [];
             foreach ($v as $key => $value) {
                 $node = $this->createAttributeNode($metadata, $key);
@@ -273,6 +274,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->currentNodes = $this->document = $this->createDocument();
         $this->nodeStack = new \SplStack();
         $this->attachNullNamespace = false;
+        $this->validatedMetadata = array ();
     }
 
     public function startVisiting($data, array $type, Context $context)
@@ -285,7 +287,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         $nodes = $this->currentNodes ?: [];
         $this->currentNodes = $this->nodeStack->pop();
-        if ($this->nodeStack->count() == 0 && $this->document->documentElement === null) {
+        if ($this->nodeStack->count() === 0 && $this->document->documentElement === null) {
             $rootNode = $this->document->createElement('result');
             $this->document->appendChild($rootNode);
 
@@ -293,7 +295,8 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         if (! is_array($nodes) && ! $nodes instanceof \DOMNodeList) {
-            $nodes = array($nodes);
+            $this->currentNodes->appendChild($nodes);
+            return;
         }
 
         foreach ($nodes as $node) {
@@ -324,7 +327,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      *
      * @return \DOMDocument
      */
-    public function createDocument($version = null, $encoding = null)
+    private function createDocument($version = null, $encoding = null)
     {
         $doc = new \DOMDocument($version ?: $this->defaultVersion, $encoding ?: $this->defaultEncoding);
         $doc->formatOutput = true;
@@ -348,7 +351,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function getCurrentPropertyMetadata(Context $context)
     {
         $stack = $context->getMetadataStack();
-        if ($stack->count() == 0) {
+        if ($stack->count() === 0) {
             return null;
         }
 
@@ -364,36 +367,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function isElementNameValid($name)
     {
-        return $name && false === strpos($name, ' ') && preg_match('#^[\pL_][\pL0-9._-]*$#ui', $name);
-    }
-
-    /**
-     * Get the array of properties that should be serialized
-     * in an object
-     *
-     * @param ClassMetadata $metadata
-     * @param Context $context
-     *
-     * @return PropertyMetadata[]
-     */
-    private function getNonSkippedProperties(ClassMetadata $metadata, Context $context)
-    {
-        $properties = $metadata->getAttributesMetadata();
-        if (null !== ($exclusionStrategy = $context->getExclusionStrategy())) {
-            /** @var PropertyMetadata[] $properties */
-            $properties = array_filter(
-                $properties,
-                function (PropertyMetadata $propertyMetadata) use ($exclusionStrategy, $context) {
-                    $context->pushPropertyMetadata($propertyMetadata);
-                    $result = !$exclusionStrategy->shouldSkipProperty($propertyMetadata, $context);
-                    $context->popPropertyMetadata();
-
-                    return $result;
-                }
-            );
-        }
-
-        return $properties;
+        return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', $name);
     }
 
     /**
@@ -402,6 +376,11 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function validateObjectProperties(ClassMetadata $metadata, $properties)
     {
+        $class = $metadata->getName();
+        if (isset($this->validatedMetadata[ $class ])) {
+            return;
+        }
+
         $has_xml_value = false;
         foreach ($properties as $property) {
             if ($property->xmlValue && !$has_xml_value) {
@@ -424,6 +403,8 @@ class XmlSerializationVisitor extends AbstractVisitor
                 }
             }
         }
+
+        $this->validatedMetadata[ $class ] = true;
     }
 
     /**

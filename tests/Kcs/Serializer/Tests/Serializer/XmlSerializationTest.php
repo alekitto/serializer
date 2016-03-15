@@ -181,19 +181,6 @@ class XmlSerializationTest extends BaseSerializationTest
         $this->assertEquals($this->getContent($key . '_no_cdata'), $serializer->serialize($value, $this->getFormat()));
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\RuntimeException
-     * @expectedExceptionMessage Unsupported value type for XML attribute map. Expected array but got object
-     */
-    public function testXmlAttributeMapWithoutArray()
-    {
-        $attributes = new \ArrayObject(array(
-            'type' => 'text',
-        ));
-
-        $this->serializer->serialize(new Input($attributes), $this->getFormat());
-    }
-
     public function testObjectWithXmlNamespaces()
     {
         $object = new ObjectWithXmlNamespaces('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
