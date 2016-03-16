@@ -17,12 +17,11 @@
  * limitations under the License.
  */
 
-namespace Kcs\Serializer\Tests\Fixtures;
+namespace Kcs\Serializer\Construction;
 
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
-use Kcs\Serializer\Construction\ObjectConstructorInterface;
 
 /**
  * Object constructor that allows deserialization into already constructed
@@ -47,7 +46,7 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
      */
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
     {
-        if ($context->attributes->containsKey('target') && $context->getDepth() === 1) {
+        if ($context->getDepth() === 1 && $context->attributes->containsKey('target')) {
             return $context->attributes->get('target')->get();
         }
 

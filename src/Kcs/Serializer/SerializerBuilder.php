@@ -20,6 +20,7 @@
 namespace Kcs\Serializer;
 
 use Doctrine\Common\Cache\Cache;
+use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\PropelCollectionHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
@@ -216,7 +217,7 @@ class SerializerBuilder
         return new Serializer(
             $metadataFactory,
             $this->handlerRegistry,
-            $this->objectConstructor ?: new UnserializeObjectConstructor(),
+            $this->objectConstructor ?: new InitializedObjectConstructor(new UnserializeObjectConstructor()),
             $this->serializationVisitors,
             $this->deserializationVisitors,
             $this->eventDispatcher

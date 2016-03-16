@@ -75,7 +75,7 @@ use Kcs\Serializer\Tests\Fixtures\GroupsObject;
 use Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject;
 use Kcs\Serializer\Tests\Fixtures\IndexedCommentsBlogPost;
 use Kcs\Serializer\Tests\Fixtures\InlineParent;
-use Kcs\Serializer\Tests\Fixtures\InitializedObjectConstructor;
+use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Tests\Fixtures\InitializedBlogPostConstructor;
 use Kcs\Serializer\Tests\Fixtures\Log;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithLifecycleCallbacks;
