@@ -66,6 +66,11 @@ class DateHandler implements SubscribingHandlerInterface
 
     public function serializeDateTime(VisitorInterface $visitor, \DateTime $date, array $type, Context $context)
     {
+        $format = $this->getFormat($type);
+        if ('U' === $format) {
+            return $visitor->visitInteger($date->getTimestamp(), $type, $context);
+        }
+
         return $this->serialize($visitor, $date->format($this->getFormat($type)), $type, $context);
     }
 
