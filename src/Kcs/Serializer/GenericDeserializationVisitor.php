@@ -98,12 +98,7 @@ abstract class GenericDeserializationVisitor extends GenericSerializationVisitor
             $v = $this->visitProperty($propertyMetadata, $data, $context);
             $context->popPropertyMetadata();
 
-            if (null === $propertyMetadata->setter) {
-                $propertyMetadata->getReflection()->setValue($object, $v);
-                continue;
-            }
-
-            $object->{$propertyMetadata->setter}($v);
+            $propertyMetadata->setValue($object, $v);
         }
 
         $this->setData($object);

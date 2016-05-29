@@ -106,6 +106,17 @@ class PropertyMetadata extends BasePropertyMetadata
         return $obj->{$this->getter}();
     }
 
+    public function setValue($obj, $value)
+    {
+        if (null === $this->setter) {
+            $reflector = $this->getReflection();
+            $reflector->setValue($obj, $value);
+            return;
+        }
+
+        return $obj->{$this->setter}($value);
+    }
+
     public function setType($type)
     {
         if (null === self::$typeParser) {
