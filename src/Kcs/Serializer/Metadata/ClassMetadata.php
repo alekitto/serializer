@@ -224,12 +224,13 @@ class ClassMetadata extends BaseClassMetadata
 
             case self::ACCESSOR_ORDER_CUSTOM:
                 $order = $this->customOrder;
-                uksort($this->attributesMetadata, function($a, $b) use ($order) {
+                $sorting = array_flip(array_keys($this->attributesMetadata));
+                uksort($this->attributesMetadata, function($a, $b) use ($order, $sorting) {
                     $existsA = isset($order[$a]);
                     $existsB = isset($order[$b]);
 
                     if ( ! $existsA && ! $existsB) {
-                        return 0;
+                        return $sorting[$a] - $sorting[$b];
                     }
 
                     if ( ! $existsA) {
