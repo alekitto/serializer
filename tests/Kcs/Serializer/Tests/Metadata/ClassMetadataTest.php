@@ -49,36 +49,16 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, array_keys($metadata->getAttributesMetadata()));
     }
 
-    public function testSetAccessorOrder()
+    public function testSetAccessorOrderAlphabetical()
     {
         $metadata = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder'));
         $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
         $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
+
         $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL);
         $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
-
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('b', 'a'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
-
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('a', 'b'));
-        $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
-
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('b'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
-
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('a'));
-        $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
-
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, array('foo', 'bar'));
-
-        if (PHP_VERSION_ID >= 70000) {
-            // PHP 7 behaves differently on uksort when returning 0
-            $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
-        } else {
-            $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
-        }
     }
 
     /**
