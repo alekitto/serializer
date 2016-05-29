@@ -43,17 +43,13 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $previous = libxml_use_internal_errors(true);
         $previousEntityLoaderState = libxml_disable_entity_loader($this->disableExternalEntities);
 
-        $dom = new \DOMDocument();
-        $dom->loadXML($data);
-        foreach ($dom->childNodes as $child) {
-            if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
-                $doctype = $this->getDomDocumentType($data);
-                if ( ! in_array($doctype, $this->doctypeWhitelist, true)) {
-                    throw new InvalidArgumentException(sprintf(
-                        'The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.',
-                        $doctype
-                    ));
-                }
+        if (false !== stripos($data, '<!doctype')) {
+            $doctype = $this->getDomDocumentType($data);
+            if (!in_array($doctype, $this->doctypeWhitelist, true)) {
+                throw new InvalidArgumentException(sprintf(
+                    'The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.',
+                    $doctype
+                ));
             }
         }
 
