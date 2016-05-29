@@ -114,7 +114,7 @@ class PropertyMetadata extends BasePropertyMetadata
             return;
         }
 
-        return $obj->{$this->setter}($value);
+        $obj->{$this->setter}($value);
     }
 
     public function setType($type)
