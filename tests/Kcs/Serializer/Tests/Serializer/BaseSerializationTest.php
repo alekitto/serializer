@@ -37,6 +37,12 @@ use Kcs\Serializer\Tests\Fixtures\Timestamp;
 use Kcs\Serializer\Tests\Fixtures\Tree;
 use Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage;
 use PhpCollection\Sequence;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormConfigBuilder;
 use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\IdentityTranslator;
@@ -591,7 +597,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     {
         $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-        $formConfigBuilder = new \Symfony\Component\Form\FormConfigBuilder('foo', null, $dispatcher);
+        $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher);
         $formConfigBuilder->setCompound(true);
         $formConfigBuilder->setDataMapper($this->getMock('Symfony\Component\Form\DataMapperInterface'));
         $fooConfig = $formConfigBuilder->getFormConfig();
@@ -599,7 +605,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $form = new Form($fooConfig);
         $form->addError(new FormError('This is the form error'));
 
-        $formConfigBuilder = new \Symfony\Component\Form\FormConfigBuilder('bar', null, $dispatcher);
+        $formConfigBuilder = new FormConfigBuilder('bar', null, $dispatcher);
         $barConfig = $formConfigBuilder->getFormConfig();
         $child = new Form($barConfig);
         $child->addError(new FormError('Error of the child form'));
@@ -610,25 +616,25 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testFormErrorsWithNonFormComponents()
     {
-        if (!class_exists('Symfony\Component\Form\Extension\Core\Type\SubmitType')) {
+        if (!class_exists(SubmitType::class)) {
             $this->markTestSkipped('Not using Symfony Form >= 2.3 with submit type');
         }
 
-        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher = $this->getMock(EventDispatcherInterface::class);
 
         $factoryBuilder = new FormFactoryBuilder();
-        $factoryBuilder->addType(new \Symfony\Component\Form\Extension\Core\Type\SubmitType);
-        $factoryBuilder->addType(new \Symfony\Component\Form\Extension\Core\Type\ButtonType);
+        $factoryBuilder->addType(new SubmitType());
+        $factoryBuilder->addType(new ButtonType());
         $factory = $factoryBuilder->getFormFactory();
 
-        $formConfigBuilder = new \Symfony\Component\Form\FormConfigBuilder('foo', null, $dispatcher);
+        $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher);
         $formConfigBuilder->setFormFactory($factory);
         $formConfigBuilder->setCompound(true);
-        $formConfigBuilder->setDataMapper($this->getMock('Symfony\Component\Form\DataMapperInterface'));
+        $formConfigBuilder->setDataMapper($this->getMock(DataMapperInterface::class));
         $fooConfig = $formConfigBuilder->getFormConfig();
 
         $form = new Form($fooConfig);
-        $form->add('save', 'submit');
+        $form->add('save', method_exists(AbstractType::class, 'getBlockPrefix') ? SubmitType::class : 'submit');
 
         $this->serialize($form);
         $this->assertTrue(true);  // Exception not thrown
