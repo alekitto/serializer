@@ -31,6 +31,7 @@ use Kcs\Serializer\Tests\Fixtures\Discriminator\Moped;
 use Kcs\Serializer\Tests\Fixtures\Garage;
 use Kcs\Serializer\Tests\Fixtures\InlineChildEmpty;
 use Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
 use Kcs\Serializer\Tests\Fixtures\Timestamp;
 use Kcs\Serializer\Tests\Fixtures\Tree;
 use Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage;
@@ -262,6 +263,13 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testArrayListAndMapDifference()
+    {
+        $arrayData = array(0 => 1, 2 => 2, 3 => 3); // Misses key 1
+        $data = new ObjectWithIntListAndIntMap($arrayData, $arrayData);
+
+        $this->assertEquals($this->getContent('array_list_and_map_difference'), $this->serialize($data));
+    }
 
     public function testDateTimeArrays()
     {

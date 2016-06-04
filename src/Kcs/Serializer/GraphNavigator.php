@@ -266,7 +266,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
                 return $visitor->visitDouble($data, $type, $context);
 
             case 'array':
-                return $visitor->visitArray($data, $type, $context);
+                return $this->visitArray($visitor, $data, $type, $context);
 
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
@@ -297,5 +297,15 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         }
 
         return $this->metadataFactory->getMetadataFor($type['name']);
+    }
+
+    private function visitArray(VisitorInterface $visitor, $data, $type, $context)
+    {
+        if ($context instanceof SerializationContext &&
+            isset($type['params'][0]) && ! isset($type['params'][1])) {
+            $data = array_values($data);
+        }
+
+        return $visitor->visitArray($data, $type, $context);
     }
 }
