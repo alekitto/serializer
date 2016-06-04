@@ -33,7 +33,7 @@ class SerializerExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'jms_serializer';
+        return 'kcs_serializer';
     }
 
     public function __construct(SerializerInterface $serializer)
@@ -56,9 +56,13 @@ class SerializerExtension extends \Twig_Extension
     }
 
     /**
+     * Serialize $object
+     *
      * @param object $object
      * @param string $type
      * @param SerializationContext $context
+     *
+     * @return string
      */
     public function serialize($object, $type = 'json', SerializationContext $context = null)
     {
