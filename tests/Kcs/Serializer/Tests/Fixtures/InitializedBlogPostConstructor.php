@@ -19,16 +19,10 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Doctrine\Common\Collections\ArrayCollection;
 
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
-
-use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\VisitorInterface;
-
-use Kcs\Serializer\Tests\Fixtures\Author;
-use Kcs\Serializer\Tests\Fixtures\Publisher;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 
 class InitializedBlogPostConstructor extends UnserializeObjectConstructor

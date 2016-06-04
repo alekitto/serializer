@@ -19,7 +19,6 @@
 
 namespace Kcs\Serializer\Naming;
 
-use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class IdenticalPropertyNamingStrategy implements PropertyNamingStrategyInterface

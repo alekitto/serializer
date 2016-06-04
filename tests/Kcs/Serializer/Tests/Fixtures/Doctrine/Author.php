@@ -19,7 +19,6 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\Doctrine;
 
-use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\SerializedName;
 
 use Doctrine\ORM\Mapping as ORM;

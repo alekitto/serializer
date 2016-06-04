@@ -24,7 +24,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-abstract class GenericSerializationVisitor extends AbstractVisitor
+class GenericSerializationVisitor extends AbstractVisitor
 {
     private $navigator;
     private $root;
@@ -177,6 +177,14 @@ abstract class GenericSerializationVisitor extends AbstractVisitor
     public function setRoot($data)
     {
         $this->root = $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getResult()
+    {
+        return $this->getRoot();
     }
 
     protected function setData($data)

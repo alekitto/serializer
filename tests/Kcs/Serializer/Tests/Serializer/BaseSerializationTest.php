@@ -21,6 +21,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Metadata\MetadataFactory;
@@ -95,7 +96,6 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use PhpCollection\Map;
 use Kcs\Serializer\Exclusion\DepthExclusionStrategy;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\Tests\Fixtures\AuthorReadOnlyPerClass;
@@ -1013,15 +1013,16 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
         $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
         $objectConstructor = new UnserializeObjectConstructor();
-        $this->serializationVisitors = new Map(array(
+        $this->serializationVisitors = [
+            'array' => new GenericSerializationVisitor($namingStrategy),
             'json' => new JsonSerializationVisitor($namingStrategy),
             'xml'  => new XmlSerializationVisitor($namingStrategy),
             'yml'  => new YamlSerializationVisitor($namingStrategy),
-        ));
-        $this->deserializationVisitors = new Map(array(
+        ];
+        $this->deserializationVisitors = [
             'json' => new JsonDeserializationVisitor($namingStrategy),
             'xml'  => new XmlDeserializationVisitor($namingStrategy),
-        ));
+        ];
 
         $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
     }

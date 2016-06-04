@@ -28,7 +28,6 @@ use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Metadata\Loader\LoaderInterface;
-use PhpCollection\Map;
 use Kcs\Serializer\EventDispatcher\EventDispatcher;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
@@ -57,7 +56,6 @@ class SerializerBuilder
     private $objectConstructor;
     private $serializationVisitors;
     private $deserializationVisitors;
-    private $visitorsAdded = false;
     private $propertyNamingStrategy;
     private $cache = null;
     private $annotationReader;
@@ -72,8 +70,8 @@ class SerializerBuilder
     {
         $this->handlerRegistry = new HandlerRegistry();
         $this->eventDispatcher = new EventDispatcher();
-        $this->serializationVisitors = new Map();
-        $this->deserializationVisitors = new Map();
+        $this->serializationVisitors = [];
+        $this->deserializationVisitors = [];
     }
 
     public function setAnnotationReader(Reader $reader)
@@ -146,16 +144,14 @@ class SerializerBuilder
 
     public function setSerializationVisitor($format, VisitorInterface $visitor)
     {
-        $this->visitorsAdded = true;
-        $this->serializationVisitors->set($format, $visitor);
+        $this->serializationVisitors[$format] = $visitor;
 
         return $this;
     }
 
     public function setDeserializationVisitor($format, VisitorInterface $visitor)
     {
-        $this->visitorsAdded = true;
-        $this->deserializationVisitors->set($format, $visitor);
+        $this->deserializationVisitors[$format] = $visitor;
 
         return $this;
     }
@@ -164,12 +160,12 @@ class SerializerBuilder
     {
         $this->initializePropertyNamingStrategy();
 
-        $this->visitorsAdded = true;
-        $this->serializationVisitors->setAll(array(
+        $this->serializationVisitors = [
+            'array' => new GenericSerializationVisitor($this->propertyNamingStrategy),
             'xml' => new XmlSerializationVisitor($this->propertyNamingStrategy),
             'yml' => new YamlSerializationVisitor($this->propertyNamingStrategy),
             'json' => new JsonSerializationVisitor($this->propertyNamingStrategy),
-        ));
+        ];
 
         return $this;
     }
@@ -178,11 +174,11 @@ class SerializerBuilder
     {
         $this->initializePropertyNamingStrategy();
 
-        $this->visitorsAdded = true;
-        $this->deserializationVisitors->setAll(array(
+        $this->deserializationVisitors = [
+            'array' => new GenericDeserializationVisitor($this->propertyNamingStrategy),
             'xml' => new XmlDeserializationVisitor($this->propertyNamingStrategy),
             'json' => new JsonDeserializationVisitor($this->propertyNamingStrategy),
-        ));
+        ];
 
         return $this;
     }
@@ -209,7 +205,7 @@ class SerializerBuilder
             $this->addDefaultListeners();
         }
 
-        if ( ! $this->visitorsAdded) {
+        if (empty($this->serializationVisitors) && empty($this->deserializationVisitors)) {
             $this->addDefaultSerializationVisitors();
             $this->addDefaultDeserializationVisitors();
         }

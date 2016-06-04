@@ -19,8 +19,6 @@
 
 namespace Kcs\Serializer;
 
-use Kcs\Serializer\Exception\LogicException;
-use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
 class SerializationContext extends Context

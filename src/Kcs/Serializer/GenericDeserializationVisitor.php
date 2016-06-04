@@ -29,7 +29,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class GenericDeserializationVisitor extends GenericSerializationVisitor
+class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
     public function visitArray($data, array $type, Context $context)
     {

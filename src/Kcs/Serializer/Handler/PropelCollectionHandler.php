@@ -23,7 +23,6 @@ use \PropelCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 
 class PropelCollectionHandler implements SubscribingHandlerInterface
 {
@@ -31,6 +30,7 @@ class PropelCollectionHandler implements SubscribingHandlerInterface
     {
         $methods = array();
         $formats = array('json', 'xml', 'yml');
+
         //Note: issue when handling inheritance
         $collectionTypes = array(
             'PropelCollection',

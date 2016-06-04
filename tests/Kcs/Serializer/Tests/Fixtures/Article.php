@@ -21,13 +21,8 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\JsonDeserializationVisitor;
-use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlDeserializationVisitor;
-use Symfony\Component\Yaml\Inline;
-use Kcs\Serializer\YamlSerializationVisitor;
-use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\XmlSerializationVisitor;
 use Kcs\Serializer\Annotation\HandlerCallback;
 

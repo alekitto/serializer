@@ -60,8 +60,8 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Kcs\Serializer\Exception\UnsupportedFormatException
-     * @expectedExceptionMessage The format "xml" is not supported for serialization.
+     * @expectedException \Kcs\Serializer\Exception\UnsupportedFormatException
+     * @expectedExceptionMessage The format "xml" is not supported for serialization
      */
     public function testDoesNotAddOtherVisitorsWhenConfiguredExplicitly()
     {
@@ -76,13 +76,5 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->builder = SerializerBuilder::create();
-    }
-
-    private function getField($obj, $name)
-    {
-        $ref = new \ReflectionProperty($obj, $name);
-        $ref->setAccessible(true);
-
-        return $ref->getValue($obj);
     }
 }

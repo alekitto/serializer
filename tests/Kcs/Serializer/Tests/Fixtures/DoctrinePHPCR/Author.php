@@ -19,7 +19,6 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\DoctrinePHPCR;
 
-use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\SerializedName;
 
 use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;

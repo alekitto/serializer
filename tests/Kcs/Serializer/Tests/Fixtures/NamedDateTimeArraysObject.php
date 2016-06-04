@@ -20,8 +20,6 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\XmlList;
 use Kcs\Serializer\Annotation\XmlKeyValuePairs;
 
 

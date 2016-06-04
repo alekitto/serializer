@@ -24,7 +24,6 @@ use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\VisitorInterface;
 use Doctrine\Common\Collections\Collection;
-use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 
 class ArrayCollectionHandler implements SubscribingHandlerInterface
 {

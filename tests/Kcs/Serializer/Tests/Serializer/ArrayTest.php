@@ -19,19 +19,18 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
+use Kcs\Serializer\GenericDeserializationVisitor;
+use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
 use Kcs\Serializer\Tests\Fixtures\Order;
 use Kcs\Serializer\Tests\Fixtures\Price;
-use PhpCollection\Map;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
-use Kcs\Serializer\JsonSerializationVisitor;
-use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
 
@@ -47,8 +46,8 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
             new MetadataFactory(new AnnotationLoader(new AnnotationReader())),
             new HandlerRegistry(),
             new UnserializeObjectConstructor(),
-            new Map(array('json' => new JsonSerializationVisitor($namingStrategy))),
-            new Map(array('json' => new JsonDeserializationVisitor($namingStrategy)))
+            ['array' => new GenericSerializationVisitor($namingStrategy)],
+            ['array' => new GenericDeserializationVisitor($namingStrategy)]
         );
     }
 
@@ -69,14 +68,11 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider scalarValues
+     * @expectedException \Kcs\Serializer\Exception\RuntimeException
+     * @expectedExceptionMessageRegExp /The input data of type ".+" did not convert to an array, but got a result of type ".+"./
      */
     public function testToArrayWithScalar($input)
     {
-        $this->setExpectedException('Kcs\Serializer\Exception\RuntimeException', sprintf(
-            'The input data of type "%s" did not convert to an array, but got a result of type "%s".',
-            gettype($input),
-            gettype($input)
-        ));
         $result = $this->serializer->toArray($input);
 
         $this->assertEquals(array($input), $result);

@@ -33,7 +33,6 @@ use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualXmlProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlRootNamespace;
-use Kcs\Serializer\Tests\Fixtures\Input;
 use Kcs\Serializer\Tests\Fixtures\SimpleClassObject;
 use Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject;
 
@@ -114,7 +113,7 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function testWhitelistedDocumentTypesAreAllowed()
     {
-        $this->deserializationVisitors->get('xml')->get()->setDoctypeWhitelist(array(
+        $this->deserializationVisitors['xml']->setDoctypeWhitelist(array(
             '<!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">',
             '<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">]>'));
 
@@ -185,7 +184,6 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $object = new ObjectWithXmlNamespaces('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
 
-        $serialized = $this->serialize($object);
         $this->assertEquals($this->getContent('object_with_xml_namespaces'), $this->serialize($object));
 
         $xml = simplexml_load_string($this->serialize($object));

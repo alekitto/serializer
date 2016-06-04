@@ -168,7 +168,7 @@ class JsonSerializationTest extends BaseSerializationTest
      */
     public function testPrimitiveTypes($primitiveType, $data)
     {
-        $visitor = $this->serializationVisitors->get('json')->get();
+        $visitor = $this->serializationVisitors['json'];
         $functionToCall = 'visit' . ucfirst($primitiveType);
         $result = $visitor->$functionToCall($data, array(), $this->getMock('Kcs\Serializer\Context'));
         if ($primitiveType == 'double') {

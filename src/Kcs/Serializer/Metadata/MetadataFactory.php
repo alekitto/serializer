@@ -18,8 +18,6 @@
 
 namespace Kcs\Serializer\Metadata;
 
-use Kcs\Metadata\ClassMetadataInterface;
-use Kcs\Metadata\Exception\InvalidMetadataException;
 use Kcs\Metadata\Factory\AbstractMetadataFactory;
 
 /**
