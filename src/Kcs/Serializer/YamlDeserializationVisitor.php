@@ -17,28 +17,19 @@
  * limitations under the License.
  */
 
-namespace Kcs\Serializer\Tests\Serializer;
+namespace Kcs\Serializer;
 
-use Kcs\Serializer\Exception\RuntimeException;
+use Symfony\Component\Yaml\Yaml;
 
-class YamlSerializationTest extends BaseSerializationTest
+class YamlDeserializationVisitor extends GenericDeserializationVisitor
 {
-    protected function getContent($key)
+    public function prepare($str)
     {
-        if (!file_exists($file = __DIR__.'/yml/'.$key.'.yml')) {
-            throw new RuntimeException(sprintf('The content with key "%s" does not exist.', $key));
-        }
-
-        return file_get_contents($file);
+        return Yaml::parse($str, true);
     }
 
-    protected function getFormat()
+    public function getResult()
     {
-        return 'yml';
-    }
-
-    protected function hasDeserializer()
-    {
-        return true;
+        return $this->getRoot();
     }
 }

@@ -21,6 +21,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
@@ -36,6 +37,7 @@ use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
 use Kcs\Serializer\Tests\Fixtures\Timestamp;
 use Kcs\Serializer\Tests\Fixtures\Tree;
 use Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage;
+use Kcs\Serializer\YamlDeserializationVisitor;
 use PhpCollection\Sequence;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
@@ -1026,8 +1028,10 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             'yml'  => new YamlSerializationVisitor($namingStrategy),
         ];
         $this->deserializationVisitors = [
+            'array' => new GenericDeserializationVisitor($namingStrategy),
+            'xml' => new XmlDeserializationVisitor($namingStrategy),
+            'yml' => new YamlDeserializationVisitor($namingStrategy),
             'json' => new JsonDeserializationVisitor($namingStrategy),
-            'xml'  => new XmlDeserializationVisitor($namingStrategy),
         ];
 
         $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);

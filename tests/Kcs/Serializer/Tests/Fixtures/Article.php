@@ -20,7 +20,6 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Context;
-use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlDeserializationVisitor;
 use Kcs\Serializer\XmlSerializationVisitor;
@@ -54,8 +53,11 @@ class Article
         $this->value = (string) $data;
     }
 
-    /** @HandlerCallback("json", direction = "deserialization") */
-    public function deserializeFromJson(JsonDeserializationVisitor $visitor, array $data)
+    /**
+     * @HandlerCallback("json", direction = "deserialization")
+     * @HandlerCallback("yml", direction = "deserialization")
+     */
+    public function deserializeFromJson(VisitorInterface $visitor, array $data)
     {
         $this->element = key($data);
         $this->value = reset($data);

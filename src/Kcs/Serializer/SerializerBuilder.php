@@ -177,6 +177,7 @@ class SerializerBuilder
         $this->deserializationVisitors = [
             'array' => new GenericDeserializationVisitor($this->propertyNamingStrategy),
             'xml' => new XmlDeserializationVisitor($this->propertyNamingStrategy),
+            'yml' => new YamlDeserializationVisitor($this->propertyNamingStrategy),
             'json' => new JsonDeserializationVisitor($this->propertyNamingStrategy),
         ];
 
