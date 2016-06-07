@@ -58,6 +58,7 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
      * Whether the class should be skipped.
      *
      * @param ClassMetadata $metadata
+     * @param Context $context
      *
      * @return boolean
      */
@@ -77,6 +78,7 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
      * Whether the property should be skipped.
      *
      * @param PropertyMetadata $property
+     * @param Context $context
      *
      * @return boolean
      */

@@ -18,13 +18,15 @@
  */
 
 namespace Kcs\Serializer;
+use JMS\Parser\AbstractParser;
+use JMS\Parser\SimpleLexer;
 
 /**
  * Parses a serializer type.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-final class TypeParser extends \JMS\Parser\AbstractParser
+final class TypeParser extends AbstractParser
 {
     const T_NAME = 1;
     const T_STRING = 2;
@@ -35,7 +37,7 @@ final class TypeParser extends \JMS\Parser\AbstractParser
 
     public function __construct()
     {
-        parent::__construct(new \JMS\Parser\SimpleLexer(
+        parent::__construct(new SimpleLexer(
             '/
                 # PHP Class Names
                 ((?:[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\\\)*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)

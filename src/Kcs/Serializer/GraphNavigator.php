@@ -83,6 +83,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
      *
      * @param mixed $data the data depends on the direction, and type of visitor
      * @param null|array $type array has the format ["name" => string, "params" => array]
+     * @param Context $context
      *
      * @return mixed the return value depends on the direction, and type of visitor
      */
@@ -118,7 +119,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         return array('name' => $typeName, 'params' => array());
     }
 
-    private function resolveMetadata(DeserializationContext $context, $data, ClassMetadata $metadata)
+    private function resolveMetadata($data, ClassMetadata $metadata)
     {
         switch (true) {
             case is_array($data) && isset($data[$metadata->discriminatorFieldName]):
@@ -216,7 +217,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         $metadata = $this->getMetadataForType($type);
         if (null !== $metadata) {
             if (! empty($metadata->discriminatorMap) && $type['name'] === $metadata->discriminatorBaseClass) {
-                $metadata = $this->resolveMetadata($context, $data, $metadata);
+                $metadata = $this->resolveMetadata($data, $metadata);
             }
         }
 

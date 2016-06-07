@@ -127,6 +127,7 @@ class Serializer implements SerializerInterface
      *
      * @param array $data
      * @param string $type
+     * @param DeserializationContext $context
      *
      * @return mixed this returns whatever the passed type is, typically an object or an array of objects
      */
@@ -144,16 +145,6 @@ class Serializer implements SerializerInterface
         $this->navigator->accept($data, $type, $context);
 
         return $visitor->getResult();
-    }
-
-    private function handleDeserializeResult($visitorResult, $navigatorResult)
-    {
-        // This is a special case if the root is handled by a callback on the object itself.
-        if (null === $visitorResult && null !== $navigatorResult) {
-            return $navigatorResult;
-        }
-
-        return $visitorResult;
     }
 
     /**

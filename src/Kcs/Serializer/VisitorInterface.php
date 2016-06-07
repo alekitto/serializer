@@ -46,6 +46,7 @@ interface VisitorInterface
     /**
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
@@ -54,6 +55,7 @@ interface VisitorInterface
     /**
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
@@ -62,6 +64,7 @@ interface VisitorInterface
     /**
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
@@ -70,6 +73,7 @@ interface VisitorInterface
     /**
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
@@ -78,6 +82,7 @@ interface VisitorInterface
     /**
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
@@ -86,14 +91,18 @@ interface VisitorInterface
     /**
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
     public function visitArray($data, array $type, Context $context);
 
     /**
+     * @param ClassMetadata $metadata
      * @param $data
      * @param array $type
+     * @param Context $context
+     * @param ObjectConstructorInterface $objectConstructor
      *
      * @return mixed
      */
@@ -102,6 +111,7 @@ interface VisitorInterface
     /**
      * @param PropertyMetadata $metadata
      * @param mixed $data
+     * @param Context $context
      *
      * @return void
      */
@@ -122,6 +132,7 @@ interface VisitorInterface
      *
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return void
      */
@@ -132,6 +143,7 @@ interface VisitorInterface
      *
      * @param mixed $data
      * @param array $type
+     * @param Context $context
      *
      * @return mixed
      */
@@ -147,7 +159,7 @@ interface VisitorInterface
     public function setNavigator(GraphNavigator $navigator = null);
 
     /**
-     * @return object|array|scalar
+     * @return mixed
      */
     public function getResult();
 }
