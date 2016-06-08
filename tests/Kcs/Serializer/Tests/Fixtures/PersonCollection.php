@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\XmlList;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +27,7 @@ use Kcs\Serializer\Annotation\Type;
 
 /**
  * @XmlRoot("person_collection")
+ * @AccessType("property")
  */
 class PersonCollection
 {

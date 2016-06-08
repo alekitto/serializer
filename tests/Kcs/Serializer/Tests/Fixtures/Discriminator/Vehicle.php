@@ -26,6 +26,7 @@ use Kcs\Serializer\Annotation as Serializer;
  *    "car": "Kcs\Serializer\Tests\Fixtures\Discriminator\Car",
  *    "moped": "Kcs\Serializer\Tests\Fixtures\Discriminator\Moped",
  * })
+ * @Serializer\AccessType("property")
  */
 abstract class Vehicle
 {

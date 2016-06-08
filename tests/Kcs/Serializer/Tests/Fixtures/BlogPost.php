@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\XmlMap;
@@ -38,6 +39,7 @@ use PhpCollection\Sequence;
  * @XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
  * @XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
  * @XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
+ * @AccessType("property")
  */
 class BlogPost
 {

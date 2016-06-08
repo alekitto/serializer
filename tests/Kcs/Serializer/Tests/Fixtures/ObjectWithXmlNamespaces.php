@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\XmlNamespace;
@@ -30,6 +31,7 @@ use Kcs\Serializer\Annotation\XmlAttribute;
  * @XmlNamespace(uri="http://example.com/namespace")
  * @XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
  * @XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
+ * @AccessType("property")
  */
 class ObjectWithXmlNamespaces
 {

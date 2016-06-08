@@ -71,13 +71,11 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata = new PropertyMetadata(get_class($object), $property);
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getterInit, $setterInit);
 
+        $metadata->setValue($object, 'x');
+        $this->assertEquals(sprintf('%1$s:%1$s:x', strtoupper($property)), $metadata->getValue($object));
+
         $this->assertEquals($getterName, $metadata->getter);
         $this->assertEquals($setterName, $metadata->setter);
-
-        // setter is not supported by setValue(), any idea?
-        $object->{$metadata->setter}('x');
-
-        $this->assertEquals(sprintf('%1$s:%1$s:x', strtoupper($property)), $metadata->getValue($object));
     }
 
     /**
@@ -91,6 +89,14 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
         $metadata = new PropertyMetadata(get_class($object), 'e');
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getter, $setter);
+
+        if (null === $getter) {
+            $metadata->getValue($object);
+        }
+
+        if (null === $setter) {
+            $metadata->setValue($object, null);
+        }
     }
 
     public function providerPublicMethodData()

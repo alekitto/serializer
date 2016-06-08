@@ -19,10 +19,13 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\Type;
 
-/** blablub */
+/**
+ * @AccessType("property")
+ */
 class GroupsObject
 {
     /**

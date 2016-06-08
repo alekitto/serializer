@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\XmlNamespace;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlAttribute;
@@ -28,6 +29,7 @@ use Kcs\Serializer\Annotation\XmlElement;
  * @XmlNamespace(prefix="old_foo", uri="http://old.foo.example.org");
  * @XmlNamespace(prefix="foo", uri="http://foo.example.org");
  * @XmlNamespace(prefix="new_foo", uri="http://new.foo.example.org");
+ * @AccessType("property")
  */
 class SimpleClassObject
 {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serializer>
-    <class name="Kcs\Serializer\Tests\Fixtures\Price">
+    <class name="Kcs\Serializer\Tests\Fixtures\Price" access-type="property">
         <property name="price" xml-value="true" type="double" />
     </class>
 </serializer>

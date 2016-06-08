@@ -22,6 +22,9 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation as Serializer;
 use Kcs\Serializer\Annotation\Type;
 
+/**
+ * @Serializer\AccessType("property")
+ */
 class InlineChild
 {
     /**

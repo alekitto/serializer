@@ -5,6 +5,7 @@ Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces:
         "": http://example.com/namespace
         gd: http://schemas.google.com/g/2005
         atom: http://www.w3.org/2005/Atom
+    access_type: property
     properties:
         title:
             type: string

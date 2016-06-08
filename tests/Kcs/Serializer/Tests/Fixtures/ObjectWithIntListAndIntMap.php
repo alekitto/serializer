@@ -4,6 +4,9 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("property")
+ */
 class ObjectWithIntListAndIntMap
 {
     /** @Serializer\Type("array<integer>") @Serializer\XmlList */

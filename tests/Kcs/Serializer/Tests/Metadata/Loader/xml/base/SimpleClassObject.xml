@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serializer>
-    <class name="Kcs\Serializer\Tests\Fixtures\SimpleClassObject">
+    <class name="Kcs\Serializer\Tests\Fixtures\SimpleClassObject" access-type="property">
         <xml-namespace prefix="foo" uri="http://foo.example.org"/>
         <xml-namespace prefix="old_foo" uri="http://old.foo.example.org"/>
         <xml-namespace prefix="new_foo" uri="http://new.foo.example.org"/>

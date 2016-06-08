@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serializer>
-    <class name="Kcs\Serializer\Tests\Fixtures\BlogPost" xml-root-name="blog-post">
+    <class name="Kcs\Serializer\Tests\Fixtures\BlogPost" xml-root-name="blog-post" access-type="property">
         <xml-namespace uri="http://example.com/namespace"/>
         <xml-namespace prefix="gd" uri="http://schemas.google.com/g/2005"/>
         <xml-namespace prefix="atom" uri="http://www.w3.org/2005/Atom"/>

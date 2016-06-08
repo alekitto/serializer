@@ -65,4 +65,28 @@ class SerializableForm
             $this->children[] = new static($child);
         }
     }
+
+    /**
+     * @return FormError[]
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return static[]
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 }

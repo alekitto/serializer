@@ -56,7 +56,7 @@ class XmlLoader extends FileLoader
         }
 
         $metadata->exclusionPolicy = strtoupper($elem->attributes()->{'exclusion-policy'}) ?: ExclusionPolicy::NONE;
-        $metadata->defaultAccessType = (string) ($elem->attributes()->{'access-type'} ?: PropertyMetadata::ACCESS_TYPE_PROPERTY);
+        $metadata->defaultAccessType = (string) ($elem->attributes()->{'access-type'} ?: PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD);
 
         if (null !== $accessorOrder = $elem->attributes()->{'accessor-order'}) {
             $metadata->setAccessorOrder((string) $accessorOrder, preg_split('/\s*,\s*/', (string) $elem->attributes()->{'custom-accessor-order'}));

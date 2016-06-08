@@ -20,10 +20,13 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\PostDeserialize;
 
-/** No annotation */
+/**
+ * @AccessType("property")
+ */
 class CircularReferenceParent
 {
     /** @Type("array<Kcs\Serializer\Tests\Fixtures\CircularReferenceChild>") */

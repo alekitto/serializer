@@ -19,12 +19,16 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Exclude;
 use Kcs\Serializer\Annotation\PreSerialize;
 use Kcs\Serializer\Annotation\PostSerialize;
 use Kcs\Serializer\Annotation\PostDeserialize;
 use Kcs\Serializer\Annotation\Type;
 
+/**
+ * @AccessType("property")
+ */
 class ObjectWithLifecycleCallbacks
 {
     /**

@@ -19,10 +19,14 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\Type;
 
-/** @XmlRoot("order") */
+/** 
+ * @XmlRoot("order")
+ * @AccessType("property")
+ */
 class Order
 {
     /** @Type("Kcs\Serializer\Tests\Fixtures\Price") */

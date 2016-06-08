@@ -21,7 +21,10 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
 
-/** @Serializer\XmlRoot("price") */
+/**
+ * @Serializer\XmlRoot("price")
+ * @Serializer\AccessType("property")
+ */
 class CurrencyAwarePrice
 {
     /**

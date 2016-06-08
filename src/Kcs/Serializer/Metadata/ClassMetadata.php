@@ -37,7 +37,7 @@ class ClassMetadata extends BaseClassMetadata
     const ACCESSOR_ORDER_CUSTOM = 'custom';
 
     public $exclusionPolicy = ExclusionPolicy::NONE;
-    public $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+    public $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
     public $readOnly = false;
 
     /** @var MethodMetadata[] */

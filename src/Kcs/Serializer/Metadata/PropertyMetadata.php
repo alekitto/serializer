@@ -48,6 +48,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public $readOnly = false;
     public $xmlAttributeMap = false;
     public $maxDepth = null;
+    public $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
 
     private static $typeParser;
 
@@ -67,39 +68,20 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public function setAccessor($type, $getter = null, $setter = null)
     {
-        if (self::ACCESS_TYPE_PUBLIC_METHOD === $type) {
-            $class = $this->getReflection()->getDeclaringClass();
-
-            if (empty($getter)) {
-                if ($class->hasMethod('get'.$this->name) && $class->getMethod('get'.$this->name)->isPublic()) {
-                    $getter = 'get'.$this->name;
-                } elseif ($class->hasMethod('is'.$this->name) && $class->getMethod('is'.$this->name)->isPublic()) {
-                    $getter = 'is'.$this->name;
-                } elseif ($class->hasMethod('has'.$this->name) && $class->getMethod('has'.$this->name)->isPublic()) {
-                    $getter = 'has'.$this->name;
-                } else {
-                    throw new RuntimeException(sprintf('There is neither a public %s method, nor a public %s method, nor a public %s method in class %s. Please specify which public method should be used for retrieving the value of the property %s.', 'get'.ucfirst($this->name), 'is'.ucfirst($this->name), 'has'.ucfirst($this->name), $this->class, $this->name));
-                }
-            }
-
-            if (empty($setter) && ! $this->readOnly) {
-                if ($class->hasMethod('set'.$this->name) && $class->getMethod('set'.$this->name)->isPublic()) {
-                    $setter = 'set'.$this->name;
-                } else {
-                    throw new RuntimeException(sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set'.ucfirst($this->name), $this->class, $this->name));
-                }
-            }
-        }
-
+        $this->accessorType = $type;
         $this->getter = $getter;
         $this->setter = $setter;
     }
 
     public function getValue($obj)
     {
-        if (null === $this->getter) {
+        if (PropertyMetadata::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();
             return $reflector->getValue($obj);
+        }
+
+        if (null === $this->getter) {
+            $this->initializeGetterAccessor();
         }
 
         return $obj->{$this->getter}();
@@ -107,10 +89,18 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public function setValue($obj, $value)
     {
-        if (null === $this->setter) {
+        if ($this->readOnly) {
+            return;
+        }
+
+        if (PropertyMetadata::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();
             $reflector->setValue($obj, $value);
             return;
+        }
+
+        if (null === $this->setter) {
+            $this->initializeSetterAccessor();
         }
 
         $obj->{$this->setter}($value);
@@ -123,5 +113,37 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         $this->type = self::$typeParser->parse($type);
+    }
+
+    protected function initializeGetterAccessor()
+    {
+        $class = $this->getReflection()->getDeclaringClass();
+
+        if ($class->hasMethod('get'.$this->name) && $class->getMethod('get'.$this->name)->isPublic()) {
+            $getter = 'get'.$this->name;
+        } elseif ($class->hasMethod('is'.$this->name) && $class->getMethod('is'.$this->name)->isPublic()) {
+            $getter = 'is'.$this->name;
+        } elseif ($class->hasMethod('has'.$this->name) && $class->getMethod('has'.$this->name)->isPublic()) {
+            $getter = 'has'.$this->name;
+        } elseif ($class->hasMethod($this->name) && $class->getMethod($this->name)->isPublic()) {
+            $getter = $this->name;
+        } else {
+            throw new RuntimeException(sprintf('There is neither a public %s method, nor a public %s method, nor a public %s method in class %s. Please specify which public method should be used for retrieving the value of the property %s.', 'get'.ucfirst($this->name), 'is'.ucfirst($this->name), 'has'.ucfirst($this->name), $this->class, $this->name));
+        }
+
+        $this->getter = $getter;
+    }
+
+    protected function initializeSetterAccessor()
+    {
+        $class = $this->getReflection()->getDeclaringClass();
+
+        if ($class->hasMethod('set'.$this->name) && $class->getMethod('set'.$this->name)->isPublic()) {
+            $setter = 'set'.$this->name;
+        } else {
+            throw new RuntimeException(sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set'.ucfirst($this->name), $this->class, $this->name));
+        }
+
+        $this->setter = $setter;
     }
 }

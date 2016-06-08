@@ -19,11 +19,13 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Expose;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
 
 /**
  * @ExclusionPolicy("all")
+ * @AccessType("property")
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */

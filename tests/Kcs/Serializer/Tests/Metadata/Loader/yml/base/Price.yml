@@ -1,4 +1,5 @@
 Kcs\Serializer\Tests\Fixtures\Price:
+    access_type: property
     properties:
         price:
             type: double

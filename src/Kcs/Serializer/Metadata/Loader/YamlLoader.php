@@ -45,7 +45,7 @@ class YamlLoader extends FileLoader
         $config = $config[$name];
         $exclusionPolicy = isset($config['exclusion_policy']) ? strtoupper($config['exclusion_policy']) : 'NONE';
         $excludeAll = isset($config['exclude']) ? (Boolean) $config['exclude'] : false;
-        $classAccessType = isset($config['access_type']) ? $config['access_type'] : PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $classAccessType = isset($config['access_type']) ? $config['access_type'] : PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
         $readOnlyClass = isset($config['read_only']) ? (Boolean) $config['read_only'] : false;
         $this->addClassProperties($metadata, $config);
 

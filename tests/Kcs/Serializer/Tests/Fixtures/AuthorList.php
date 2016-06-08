@@ -23,6 +23,7 @@ use Kcs\Serializer\Annotation as Serializer;
 
 /**
  * An array-acting object that holds many author instances.
+ * @Serializer\AccessType("property")
  */
 class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
 {

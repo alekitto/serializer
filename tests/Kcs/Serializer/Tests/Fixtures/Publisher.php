@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlRoot;
@@ -28,6 +29,7 @@ use Kcs\Serializer\Annotation\XmlElement;
 /**
  * @XmlRoot("publisher")
  * @XmlNamespace(uri="http://example.com/namespace2", prefix="ns2")
+ * @ReadOnly()
  */
 class Publisher
 {

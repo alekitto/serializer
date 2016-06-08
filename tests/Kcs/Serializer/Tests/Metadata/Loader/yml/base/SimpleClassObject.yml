@@ -3,6 +3,7 @@ Kcs\Serializer\Tests\Fixtures\SimpleClassObject:
         foo: http://foo.example.org
         old_foo: http://old.foo.example.org
         new_foo: http://new.foo.example.org
+    access_type: property
     properties:
         foo:
             type: string

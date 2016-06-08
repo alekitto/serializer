@@ -21,6 +21,9 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("property")
+ */
 class Node
 {
     /**

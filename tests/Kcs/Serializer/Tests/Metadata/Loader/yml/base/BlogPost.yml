@@ -5,6 +5,7 @@ Kcs\Serializer\Tests\Fixtures\BlogPost:
         gd: http://schemas.google.com/g/2005
         atom: http://www.w3.org/2005/Atom
         dc: http://purl.org/dc/elements/1.1/
+    access_type: property
     properties:
         id:
             type: string

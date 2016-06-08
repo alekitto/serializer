@@ -19,10 +19,14 @@
  
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlKeyValuePairs;
 
-
+/**
+ * @AccessType("property")
+ */
 class NamedDateTimeArraysObject
 {
     /**
@@ -32,7 +36,7 @@ class NamedDateTimeArraysObject
      */
     private $namedArrayWithFormattedDate;
 
-    function __construct($namedArrayWithFormattedDate)
+    public function __construct($namedArrayWithFormattedDate)
     {
         $this->namedArrayWithFormattedDate = $namedArrayWithFormattedDate;
     }

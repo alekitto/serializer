@@ -23,6 +23,7 @@ use Kcs\Serializer\Annotation as Serializer;
 
 /**
  * @Serializer\XmlRoot("input")
+ * @Serializer\AccessType("property")
  */
 class Input
 {

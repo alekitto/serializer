@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\XmlAttribute;
 use Kcs\Serializer\Annotation\XmlValue;
 use Kcs\Serializer\Annotation\XmlRoot;
@@ -26,6 +27,7 @@ use Kcs\Serializer\Annotation\Type;
 
 /**
  * @XmlRoot("child")
+ * @AccessType("property")
  */
 class Person
 {

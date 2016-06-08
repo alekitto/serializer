@@ -17,4 +17,9 @@ abstract class Person
 {
     /** @ORM\Id @ORM\GeneratedValue(strategy = "AUTO") @ORM\Column(type = "integer") */
     private $id;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 }

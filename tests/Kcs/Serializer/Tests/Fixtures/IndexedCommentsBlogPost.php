@@ -20,6 +20,8 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\Accessor;
+use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\XmlMap;
 use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\XmlList;
@@ -31,6 +33,7 @@ class IndexedCommentsBlogPost
     /**
      * @XmlMap(keyAttribute="author-name", inline=true, entry="comments")
      * @Accessor(getter="getCommentsIndexedByAuthor")
+     * @ReadOnly()
      */
     private $comments = array();
 
@@ -58,6 +61,9 @@ class IndexedCommentsBlogPost
     }
 }
 
+/**
+ * @AccessType("property")
+ */
 class IndexedCommentsList
 {
     /** @XmlList(inline=true, entry="comment") */

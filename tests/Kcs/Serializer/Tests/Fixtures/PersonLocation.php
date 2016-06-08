@@ -19,11 +19,13 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\Type;
 
 /**
  * @XmlRoot("person_location")
+ * @AccessType("property")
  */
 class PersonLocation
 {

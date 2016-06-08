@@ -18,6 +18,7 @@
 
 namespace Kcs\Serializer\Util;
 
+use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlAttribute;
 use Kcs\Serializer\Annotation\XmlRoot;
@@ -25,6 +26,7 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**
  * @XmlRoot("violation")
+ * @ReadOnly()
  */
 class SerializableConstraintViolation
 {
@@ -34,7 +36,7 @@ class SerializableConstraintViolation
      *
      * @var string
      */
-    private $property_path;
+    private $propertyPath;
 
     /**
      * @Type("string")
@@ -45,7 +47,23 @@ class SerializableConstraintViolation
 
     public function __construct(ConstraintViolationInterface $violation)
     {
-        $this->property_path = $violation->getPropertyPath();
+        $this->propertyPath = $violation->getPropertyPath();
         $this->message = $violation->getMessage();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPropertyPath()
+    {
+        return $this->propertyPath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Handler;
 
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\SerializerBuilder;
 
 class PropelCollectionHandlerTest extends \PHPUnit_Framework_TestCase
@@ -32,6 +33,9 @@ class PropelCollectionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 }
 
+/**
+ * @AccessType("property")
+ */
 class TestSubject
 {
     protected $name;
