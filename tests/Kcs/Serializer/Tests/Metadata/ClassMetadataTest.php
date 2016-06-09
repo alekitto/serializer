@@ -80,11 +80,10 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider providerPublicMethodException
+     * @expectedException \Kcs\Serializer\Exception\RuntimeException
      */
-    public function testAccessorTypePublicMethodException($getter, $setter, $message)
+    public function testAccessorTypePublicMethodException($getter, $setter)
     {
-        $this->setExpectedException('\Kcs\Serializer\Exception\RuntimeException', $message);
-
         $object = new PropertyMetadataPublicMethod();
 
         $metadata = new PropertyMetadata(get_class($object), 'e');
@@ -102,9 +101,9 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
     public function providerPublicMethodData()
     {
         return array(
-            array('a', null, null, 'geta', 'seta'),
-            array('b', null, null, 'isb', 'setb'),
-            array('c', null, null, 'hasc', 'setc'),
+            array('a', null, null, 'getA', 'setA'),
+            array('b', null, null, 'isB', 'setB'),
+            array('c', null, null, 'hasC', 'setC'),
             array('d', 'fetchd', 'saved', 'fetchd', 'saved')
         );
     }
@@ -112,9 +111,9 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
     public function providerPublicMethodException()
     {
         return array(
-            array(null, null, 'a public getE method, nor a public isE method, nor a public hasE method in class'),
-            array(null, 'setx', 'a public getE method, nor a public isE method, nor a public hasE method in class'),
-            array('getx', null, 'no public setE method in class'),
+            array(null, null),
+            array(null, 'setx'),
+            array('getx', null),
         );
     }
 }
