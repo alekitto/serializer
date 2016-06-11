@@ -33,7 +33,7 @@ use PhpCollection\Map;
 abstract class Context
 {
     /**
-     * @var \PhpCollection\Map
+     * @var AttributesMap
      */
     public $attributes;
 
@@ -66,7 +66,7 @@ abstract class Context
 
     public function __construct()
     {
-        $this->attributes = new Map();
+        $this->attributes = new AttributesMap();
     }
 
     public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
@@ -82,6 +82,9 @@ abstract class Context
         $this->metadataFactory = $factory;
         $this->metadataStack = new \SplStack();
         $this->nonSkippedProperties = array ();
+
+        $this->addVersionExclusionStrategy();
+        $this->addGroupsExclusionStrategy();
     }
 
     public function accept($data, array $type = null)
@@ -138,47 +141,30 @@ abstract class Context
     public function addExclusionStrategy(ExclusionStrategyInterface $strategy)
     {
         $this->assertMutable();
-
-        if (null === $this->exclusionStrategy) {
-            $this->exclusionStrategy = $strategy;
-
-            return $this;
-        }
-
-        if ($this->exclusionStrategy instanceof DisjunctExclusionStrategy) {
-            $this->exclusionStrategy->addStrategy($strategy);
-
-            return $this;
-        }
-
-        $this->exclusionStrategy = new DisjunctExclusionStrategy(array(
-            $this->exclusionStrategy,
-            $strategy,
-        ));
+        $this->_addExclusionStrategy($strategy);
 
         return $this;
     }
 
     public function setVersion($version)
     {
-        if (null === $version) {
-            throw new \LogicException('The version must not be null.');
-        }
-
+        $this->assertMutable();
         $this->attributes->set('version', $version);
-        $this->addExclusionStrategy(new VersionExclusionStrategy($version));
 
         return $this;
     }
 
     public function setGroups($groups)
     {
+        $this->assertMutable();
+
         if (empty($groups)) {
-            throw new \LogicException('The groups must not be empty.');
+            $groups = null;
+        } elseif (! is_array($groups)) {
+            $groups = (array) $groups;
         }
 
-        $this->attributes->set('groups', (array) $groups);
-        $this->addExclusionStrategy(new GroupsExclusionStrategy((array) $groups));
+        $this->attributes->set('groups', $groups);
 
         return $this;
     }
@@ -268,4 +254,47 @@ abstract class Context
      * @return integer
      */
     abstract public function getDirection();
+
+    /**
+     * Set or add exclusion strategy
+     *
+     * @param ExclusionStrategyInterface $strategy
+     */
+    private function _addExclusionStrategy(ExclusionStrategyInterface $strategy)
+    {
+        if (null === $this->exclusionStrategy) {
+            $this->exclusionStrategy = $strategy;
+
+            return;
+        }
+
+        if ($this->exclusionStrategy instanceof DisjunctExclusionStrategy) {
+            $this->exclusionStrategy->addStrategy($strategy);
+
+            return;
+        }
+
+        $this->exclusionStrategy = new DisjunctExclusionStrategy(array(
+            $this->exclusionStrategy,
+            $strategy,
+        ));
+    }
+
+    private function addVersionExclusionStrategy()
+    {
+        if (null === ($version = $this->attributes->get('version'))) {
+            return;
+        }
+
+        $this->_addExclusionStrategy(new VersionExclusionStrategy($version));
+    }
+
+    private function addGroupsExclusionStrategy()
+    {
+        if (null === ($groups = $this->attributes->get('groups'))) {
+            return;
+        }
+
+        $this->_addExclusionStrategy(new GroupsExclusionStrategy($groups));
+    }
 }
