@@ -148,23 +148,20 @@ abstract class Context
 
     public function setVersion($version)
     {
-        $this->assertMutable();
-        $this->attributes->set('version', $version);
+        $this->setAttribute('version', $version);
 
         return $this;
     }
 
     public function setGroups($groups)
     {
-        $this->assertMutable();
-
         if (empty($groups)) {
             $groups = null;
         } elseif (! is_array($groups)) {
             $groups = (array) $groups;
         }
 
-        $this->attributes->set('groups', $groups);
+        $this->setAttribute('groups', $groups);
 
         return $this;
     }
@@ -201,10 +198,6 @@ abstract class Context
     public function popPropertyMetadata()
     {
         $metadata = $this->metadataStack->pop();
-
-        if ( ! $metadata instanceof PropertyMetadata) {
-            throw new RuntimeException('Context metadataStack not working well');
-        }
 
         return $metadata;
     }
