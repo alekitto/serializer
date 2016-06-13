@@ -25,6 +25,7 @@ use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\EventDispatcher\EventDispatcherInterface;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
+use Kcs\Serializer\Type\Parser\Parser;
 
 /**
  * Serializer Implementation.
@@ -56,15 +57,15 @@ class Serializer implements SerializerInterface
      * @param VisitorInterface[] $serializationVisitors of VisitorInterface
      * @param VisitorInterface[] $deserializationVisitors of VisitorInterface
      * @param EventDispatcher\EventDispatcherInterface $dispatcher
-     * @param TypeParser $typeParser
+     * @param Parser $typeParser
      */
-    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null, TypeParser $typeParser = null)
+    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null, Parser $typeParser = null)
     {
         $this->factory = $factory;
         $this->handlerRegistry = $handlerRegistry;
         $this->objectConstructor = $objectConstructor;
         $this->dispatcher = $dispatcher;
-        $this->typeParser = $typeParser ?: new TypeParser();
+        $this->typeParser = $typeParser ?: new Parser();
         $this->serializationVisitors = $serializationVisitors;
         $this->deserializationVisitors = $deserializationVisitors;
 

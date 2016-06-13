@@ -19,7 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
-use Kcs\Serializer\TypeParser;
+use Kcs\Serializer\Type\Parser\Parser;
 
 class TypeParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,8 +49,7 @@ class TypeParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \JMS\Parser\SyntaxErrorException
-     * @expectedExceptionMessage Expected T_CLOSE_BRACKET, but got end of input.
+     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
     public function testParamTypeMustEndWithBracket()
     {
@@ -58,8 +57,7 @@ class TypeParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \JMS\Parser\SyntaxErrorException
-     * @expectedExceptionMessage Expected T_NAME, but got "," of type T_COMMA at beginning of input.
+     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
     public function testMustStartWithName()
     {
@@ -67,8 +65,7 @@ class TypeParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \JMS\Parser\SyntaxErrorException
-     * @expectedExceptionMessage Expected any of T_NAME or T_STRING, but got ">" of type T_CLOSE_BRACKET at position 4 (0-based).
+     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
     public function testEmptyParams()
     {
@@ -76,8 +73,7 @@ class TypeParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \JMS\Parser\SyntaxErrorException
-     * @expectedExceptionMessage Expected any of T_NAME or T_STRING, but got ">" of type T_CLOSE_BRACKET at position 7 (0-based).
+     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
     public function testNoTrailingComma()
     {
@@ -85,8 +81,7 @@ class TypeParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \JMS\Parser\SyntaxErrorException
-     * @expectedExceptionMessage  Expected any of T_NAME or T_STRING, but got "\" of type T_NONE at position 4 (0-based).
+     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
     public function testLeadingBackslash()
     {
@@ -95,6 +90,6 @@ class TypeParserTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->parser = new TypeParser();
+        $this->parser = new Parser();
     }
 }

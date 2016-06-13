@@ -19,7 +19,7 @@
 
 namespace Kcs\Serializer\Metadata;
 
-use Kcs\Serializer\TypeParser;
+use Kcs\Serializer\Type\Parser\Parser;
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
 use Kcs\Serializer\Exception\RuntimeException;
 
@@ -109,7 +109,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public function setType($type)
     {
         if (null === self::$typeParser) {
-            self::$typeParser = new TypeParser();
+            self::$typeParser = new Parser();
         }
 
         $this->type = self::$typeParser->parse($type);

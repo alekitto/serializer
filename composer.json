@@ -16,9 +16,9 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "kcs/metadata": "^1.1",
-        "jms/parser-lib": "1.*",
-        "doctrine/instantiator": "~1.0.3"
+        "doctrine/common": "^2.0",
+        "doctrine/instantiator": "~1.0.3",
+        "kcs/metadata": "^1.1"
     },
     "conflict": {
         "twig/twig": "<1.12"
