@@ -23,6 +23,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\YamlsLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
+use Kcs\Serializer\Type\Type;
 
 class YamlLoaderTest extends BaseLoaderTest
 {
@@ -74,7 +75,7 @@ class YamlLoaderTest extends BaseLoaderTest
         $this->getLoaderForSubDir('case')->loadClassMetadata($m);
 
         $p = new PropertyMetadata($m->getName(), 'title');
-        $p->type = array('name' => 'string', 'params' => array());
+        $p->type = Type::from('string');
         $this->assertEquals($p, $m->getAttributeMetadata('title'));
     }
 

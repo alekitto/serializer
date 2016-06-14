@@ -30,6 +30,7 @@ use Kcs\Serializer\EventDispatcher\EventDispatcherInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
+use Kcs\Serializer\Type\Type;
 
 /**
  * Handles traversal along the object graph.
@@ -82,17 +83,17 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
      * Called for each node of the graph that is being traversed.
      *
      * @param mixed $data the data depends on the direction, and type of visitor
-     * @param null|array $type array has the format ["name" => string, "params" => array]
-     * @param Context $context
+     * @param Type $type array has the format ["name" => string, "params" => array]
+     * @param SerializationContext|DeserializationContext|Context $context
      *
      * @return mixed the return value depends on the direction, and type of visitor
      */
-    public function accept($data, array $type = null, Context $context)
+    public function accept($data, Type $type = null, Context $context)
     {
         // If the data is null, we have to force the type to null regardless of the input in order to
         // guarantee correct handling of null values, and not have any internal auto-casting behavior.
         if ($context instanceof SerializationContext && null === $data) {
-            $type = array('name' => 'NULL', 'params' => array());
+            $type = Type::null();
         } elseif (null === $type) {
             if ($context instanceof DeserializationContext) {
                 throw new RuntimeException('The type must be given for all properties when deserializing.');
@@ -110,13 +111,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
     private function guessType($data)
     {
-        // infer the most specific type from the input data
-        $typeName = gettype($data);
-        if ('object' === $typeName) {
-            $typeName = get_class($data);
-        }
-
-        return array('name' => $typeName, 'params' => array());
+        return new Type(is_object($data) ? get_class($data) : gettype($data));
     }
 
     private function resolveMetadata($data, ClassMetadata $metadata)
@@ -150,7 +145,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         return $this->metadataFactory->getMetadataFor($metadata->discriminatorMap[$typeValue]);
     }
 
-    private function serialize($data, array $type, SerializationContext $context)
+    private function serialize($data, Type $type, SerializationContext $context)
     {
         $inVisitingStack = is_object($data) && null !== $data;
         if ($inVisitingStack) {
@@ -163,15 +158,12 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
-        if (class_exists($type['name'], false) || interface_exists($type['name'], false)) {
-            if (is_subclass_of($data, $type['name'], false)) {
-                $type = array('name' => get_class($data), 'params' => array());
-            }
+        if (is_subclass_of($data, $type->getName(), false)) {
+            $type = new Type(get_class($data));
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.pre_serialize', $type['name'], $context->getFormat(), $event = new PreSerializeEvent($context, $data, $type));
-            $type = $event->getType();
+            $this->dispatcher->dispatch('serializer.pre_serialize', $type->getName(), $context->getFormat(), $event = new PreSerializeEvent($context, $data, $type));
             $data = $event->getData();
         }
 
@@ -192,7 +184,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.post_serialize', $type['name'], $context->getFormat(), new PostSerializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch('serializer.post_serialize', $type->getName(), $context->getFormat(), new PostSerializeEvent($context, $data, $type));
         }
 
         $rs = $context->getVisitor()->endVisiting($data, $type, $context);
@@ -204,19 +196,18 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         return $rs;
     }
 
-    private function deserialize($data, array $type, DeserializationContext $context)
+    private function deserialize($data, Type $type, DeserializationContext $context)
     {
         $context->increaseDepth();
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.pre_deserialize', $type['name'], $context->getFormat(), $event = new PreDeserializeEvent($context, $data, $type));
-            $type = $event->getType();
+            $this->dispatcher->dispatch('serializer.pre_deserialize', $type->getName(), $context->getFormat(), $event = new PreDeserializeEvent($context, $data, $type));
             $data = $event->getData();
         }
 
         $metadata = $this->getMetadataForType($type);
         if (null !== $metadata) {
-            if (! empty($metadata->discriminatorMap) && $type['name'] === $metadata->discriminatorBaseClass) {
+            if (! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
                 $metadata = $this->resolveMetadata($data, $metadata);
             }
         }
@@ -231,7 +222,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.post_deserialize', $type['name'], $context->getFormat(), new PostDeserializeEvent($context, $rs, $type));
+            $this->dispatcher->dispatch('serializer.post_deserialize', $type->getName(), $context->getFormat(), new PostDeserializeEvent($context, $rs, $type));
         }
 
         $rs = $context->getVisitor()->endVisiting($rs, $type, $context);
@@ -240,16 +231,16 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
         return $rs;
     }
 
-    private function callVisitor($data, array $type, Context $context, ClassMetadata $metadata = null)
+    private function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
     {
         $visitor = $context->getVisitor();
 
         // First, try whether a custom handler exists for the given type
-        if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type['name'], $context->getFormat())) {
+        if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type->getName(), $context->getFormat())) {
             return $visitor->visitCustom($handler, $data, $type, $context);
         }
 
-        switch ($type['name']) {
+        switch ($type->getName()) {
             case 'NULL':
                 return $visitor->visitNull($data, $type, $context);
 
@@ -287,23 +278,22 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
     /**
      * Get ClassMetadata instance for type. Returns null if class does not exist
      *
-     * @param array $type
+     * @param Type $type
      *
      * @return null|ClassMetadata
      */
-    private function getMetadataForType(array $type)
+    private function getMetadataForType(Type $type)
     {
-        if (!class_exists($type['name'], false) && !interface_exists($type['name'], false)) {
+        if (!class_exists($type->getName(), false) && !interface_exists($type->getName(), false)) {
             return null;
         }
 
-        return $this->metadataFactory->getMetadataFor($type['name']);
+        return $this->metadataFactory->getMetadataFor($type->getName());
     }
 
-    private function visitArray(VisitorInterface $visitor, $data, $type, $context)
+    private function visitArray(VisitorInterface $visitor, $data, Type $type, $context)
     {
-        if ($context instanceof SerializationContext &&
-            isset($type['params'][0]) && ! isset($type['params'][1])) {
+        if ($context instanceof SerializationContext && $type->hasParam(0) && ! $type->hasParam(1)) {
             $data = array_values($data);
         }
 

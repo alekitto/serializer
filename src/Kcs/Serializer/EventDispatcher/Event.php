@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\EventDispatcher;
 
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Type\Type;
 
 class Event
 {
@@ -27,7 +28,7 @@ class Event
     private $context;
     private $data;
 
-    public function __construct(Context $context, $data, array $type)
+    public function __construct(Context $context, $data, Type $type)
     {
         $this->context = $context;
         $this->type = $type;
@@ -49,9 +50,9 @@ class Event
         return $this->type;
     }
 
-    public function setType($name, array $params = array())
+    public function setType(Type $type)
     {
-        $this->type = array('name' => $name, 'params' => $params);
+        $this->type = $type;
     }
 
     public function getData()

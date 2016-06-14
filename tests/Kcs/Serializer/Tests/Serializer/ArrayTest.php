@@ -33,6 +33,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Type\Type;
 
 class ArrayTest extends \PHPUnit_Framework_TestCase
 {
@@ -97,7 +98,7 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
         );
 
         $expected = new Order(new Price(2.5));
-        $result = $this->serializer->fromArray($data, 'Kcs\Serializer\Tests\Fixtures\Order');
+        $result = $this->serializer->fromArray($data, Type::from(Order::class));
 
         $this->assertEquals($expected, $result);
     }

@@ -20,6 +20,7 @@
 namespace Kcs\Serializer;
 
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
+use Kcs\Serializer\Type\Type;
 
 abstract class AbstractVisitor implements VisitorInterface
 {
@@ -41,16 +42,16 @@ abstract class AbstractVisitor implements VisitorInterface
         return $data;
     }
 
-    protected function getElementType($typeArray)
+    protected function getElementType(Type $type)
     {
-        if (false === isset($typeArray['params'][0])) {
+        if (! $type->hasParam(0)) {
             return null;
         }
 
-        if (isset($typeArray['params'][1]) && is_array($typeArray['params'][1])) {
-            return $typeArray['params'][1];
+        if ($type->hasParam(1) && ($param = $type->getParam(1)) instanceof Type) {
+            return $param;
         }
 
-        return $typeArray['params'][0];
+        return Type::from($type->getParam(0));
     }
 }

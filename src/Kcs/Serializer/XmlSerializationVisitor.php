@@ -23,6 +23,7 @@ use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Type\Type;
 
 /**
  * XmlSerializationVisitor.
@@ -55,7 +56,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private $validatedMetadata;
 
-    public function visitNull($data, array $type, Context $context)
+    public function visitNull($data, Type $type, Context $context)
     {
         $this->attachNullNamespace = true;
 
@@ -69,29 +70,29 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $this->createTextNode((string) $data);
     }
 
-    public function visitString($data, array $type, Context $context)
+    public function visitString($data, Type $type, Context $context)
     {
         /** @var PropertyMetadata $metadata */
         $metadata = $this->getCurrentPropertyMetadata($context);
         return $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
     }
 
-    public function visitInteger($data, array $type, Context $context)
+    public function visitInteger($data, Type $type, Context $context)
     {
         return $this->currentNodes = $this->createTextNode($data);
     }
 
-    public function visitBoolean($data, array $type, Context $context)
+    public function visitBoolean($data, Type $type, Context $context)
     {
         return $this->currentNodes = $this->createTextNode($data ? 'true' : 'false');
     }
 
-    public function visitDouble($data, array $type, Context $context)
+    public function visitDouble($data, Type $type, Context $context)
     {
         return $this->currentNodes = $this->createTextNode($data);
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
             $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
@@ -226,7 +227,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes;
     }
 
-    public function visitArray($data, array $type, Context $context)
+    public function visitArray($data, Type $type, Context $context)
     {
         if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
             $this->document->appendChild($rootNode = $this->document->createElement('result'));
@@ -260,7 +261,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = array_values($nodes);
     }
 
-    public function visitCustom(callable $handler, $data, array $type, Context $context)
+    public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
         $args = func_get_args();
 
@@ -277,13 +278,13 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->validatedMetadata = array ();
     }
 
-    public function startVisiting($data, array $type, Context $context)
+    public function startVisiting($data, Type $type, Context $context)
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
     }
 
-    public function endVisiting($data, array $type, Context $context)
+    public function endVisiting($data, Type $type, Context $context)
     {
         $nodes = $this->currentNodes ?: [];
         $this->currentNodes = $this->nodeStack->pop();

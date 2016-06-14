@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableConstraintViolation;
 use Kcs\Serializer\Util\SerializableConstraintViolationList;
 use Kcs\Serializer\VisitorInterface;
@@ -49,7 +50,7 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
-    public function serializeList(VisitorInterface $visitor, ConstraintViolationList $list, array $type, Context $context)
+    public function serializeList(VisitorInterface $visitor, ConstraintViolationList $list, Type $type, Context $context)
     {
         $serializableList = new SerializableConstraintViolationList($list);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableList);
@@ -57,7 +58,7 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
         return $visitor->visitObject($metadata, $serializableList, $type, $context);
     }
 
-    public function serializeViolation(VisitorInterface $visitor, ConstraintViolation $violation, array $type, Context $context)
+    public function serializeViolation(VisitorInterface $visitor, ConstraintViolation $violation, Type $type, Context $context)
     {
         $serializableViolation = new SerializableConstraintViolation($violation);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableViolation);

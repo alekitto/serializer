@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Construction;
 
 use Doctrine\Instantiator\Instantiator;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
@@ -29,7 +30,7 @@ class UnserializeObjectConstructor implements ObjectConstructorInterface
     /** @var Instantiator  */
     private $instantiator;
 
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
     {
         return $this->getInstantiator()->instantiate($metadata->getName());
     }

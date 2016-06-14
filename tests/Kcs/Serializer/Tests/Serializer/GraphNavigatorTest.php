@@ -30,6 +30,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Metadata\MetadataFactory;
+use Kcs\Serializer\Type\Type;
 
 class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -71,7 +72,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $visitor = $this->getMock('Kcs\Serializer\VisitorInterface');
         $visitor->expects($this->any())
             ->method('visitObject')
-            ->will($this->returnCallback(function(ClassMetadata $passedMetadata, $data, array $type, Context $passedContext, ObjectConstructorInterface $objectConstructor)
+            ->will($this->returnCallback(function(ClassMetadata $passedMetadata, $data, Type $type, Context $passedContext, ObjectConstructorInterface $objectConstructor)
                 use ($context, $metadata, $self) {
                 $self->assertSame($metadata, $passedMetadata);
                 $self->assertTrue($context === $passedContext);
@@ -92,8 +93,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
         $this->dispatcher->addListener('serializer.pre_serialize', function($event) use ($typeName) {
             $type = $event->getType();
-            $type['name'] = $typeName;
-            $event->setType($type['name'], $type['params']);
+            $type->setName($typeName);
         });
 
         $this->handlerRegistry->registerSubscribingHandler(new TestSubscribingHandler());

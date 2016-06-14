@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Construction;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
@@ -47,7 +48,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     /**
      * {@inheritdoc}
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
     {
         // Locate possible ObjectManager
         $objectManager = $this->managerRegistry->getManagerForClass($metadata->getName());

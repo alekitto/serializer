@@ -22,6 +22,7 @@ namespace Kcs\Serializer\Tests\Serializer\EventDispatcher\Subscriber;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Tests\Fixtures\SimpleObjectProxy;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 
 class DoctrineProxySubscriberTest extends \PHPUnit_Framework_TestCase
@@ -34,19 +35,19 @@ class DoctrineProxySubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testRewritesProxyClassName()
     {
-        $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), array('name' => get_class($obj), 'params' => array()));
+        $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), Type::from($obj));
         $this->subscriber->onPreSerialize($event);
 
-        $this->assertEquals(array('name' => get_parent_class($obj), 'params' => array()), $event->getType());
+        $this->assertEquals(Type::from(get_parent_class($obj)), $event->getType());
         $this->assertTrue($obj->__isInitialized());
     }
 
     public function testDoesNotRewriteCustomType()
     {
-        $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), array('name' => 'FakedName', 'params' => array()));
+        $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), Type::from('FakedName'));
         $this->subscriber->onPreSerialize($event);
 
-        $this->assertEquals(array('name' => 'FakedName', 'params' => array()), $event->getType());
+        $this->assertEquals(Type::from('FakedName'), $event->getType());
         $this->assertTrue($obj->__isInitialized());
     }
 
@@ -56,7 +57,7 @@ class DoctrineProxySubscriberTest extends \PHPUnit_Framework_TestCase
         $this->visitor = $this->getMock('Kcs\Serializer\Context');
     }
 
-    private function createEvent($object, array $type)
+    private function createEvent($object, Type $type)
     {
         return new PreSerializeEvent($this->visitor, $object, $type);
     }

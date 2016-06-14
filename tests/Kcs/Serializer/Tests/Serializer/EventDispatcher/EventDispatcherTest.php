@@ -22,6 +22,7 @@ namespace Kcs\Serializer\Tests\Serializer\EventDispatcher;
 use Kcs\Serializer\EventDispatcher\Event;
 use Kcs\Serializer\EventDispatcher\EventDispatcher;
 use Kcs\Serializer\EventDispatcher\EventSubscriberInterface;
+use Kcs\Serializer\Type\Type;
 
 class EventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
@@ -93,7 +94,7 @@ class EventDispatcherTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->dispatcher = new EventDispatcher();
-        $this->event = new Event($this->getMock('Kcs\Serializer\Context'), new \stdClass(), array('name' => 'foo', 'params' => array()));
+        $this->event = new Event($this->getMock('Kcs\Serializer\Context'), new \stdClass(), Type::from('foo'));
     }
 
     private function dispatch($eventName, $class = 'Foo', $format = 'json', Event $event = null)

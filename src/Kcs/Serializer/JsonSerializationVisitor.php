@@ -21,6 +21,7 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Type\Type;
 
 class JsonSerializationVisitor extends GenericSerializationVisitor
 {
@@ -52,11 +53,11 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         $this->options = (integer) $options;
     }
 
-    public function visitArray($data, array $type, Context $context)
+    public function visitArray($data, Type $type, Context $context)
     {
         $result = parent::visitArray($data, $type, $context);
 
-        if (isset($type['params'][1]) && 0 === count($result)) {
+        if ($type->hasParam(1) && 0 === count($result)) {
             // ArrayObject is specially treated by the json_encode function and
             // serialized to { } while a mere array would be serialized to [].
             $this->setData($result = new \ArrayObject());
@@ -65,7 +66,7 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         return $result;
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $rs = parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
 

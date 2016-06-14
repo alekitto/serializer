@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableForm;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\GraphNavigator;
@@ -57,7 +58,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         $this->translator = $translator;
     }
 
-    public function serializeForm(VisitorInterface $visitor, Form $form, array $type, Context $context)
+    public function serializeForm(VisitorInterface $visitor, Form $form, Type $type, Context $context)
     {
         $serializableForm = new SerializableForm($form);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableForm);
@@ -65,7 +66,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return $visitor->visitObject($metadata, $serializableForm, $type, $context);
     }
 
-    public function serializeFormError(VisitorInterface $visitor, FormError $formError, array $type, Context $context)
+    public function serializeFormError(VisitorInterface $visitor, FormError $formError, Type $type, Context $context)
     {
         return $visitor->visitString($this->getErrorMessage($formError), $type, $context);
     }

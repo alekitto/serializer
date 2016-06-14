@@ -23,6 +23,7 @@ use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Type\Type;
 
 /**
  * Generic Deserialization Visitor.
@@ -31,21 +32,21 @@ use Kcs\Serializer\Metadata\ClassMetadata;
  */
 class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
-    public function visitArray($data, array $type, Context $context)
+    public function visitArray($data, Type $type, Context $context)
     {
         if ( ! is_array($data)) {
             throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), json_encode($data)));
         }
 
         // If no further parameters were given, keys/values are just passed as is.
-        if ( ! $type['params']) {
+        if (! $type->hasParam(0)) {
             $this->setData($data);
             return $data;
         }
 
-        switch (count($type['params'])) {
+        switch (count($type->getParams())) {
             case 1: // Array is a list.
-                $listType = $type['params'][0];
+                $listType = $type->getParam(0);
 
                 $result = array();
                 foreach ($data as $v) {
@@ -56,7 +57,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 return $result;
 
             case 2: // Array is a map.
-                list($keyType, $entryType) = $type['params'];
+                list($keyType, $entryType) = $type->getParams();
 
                 $result = array();
                 foreach ($data as $k => $v) {
@@ -67,11 +68,11 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 return $result;
 
             default:
-                throw new RuntimeException(sprintf('Array type cannot have more than 2 parameters, but got %s.', json_encode($type['params'])));
+                throw new RuntimeException(sprintf('Array type cannot have more than 2 parameters, but got %s.', json_encode($type->getParams())));
         }
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $exclusionStrategy = $context->getExclusionStrategy();
 

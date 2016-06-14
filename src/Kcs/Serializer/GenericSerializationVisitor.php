@@ -23,6 +23,7 @@ use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Type\Type;
 
 class GenericSerializationVisitor extends AbstractVisitor
 {
@@ -38,32 +39,32 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->dataStack = new \SplStack;
     }
 
-    public function visitNull($data, array $type, Context $context)
+    public function visitNull($data, Type $type, Context $context)
     {
         return $this->data = null;
     }
 
-    public function visitString($data, array $type, Context $context)
+    public function visitString($data, Type $type, Context $context)
     {
         return $this->data = (string) $data;
     }
 
-    public function visitBoolean($data, array $type, Context $context)
+    public function visitBoolean($data, Type $type, Context $context)
     {
         return $this->data = (boolean) $data;
     }
 
-    public function visitInteger($data, array $type, Context $context)
+    public function visitInteger($data, Type $type, Context $context)
     {
         return $this->data = (int) $data;
     }
 
-    public function visitDouble($data, array $type, Context $context)
+    public function visitDouble($data, Type $type, Context $context)
     {
         return $this->data = (float) $data;
     }
 
-    public function visitArray($data, array $type, Context $context)
+    public function visitArray($data, Type $type, Context $context)
     {
         $rs = array();
         foreach ($data as $k => $v) {
@@ -79,7 +80,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = $rs;
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $this->data = array();
 
@@ -103,13 +104,13 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data;
     }
 
-    public function startVisiting($data, array $type, Context $context)
+    public function startVisiting($data, Type $type, Context $context)
     {
         $this->dataStack->push($this->data);
         $this->data = null;
     }
 
-    public function endVisiting($data, array $type, Context $context)
+    public function endVisiting($data, Type $type, Context $context)
     {
         $rs = $this->data;
         $this->data = $this->dataStack->pop();
@@ -141,7 +142,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         }
     }
 
-    public function visitCustom(callable $handler, $data, array $type, Context $context)
+    public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
         $args = func_get_args();
 

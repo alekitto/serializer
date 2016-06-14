@@ -24,6 +24,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\EventDispatcher\Event;
 use Kcs\Serializer\EventDispatcher\EventSubscriberInterface;
 use Kcs\Serializer\GraphNavigator;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
@@ -113,7 +114,7 @@ class JsonSerializationTest extends BaseSerializationTest
     {
         $this->dispatcher->addSubscriber(new LinkAddingSubscriber());
         $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList', 'json',
-            function(VisitorInterface $visitor, AuthorList $data, array $type, Context $context) {
+            function(VisitorInterface $visitor, AuthorList $data, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($data), $type, $context);
             }
         );
@@ -170,7 +171,7 @@ class JsonSerializationTest extends BaseSerializationTest
     {
         $visitor = $this->serializationVisitors['json'];
         $functionToCall = 'visit' . ucfirst($primitiveType);
-        $result = $visitor->$functionToCall($data, array(), $this->getMock('Kcs\Serializer\Context'));
+        $result = $visitor->$functionToCall($data, new Type('NULL'), $this->getMock('Kcs\Serializer\Context'));
         if ($primitiveType == 'double') {
             $primitiveType = 'float';
         }

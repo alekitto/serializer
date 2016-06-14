@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Construction;
 
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
@@ -44,7 +45,7 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
     /**
      * {@inheritdoc}
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
     {
         if ($context->getDepth() === 1 && $context->attributes->has('target')) {
             return $context->attributes->get('target');

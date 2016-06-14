@@ -19,17 +19,17 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 
 class InitializedBlogPostConstructor extends UnserializeObjectConstructor
 {
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
     {
-        if ($type['name'] !== 'Kcs\Serializer\Tests\Fixtures\BlogPost') {
+        if (! $type->is(BlogPost::class)) {
             return parent::construct($visitor, $metadata, $data, $type, $context);
         }
 

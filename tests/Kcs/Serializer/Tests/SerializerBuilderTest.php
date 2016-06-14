@@ -23,6 +23,7 @@ use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Type\Type;
 
 class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,8 +41,8 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo
 ', $serializer->serialize('foo', 'yml'));
 
-        $this->assertEquals('foo', $serializer->deserialize('"foo"', 'string', 'json'));
-        $this->assertEquals('foo', $serializer->deserialize('<?xml version="1.0" encoding="UTF-8"?><result><![CDATA[foo]]></result>', 'string', 'xml'));
+        $this->assertEquals('foo', $serializer->deserialize('"foo"', Type::from('string'), 'json'));
+        $this->assertEquals('foo', $serializer->deserialize('<?xml version="1.0" encoding="UTF-8"?><result><![CDATA[foo]]></result>', Type::from('string'), 'xml'));
     }
 
     public function testDoesAddDefaultHandlers()

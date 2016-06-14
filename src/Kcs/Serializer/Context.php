@@ -28,6 +28,7 @@ use Kcs\Serializer\Exclusion\VersionExclusionStrategy;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
+use Kcs\Serializer\Type\Type;
 use PhpCollection\Map;
 
 abstract class Context
@@ -87,7 +88,7 @@ abstract class Context
         $this->addGroupsExclusionStrategy();
     }
 
-    public function accept($data, array $type = null)
+    public function accept($data, Type $type = null)
     {
         return $this->navigator->accept($data, $type, $this);
     }

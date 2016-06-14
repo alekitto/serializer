@@ -22,6 +22,7 @@ namespace Kcs\Serializer\Handler;
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Doctrine\Common\Collections\Collection;
 
@@ -60,19 +61,13 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
-    public function serializeCollection(VisitorInterface $visitor, Collection $collection, array $type, Context $context)
+    public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
     {
-        // We change the base type, and pass through possible parameters.
-        $type['name'] = 'array';
-
         return $visitor->visitArray($collection->toArray(), $type, $context);
     }
 
-    public function deserializeCollection(VisitorInterface $visitor, $data, array $type, Context $context)
+    public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
-        // See above.
-        $type['name'] = 'array';
-
         return new ArrayCollection($visitor->visitArray($data, $type, $context));
     }
 }

@@ -24,20 +24,9 @@ class Lexer extends AbstractLexer
 {
     const T_NONE                = 1;
     const T_STRING              = 2;
-    const T_CLOSE_PARENTHESIS   = 6;
-    const T_OPEN_PARENTHESIS    = 7;
-    const T_COMMA               = 8;
-    const T_DIVIDE              = 9;
-    const T_DOT                 = 10;
-    const T_EQUALS              = 11;
-    const T_CLOSED_BRACKET      = 12;
-    const T_OPEN_BRACKET        = 13;
-    const T_MINUS               = 14;
-    const T_MULTIPLY            = 15;
-    const T_NEGATE              = 16;
-    const T_PLUS                = 17;
-    const T_OPEN_CURLY_BRACE    = 18;
-    const T_CLOSE_CURLY_BRACE   = 19;
+    const T_COMMA               = 3;
+    const T_CLOSED_BRACKET      = 4;
+    const T_OPEN_BRACKET        = 5;
 
     const T_IDENTIFIER          = 100;
 
@@ -81,20 +70,9 @@ class Lexer extends AbstractLexer
             return self::T_IDENTIFIER;
         } else {
             switch ($value) {
-                case '.': return self::T_DOT;
                 case ',': return self::T_COMMA;
-                case '(': return self::T_OPEN_PARENTHESIS;
-                case ')': return self::T_CLOSE_PARENTHESIS;
-                case '=': return self::T_EQUALS;
                 case '>': return self::T_CLOSED_BRACKET;
                 case '<': return self::T_OPEN_BRACKET;
-                case '+': return self::T_PLUS;
-                case '-': return self::T_MINUS;
-                case '*': return self::T_MULTIPLY;
-                case '/': return self::T_DIVIDE;
-                case '!': return self::T_NEGATE;
-                case '{': return self::T_OPEN_CURLY_BRACE;
-                case '}': return self::T_CLOSE_CURLY_BRACE;
                 default:
                     // Do nothing
                     break;

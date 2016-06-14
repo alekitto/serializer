@@ -19,6 +19,8 @@
 
 namespace Kcs\Serializer;
 
+use Kcs\Serializer\Type\Type;
+
 /**
  * Serializer Interface.
  *
@@ -41,11 +43,10 @@ interface SerializerInterface
      * Deserializes the given data to the specified type.
      *
      * @param string $data
-     * @param string $type
+     * @param Type $type
      * @param string $format
      * @param DeserializationContext $context
-     *
      * @return mixed
      */
-    public function deserialize($data, $type, $format, DeserializationContext $context = null);
+    public function deserialize($data, Type $type, $format, DeserializationContext $context = null);
 }

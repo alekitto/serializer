@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\EventDispatcher\Subscriber;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ODM\MongoDB\PersistentCollection as MongoDBPersistentCollection;
 use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
@@ -26,6 +27,7 @@ use Doctrine\Common\Persistence\Proxy;
 use Doctrine\ORM\Proxy\Proxy as ORMProxy;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\EventDispatcher\EventSubscriberInterface;
+use Kcs\Serializer\Type\Type;
 
 class DoctrineProxySubscriber implements EventSubscriberInterface
 {
@@ -35,13 +37,11 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         $type = $event->getType();
 
         if (
-            (
-                $object instanceof PersistentCollection ||
-                $object instanceof MongoDBPersistentCollection ||
-                $object instanceof PHPCRPersistentCollection
-            ) && $type['name'] === get_class($object)
+            $type->is(PersistentCollection::class) ||
+            $type->is(MongoDBPersistentCollection::class) ||
+            $type->is(PHPCRPersistentCollection::class)
         ) {
-            $event->setType('ArrayCollection');
+            $event->setType(new Type(ArrayCollection::class));
             return;
         }
 
@@ -50,8 +50,8 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         }
 
         $object->__load();
-        if ($type['name'] === get_class($object)) {
-            $event->setType(get_parent_class($object));
+        if ($type->is(get_class($object))) {
+            $type->setName(get_parent_class($object));
         }
     }
 

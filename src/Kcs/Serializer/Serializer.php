@@ -26,6 +26,7 @@ use Kcs\Serializer\EventDispatcher\EventDispatcherInterface;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Parser\Parser;
+use Kcs\Serializer\Type\Type;
 
 /**
  * Serializer Implementation.
@@ -57,15 +58,13 @@ class Serializer implements SerializerInterface
      * @param VisitorInterface[] $serializationVisitors of VisitorInterface
      * @param VisitorInterface[] $deserializationVisitors of VisitorInterface
      * @param EventDispatcher\EventDispatcherInterface $dispatcher
-     * @param Parser $typeParser
      */
-    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null, Parser $typeParser = null)
+    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null)
     {
         $this->factory = $factory;
         $this->handlerRegistry = $handlerRegistry;
         $this->objectConstructor = $objectConstructor;
         $this->dispatcher = $dispatcher;
-        $this->typeParser = $typeParser ?: new Parser();
         $this->serializationVisitors = $serializationVisitors;
         $this->deserializationVisitors = $deserializationVisitors;
 
@@ -85,7 +84,7 @@ class Serializer implements SerializerInterface
         return $this->visit($this->serializationVisitors[$format], $context, $data, $format);
     }
 
-    public function deserialize($data, $type, $format, DeserializationContext $context = null)
+    public function deserialize($data, Type $type, $format, DeserializationContext $context = null)
     {
         if (null === $context) {
             $context = new DeserializationContext();
@@ -95,7 +94,7 @@ class Serializer implements SerializerInterface
             throw new UnsupportedFormatException("The format \"$format\" is not supported for deserialization");
         }
 
-        return $this->visit($this->deserializationVisitors[$format], $context, $data, $format, $this->typeParser->parse($type));
+        return $this->visit($this->deserializationVisitors[$format], $context, $data, $format, $type);
     }
 
     /**
@@ -127,17 +126,17 @@ class Serializer implements SerializerInterface
      * Restores objects from an array structure.
      *
      * @param array $data
-     * @param string $type
+     * @param Type $type
      * @param DeserializationContext $context
      *
      * @return mixed this returns whatever the passed type is, typically an object or an array of objects
      */
-    public function fromArray(array $data, $type, DeserializationContext $context = null)
+    public function fromArray(array $data, Type $type, DeserializationContext $context = null)
     {
         return $this->deserialize($data, $type, 'array', $context);
     }
 
-    private function visit(VisitorInterface $visitor, Context $context, $data, $format, array $type = null)
+    private function visit(VisitorInterface $visitor, Context $context, $data, $format, Type $type = null)
     {
         $data = $visitor->prepare($data);
         $context->initialize($format, $visitor, $this->navigator, $this->factory);

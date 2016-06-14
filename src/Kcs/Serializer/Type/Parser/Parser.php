@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Type\Parser;
 
 use Kcs\Serializer\Exception\SyntaxErrorException;
+use Kcs\Serializer\Type\Type;
 
 /**
  * Parses a serializer type.
@@ -31,6 +32,12 @@ final class Parser
         $this->lexer = new Lexer();
     }
 
+    /**
+     * Parse a type string
+     *
+     * @param string $input
+     * @return array
+     */
     public function parse($input)
     {
         $this->lexer->setInput($input);
@@ -39,6 +46,14 @@ final class Parser
         return $this->parseInternal();
     }
 
+    /**
+     * Match a token in the lexer
+     *
+     * @param int $type
+     * @return mixed
+     *
+     * @throws SyntaxErrorException
+     */
     protected function match($type)
     {
         if (! $this->lexer->isNextToken($type)) {
@@ -51,11 +66,18 @@ final class Parser
         return $value;
     }
 
+    /**
+     * Parse internal type string
+     *
+     * @return array
+     *
+     * @throws SyntaxErrorException
+     */
     private function parseInternal()
     {
         $typeName = $this->match(Lexer::T_IDENTIFIER);
         if (! $this->lexer->isNextToken(Lexer::T_OPEN_BRACKET)) {
-            return ['name' => $typeName, 'params' => []];
+            return new Type($typeName);
         }
 
         $this->match(Lexer::T_OPEN_BRACKET);
@@ -73,9 +95,14 @@ final class Parser
 
         $this->match(Lexer::T_CLOSED_BRACKET);
 
-        return ['name' => $typeName, 'params' => $params];
+        return new Type($typeName, $params);
     }
 
+    /**
+     * Throw a syntax error exception
+     *
+     * @throws SyntaxErrorException
+     */
     private function syntaxError()
     {
         throw new SyntaxErrorException(

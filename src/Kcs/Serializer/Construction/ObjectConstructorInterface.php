@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Construction;
 
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\DeserializationContext;
@@ -39,10 +40,10 @@ interface ObjectConstructorInterface
      * @param VisitorInterface $visitor
      * @param ClassMetadata $metadata
      * @param mixed $data
-     * @param array $type ["name" => string, "params" => array]
+     * @param Type $type
      * @param DeserializationContext $context
      *
      * @return object
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, array $type, DeserializationContext $context);
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context);
 }

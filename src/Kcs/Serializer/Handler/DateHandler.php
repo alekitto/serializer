@@ -21,6 +21,7 @@ namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\XmlSerializationVisitor;
@@ -64,7 +65,7 @@ class DateHandler implements SubscribingHandlerInterface
         $this->xmlCData = $xmlCData;
     }
 
-    public function serializeDateTime(VisitorInterface $visitor, \DateTime $date, array $type, Context $context)
+    public function serializeDateTime(VisitorInterface $visitor, \DateTime $date, Type $type, Context $context)
     {
         $format = $this->getFormat($type);
         if ('U' === $format) {
@@ -74,18 +75,18 @@ class DateHandler implements SubscribingHandlerInterface
         return $this->serialize($visitor, $date->format($this->getFormat($type)), $type, $context);
     }
 
-    public function serializeDateInterval(VisitorInterface $visitor, \DateInterval $date, array $type, Context $context)
+    public function serializeDateInterval(VisitorInterface $visitor, \DateInterval $date, Type $type, Context $context)
     {
         return $this->serialize($visitor, $this->formatInterval($date), $type, $context);
     }
 
-    public function deserializeDateTime(VisitorInterface $visitor, $data, array $type)
+    public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type)
     {
         if (null === $data) {
             return null;
         }
 
-        $timezone = isset($type['params'][1]) ? new \DateTimeZone($type['params'][1]) : $this->defaultTimezone;
+        $timezone = $type->hasParam(1) ? new \DateTimeZone($type->getParam(1)) : $this->defaultTimezone;
         $format = $this->getFormat($type);
         $datetime = \DateTime::createFromFormat($format, (string) $data, $timezone);
 
@@ -96,7 +97,7 @@ class DateHandler implements SubscribingHandlerInterface
         return $datetime;
     }
 
-    private function serialize(VisitorInterface $visitor, $data, array $type, Context $context)
+    private function serialize(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
         if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
             return $visitor->visitSimpleString($data);
@@ -107,11 +108,11 @@ class DateHandler implements SubscribingHandlerInterface
 
     /**
      * @return string
-     * @param array $type
+     * @param Type $type
      */
-    private function getFormat(array $type)
+    private function getFormat(Type $type)
     {
-        return isset($type['params'][0]) ? $type['params'][0] : $this->defaultFormat;
+        return $type->hasParam(0) ? $type->getParam(0) : $this->defaultFormat;
     }
 
     /**

@@ -37,6 +37,7 @@ use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
 use Kcs\Serializer\Tests\Fixtures\Timestamp;
 use Kcs\Serializer\Tests\Fixtures\Tree;
 use Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\YamlDeserializationVisitor;
 use PhpCollection\Sequence;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -227,7 +228,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getContent('array_strings'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
-            $this->assertEquals($data, $this->deserialize($this->getContent('array_strings'), 'array<string>'));
+            $this->assertEquals($data, $this->deserialize($this->getContent('array_strings'), Type::parse('array<string>')));
         }
     }
 
@@ -237,7 +238,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getContent('array_booleans'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
-            $this->assertEquals($data, $this->deserialize($this->getContent('array_booleans'), 'array<boolean>'));
+            $this->assertEquals($data, $this->deserialize($this->getContent('array_booleans'), Type::parse('array<boolean>')));
         }
     }
 
@@ -247,7 +248,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getContent('array_integers'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
-            $this->assertEquals($data, $this->deserialize($this->getContent('array_integers'), 'array<integer>'));
+            $this->assertEquals($data, $this->deserialize($this->getContent('array_integers'), Type::parse('array<integer>')));
         }
     }
 
@@ -257,7 +258,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getContent('array_floats'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
-            $this->assertEquals($data, $this->deserialize($this->getContent('array_floats'), 'array<double>'));
+            $this->assertEquals($data, $this->deserialize($this->getContent('array_floats'), Type::parse('array<double>')));
         }
     }
 
@@ -267,7 +268,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getContent('array_objects'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
-            $this->assertEquals($data, $this->deserialize($this->getContent('array_objects'), 'array<Kcs\Serializer\Tests\Fixtures\SimpleObject>'));
+            $this->assertEquals($data, $this->deserialize($this->getContent('array_objects'), Type::parse('array<Kcs\Serializer\Tests\Fixtures\SimpleObject>')));
         }
     }
 
@@ -783,7 +784,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_DESERIALIZATION, 'CustomDeserializationObject', $this->getFormat(), $handler);
 
         $serialized = $this->serializer->serialize(new CustomDeserializationObject('sometext'), $this->getFormat());
-        $object = $this->serializer->deserialize($serialized, 'CustomDeserializationObject', $this->getFormat());
+        $object = $this->serializer->deserialize($serialized, Type::from('CustomDeserializationObject'), $this->getFormat());
         $this->assertEquals('customly_unserialized_value', $object->someProperty);
     }
 
@@ -899,7 +900,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @group polymorphic
-     * @expectedException LogicException
+     * @expectedException \LogicException
      */
     public function testPolymorphicObjectsInvalidDeserialization()
     {
@@ -953,7 +954,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
         $deseralizedOrder = $serializer->deserialize(
             $this->getContent('order'),
-            get_class($order),
+            Type::from($order),
             $this->getFormat(),
             $context
         );
@@ -978,7 +979,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     protected function deserialize($content, $type, Context $context = null)
     {
-        return $this->serializer->deserialize($content, $type, $this->getFormat(), $context);
+        return $this->serializer->deserialize($content, Type::from($type), $this->getFormat(), $context);
     }
 
     protected function setUp()
@@ -992,18 +993,18 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'AuthorList', $this->getFormat(),
-            function(VisitorInterface $visitor, $object, array $type, Context $context) {
+            function(VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($object), $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_DESERIALIZATION, 'AuthorList', $this->getFormat(),
             function(VisitorInterface $visitor, $data, $type, Context $context) {
-                $type = array(
-                    'name' => 'array',
-                    'params' => array(
-                        array('name' => 'integer', 'params' => array()),
-                        array('name' => 'Kcs\Serializer\Tests\Fixtures\Author', 'params' => array()),
-                    ),
+                $type = new Type(
+                    'array',
+                    [
+                        Type::from('integer'),
+                        Type::from(Author::class)
+                    ]
                 );
 
                 $elements = $context->accept($data, $type);

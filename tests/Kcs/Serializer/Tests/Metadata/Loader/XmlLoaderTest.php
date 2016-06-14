@@ -24,6 +24,7 @@ use Kcs\Serializer\Metadata\Loader\XmlsLoader;
 use Kcs\Serializer\Tests\Metadata\Loader\BaseLoaderTest;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
+use Kcs\Serializer\Type\Type;
 
 class XmlLoaderTest extends BaseLoaderTest
 {
@@ -59,7 +60,7 @@ class XmlLoaderTest extends BaseLoaderTest
         $this->getLoader('case')->loadClassMetadata($m);
 
         $p = new PropertyMetadata($m->getName(), 'title');
-        $p->type = array('name' => 'string', 'params' => array());
+        $p->type = Type::from('string');
         $this->assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
@@ -69,7 +70,7 @@ class XmlLoaderTest extends BaseLoaderTest
         $this->getLoader()->loadClassMetadata($m);
 
         $p = new PropertyMetadata($m->getName(), 'name');
-        $p->type = array('name' => 'string', 'params' => array());
+        $p->type = Type::from('string');
         $p->getter = 'getTrimmedName';
         $p->setter = 'setCapitalizedName';
 

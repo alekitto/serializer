@@ -22,6 +22,7 @@ namespace Kcs\Serializer;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Type\Type;
 
 /**
  * Interface for visitors.
@@ -45,68 +46,68 @@ interface VisitorInterface
 
     /**
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitNull($data, array $type, Context $context);
+    public function visitNull($data, Type $type, Context $context);
 
     /**
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitString($data, array $type, Context $context);
+    public function visitString($data, Type $type, Context $context);
 
     /**
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitBoolean($data, array $type, Context $context);
+    public function visitBoolean($data, Type $type, Context $context);
 
     /**
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitDouble($data, array $type, Context $context);
+    public function visitDouble($data, Type $type, Context $context);
 
     /**
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitInteger($data, array $type, Context $context);
+    public function visitInteger($data, Type $type, Context $context);
 
     /**
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitArray($data, array $type, Context $context);
+    public function visitArray($data, Type $type, Context $context);
 
     /**
      * @param ClassMetadata $metadata
      * @param $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      * @param ObjectConstructorInterface $objectConstructor
      *
      * @return mixed
      */
-    public function visitObject(ClassMetadata $metadata, $data, array $type, Context $context, ObjectConstructorInterface $objectConstructor = null);
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null);
 
     /**
      * @param PropertyMetadata $metadata
@@ -120,34 +121,34 @@ interface VisitorInterface
     /**
      * @param callable $handler
      * @param $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function visitCustom(callable $handler, $data, array $type, Context $context);
+    public function visitCustom(callable $handler, $data, Type $type, Context $context);
 
     /**
      * Called before the properties of the object are being visited.
      *
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return void
      */
-    public function startVisiting($data, array $type, Context $context);
+    public function startVisiting($data, Type $type, Context $context);
 
     /**
      * Called after all properties of the object have been visited.
      *
      * @param mixed $data
-     * @param array $type
+     * @param Type $type
      * @param Context $context
      *
      * @return mixed
      */
-    public function endVisiting($data, array $type, Context $context);
+    public function endVisiting($data, Type $type, Context $context);
 
     /**
      * Called before serialization/deserialization starts.

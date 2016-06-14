@@ -21,6 +21,7 @@ namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
+use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use PhpCollection\Map;
 use PhpCollection\Sequence;
@@ -57,35 +58,27 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
-    public function serializeMap(VisitorInterface $visitor, Map $map, array $type, Context $context)
+    public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context)
     {
-        $type['name'] = 'array';
         $rs = $visitor->visitArray(iterator_to_array($map), $type, $context);
 
         return $rs;
     }
 
-    public function deserializeMap(VisitorInterface $visitor, $data, array $type, Context $context)
+    public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
-        $type['name'] = 'array';
-
         return new Map($visitor->visitArray($data, $type, $context));
     }
 
-    public function serializeSequence(VisitorInterface $visitor, Sequence $sequence, array $type, Context $context)
+    public function serializeSequence(VisitorInterface $visitor, Sequence $sequence, Type $type, Context $context)
     {
-        // We change the base type, and pass through possible parameters.
-        $type['name'] = 'array';
         $rs = $visitor->visitArray($sequence->all(), $type, $context);
 
         return $rs;
     }
 
-    public function deserializeSequence(VisitorInterface $visitor, $data, array $type, Context $context)
+    public function deserializeSequence(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
-        // See above.
-        $type['name'] = 'array';
-
         return new Sequence($visitor->visitArray($data, $type, $context));
     }
 }

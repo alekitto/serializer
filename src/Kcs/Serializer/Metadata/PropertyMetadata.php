@@ -22,6 +22,7 @@ namespace Kcs\Serializer\Metadata;
 use Kcs\Serializer\Type\Parser\Parser;
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Type\Type;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
@@ -49,8 +50,6 @@ class PropertyMetadata extends BasePropertyMetadata
     public $xmlAttributeMap = false;
     public $maxDepth = null;
     public $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
-
-    private static $typeParser;
 
     public function __construct($class, $name)
     {
@@ -108,11 +107,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public function setType($type)
     {
-        if (null === self::$typeParser) {
-            self::$typeParser = new Parser();
-        }
-
-        $this->type = self::$typeParser->parse($type);
+        $this->type = Type::parse($type);
     }
 
     protected function initializeGetterAccessor()

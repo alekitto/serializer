@@ -35,6 +35,7 @@ use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlRootNamespace;
 use Kcs\Serializer\Tests\Fixtures\SimpleClassObject;
 use Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject;
+use Kcs\Serializer\Type\Type;
 
 class XmlSerializationTest extends BaseSerializationTest
 {
@@ -119,13 +120,13 @@ class XmlSerializationTest extends BaseSerializationTest
 
         $this->serializer->deserialize('<?xml version="1.0"?>
             <!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">
-            <foo></foo>', 'stdClass', 'xml');
+            <foo></foo>', Type::from('stdClass'), 'xml');
 
         $this->serializer->deserialize('<?xml version="1.0"?>
             <!DOCTYPE author [
                 <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">
             ]>
-            <foo></foo>', 'stdClass', 'xml');
+            <foo></foo>', Type::from('stdClass'), 'xml');
     }
 
     public function testVirtualAttributes()
