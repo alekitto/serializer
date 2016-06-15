@@ -20,14 +20,15 @@
 namespace Kcs\Serializer\EventDispatcher\Subscriber;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ODM\MongoDB\PersistentCollection as MongoDBPersistentCollection;
 use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\ORM\Proxy\Proxy as ORMProxy;
+use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
-use Kcs\Serializer\EventDispatcher\EventSubscriberInterface;
-use Kcs\Serializer\Type\Type;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DoctrineProxySubscriber implements EventSubscriberInterface
 {
@@ -36,14 +37,7 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         $object = $event->getData();
         $type = $event->getType();
 
-        if (
-            $type->is(PersistentCollection::class) ||
-            $type->is(MongoDBPersistentCollection::class) ||
-            $type->is(PHPCRPersistentCollection::class)
-        ) {
-            $event->setType(new Type(ArrayCollection::class));
-            return;
-        }
+        $this->processCollectionType($event);
 
         if ( ! $object instanceof Proxy && ! $object instanceof ORMProxy) {
             return;
@@ -57,8 +51,26 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            array('event' => 'serializer.pre_serialize', 'method' => 'onPreSerialize'),
-        );
+        return [
+            Events::PRE_SERIALIZE => ['onPreSerialize', 20]
+        ];
+    }
+
+    protected function processCollectionType(PreSerializeEvent $event)
+    {
+        $type = $event->getType();
+        $object = $event->getData();
+
+        if (! $object instanceof Collection || $object instanceof ArrayCollection) {
+            return;
+        }
+
+        if (
+            $type->is(PersistentCollection::class) ||
+            $type->is(MongoDBPersistentCollection::class) ||
+            $type->is(PHPCRPersistentCollection::class)
+        ) {
+            $event->getType()->setName(ArrayCollection::class);
+        }
     }
 }

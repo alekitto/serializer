@@ -19,15 +19,15 @@
 
 namespace Kcs\Serializer\Tests\Serializer\EventDispatcher\Subscriber;
 
+use Kcs\Serializer\Context;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Tests\Fixtures\SimpleObjectProxy;
 use Kcs\Serializer\Type\Type;
-use Kcs\Serializer\VisitorInterface;
 
 class DoctrineProxySubscriberTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var VisitorInterface */
+    /** @var Context */
     private $visitor;
 
     /** @var DoctrineProxySubscriber */

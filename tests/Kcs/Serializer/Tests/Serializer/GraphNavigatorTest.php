@@ -23,7 +23,6 @@ use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Handler\HandlerRegistry;
-use Kcs\Serializer\EventDispatcher\EventDispatcher;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
@@ -31,6 +30,7 @@ use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 {

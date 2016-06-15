@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer;
 
+use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PostDeserializeEvent;
 use Kcs\Serializer\EventDispatcher\PostSerializeEvent;
 use Kcs\Serializer\EventDispatcher\PreDeserializeEvent;
@@ -26,11 +27,11 @@ use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
-use Kcs\Serializer\EventDispatcher\EventDispatcherInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles traversal along the object graph.
@@ -163,7 +164,7 @@ use Kcs\Serializer\Type\Type;
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.pre_serialize', $type->getName(), $context->getFormat(), $event = new PreSerializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
             $data = $event->getData();
         }
 
@@ -184,7 +185,7 @@ use Kcs\Serializer\Type\Type;
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.post_serialize', $type->getName(), $context->getFormat(), new PostSerializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
         }
 
         $rs = $context->getVisitor()->endVisiting($data, $type, $context);
@@ -201,7 +202,7 @@ use Kcs\Serializer\Type\Type;
         $context->increaseDepth();
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.pre_deserialize', $type->getName(), $context->getFormat(), $event = new PreDeserializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
             $data = $event->getData();
         }
 
@@ -222,7 +223,7 @@ use Kcs\Serializer\Type\Type;
         }
 
         if (null !== $this->dispatcher) {
-            $this->dispatcher->dispatch('serializer.post_deserialize', $type->getName(), $context->getFormat(), new PostDeserializeEvent($context, $rs, $type));
+            $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
         }
 
         $rs = $context->getVisitor()->endVisiting($rs, $type, $context);

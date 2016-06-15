@@ -44,7 +44,9 @@ function createObject()
     return $post;
 }
 
-$serializer = \Kcs\Serializer\SerializerBuilder::create()->build();
+$serializer = \Kcs\Serializer\SerializerBuilder::create()
+    ->setEventDispatcher(new \Symfony\Component\EventDispatcher\EventDispatcher())
+    ->build();
 $collection = createCollection();
 $metrics = array();
 $f = function() use ($serializer, $collection, $format) {

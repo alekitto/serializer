@@ -21,8 +21,9 @@ namespace Kcs\Serializer\EventDispatcher;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
-class Event
+class Event extends BaseEvent
 {
     protected $type;
     private $context;

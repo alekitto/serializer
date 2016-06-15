@@ -20,6 +20,7 @@ use Kcs\Serializer\Tests\Fixture\Doctrine\SingleTableInheritance\Clazz;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Excursion;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Student;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Teacher;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
@@ -75,6 +76,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
         $this->serializer = SerializerBuilder::create()
             ->setMetadataLoader(new DoctrineTypeLoader(new AnnotationLoader(new AnnotationReader()), $registry))
+            ->setEventDispatcher(new EventDispatcher())
             ->build()
         ;
 

@@ -22,10 +22,10 @@ namespace Kcs\Serializer;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
-use Kcs\Serializer\EventDispatcher\EventDispatcherInterface;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Serializer Implementation.
@@ -35,9 +35,6 @@ use Kcs\Serializer\Type\Type;
 class Serializer implements SerializerInterface
 {
     private $factory;
-    private $handlerRegistry;
-    private $objectConstructor;
-    private $dispatcher;
 
     /** @var VisitorInterface[] */
     private $serializationVisitors;
@@ -55,18 +52,15 @@ class Serializer implements SerializerInterface
      * @param Construction\ObjectConstructorInterface $objectConstructor
      * @param VisitorInterface[] $serializationVisitors of VisitorInterface
      * @param VisitorInterface[] $deserializationVisitors of VisitorInterface
-     * @param EventDispatcher\EventDispatcherInterface $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null)
     {
         $this->factory = $factory;
-        $this->handlerRegistry = $handlerRegistry;
-        $this->objectConstructor = $objectConstructor;
-        $this->dispatcher = $dispatcher;
         $this->serializationVisitors = $serializationVisitors;
         $this->deserializationVisitors = $deserializationVisitors;
 
-        $this->navigator = new GraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new GraphNavigator($this->factory, $handlerRegistry, $objectConstructor, $dispatcher);
     }
 
     public function serialize($data, $format, SerializationContext $context = null)

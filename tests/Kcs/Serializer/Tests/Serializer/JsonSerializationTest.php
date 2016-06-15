@@ -22,12 +22,12 @@ namespace Kcs\Serializer\Tests\Serializer;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\EventDispatcher\Event;
-use Kcs\Serializer\EventDispatcher\EventSubscriberInterface;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class JsonSerializationTest extends BaseSerializationTest
 {
@@ -223,6 +223,10 @@ class LinkAddingSubscriber implements EventSubscriberInterface
 {
     public function onPostSerialize(Event $event)
     {
+        if ($event->getContext()->getFormat() !== 'json' || ! $event->getType()->is(Author::class)) {
+            return;
+        }
+
         $author = $event->getData();
 
         $event->getVisitor()->addData('_links', array(
@@ -233,8 +237,8 @@ class LinkAddingSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            array('event' => 'serializer.post_serialize', 'method' => 'onPostSerialize', 'format' => 'json', 'class' => 'Kcs\Serializer\Tests\Fixtures\Author'),
-        );
+        return [
+            'serializer.post_serialize' => 'onPostSerialize'
+        ];
     }
 }

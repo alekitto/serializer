@@ -28,7 +28,6 @@ use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Metadata\Loader\LoaderInterface;
-use Kcs\Serializer\EventDispatcher\EventDispatcher;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
@@ -38,6 +37,7 @@ use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Builder for serializer instances.
@@ -69,7 +69,6 @@ class SerializerBuilder
     public function __construct()
     {
         $this->handlerRegistry = new HandlerRegistry();
-        $this->eventDispatcher = new EventDispatcher();
         $this->serializationVisitors = [];
         $this->deserializationVisitors = [];
     }
@@ -90,6 +89,12 @@ class SerializerBuilder
     public function setMetadataLoader(LoaderInterface $metadataLoader)
     {
         $this->metadataLoader = $metadataLoader;
+        return $this;
+    }
+
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
         return $this;
     }
 
@@ -115,7 +120,10 @@ class SerializerBuilder
     public function addDefaultListeners()
     {
         $this->listenersConfigured = true;
-        $this->eventDispatcher->addSubscriber(new DoctrineProxySubscriber());
+
+        if (null !== $this->eventDispatcher) {
+            $this->eventDispatcher->addSubscriber(new DoctrineProxySubscriber());
+        }
 
         return $this;
     }
@@ -196,7 +204,7 @@ class SerializerBuilder
             $metadataLoader = new AnnotationLoader($annotationReader);
         }
 
-        $metadataFactory = new MetadataFactory($metadataLoader, null, $this->cache);
+        $metadataFactory = new MetadataFactory($metadataLoader, $this->eventDispatcher, $this->cache);
 
         if ( ! $this->handlersConfigured) {
             $this->addDefaultHandlers();
