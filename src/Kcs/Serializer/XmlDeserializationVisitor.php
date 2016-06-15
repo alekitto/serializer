@@ -75,7 +75,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
         $result = array();
 
-        switch (count($type->getParams())) {
+        switch ($type->countParams()) {
             case 0:
                 throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
 
@@ -95,7 +95,8 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                     throw new RuntimeException('Maps are not supported on top-level without metadata.');
                 }
 
-                list($keyType, $entryType) = $type->getParams();
+                $keyType = $type->getParam(0);
+                $entryType = $type->getParam(1);
                 foreach ($data->$entryName as $v) {
                     if ( ! isset($v[$currentMetadata->xmlKeyAttribute])) {
                         throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));

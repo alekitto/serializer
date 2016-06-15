@@ -44,7 +44,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
             return $data;
         }
 
-        switch (count($type->getParams())) {
+        switch ($type->countParams()) {
             case 1: // Array is a list.
                 $listType = $type->getParam(0);
 
@@ -57,7 +57,8 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 return $result;
 
             case 2: // Array is a map.
-                list($keyType, $entryType) = $type->getParams();
+                $keyType = $type->getParam(0);
+                $entryType = $type->getParam(1);
 
                 $result = array();
                 foreach ($data as $k => $v) {

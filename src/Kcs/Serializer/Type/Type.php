@@ -71,6 +71,9 @@ class Type
         return new self($object);
     }
 
+    /**
+     * @return Type
+     */
     public static function null()
     {
         static $nullType = null;
@@ -117,6 +120,11 @@ class Type
         $this->params = $params;
 
         return $this;
+    }
+
+    public function countParams()
+    {
+        return count($this->params);
     }
 
     /**

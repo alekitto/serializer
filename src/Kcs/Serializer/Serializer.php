@@ -25,7 +25,6 @@ use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\EventDispatcher\EventDispatcherInterface;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
-use Kcs\Serializer\Type\Parser\Parser;
 use Kcs\Serializer\Type\Type;
 
 /**
@@ -39,7 +38,6 @@ class Serializer implements SerializerInterface
     private $handlerRegistry;
     private $objectConstructor;
     private $dispatcher;
-    private $typeParser;
 
     /** @var VisitorInterface[] */
     private $serializationVisitors;
