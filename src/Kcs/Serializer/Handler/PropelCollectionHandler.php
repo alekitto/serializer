@@ -20,7 +20,6 @@
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Type\Type;
-use \PropelCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\VisitorInterface;
@@ -29,46 +28,41 @@ class PropelCollectionHandler implements SubscribingHandlerInterface
 {
     public static function getSubscribingMethods()
     {
-        $methods = array();
-        $formats = array('json', 'xml', 'yml');
+        $methods = [];
 
         //Note: issue when handling inheritance
-        $collectionTypes = array(
-            'PropelCollection',
-            'PropelObjectCollection',
-            'PropelArrayCollection',
-            'PropelOnDemandCollection'
-        );
+        $collectionTypes = [
+            \PropelCollection::class,
+            \PropelObjectCollection::class,
+            \PropelArrayCollection::class,
+            \PropelOnDemandCollection::class,
+        ];
 
         foreach ($collectionTypes as $type) {
-            foreach ($formats as $format) {
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => 'serializeCollection',
-                );
+            $methods[] = [
+                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'type' => $type,
+                'method' => 'serializeCollection',
+            ];
 
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => 'deserializeCollection',
-                );
-            }
+            $methods[] = [
+                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'type' => $type,
+                'method' => 'deserializeCollection',
+            ];
         }
 
         return $methods;
     }
 
-    public function serializeCollection(VisitorInterface $visitor, PropelCollection $collection, Type $type, Context $context)
+    public function serializeCollection(VisitorInterface $visitor, \PropelCollection $collection, Type $type, Context $context)
     {
         return $visitor->visitArray($collection->getData(), $type, $context);
     }
 
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
-        $collection = new PropelCollection();
+        $collection = new \PropelCollection();
         $collection->setData($visitor->visitArray($data, $type, $context));
 
         return $collection;

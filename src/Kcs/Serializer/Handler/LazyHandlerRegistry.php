@@ -32,27 +32,27 @@ class LazyHandlerRegistry extends HandlerRegistry
         $this->container = $container;
     }
 
-    public function registerHandler($direction, $typeName, $format, $handler)
+    public function registerHandler($direction, $typeName, callable $handler)
     {
-        parent::registerHandler($direction, $typeName, $format, $handler);
-        unset($this->initializedHandlers[$direction][$typeName][$format]);
+        parent::registerHandler($direction, $typeName, $handler);
+        unset($this->initializedHandlers[$direction][$typeName]);
     }
 
-    public function getHandler($direction, $typeName, $format)
+    public function getHandler($direction, $typeName)
     {
-        if (isset($this->initializedHandlers[$direction][$typeName][$format])) {
-            return $this->initializedHandlers[$direction][$typeName][$format];
+        if (isset($this->initializedHandlers[$direction][$typeName])) {
+            return $this->initializedHandlers[$direction][$typeName];
         }
 
-        if ( ! isset($this->handlers[$direction][$typeName][$format])) {
+        if ( ! isset($this->handlers[$direction][$typeName])) {
             return null;
         }
 
-        $handler = $this->handlers[$direction][$typeName][$format];
+        $handler = $this->handlers[$direction][$typeName];
         if (is_array($handler) && is_string($handler[0]) && $this->container->has($handler[0])) {
             $handler[0] = $this->container->get($handler[0]);
         }
 
-        return $this->initializedHandlers[$direction][$typeName][$format] = $handler;
+        return $this->initializedHandlers[$direction][$typeName] = $handler;
     }
 }

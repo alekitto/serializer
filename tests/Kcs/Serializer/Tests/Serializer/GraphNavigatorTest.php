@@ -133,9 +133,10 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
     {
         return array(array(
             'type' => 'JsonSerializable',
-            'format' => 'foo',
             'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
             'method' => 'serialize'
         ));
     }
+
+    public function serialize() {}
 }

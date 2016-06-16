@@ -20,6 +20,9 @@
 namespace Kcs\Serializer\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
+use Doctrine\ODM\MongoDB\PersistentCollection as MongoBDPersistentCollection;
+use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Type\Type;
@@ -30,32 +33,27 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 {
     public static function getSubscribingMethods()
     {
-        $methods = array();
-        $formats = array('json', 'xml', 'yml');
-        $collectionTypes = array(
+        $methods = [];
+        $collectionTypes = [
             'ArrayCollection',
-            'Doctrine\Common\Collections\ArrayCollection',
-            'Doctrine\ORM\PersistentCollection',
-            'Doctrine\ODM\MongoDB\PersistentCollection',
-            'Doctrine\ODM\PHPCR\PersistentCollection',
-        );
+            ArrayCollection::class,
+            PersistentCollection::class,
+            MongoDBPersistentCollection::class,
+            PHPCRPersistentCollection::class,
+        ];
 
         foreach ($collectionTypes as $type) {
-            foreach ($formats as $format) {
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => 'serializeCollection',
-                );
+            $methods[] = [
+                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'type' => $type,
+                'method' => 'serializeCollection',
+            ];
 
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => 'deserializeCollection',
-                );
-            }
+            $methods[] = [
+                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'type' => $type,
+                'method' => 'deserializeCollection',
+            ];
         }
 
         return $methods;

@@ -30,29 +30,24 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 {
     public static function getSubscribingMethods()
     {
-        $methods = array();
-        $formats = array('json', 'xml', 'yml');
-        $collectionTypes = array(
-            'PhpCollection\Sequence' => 'Sequence',
-            'PhpCollection\Map' => 'Map',
-        );
+        $methods = [];
+        $collectionTypes = [
+            Sequence::class => 'Sequence',
+            Map::class => 'Map',
+        ];
 
         foreach ($collectionTypes as $type => $shortName) {
-            foreach ($formats as $format) {
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => 'serialize'.$shortName,
-                );
+            $methods[] = [
+                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'type' => $type,
+                'method' => 'serialize'.$shortName,
+            ];
 
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => 'deserialize'.$shortName,
-                );
-            }
+            $methods[] = [
+                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'type' => $type,
+                'method' => 'deserialize'.$shortName,
+            ];
         }
 
         return $methods;
@@ -60,9 +55,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context)
     {
-        $rs = $visitor->visitArray(iterator_to_array($map), $type, $context);
-
-        return $rs;
+        return $visitor->visitArray(iterator_to_array($map), $type, $context);
     }
 
     public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context)
@@ -72,9 +65,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeSequence(VisitorInterface $visitor, Sequence $sequence, Type $type, Context $context)
     {
-        $rs = $visitor->visitArray($sequence->all(), $type, $context);
-
-        return $rs;
+        return $visitor->visitArray($sequence->all(), $type, $context);
     }
 
     public function deserializeSequence(VisitorInterface $visitor, $data, Type $type, Context $context)

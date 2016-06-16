@@ -781,7 +781,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             return new CustomDeserializationObject('customly_unserialized_value');
         };
 
-        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_DESERIALIZATION, 'CustomDeserializationObject', $this->getFormat(), $handler);
+        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_DESERIALIZATION, 'CustomDeserializationObject', $handler);
 
         $serialized = $this->serializer->serialize(new CustomDeserializationObject('sometext'), $this->getFormat());
         $object = $this->serializer->deserialize($serialized, Type::from('CustomDeserializationObject'), $this->getFormat());
@@ -992,12 +992,12 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler(new IdentityTranslator(new MessageSelector())));
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
-        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'AuthorList', $this->getFormat(),
+        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'AuthorList',
             function(VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($object), $type, $context);
             }
         );
-        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_DESERIALIZATION, 'AuthorList', $this->getFormat(),
+        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_DESERIALIZATION, 'AuthorList',
             function(VisitorInterface $visitor, $data, $type, Context $context) {
                 $type = new Type(
                     'array',

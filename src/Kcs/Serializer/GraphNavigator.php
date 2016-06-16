@@ -163,7 +163,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
             $type = new Type(get_class($data));
         }
 
-        if (null !== $this->dispatcher) {
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
             $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
             $data = $event->getData();
         }
@@ -184,7 +184,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
             }
         }
 
-        if (null !== $this->dispatcher) {
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
             $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
         }
 
@@ -201,7 +201,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
     {
         $context->increaseDepth();
 
-        if (null !== $this->dispatcher) {
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
             $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
             $data = $event->getData();
         }
@@ -222,7 +222,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
             }
         }
 
-        if (null !== $this->dispatcher) {
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
             $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
         }
 
@@ -237,7 +237,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         $visitor = $context->getVisitor();
 
         // First, try whether a custom handler exists for the given type
-        if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type->getName(), $context->getFormat())) {
+        if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type->getName())) {
             return $visitor->visitCustom($handler, $data, $type, $context);
         }
 

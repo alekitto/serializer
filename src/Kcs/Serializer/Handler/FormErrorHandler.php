@@ -34,23 +34,17 @@ class FormErrorHandler implements SubscribingHandlerInterface
 
     public static function getSubscribingMethods()
     {
-        $methods = array();
-        foreach (array('xml', 'json', 'yml') as $format) {
-            $methods[] = array(
+        return [
+            [
                 'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\Form',
-                'format' => $format,
                 'method' => 'serializeForm'
-            );
-            $methods[] = array(
+            ], [
                 'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\FormError',
-                'format' => $format,
                 'method' => 'serializeFormError'
-            );
-        }
-
-        return $methods;
+            ]
+        ];
     }
 
     public function __construct(TranslatorInterface $translator)

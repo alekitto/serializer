@@ -32,22 +32,17 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
 {
     public static function getSubscribingMethods()
     {
-        $methods = array();
-        $formats = array('xml', 'json', 'yml');
-        $types = array('Symfony\Component\Validator\ConstraintViolationList' => 'serializeList', 'Symfony\Component\Validator\ConstraintViolation' => 'serializeViolation');
-
-        foreach ($types as $type => $method) {
-            foreach ($formats as $format) {
-                $methods[] = array(
-                    'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
-                    'type' => $type,
-                    'format' => $format,
-                    'method' => $method,
-                );
-            }
-        }
-
-        return $methods;
+        return [
+            [
+                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'type' => ConstraintViolationList::class,
+                'method' => 'serializeList',
+            ], [
+                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'type' => ConstraintViolation::class,
+                'method' => 'serializeViolation',
+            ],
+        ];
     }
 
     public function serializeList(VisitorInterface $visitor, ConstraintViolationList $list, Type $type, Context $context)

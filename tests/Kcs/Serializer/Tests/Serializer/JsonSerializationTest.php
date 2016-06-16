@@ -113,7 +113,7 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testAddLinksToOutput()
     {
         $this->dispatcher->addSubscriber(new LinkAddingSubscriber());
-        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList', 'json',
+        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList',
             function(VisitorInterface $visitor, AuthorList $data, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($data), $type, $context);
             }

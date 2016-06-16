@@ -30,7 +30,7 @@
     "require-dev": {
         "doctrine/annotations": "^1.0",
         "doctrine/cache": "~1.4",
-        "doctrine/orm": "~2.1",
+        "doctrine/orm": "~2.3",
         "doctrine/phpcr-odm": "~1.0",
         "jackalope/jackalope-doctrine-dbal": "^1.0",
         "phpcollection/phpcollection": "^0.4.0",
