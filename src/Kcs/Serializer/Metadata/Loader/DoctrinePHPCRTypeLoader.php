@@ -49,7 +49,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 
         $propertyName = $propertyMetadata->name;
         if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
-            $field = $doctrineMetadata->getField($propertyName);
+            $field = $doctrineMetadata->getFieldMapping($propertyName);
             if ( ! empty($field['multivalue'])) {
                 $fieldType = 'array';
             }

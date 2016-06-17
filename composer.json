@@ -21,7 +21,8 @@
         "kcs/metadata": "^1.1"
     },
     "conflict": {
-        "twig/twig": "<1.12"
+        "twig/twig": "<1.12",
+        "doctrine/phpcr-odm": "<1.1.4"
     },
     "suggest": {
         "symfony/event-dispatcher": "Dispatch pre/post serialize events",
