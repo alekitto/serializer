@@ -31,7 +31,7 @@ class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
      * @Serializer\Type("array<Kcs\Serializer\Tests\Fixtures\Author>")
      * @var array
      */
-    protected $authors = array();
+    protected $authors = [];
 
     /**
      * @param Author $author
@@ -92,5 +92,4 @@ class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
     {
         unset($this->authors[$offset]);
     }
-
 }

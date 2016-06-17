@@ -44,7 +44,7 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::PRE_SERIALIZE => ['onPreSerialize', 20]
+            Events::PRE_SERIALIZE => ['onPreSerialize', 20],
         ];
     }
 }

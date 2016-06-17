@@ -29,7 +29,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 class DepthExclusionStrategy implements ExclusionStrategyInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function shouldSkipClass(ClassMetadata $metadata, Context $context)
     {
@@ -37,7 +37,7 @@ class DepthExclusionStrategy implements ExclusionStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $context)
     {

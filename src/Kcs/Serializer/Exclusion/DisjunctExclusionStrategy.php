@@ -42,7 +42,7 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
      */
     public function __construct($delegates)
     {
-        if ( ! $delegates instanceof SequenceInterface) {
+        if (! $delegates instanceof SequenceInterface) {
             $delegates = new Sequence($delegates);
         }
 
@@ -60,7 +60,7 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
      * @param ClassMetadata $metadata
      * @param Context $context
      *
-     * @return boolean
+     * @return bool
      */
     public function shouldSkipClass(ClassMetadata $metadata, Context $context)
     {
@@ -80,7 +80,7 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
      * @param PropertyMetadata $property
      * @param Context $context
      *
-     * @return boolean
+     * @return bool
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $context)
     {

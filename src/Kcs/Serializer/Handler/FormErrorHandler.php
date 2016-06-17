@@ -24,7 +24,6 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableForm;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\GraphNavigator;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -39,12 +38,12 @@ class FormErrorHandler implements SubscribingHandlerInterface
             [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\Form',
-                'method' => 'serializeForm'
+                'method' => 'serializeForm',
             ], [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\FormError',
-                'method' => 'serializeFormError'
-            ]
+                'method' => 'serializeFormError',
+            ],
         ];
     }
 

@@ -19,20 +19,20 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\HandlerRegistry;
+use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
+use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
 use Kcs\Serializer\Tests\Fixtures\Order;
 use Kcs\Serializer\Tests\Fixtures\Price;
-use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Kcs\Serializer\Construction\UnserializeObjectConstructor;
-use Kcs\Serializer\Serializer;
-use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
 use Kcs\Serializer\Type\Type;
 
 class ArrayTest extends \PHPUnit_Framework_TestCase
@@ -56,11 +56,11 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
     {
         $order = new Order(new Price(5));
 
-        $expected = array(
-            'cost' => array(
-                'price' => 5
-            )
-        );
+        $expected = [
+            'cost' => [
+                'price' => 5,
+            ],
+        ];
 
         $result = $this->serializer->toArray($order);
 
@@ -76,26 +76,26 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->serializer->toArray($input);
 
-        $this->assertEquals(array($input), $result);
+        $this->assertEquals([$input], $result);
     }
 
     public function scalarValues()
     {
-        return array(
-            array(42),
-            array(3.14159),
-            array('helloworld'),
-            array(true),
-        );
+        return [
+            [42],
+            [3.14159],
+            ['helloworld'],
+            [true],
+        ];
     }
 
     public function testFromArray()
     {
-        $data = array(
-            'cost' => array(
-                'price' => 2.5
-            )
-        );
+        $data = [
+            'cost' => [
+                'price' => 2.5,
+            ],
+        ];
 
         $expected = new Order(new Price(2.5));
         $result = $this->serializer->fromArray($data, Type::from(Order::class));
@@ -107,7 +107,7 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->serializer->toArray(new Author(null));
 
-        $this->assertSame(array(), $result);
+        $this->assertSame([], $result);
     }
 
     public function testToArrayConversNestedArrayObjects()
@@ -116,6 +116,6 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
         $list->add(new Author(null));
 
         $result = $this->serializer->toArray($list);
-        $this->assertSame(array('authors' => array(array())), $result);
+        $this->assertSame(['authors' => [[]]], $result);
     }
 }

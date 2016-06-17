@@ -8,16 +8,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrineTypeLoader;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\SerializerBuilder;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\ORMException;
 use Kcs\Serializer\Tests\Fixture\Doctrine\SingleTableInheritance\Clazz;
-use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Excursion;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Student;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Teacher;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -38,7 +37,7 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         $student1 = new Student();
         $student2 = new Student();
         $teacher = new Teacher();
-        $class = new Clazz($teacher, array($student1, $student2));
+        $class = new Clazz($teacher, [$student1, $student2]);
 
         $em->persist($student1);
         $em->persist($student2);
@@ -56,11 +55,11 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $connection    = $this->createConnection();
+        $connection = $this->createConnection();
         $entityManager = $this->createEntityManager($connection);
 
         $this->registry = $registry = new SimpleManagerRegistry(
-            function($id) use($connection, $entityManager) {
+            function ($id) use ($connection, $entityManager) {
                 switch ($id) {
                     case 'default_connection':
                         return $connection;
@@ -94,10 +93,10 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     private function createConnection()
     {
-        $con = DriverManager::getConnection(array(
+        $con = DriverManager::getConnection([
             'driver' => 'pdo_sqlite',
             'memory' => true,
-        ));
+        ]);
 
         return $con;
     }
@@ -105,9 +104,9 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
     private function createEntityManager(Connection $con)
     {
         $cfg = new Configuration();
-        $cfg->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), array(
+        $cfg->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), [
             __DIR__.'/../../Fixtures/Doctrine/SingleTableInheritance',
-        )));
+        ]));
         $cfg->setAutoGenerateProxyClasses(true);
         $cfg->setProxyNamespace('Kcs\Serializer\DoctrineProxy');
         $cfg->setProxyDir(sys_get_temp_dir().'/serializer-test-proxies');
@@ -120,21 +119,21 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
 class SimpleManagerRegistry extends AbstractManagerRegistry
 {
-    private $services = array();
+    private $services = [];
     private $serviceCreator;
 
-    public function __construct($serviceCreator, $name = 'anonymous', array $connections = array('default' => 'default_connection'), array $managers = array('default' => 'default_manager'), $defaultConnection = null, $defaultManager = null, $proxyInterface = 'Doctrine\Common\Persistence\Proxy')
+    public function __construct($serviceCreator, $name = 'anonymous', array $connections = ['default' => 'default_connection'], array $managers = ['default' => 'default_manager'], $defaultConnection = null, $defaultManager = null, $proxyInterface = 'Doctrine\Common\Persistence\Proxy')
     {
         if (null === $defaultConnection) {
-            list($defaultConnection, ) = each($connections);
+            list($defaultConnection) = each($connections);
         }
         if (null === $defaultManager) {
-            list($defaultManager, ) = each($managers);
+            list($defaultManager) = each($managers);
         }
 
         parent::__construct($name, $connections, $managers, $defaultConnection, $defaultManager, $proxyInterface);
 
-        if ( ! is_callable($serviceCreator)) {
+        if (! is_callable($serviceCreator)) {
             throw new \InvalidArgumentException('$serviceCreator must be a valid callable.');
         }
         $this->serviceCreator = $serviceCreator;

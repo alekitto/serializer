@@ -19,11 +19,11 @@
 
 namespace Kcs\Serializer;
 
+use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
-use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
-use Kcs\Metadata\Factory\MetadataFactoryInterface;
+use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -69,7 +69,7 @@ class Serializer implements SerializerInterface
             $context = new SerializationContext();
         }
 
-        if (! isset ($this->serializationVisitors[$format])) {
+        if (! isset($this->serializationVisitors[$format])) {
             throw new UnsupportedFormatException("The format \"$format\" is not supported for serialization");
         }
 
@@ -82,7 +82,7 @@ class Serializer implements SerializerInterface
             $context = new DeserializationContext();
         }
 
-        if (! isset ($this->deserializationVisitors[$format])) {
+        if (! isset($this->deserializationVisitors[$format])) {
             throw new UnsupportedFormatException("The format \"$format\" is not supported for deserialization");
         }
 
@@ -103,7 +103,7 @@ class Serializer implements SerializerInterface
     {
         $result = $this->serialize($data, 'array', $context);
 
-        if ( ! is_array($result)) {
+        if (! is_array($result)) {
             throw new RuntimeException(sprintf(
                 'The input data of type "%s" did not convert to an array, but got a result of type "%s".',
                 is_object($data) ? get_class($data) : gettype($data),

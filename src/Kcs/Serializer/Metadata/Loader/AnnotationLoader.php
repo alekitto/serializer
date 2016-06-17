@@ -20,16 +20,15 @@
 namespace Kcs\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Annotations\Reader;
-use Kcs\Serializer\Annotation;
-use Kcs\Serializer\Direction;
-use Kcs\Serializer\Exception\InvalidArgumentException;
-use Kcs\Serializer\GraphNavigator;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\MethodMetadata;
+use Kcs\Serializer\Annotation;
+use Kcs\Serializer\Direction;
+use Kcs\Serializer\Exception\InvalidArgumentException;
+use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class AnnotationLoader implements LoaderInterface
 {
@@ -187,89 +186,89 @@ class AnnotationLoader implements LoaderInterface
 
         foreach ($annotations as $annotation) {
             switch (true) {
-                case ($annotation instanceof Annotation\Since): {
+                case $annotation instanceof Annotation\Since: {
                     $metadata->sinceVersion = $annotation->version;
                 } break;
 
-                case ($annotation instanceof Annotation\Until): {
+                case $annotation instanceof Annotation\Until: {
                     $metadata->untilVersion = $annotation->version;
                 } break;
 
-                case ($annotation instanceof Annotation\SerializedName): {
+                case $annotation instanceof Annotation\SerializedName: {
                     $metadata->serializedName = $annotation->name;
                 } break;
 
-                case ($annotation instanceof Annotation\Type): {
+                case $annotation instanceof Annotation\Type: {
                     $metadata->setType($annotation->name);
                 } break;
 
-                case ($annotation instanceof Annotation\XmlElement): {
+                case $annotation instanceof Annotation\XmlElement: {
                     $metadata->xmlAttribute = false;
                     $metadata->xmlElementCData = $annotation->cdata;
                     $metadata->xmlNamespace = $annotation->namespace;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlList): {
+                case $annotation instanceof Annotation\XmlList: {
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlMap): {
+                case $annotation instanceof Annotation\XmlMap: {
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
                     $metadata->xmlKeyAttribute = $annotation->keyAttribute;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlKeyValuePairs): {
+                case $annotation instanceof Annotation\XmlKeyValuePairs: {
                     $metadata->xmlKeyValuePairs = true;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlAttribute): {
+                case $annotation instanceof Annotation\XmlAttribute: {
                     $metadata->xmlAttribute = true;
                     $metadata->xmlNamespace = $annotation->namespace;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlValue): {
+                case $annotation instanceof Annotation\XmlValue: {
                     $metadata->xmlValue = true;
                     $metadata->xmlElementCData = $annotation->cdata;
                 } break;
 
-                case ($annotation instanceof Annotation\AccessType): {
+                case $annotation instanceof Annotation\AccessType: {
                     $accessType = $annotation->type;
                 } break;
 
-                case ($annotation instanceof Annotation\ReadOnly): {
+                case $annotation instanceof Annotation\ReadOnly: {
                     $metadata->readOnly = $annotation->readOnly;
                 } break;
 
-                case ($annotation instanceof Annotation\Accessor): {
-                    $accessor = array($annotation->getter, $annotation->setter);
+                case $annotation instanceof Annotation\Accessor: {
+                    $accessor = [$annotation->getter, $annotation->setter];
                 } break;
 
-                case ($annotation instanceof Annotation\Groups): {
+                case $annotation instanceof Annotation\Groups: {
                     $metadata->groups = $annotation->groups;
                     foreach ((array)$metadata->groups as $groupName) {
                         if (false !== strpos($groupName, ',')) {
                             throw new InvalidArgumentException(sprintf(
                                 'Invalid group name "%s" on "%s", did you mean to create multiple groups?',
                                 implode(', ', $metadata->groups),
-                                $metadata->class . '->' . $metadata->name
+                                $metadata->class.'->'.$metadata->name
                             ));
                         }
                     }
                 } break;
 
-                case ($annotation instanceof Annotation\Inline): {
+                case $annotation instanceof Annotation\Inline: {
                     $metadata->inline = true;
                 } break;
 
-                case ($annotation instanceof Annotation\XmlAttributeMap): {
+                case $annotation instanceof Annotation\XmlAttributeMap: {
                     $metadata->xmlAttributeMap = true;
                 } break;
 
-                case ($annotation instanceof Annotation\MaxDepth): {
+                case $annotation instanceof Annotation\MaxDepth: {
                     $metadata->maxDepth = $annotation->depth;
                 } break;
 

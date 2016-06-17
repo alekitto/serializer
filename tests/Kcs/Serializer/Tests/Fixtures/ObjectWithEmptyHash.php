@@ -29,5 +29,5 @@ class ObjectWithEmptyHash
     /**
      * @Serializer\Type("array<string,string>")
      */
-    private $hash = array();
+    private $hash = [];
 }

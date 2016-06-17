@@ -20,12 +20,12 @@
 namespace Kcs\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Kcs\Serializer\Metadata\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\NullMetadata;
+use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\PropertyMetadata;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
@@ -37,29 +37,29 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
      * Map of doctrine 2 field types to Kcs\Serializer types
      * @var array
      */
-    protected $fieldMapping = array(
-        'string'       => 'string',
-        'text'         => 'string',
-        'blob'         => 'string',
+    protected $fieldMapping = [
+        'string' => 'string',
+        'text' => 'string',
+        'blob' => 'string',
 
-        'integer'      => 'integer',
-        'smallint'     => 'integer',
-        'bigint'       => 'integer',
+        'integer' => 'integer',
+        'smallint' => 'integer',
+        'bigint' => 'integer',
 
-        'datetime'     => 'DateTime',
-        'datetimetz'   => 'DateTime',
-        'time'         => 'DateTime',
-        'date'         => 'DateTime',
+        'datetime' => 'DateTime',
+        'datetimetz' => 'DateTime',
+        'time' => 'DateTime',
+        'date' => 'DateTime',
 
-        'float'        => 'float',
-        'decimal'      => 'float',
+        'float' => 'float',
+        'decimal' => 'float',
 
-        'boolean'      => 'boolean',
+        'boolean' => 'boolean',
 
-        'array'        => 'array',
-        'json_array'   => 'array',
+        'array' => 'array',
+        'json_array' => 'array',
         'simple_array' => 'array<string>',
-    );
+    ];
 
     /**
      * @var LoaderInterface
@@ -83,7 +83,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         $this->delegate->loadClassMetadata($classMetadata);
 
         // Abort if the given class is not a mapped entity
-        if ( ! $doctrineMetadata = $this->tryLoadingDoctrineMetadata($classMetadata->getName())) {
+        if (! $doctrineMetadata = $this->tryLoadingDoctrineMetadata($classMetadata->getName())) {
             return true;
         }
 
@@ -97,7 +97,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
             }
 
             // If the inner driver provides a type, don't guess anymore.
-            if ($propertyMetadata->type) {
+            if (null !== $propertyMetadata->type) {
                 continue;
             }
 
@@ -138,7 +138,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
      */
     protected function tryLoadingDoctrineMetadata($className)
     {
-        if ( ! $manager = $this->registry->getManagerForClass($className)) {
+        if (! $manager = $this->registry->getManagerForClass($className)) {
             return null;
         }
 
@@ -151,7 +151,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     protected function normalizeFieldType($type)
     {
-        if ( ! isset($this->fieldMapping[$type])) {
+        if (! isset($this->fieldMapping[$type])) {
             return null;
         }
 

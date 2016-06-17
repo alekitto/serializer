@@ -21,8 +21,8 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
  * @XmlRoot("test-object", namespace="http://example.com/namespace")
@@ -51,7 +51,7 @@ class ObjectWithXmlRootNamespace
      * @Type("string")
      */
     private $author;
-    
+
     /**
      * @Type("string")
      * @XmlAttribute

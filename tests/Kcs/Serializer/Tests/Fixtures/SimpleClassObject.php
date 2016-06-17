@@ -20,10 +20,10 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlNamespace;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlAttribute;
 use Kcs\Serializer\Annotation\XmlElement;
+use Kcs\Serializer\Annotation\XmlNamespace;
 
 /**
  * @XmlNamespace(prefix="old_foo", uri="http://old.foo.example.org");
@@ -38,7 +38,7 @@ class SimpleClassObject
      * @XmlAttribute(namespace="http://old.foo.example.org")
      */
     public $foo;
-    
+
     /**
      * @Type("string")
      * @XmlElement(namespace="http://foo.example.org")
@@ -50,5 +50,4 @@ class SimpleClassObject
      * @XmlElement(namespace="http://new.foo.example.org")
      */
     public $moo;
-
 }

@@ -62,6 +62,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         $node = $this->document->createAttribute('xsi:nil');
         $node->value = 'true';
+
         return $this->currentNodes = $node;
     }
 
@@ -74,6 +75,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         /** @var PropertyMetadata $metadata */
         $metadata = $this->getCurrentPropertyMetadata($context);
+
         return $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
     }
 
@@ -123,7 +125,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             $this->nodeStack->push($rootNode);
         }
 
-        $nodes = array();
+        $nodes = [];
 
         /** @var \DOMElement $prevNode */
         $prevNode = $this->nodeStack->top();
@@ -201,7 +203,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $elementName = $this->namingStrategy->translateName($metadata);
         if ('' !== $namespace = (string) $metadata->xmlNamespace) {
             $prevNode = $this->nodeStack->top();
-            if ( ! $prefix = $prevNode->lookupPrefix($namespace)) {
+            if (! $prefix = $prevNode->lookupPrefix($namespace)) {
                 $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
             }
             $this->currentNodes = $this->document->createElementNS($namespace, $prefix.':'.$elementName);
@@ -267,6 +269,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         $handler = array_shift($args);
         array_unshift($args, $this);
+
         return call_user_func_array($handler, $args);
     }
 
@@ -275,7 +278,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->currentNodes = $this->document = $this->createDocument();
         $this->nodeStack = new \SplStack();
         $this->attachNullNamespace = false;
-        $this->validatedMetadata = array ();
+        $this->validatedMetadata = [];
     }
 
     public function startVisiting($data, Type $type, Context $context)
@@ -297,6 +300,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         if (! is_array($nodes) && ! $nodes instanceof \DOMNodeList) {
             $this->currentNodes->appendChild($nodes);
+
             return;
         }
 
@@ -308,6 +312,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function getResult()
     {
         $this->attachNullNS();
+
         return $this->document->saveXML();
     }
 
@@ -364,7 +369,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
     private function isElementNameValid($name)
     {
@@ -388,7 +393,7 @@ class XmlSerializationVisitor extends AbstractVisitor
                 $has_xml_value = true;
             } elseif ($property->xmlValue) {
                 throw new RuntimeException(sprintf(
-                    "Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s",
+                    'Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s',
                     $metadata->getName()
                 ));
             }
@@ -419,10 +424,10 @@ class XmlSerializationVisitor extends AbstractVisitor
         if ('' !== $namespace = (string)$metadata->xmlNamespace) {
             $prevNode = $this->nodeStack->top();
             if (! $prefix = $prevNode->lookupPrefix($namespace)) {
-                $prefix = 'ns-' . substr(sha1($namespace), 0, 8);
+                $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
             }
 
-            $node = $this->document->createAttributeNS($namespace, $prefix . ':' . $attributeName);
+            $node = $this->document->createAttributeNS($namespace, $prefix.':'.$attributeName);
         } else {
             $node = $this->document->createAttribute($attributeName);
         }

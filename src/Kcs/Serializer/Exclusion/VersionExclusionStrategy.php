@@ -19,9 +19,9 @@
 
 namespace Kcs\Serializer\Exclusion;
 
+use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Context;
 
 class VersionExclusionStrategy implements ExclusionStrategyInterface
 {
@@ -33,7 +33,7 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext)
     {
@@ -41,7 +41,7 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext)
     {

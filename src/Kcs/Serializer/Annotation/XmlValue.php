@@ -26,7 +26,7 @@ namespace Kcs\Serializer\Annotation;
 final class XmlValue
 {
     /**
-     * @var boolean
+     * @var bool
      */
     public $cdata = true;
 }

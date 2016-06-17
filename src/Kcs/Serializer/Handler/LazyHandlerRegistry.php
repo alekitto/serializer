@@ -24,9 +24,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LazyHandlerRegistry extends HandlerRegistry
 {
     private $container;
-    private $initializedHandlers = array();
+    private $initializedHandlers = [];
 
-    public function __construct(ContainerInterface $container, array $handlers = array())
+    public function __construct(ContainerInterface $container, array $handlers = [])
     {
         parent::__construct($handlers);
         $this->container = $container;
@@ -44,7 +44,7 @@ class LazyHandlerRegistry extends HandlerRegistry
             return $this->initializedHandlers[$direction][$typeName];
         }
 
-        if ( ! isset($this->handlers[$direction][$typeName])) {
+        if (! isset($this->handlers[$direction][$typeName])) {
             return null;
         }
 

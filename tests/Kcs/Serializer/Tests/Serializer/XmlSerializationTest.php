@@ -20,19 +20,19 @@
 namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
+use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Tests\Fixtures\InvalidUsageOfXmlValue;
-use Kcs\Serializer\Exception\InvalidArgumentException;
-use Kcs\Serializer\Tests\Fixtures\PersonCollection;
-use Kcs\Serializer\Tests\Fixtures\PersonLocation;
-use Kcs\Serializer\Tests\Fixtures\Person;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualXmlProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlRootNamespace;
+use Kcs\Serializer\Tests\Fixtures\Person;
+use Kcs\Serializer\Tests\Fixtures\PersonCollection;
+use Kcs\Serializer\Tests\Fixtures\PersonLocation;
 use Kcs\Serializer\Tests\Fixtures\SimpleClassObject;
 use Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject;
 use Kcs\Serializer\Type\Type;
@@ -48,7 +48,6 @@ class XmlSerializationTest extends BaseSerializationTest
         $this->serialize($obj);
     }
 
-
     /**
      * @dataProvider getXMLBooleans
      */
@@ -61,13 +60,13 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function getXMLBooleans()
     {
-        return array(array('true', true), array('false', false), array('1', true), array('0', false));
+        return [['true', true], ['false', false], ['1', true], ['0', false]];
     }
 
     public function testPropertyIsObjectWithAttributeAndValue()
     {
-        $personCollection = new PersonLocation;
-        $person = new Person;
+        $personCollection = new PersonLocation();
+        $person = new Person();
         $person->name = 'Matthias Noback';
         $person->age = 28;
         $personCollection->person = $person;
@@ -78,8 +77,8 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function testPropertyIsCollectionOfObjectsWithAttributeAndValue()
     {
-        $personCollection = new PersonCollection;
-        $person = new Person;
+        $personCollection = new PersonCollection();
+        $person = new Person();
         $person->name = 'Matthias Noback';
         $person->age = 28;
         $personCollection->persons->add($person);
@@ -114,9 +113,9 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function testWhitelistedDocumentTypesAreAllowed()
     {
-        $this->deserializationVisitors['xml']->setDoctypeWhitelist(array(
+        $this->deserializationVisitors['xml']->setDoctypeWhitelist([
             '<!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">',
-            '<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">]>'));
+            '<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">]>', ]);
 
         $this->serializer->deserialize('<?xml version="1.0"?>
             <!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">
@@ -133,7 +132,7 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $this->assertEquals(
             $this->getContent('virtual_attributes'),
-            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(array('attributes')))
+            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['attributes']))
         );
     }
 
@@ -141,7 +140,7 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $this->assertEquals(
             $this->getContent('virtual_values'),
-            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(array('values')))
+            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['values']))
         );
     }
 
@@ -149,7 +148,7 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $this->assertEquals(
             $this->getContent('virtual_properties_list'),
-            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(array('list')))
+            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['list']))
         );
     }
 
@@ -157,7 +156,7 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $this->assertEquals(
             $this->getContent('virtual_properties_map'),
-            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(array('map')))
+            $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['map']))
         );
     }
 
@@ -178,7 +177,7 @@ class XmlSerializationTest extends BaseSerializationTest
 
         $serializer = new Serializer($this->factory, $handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors);
 
-        $this->assertEquals($this->getContent($key . '_no_cdata'), $serializer->serialize($value, $this->getFormat()));
+        $this->assertEquals($this->getContent($key.'_no_cdata'), $serializer->serialize($value, $this->getFormat()));
     }
 
     public function testObjectWithXmlNamespaces()
@@ -188,9 +187,9 @@ class XmlSerializationTest extends BaseSerializationTest
         $this->assertEquals($this->getContent('object_with_xml_namespaces'), $this->serialize($object));
 
         $xml = simplexml_load_string($this->serialize($object));
-        $xml->registerXPathNamespace('ns1', "http://purl.org/dc/elements/1.1/");
-        $xml->registerXPathNamespace('ns2', "http://schemas.google.com/g/2005");
-        $xml->registerXPathNamespace('ns3', "http://www.w3.org/2005/Atom");
+        $xml->registerXPathNamespace('ns1', 'http://purl.org/dc/elements/1.1/');
+        $xml->registerXPathNamespace('ns2', 'http://schemas.google.com/g/2005');
+        $xml->registerXPathNamespace('ns3', 'http://www.w3.org/2005/Atom');
 
         $this->assertEquals('2011-07-30T00:00:00+0000', $this->xpathFirstToString($xml, './@created_at'));
         $this->assertEquals('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->xpathFirstToString($xml, './@ns2:etag'));
@@ -204,7 +203,6 @@ class XmlSerializationTest extends BaseSerializationTest
         $this->assertAttributeSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', 'etag', $deserialized);
         $this->assertAttributeSame('en', 'language', $deserialized);
         $this->assertAttributeEquals('Foo Bar', 'author', $deserialized);
-
     }
 
     public function testObjectWithXmlRootNamespace()
@@ -229,13 +227,13 @@ class XmlSerializationTest extends BaseSerializationTest
         $childObject->baz = 'baz';
         $childObject->qux = 'qux';
 
-
         $this->assertEquals($this->getContent('simple_subclass_object'), $this->serialize($childObject));
     }
 
     private function xpathFirstToString(\SimpleXMLElement $xml, $xpath)
     {
         $nodes = $xml->xpath($xpath);
+
         return (string) reset($nodes);
     }
 

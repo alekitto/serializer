@@ -53,9 +53,9 @@ class GroupsObject
 
     public function __construct()
     {
-        $this->foo  = "foo";
-        $this->bar = "bar";
-        $this->foobar  = "foobar";
-        $this->none = "none";
+        $this->foo = 'foo';
+        $this->bar = 'bar';
+        $this->foobar = 'foobar';
+        $this->none = 'none';
     }
 }

@@ -48,7 +48,7 @@ class StaticPropertyMetadata extends PropertyMetadata
     public function __sleep()
     {
         return parent::__sleep() + [
-            'value'
+            'value',
         ];
     }
 }

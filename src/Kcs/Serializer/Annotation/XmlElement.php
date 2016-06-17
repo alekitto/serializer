@@ -26,10 +26,10 @@ namespace Kcs\Serializer\Annotation;
 final class XmlElement
 {
     /**
-     * @var boolean
+     * @var bool
      */
     public $cdata = true;
-    
+
     /**
      * @var string
      */

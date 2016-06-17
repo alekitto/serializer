@@ -19,16 +19,15 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Kcs\Serializer\Direction;
-use Kcs\Serializer\GraphNavigator;
-use Kcs\Serializer\Exception\RuntimeException;
-use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoader;
+use Kcs\Metadata\MethodMetadata;
+use Kcs\Serializer\Annotation\ExclusionPolicy;
+use Kcs\Serializer\Direction;
+use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Metadata\MethodMetadata;
 use Symfony\Component\Yaml\Yaml;
 
 class YamlLoader extends FileLoader
@@ -39,7 +38,7 @@ class YamlLoader extends FileLoader
         $class = $metadata->getReflectionClass();
         $config = Yaml::parse($file_content);
 
-        if ( ! isset($config[$name = $class->name])) {
+        if (! isset($config[$name = $class->name])) {
             return false;
         }
 
@@ -50,10 +49,10 @@ class YamlLoader extends FileLoader
         $readOnlyClass = isset($config['read_only']) ? (Boolean) $config['read_only'] : false;
         $this->addClassProperties($metadata, $config);
 
-        $propertiesMetadata = array();
+        $propertiesMetadata = [];
         if (array_key_exists('virtual_properties', $config)) {
             foreach ($config['virtual_properties'] as $methodName => $propertySettings) {
-                if ( ! $class->hasMethod($methodName)) {
+                if (! $class->hasMethod($methodName)) {
                     throw new RuntimeException('The method '.$methodName.' not found in class '.$class->name);
                 }
 
@@ -64,7 +63,7 @@ class YamlLoader extends FileLoader
             }
         }
 
-        if ( ! $excludeAll) {
+        if (! $excludeAll) {
             foreach ($class->getProperties() as $property) {
                 if ($name !== $property->class) {
                     continue;
@@ -169,7 +168,7 @@ class YamlLoader extends FileLoader
 
                     //we need read_only before setter and getter set, because that method depends on flag being set
                     if (isset($pConfig['read_only'])) {
-                          $pMetadata->readOnly = (Boolean) $pConfig['read_only'];
+                        $pMetadata->readOnly = (Boolean) $pConfig['read_only'];
                     } else {
                         $pMetadata->readOnly = $pMetadata->readOnly || $readOnlyClass;
                     }
@@ -233,7 +232,7 @@ class YamlLoader extends FileLoader
         }
 
         if (isset($config['accessor_order'])) {
-            $metadata->setAccessorOrder($config['accessor_order'], isset($config['custom_accessor_order']) ? $config['custom_accessor_order'] : array());
+            $metadata->setAccessorOrder($config['accessor_order'], isset($config['custom_accessor_order']) ? $config['custom_accessor_order'] : []);
         }
 
         if (isset($config['xml_root_name'])) {
@@ -245,22 +244,20 @@ class YamlLoader extends FileLoader
         }
 
         if (array_key_exists('xml_namespaces', $config)) {
-
             foreach ($config['xml_namespaces'] as $prefix => $uri) {
                 $metadata->registerNamespace($uri, $prefix);
             }
-
         }
 
         if (isset($config['discriminator'])) {
             if (isset($config['discriminator']['disabled']) && true === $config['discriminator']['disabled']) {
                 $metadata->discriminatorDisabled = true;
             } else {
-                if ( ! isset($config['discriminator']['field_name'])) {
+                if (! isset($config['discriminator']['field_name'])) {
                     throw new RuntimeException('The "field_name" attribute must be set for discriminators.');
                 }
 
-                if ( ! isset($config['discriminator']['map']) || ! is_array($config['discriminator']['map'])) {
+                if (! isset($config['discriminator']['map']) || ! is_array($config['discriminator']['map'])) {
                     throw new RuntimeException('The "map" attribute must be set, and be an array for discriminators.');
                 }
 
@@ -272,14 +269,14 @@ class YamlLoader extends FileLoader
     private function getCallbackMetadata(\ReflectionClass $class, $config)
     {
         if (is_string($config)) {
-            $config = array($config);
-        } elseif ( ! is_array($config)) {
+            $config = [$config];
+        } elseif (! is_array($config)) {
             throw new RuntimeException(sprintf('callback methods expects a string, or an array of strings that represent method names, but got %s.', json_encode($config['pre_serialize'])));
         }
 
-        $methods = array();
+        $methods = [];
         foreach ($config as $name) {
-            if ( ! $class->hasMethod($name)) {
+            if (! $class->hasMethod($name)) {
                 throw new RuntimeException(sprintf('The method %s does not exist in class %s.', $name, $class->name));
             }
 

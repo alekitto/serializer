@@ -28,13 +28,13 @@ use Kcs\Serializer\Exception\RuntimeException;
 final class ExclusionPolicy
 {
     const NONE = 'NONE';
-    const ALL  = 'ALL';
+    const ALL = 'ALL';
 
     public $policy;
 
     public function __construct(array $values)
     {
-        if ( ! is_string($values['value'])) {
+        if (! is_string($values['value'])) {
             throw new RuntimeException('"value" must be a string.');
         }
 

@@ -32,7 +32,8 @@ class Garage
      */
     public $vehicles;
 
-    public function __construct($vehicles) {
+    public function __construct($vehicles)
+    {
         $this->vehicles = $vehicles;
     }
 }

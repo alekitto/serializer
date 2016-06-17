@@ -22,13 +22,13 @@ use Doctrine\Common\Lexer\AbstractLexer;
 
 class Lexer extends AbstractLexer
 {
-    const T_NONE                = 1;
-    const T_STRING              = 2;
-    const T_COMMA               = 3;
-    const T_CLOSED_BRACKET      = 4;
-    const T_OPEN_BRACKET        = 5;
+    const T_NONE = 1;
+    const T_STRING = 2;
+    const T_COMMA = 3;
+    const T_CLOSED_BRACKET = 4;
+    const T_OPEN_BRACKET = 5;
 
-    const T_IDENTIFIER          = 100;
+    const T_IDENTIFIER = 100;
 
     /**
      * {@inheritdoc}
@@ -37,7 +37,7 @@ class Lexer extends AbstractLexer
     {
         return [
             '[a-zA-Z_\x7f-\xff\\\][a-z0-9A-Z_\x7f-\xff\:\\\]*[a-zA-Z_\x7f-\xff][a-z0-9A-Z_\x7f-\xff]*', // PHP Class Name: http://php.net/manual/en/language.oop5.basic.php
-            '"(?:[^"]|"")*"|\'(?:[^\']|\'\')*\''          // Strings
+            '"(?:[^"]|"")*"|\'(?:[^\']|\'\')*\'',          // Strings
         ];
     }
 
@@ -48,7 +48,7 @@ class Lexer extends AbstractLexer
     {
         return [
             '\s+',
-            '(.)'
+            '(.)',
         ];
     }
 
@@ -62,9 +62,11 @@ class Lexer extends AbstractLexer
         // Differentiate between quoted names, identifiers, input parameters and symbols
         if ($value[0] === "'") {
             $value = str_replace("''", "'", substr($value, 1, strlen($value) - 2));
+
             return self::T_STRING;
         } elseif ($value[0] === '"') {
             $value = substr($value, 1, strlen($value) - 2);
+
             return self::T_STRING;
         } elseif (ctype_alpha($value[0])) {
             return self::T_IDENTIFIER;

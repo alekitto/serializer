@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
@@ -39,11 +39,10 @@ class DateTimeArraysObject
      */
     private $arrayWithFormattedDateTime;
 
-
-    function __construct($arrayWithDefaultDateTime, $arrayWithFormattedDateTime)
+    public function __construct($arrayWithDefaultDateTime, $arrayWithFormattedDateTime)
     {
-        $this->arrayWithDefaultDateTime    = $arrayWithDefaultDateTime;
-        $this->arrayWithFormattedDateTime  = $arrayWithFormattedDateTime;
+        $this->arrayWithDefaultDateTime = $arrayWithDefaultDateTime;
+        $this->arrayWithFormattedDateTime = $arrayWithFormattedDateTime;
     }
 
     /**
@@ -61,5 +60,4 @@ class DateTimeArraysObject
     {
         return $this->arrayWithFormattedDateTime;
     }
-
 }

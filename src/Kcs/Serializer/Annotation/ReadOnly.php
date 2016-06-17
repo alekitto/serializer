@@ -26,7 +26,7 @@ namespace Kcs\Serializer\Annotation;
 final class ReadOnly
 {
     /**
-     * @var boolean
+     * @var bool
      */
     public $readOnly = true;
 }

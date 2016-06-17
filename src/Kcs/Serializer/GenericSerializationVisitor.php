@@ -20,8 +20,8 @@
 namespace Kcs\Serializer;
 
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
-use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Exception\InvalidArgumentException;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
@@ -36,7 +36,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     {
         $this->navigator = $navigator;
         $this->root = null;
-        $this->dataStack = new \SplStack;
+        $this->dataStack = new \SplStack();
     }
 
     public function visitNull($data, Type $type, Context $context)
@@ -66,11 +66,11 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     public function visitArray($data, Type $type, Context $context)
     {
-        $rs = array();
+        $rs = [];
         foreach ($data as $k => $v) {
             $v = $this->navigator->accept($v, $this->getElementType($type), $context);
 
-            if (null === $v && ( ! is_string($k) || ! $context->shouldSerializeNull())) {
+            if (null === $v && (! is_string($k) || ! $context->shouldSerializeNull())) {
                 continue;
             }
 
@@ -82,11 +82,12 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
-        $this->data = array();
+        $this->data = [];
 
         $exclusionStrategy = $context->getExclusionStrategy();
         if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
             $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+
             return $this->data = $data->$callback($this, null, $context);
         }
 
@@ -148,6 +149,7 @@ class GenericSerializationVisitor extends AbstractVisitor
 
         $handler = array_shift($args);
         array_unshift($args, $this);
+
         return $this->data = call_user_func_array($handler, $args);
     }
 
@@ -181,7 +183,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getResult()
     {

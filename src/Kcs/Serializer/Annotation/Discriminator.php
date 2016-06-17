@@ -31,6 +31,6 @@ class Discriminator
     /** @var string */
     public $field = 'type';
 
-    /** @var boolean */
+    /** @var bool */
     public $disabled = false;
 }

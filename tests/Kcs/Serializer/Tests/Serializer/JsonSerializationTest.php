@@ -21,20 +21,19 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
-use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\EventDispatcher\Event;
-use Kcs\Serializer\GraphNavigator;
-use Kcs\Serializer\Type\Type;
-use Kcs\Serializer\VisitorInterface;
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
+use Kcs\Serializer\Type\Type;
+use Kcs\Serializer\VisitorInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class JsonSerializationTest extends BaseSerializationTest
 {
     protected function getContent($key)
     {
-        static $outputs = array();
+        static $outputs = [];
 
         if (!$outputs) {
             $outputs['readonly'] = '{"id":123,"full_name":"Ruud Kamphuis"}';
@@ -115,7 +114,7 @@ class JsonSerializationTest extends BaseSerializationTest
     {
         $this->dispatcher->addSubscriber(new LinkAddingSubscriber());
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList',
-            function(VisitorInterface $visitor, AuthorList $data, Type $type, Context $context) {
+            function (VisitorInterface $visitor, AuthorList $data, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($data), $type, $context);
             }
         );
@@ -129,40 +128,40 @@ class JsonSerializationTest extends BaseSerializationTest
 
     public function getPrimitiveTypes()
     {
-        return array(
-            array(
+        return [
+            [
                 'type' => 'boolean',
                 'data' => true,
-            ),
-            array(
+            ],
+            [
                 'type' => 'boolean',
                 'data' => 1,
-            ),
-            array(
+            ],
+            [
                 'type' => 'integer',
                 'data' => 123,
-            ),
-            array(
+            ],
+            [
                 'type' => 'integer',
-                'data' => "123",
-            ),
-            array(
+                'data' => '123',
+            ],
+            [
                 'type' => 'string',
-                'data' => "hello",
-            ),
-            array(
+                'data' => 'hello',
+            ],
+            [
                 'type' => 'string',
                 'data' => 123,
-            ),
-            array(
+            ],
+            [
                 'type' => 'double',
                 'data' => 0.1234,
-            ),
-            array(
+            ],
+            [
                 'type' => 'double',
-                'data' => "0.1234",
-            ),
-        );
+                'data' => '0.1234',
+            ],
+        ];
     }
 
     /**
@@ -171,7 +170,7 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testPrimitiveTypes($primitiveType, $data)
     {
         $visitor = $this->serializationVisitors['json'];
-        $functionToCall = 'visit' . ucfirst($primitiveType);
+        $functionToCall = 'visit'.ucfirst($primitiveType);
         $result = $visitor->$functionToCall($data, new Type('NULL'), $this->getMock('Kcs\Serializer\Context'));
         if ($primitiveType == 'double') {
             $primitiveType = 'float';
@@ -195,7 +194,7 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff()
     {
         ini_set('display_errors', 1);
-        $this->serialize(array('foo' => 'bar', 'bar' => pack("H*" ,'c32e')));
+        $this->serialize(['foo' => 'bar', 'bar' => pack('H*', 'c32e')]);
     }
 
     /**
@@ -206,12 +205,12 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn()
     {
         ini_set('display_errors', 0);
-        $this->serialize(array('foo' => 'bar', 'bar' => pack("H*" ,'c32e')));
+        $this->serialize(['foo' => 'bar', 'bar' => pack('H*', 'c32e')]);
     }
 
     public function testSerializeArrayWithEmptyObject()
     {
-        $this->assertEquals('[{}]', $this->serialize(array(new \stdClass())));
+        $this->assertEquals('[{}]', $this->serialize([new \stdClass()]));
     }
 
     protected function getFormat()
@@ -230,16 +229,16 @@ class LinkAddingSubscriber implements EventSubscriberInterface
 
         $author = $event->getData();
 
-        $event->getVisitor()->addData('_links', array(
+        $event->getVisitor()->addData('_links', [
             'details' => 'http://foo.bar/details/'.$author->getName(),
             'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
-        ));
+        ]);
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            'serializer.post_serialize' => 'onPostSerialize'
+            'serializer.post_serialize' => 'onPostSerialize',
         ];
     }
 }

@@ -22,9 +22,9 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlNamespace;
 use Kcs\Serializer\Annotation\XmlElement;
+use Kcs\Serializer\Annotation\XmlNamespace;
+use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
  * @XmlRoot("publisher")

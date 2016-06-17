@@ -19,20 +19,20 @@
 
 namespace Kcs\Serializer\Exclusion;
 
+use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Context;
 
 class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
     const DEFAULT_GROUP = 'Default';
 
-    private $groups = array();
+    private $groups = [];
 
     public function __construct(array $groups)
     {
         if (empty($groups)) {
-            $groups = array(self::DEFAULT_GROUP);
+            $groups = [self::DEFAULT_GROUP];
         }
 
         foreach ($groups as $group) {
@@ -41,7 +41,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext)
     {
@@ -49,7 +49,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext)
     {

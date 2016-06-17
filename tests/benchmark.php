@@ -1,6 +1,6 @@
 <?php
 
-if ( ! isset($_SERVER['argv'][1], $_SERVER['argv'][2])) {
+if (! isset($_SERVER['argv'][1], $_SERVER['argv'][2])) {
     echo 'Usage: php benchmark.php <format> <iterations> [output-file]'.PHP_EOL;
     exit(1);
 }
@@ -12,7 +12,7 @@ require_once 'bootstrap.php';
 function benchmark(\Closure $f, $times = 10)
 {
     $time = microtime(true);
-    for ($i=0; $i<$times; $i++) {
+    for ($i = 0; $i < $times; ++$i) {
         $f();
     }
 
@@ -21,8 +21,8 @@ function benchmark(\Closure $f, $times = 10)
 
 function createCollection()
 {
-    $collection = array();
-    for ($i=0; $i<50; $i++) {
+    $collection = [];
+    for ($i = 0; $i < 50; ++$i) {
         $collection[] = createObject();
     }
 
@@ -34,10 +34,10 @@ function createObject()
     $post = new \Kcs\Serializer\Tests\Fixtures\BlogPost(
         'FooooooooooooooooooooooBAR',
         new \Kcs\Serializer\Tests\Fixtures\Author('Foo'),
-        new \DateTime,
+        new \DateTime(),
         new \Kcs\Serializer\Tests\Fixtures\Publisher('Bar')
     );
-    for ($i=0; $i<10; $i++) {
+    for ($i = 0; $i < 10; ++$i) {
         $post->addComment(new \Kcs\Serializer\Tests\Fixtures\Comment(new \Kcs\Serializer\Tests\Fixtures\Author('foo'), 'foobar'));
     }
 
@@ -48,8 +48,8 @@ $serializer = \Kcs\Serializer\SerializerBuilder::create()
     ->setEventDispatcher(new \Symfony\Component\EventDispatcher\EventDispatcher())
     ->build();
 $collection = createCollection();
-$metrics = array();
-$f = function() use ($serializer, $collection, $format) {
+$metrics = [];
+$f = function () use ($serializer, $collection, $format) {
     $serializer->serialize($collection, $format);
 };
 
@@ -59,11 +59,11 @@ benchmark($f, 1);
 printf('Benchmarking collection for format "%s".'.PHP_EOL, $format);
 $metrics['benchmark-collection-'.$format] = benchmark($f, $iterations);
 
-$output = json_encode(array('metrics' => $metrics));
+$output = json_encode(['metrics' => $metrics]);
 
 if (isset($_SERVER['argv'][3])) {
     file_put_contents($_SERVER['argv'][3], $output);
-    echo "Done.".PHP_EOL;
+    echo 'Done.'.PHP_EOL;
 } else {
     echo $output.PHP_EOL;
 }

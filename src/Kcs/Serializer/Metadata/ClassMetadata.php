@@ -19,11 +19,11 @@
 
 namespace Kcs\Serializer\Metadata;
 
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Metadata\ClassMetadata as BaseClassMetadata;
 use Kcs\Metadata\MetadataInterface;
 use Kcs\Metadata\MethodMetadata;
+use Kcs\Serializer\Annotation\ExclusionPolicy;
+use Kcs\Serializer\Exception\InvalidArgumentException;
 
 /**
  * Class Metadata used to customize the serialization process.
@@ -41,26 +41,26 @@ class ClassMetadata extends BaseClassMetadata
     public $readOnly = false;
 
     /** @var MethodMetadata[] */
-    public $preSerializeMethods = array();
+    public $preSerializeMethods = [];
 
     /** @var MethodMetadata[] */
-    public $postSerializeMethods = array();
+    public $postSerializeMethods = [];
 
     /** @var MethodMetadata[] */
-    public $postDeserializeMethods = array();
+    public $postDeserializeMethods = [];
 
     public $xmlRootName;
     public $xmlRootNamespace;
-    public $xmlNamespaces = array();
+    public $xmlNamespaces = [];
     public $accessorOrder;
     public $customOrder;
-    public $handlerCallbacks = array();
+    public $handlerCallbacks = [];
 
     public $discriminatorDisabled = false;
     public $discriminatorBaseClass;
     public $discriminatorFieldName;
     public $discriminatorValue;
-    public $discriminatorMap = array();
+    public $discriminatorMap = [];
 
     public function setDiscriminator($fieldName, array $map)
     {
@@ -86,14 +86,14 @@ class ClassMetadata extends BaseClassMetadata
      * @throws InvalidArgumentException When the accessor order is not valid
      * @throws InvalidArgumentException When the custom order is not valid
      */
-    public function setAccessorOrder($order, array $customOrder = array())
+    public function setAccessorOrder($order, array $customOrder = [])
     {
-        if ( ! in_array($order, array(self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM), true)) {
+        if (! in_array($order, [self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM], true)) {
             throw new InvalidArgumentException(sprintf('The accessor order "%s" is invalid.', $order));
         }
 
         foreach ($customOrder as $name) {
-            if ( ! is_string($name)) {
+            if (! is_string($name)) {
                 throw new InvalidArgumentException(sprintf('$customOrder is expected to be a list of strings, but got element of value %s.', json_encode($name)));
             }
         }
@@ -108,7 +108,6 @@ class ClassMetadata extends BaseClassMetadata
         parent::addAttributeMetadata($metadata);
         $this->sortProperties();
     }
-
 
     public function addPreSerializeMethod(MethodMetadata $method)
     {
@@ -126,8 +125,8 @@ class ClassMetadata extends BaseClassMetadata
     }
 
     /**
-     * @param integer $direction
-     * @param string|integer $format
+     * @param int $direction
+     * @param string|int $format
      * @param string $methodName
      */
     public function addHandlerCallback($direction, $format, $methodName)
@@ -137,7 +136,7 @@ class ClassMetadata extends BaseClassMetadata
 
     public function merge(MetadataInterface $object)
     {
-        if ( ! $object instanceof self) {
+        if (! $object instanceof self) {
             throw new InvalidArgumentException('$object must be an instance of ClassMetadata.');
         }
 
@@ -167,7 +166,7 @@ class ClassMetadata extends BaseClassMetadata
             ));
         }
 
-        if ($object->discriminatorMap && ! $this->getReflectionClass()->isAbstract()) {
+        if (! empty($object->discriminatorMap) && ! $this->getReflectionClass()->isAbstract()) {
             if (false === $typeValue = array_search($this->getName(), $object->discriminatorMap, true)) {
                 throw new \LogicException(sprintf(
                     'The sub-class "%s" is not listed in the discriminator of the base class "%s".',
@@ -194,20 +193,19 @@ class ClassMetadata extends BaseClassMetadata
 
     public function registerNamespace($uri, $prefix = null)
     {
-        if ( ! is_string($uri)) {
+        if (! is_string($uri)) {
             throw new InvalidArgumentException(sprintf('$uri is expected to be a strings, but got value %s.', json_encode($uri)));
         }
 
         if ($prefix !== null) {
-            if ( ! is_string($prefix)) {
+            if (! is_string($prefix)) {
                 throw new InvalidArgumentException(sprintf('$prefix is expected to be a strings, but got value %s.', json_encode($prefix)));
             }
         } else {
-            $prefix = "";
+            $prefix = '';
         }
 
         $this->xmlNamespaces[$prefix] = $uri;
-
     }
 
     public function __wakeup()
@@ -223,14 +221,14 @@ class ClassMetadata extends BaseClassMetadata
             $typeValue = (string) $data->{$this->discriminatorFieldName};
         } else {
             throw new \LogicException(
-                "The discriminator field name '{$this->discriminatorFieldName}' for " .
+                "The discriminator field name '{$this->discriminatorFieldName}' for ".
                 "base-class '{$this->getName()}' was not found in input data."
             );
         }
 
-        if ( ! isset($this->discriminatorMap[$typeValue])) {
+        if (! isset($this->discriminatorMap[$typeValue])) {
             throw new \LogicException(
-                "The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: " .
+                "The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: ".
                 implode(', ', array_keys($this->discriminatorMap))
             );
         }
@@ -248,19 +246,19 @@ class ClassMetadata extends BaseClassMetadata
             case self::ACCESSOR_ORDER_CUSTOM:
                 $order = $this->customOrder;
                 $sorting = array_flip(array_keys($this->attributesMetadata));
-                uksort($this->attributesMetadata, function($a, $b) use ($order, $sorting) {
+                uksort($this->attributesMetadata, function ($a, $b) use ($order, $sorting) {
                     $existsA = isset($order[$a]);
                     $existsB = isset($order[$b]);
 
-                    if ( ! $existsA && ! $existsB) {
+                    if (! $existsA && ! $existsB) {
                         return $sorting[$a] - $sorting[$b];
                     }
 
-                    if ( ! $existsA) {
+                    if (! $existsA) {
                         return 1;
                     }
 
-                    if ( ! $existsB) {
+                    if (! $existsB) {
                         return -1;
                     }
 

@@ -20,11 +20,11 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlRoot;
 use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlList;
 use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
  * @XmlRoot("log") 
@@ -52,7 +52,7 @@ class Log
         $this->authors->add(new Author('John Doe'));
 
         $author = new Author('Foo Bar');
-        $this->comments = array();
+        $this->comments = [];
         $this->comments[] = new Comment($author, 'foo');
         $this->comments[] = new Comment($author, 'bar');
         $this->comments[] = new Comment($author, 'baz');

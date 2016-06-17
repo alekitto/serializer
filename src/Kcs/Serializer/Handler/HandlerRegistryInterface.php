@@ -36,7 +36,7 @@ interface HandlerRegistryInterface
     /**
      * Registers a handler in the registry.
      *
-     * @param integer $direction one of the GraphNavigator::DIRECTION_??? constants
+     * @param int $direction one of the GraphNavigator::DIRECTION_??? constants
      * @param string $typeName
      * @param callable $handler function(VisitorInterface, mixed $data, array $type): mixed
      *
@@ -45,7 +45,7 @@ interface HandlerRegistryInterface
     public function registerHandler($direction, $typeName, callable $handler);
 
     /**
-     * @param integer $direction one of the GraphNavigator::DIRECTION_??? constants
+     * @param int $direction one of the GraphNavigator::DIRECTION_??? constants
      * @param string $typeName
      *
      * @return callable|null

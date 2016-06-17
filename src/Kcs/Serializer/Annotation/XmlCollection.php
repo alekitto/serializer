@@ -27,7 +27,7 @@ abstract class XmlCollection
     public $entry = 'entry';
 
     /**
-     * @var boolean
+     * @var bool
      */
     public $inline = false;
 }

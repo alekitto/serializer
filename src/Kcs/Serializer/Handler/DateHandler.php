@@ -24,7 +24,6 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\XmlSerializationVisitor;
 
 class DateHandler implements SubscribingHandlerInterface
@@ -40,7 +39,7 @@ class DateHandler implements SubscribingHandlerInterface
         $methods[] = [
             'type' => 'DateTime',
             'direction' => Direction::DIRECTION_DESERIALIZATION,
-            'method' => 'deserializeDateTime'
+            'method' => 'deserializeDateTime',
         ];
 
         foreach ([\DateTime::class, \DateInterval::class] as $type) {

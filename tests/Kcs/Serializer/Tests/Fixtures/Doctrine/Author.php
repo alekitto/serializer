@@ -19,9 +19,8 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\Doctrine;
 
-use Kcs\Serializer\Annotation\SerializedName;
-
 use Doctrine\ORM\Mapping as ORM;
+use Kcs\Serializer\Annotation\SerializedName;
 
 /** @ORM\Entity */
 class Author

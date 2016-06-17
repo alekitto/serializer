@@ -46,11 +46,10 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
         /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
-
         $propertyName = $propertyMetadata->name;
         if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
             $field = $doctrineMetadata->getFieldMapping($propertyName);
-            if ( ! empty($field['multivalue'])) {
+            if (! empty($field['multivalue'])) {
                 $fieldType = 'array';
             }
 
@@ -66,7 +65,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
                 return;
             }
 
-            if ( ! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
+            if (! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
                 $targetEntity = "ArrayCollection<{$targetEntity}>";
             }
 

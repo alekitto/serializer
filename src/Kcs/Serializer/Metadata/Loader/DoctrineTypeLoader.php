@@ -19,8 +19,8 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Kcs\Serializer\Metadata\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 /**
@@ -37,7 +37,6 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
     {
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
-
         if (empty($classMetadata->discriminatorMap) && ! $classMetadata->discriminatorDisabled
             && ! empty($doctrineMetadata->discriminatorMap) && $doctrineMetadata->isRootEntity()
         ) {
@@ -51,7 +50,6 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
-
         $propertyName = $propertyMetadata->name;
         if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
             $propertyMetadata->setType($fieldType);
@@ -69,7 +67,7 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
                 return;
             }
 
-            if ( ! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
+            if (! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
                 $targetEntity = "ArrayCollection<{$targetEntity}>";
             }
 

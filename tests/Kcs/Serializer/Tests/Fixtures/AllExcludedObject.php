@@ -20,8 +20,8 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Expose;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
+use Kcs\Serializer\Annotation\Expose;
 
 /**
  * @ExclusionPolicy("all")

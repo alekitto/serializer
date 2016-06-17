@@ -30,7 +30,7 @@ class Direction
      *
      * @param string $dirStr
      *
-     * @return integer
+     * @return int
      */
     public static function parseDirection($dirStr)
     {

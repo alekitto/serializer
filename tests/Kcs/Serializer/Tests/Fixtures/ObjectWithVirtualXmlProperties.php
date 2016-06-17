@@ -20,18 +20,17 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\XmlValue;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlMap;
+use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Since;
 use Kcs\Serializer\Annotation\Until;
 use Kcs\Serializer\Annotation\VirtualProperty;
-use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\XmlList;
+use Kcs\Serializer\Annotation\XmlMap;
+use Kcs\Serializer\Annotation\XmlValue;
 
 class ObjectWithVirtualXmlProperties
 {
-
     /**
      *
      * @VirtualProperty
@@ -65,7 +64,7 @@ class ObjectWithVirtualXmlProperties
      */
     public function getVirualXmlList()
     {
-        return array('One','Two');
+        return ['One', 'Two'];
     }
 
     /**
@@ -77,10 +76,10 @@ class ObjectWithVirtualXmlProperties
      */
     public function getVirualXmlMap()
     {
-        return array(
-            'key-one'   => 'One',
-            'key-two'   => 'Two'
-        );
+        return [
+            'key-one' => 'One',
+            'key-two' => 'Two',
+        ];
     }
 
     /**
@@ -105,5 +104,4 @@ class ObjectWithVirtualXmlProperties
     {
         return 8;
     }
-
 }

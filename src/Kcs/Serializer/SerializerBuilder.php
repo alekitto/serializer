@@ -19,23 +19,23 @@
 
 namespace Kcs\Serializer;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\Cache;
+use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
+use Kcs\Serializer\Construction\ObjectConstructorInterface;
+use Kcs\Serializer\Construction\UnserializeObjectConstructor;
+use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
+use Kcs\Serializer\Handler\ArrayCollectionHandler;
+use Kcs\Serializer\Handler\DateHandler;
+use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\PropelCollectionHandler;
-use Kcs\Serializer\Handler\HandlerRegistry;
-use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Metadata\Loader\LoaderInterface;
-use Kcs\Serializer\Handler\DateHandler;
-use Kcs\Serializer\Handler\ArrayCollectionHandler;
-use Kcs\Serializer\Construction\ObjectConstructorInterface;
-use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
-use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -83,18 +83,21 @@ class SerializerBuilder
     public function setCache(Cache $cache = null)
     {
         $this->cache = $cache;
+
         return $this;
     }
 
     public function setMetadataLoader(LoaderInterface $metadataLoader)
     {
         $this->metadataLoader = $metadataLoader;
+
         return $this;
     }
 
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+
         return $this;
     }
 
@@ -206,11 +209,11 @@ class SerializerBuilder
 
         $metadataFactory = new MetadataFactory($metadataLoader, $this->eventDispatcher, $this->cache);
 
-        if ( ! $this->handlersConfigured) {
+        if (! $this->handlersConfigured) {
             $this->addDefaultHandlers();
         }
 
-        if ( ! $this->listenersConfigured) {
+        if (! $this->listenersConfigured) {
             $this->addDefaultListeners();
         }
 

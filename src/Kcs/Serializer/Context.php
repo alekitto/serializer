@@ -19,7 +19,7 @@
 
 namespace Kcs\Serializer;
 
-use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Exclusion\DepthExclusionStrategy;
 use Kcs\Serializer\Exclusion\DisjunctExclusionStrategy;
 use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
@@ -27,9 +27,7 @@ use Kcs\Serializer\Exclusion\GroupsExclusionStrategy;
 use Kcs\Serializer\Exclusion\VersionExclusionStrategy;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
-use PhpCollection\Map;
 
 abstract class Context
 {
@@ -52,7 +50,7 @@ abstract class Context
     /** @var ExclusionStrategyInterface */
     private $exclusionStrategy;
 
-    /** @var boolean */
+    /** @var bool */
     private $serializeNull;
 
     private $initialized = false;
@@ -82,7 +80,7 @@ abstract class Context
         $this->navigator = $navigator;
         $this->metadataFactory = $factory;
         $this->metadataStack = new \SplStack();
-        $this->nonSkippedProperties = array ();
+        $this->nonSkippedProperties = [];
 
         $this->addVersionExclusionStrategy();
         $this->addGroupsExclusionStrategy();
@@ -123,7 +121,7 @@ abstract class Context
 
     private function assertMutable()
     {
-        if ( ! $this->initialized) {
+        if (! $this->initialized) {
             return;
         }
 
@@ -229,7 +227,7 @@ abstract class Context
             /** @var PropertyMetadata[] $properties */
             $properties = array_filter(
                 $properties,
-                function (PropertyMetadata $propertyMetadata){
+                function (PropertyMetadata $propertyMetadata) {
                     $this->pushPropertyMetadata($propertyMetadata);
                     $result = ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
                     $this->popPropertyMetadata();
@@ -245,7 +243,7 @@ abstract class Context
     abstract public function getDepth();
 
     /**
-     * @return integer
+     * @return int
      */
     abstract public function getDirection();
 
@@ -268,10 +266,10 @@ abstract class Context
             return;
         }
 
-        $this->exclusionStrategy = new DisjunctExclusionStrategy(array(
+        $this->exclusionStrategy = new DisjunctExclusionStrategy([
             $this->exclusionStrategy,
             $strategy,
-        ));
+        ]);
     }
 
     private function addVersionExclusionStrategy()

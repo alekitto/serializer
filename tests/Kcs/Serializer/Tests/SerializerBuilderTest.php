@@ -19,10 +19,10 @@
 
 namespace Kcs\Serializer\Tests;
 
-use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Type\Type;
 
 class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
@@ -54,7 +54,7 @@ class SerializerBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testDoesNotAddDefaultHandlersWhenExplicitlyConfigured()
     {
-        $this->assertSame($this->builder, $this->builder->configureHandlers(function(HandlerRegistry $registry) {
+        $this->assertSame($this->builder, $this->builder->configureHandlers(function (HandlerRegistry $registry) {
         }));
 
         $this->assertEquals('{}', $this->builder->build()->serialize(new \DateTime('2020-04-16'), 'json'));

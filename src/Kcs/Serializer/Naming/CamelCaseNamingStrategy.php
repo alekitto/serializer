@@ -38,7 +38,7 @@ class CamelCaseNamingStrategy implements PropertyNamingStrategyInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function translateName(PropertyMetadata $property)
     {

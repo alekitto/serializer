@@ -35,7 +35,7 @@ class CircularReferenceChild
 
     public function __construct($name, CircularReferenceParent $parent)
     {
-        $this->name   = $name;
+        $this->name = $name;
         $this->parent = $parent;
     }
 

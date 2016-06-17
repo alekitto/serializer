@@ -23,5 +23,4 @@ use Kcs\Serializer\Annotation as Serializer;
 
 class InlineChildEmpty
 {
-
 }

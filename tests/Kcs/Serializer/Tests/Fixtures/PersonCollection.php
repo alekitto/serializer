@@ -19,11 +19,11 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlList;
 use Doctrine\Common\Collections\ArrayCollection;
+use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Annotation\XmlList;
+use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
  * @XmlRoot("person_collection")
@@ -44,6 +44,6 @@ class PersonCollection
 
     public function __construct()
     {
-        $this->persons = new ArrayCollection;
+        $this->persons = new ArrayCollection();
     }
 }

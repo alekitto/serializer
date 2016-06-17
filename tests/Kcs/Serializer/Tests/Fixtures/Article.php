@@ -19,11 +19,11 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
+use Kcs\Serializer\Annotation\HandlerCallback;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlDeserializationVisitor;
 use Kcs\Serializer\XmlSerializationVisitor;
-use Kcs\Serializer\Annotation\HandlerCallback;
 
 class Article
 {
@@ -43,6 +43,7 @@ class Article
     public function serializeToYamlAndJson(VisitorInterface $visitor, $data, Context $context)
     {
         $visitor->addData($this->element, $this->value);
+
         return [$this->element => $this->value];
     }
 

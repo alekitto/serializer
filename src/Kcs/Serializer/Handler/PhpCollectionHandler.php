@@ -21,7 +21,6 @@ namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
-use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use PhpCollection\Map;

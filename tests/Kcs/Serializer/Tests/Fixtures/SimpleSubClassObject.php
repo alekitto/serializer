@@ -20,9 +20,9 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlNamespace;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlElement;
+use Kcs\Serializer\Annotation\XmlNamespace;
 
 /**
  * @XmlNamespace(prefix="old_foo", uri="http://foo.example.org");
@@ -32,7 +32,6 @@ use Kcs\Serializer\Annotation\XmlElement;
 class SimpleSubClassObject
     extends SimpleClassObject
 {
-
     /**
      * @Type("string")
      * @XmlElement(namespace="http://better.foo.example.org")
@@ -50,5 +49,4 @@ class SimpleSubClassObject
      * @XmlElement(namespace="http://new.foo.example.org")
      */
     public $qux;
-
 }

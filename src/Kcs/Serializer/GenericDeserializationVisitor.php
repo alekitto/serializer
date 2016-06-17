@@ -21,8 +21,8 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
-use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
 /**
@@ -34,13 +34,14 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
     public function visitArray($data, Type $type, Context $context)
     {
-        if ( ! is_array($data)) {
+        if (! is_array($data)) {
             throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), json_encode($data)));
         }
 
         // If no further parameters were given, keys/values are just passed as is.
         if (! $type->hasParam(0)) {
             $this->setData($data);
+
             return $data;
         }
 
@@ -48,24 +49,26 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
             case 1: // Array is a list.
                 $listType = $type->getParam(0);
 
-                $result = array();
+                $result = [];
                 foreach ($data as $v) {
                     $result[] = $context->accept($v, $listType);
                 }
 
                 $this->setData($result);
+
                 return $result;
 
             case 2: // Array is a map.
                 $keyType = $type->getParam(0);
                 $entryType = $type->getParam(1);
 
-                $result = array();
+                $result = [];
                 foreach ($data as $k => $v) {
                     $result[$context->accept($k, $keyType)] = $context->accept($v, $entryType);
                 }
 
                 $this->setData($result);
+
                 return $result;
 
             default:
@@ -83,6 +86,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
             $object->$callback($this, $data, $context);
 
             $this->setData($object);
+
             return $object;
         }
 
@@ -104,6 +108,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         }
 
         $this->setData($object);
+
         return $object;
     }
 
@@ -115,13 +120,14 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
             return null;
         }
 
-        if ( ! $metadata->type) {
+        if (null === $metadata->type) {
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
         $v = $data[$name] !== null ? $context->accept($data[$name], $metadata->type) : null;
 
         $this->addData($name, $v);
+
         return $v;
     }
 

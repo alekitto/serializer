@@ -19,10 +19,10 @@
 
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
+use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\YamlsLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Type\Type;
 
 class YamlLoaderTest extends BaseLoaderTest
@@ -31,7 +31,7 @@ class YamlLoaderTest extends BaseLoaderTest
     {
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Person'));
         $this->getLoaderForSubDir('accessor_inferred')->loadClassMetadata($m);
-        $this->assertEquals(array('age', 'name'), array_keys($m->getAttributesMetadata()));
+        $this->assertEquals(['age', 'name'], array_keys($m->getAttributesMetadata()));
     }
 
     public function testShortExposeSyntax()
@@ -50,7 +50,7 @@ class YamlLoaderTest extends BaseLoaderTest
 
         $this->assertArrayHasKey('title', $m->getAttributesMetadata());
 
-        $excluded = array('createdAt', 'published', 'comments', 'author');
+        $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
             $this->assertArrayNotHasKey($key, $m->getAttributesMetadata());
         }
@@ -63,7 +63,7 @@ class YamlLoaderTest extends BaseLoaderTest
 
         $this->assertArrayNotHasKey('title', $m->getAttributesMetadata());
 
-        $excluded = array('createdAt', 'published', 'comments', 'author');
+        $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
             $this->assertArrayHasKey($key, $m->getAttributesMetadata());
         }
@@ -95,7 +95,8 @@ class YamlLoaderTest extends BaseLoaderTest
     private function getLoaderForSubDir($subDir = 'base')
     {
         $locator = new IteratorFileLocator();
-        return new YamlsLoader($locator->locate(__DIR__.'/yml' . ($subDir ? '/'.$subDir : ''), '.yml'));
+
+        return new YamlsLoader($locator->locate(__DIR__.'/yml'.($subDir ? '/'.$subDir : ''), '.yml'));
     }
 
     protected function getLoader()

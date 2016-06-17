@@ -19,8 +19,8 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\VirtualProperty;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
+use Kcs\Serializer\Annotation\VirtualProperty;
 
 /**
  * @ExclusionPolicy("all")

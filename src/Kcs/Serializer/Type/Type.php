@@ -56,7 +56,7 @@ class Type
      */
     public static function from($object)
     {
-        if ($object instanceof Type) {
+        if ($object instanceof self) {
             return $object;
         }
 
@@ -65,7 +65,7 @@ class Type
         }
 
         if (! is_string($object)) {
-            throw new InvalidArgumentException("Cannot create a type from ".gettype($object));
+            throw new InvalidArgumentException('Cannot create a type from '.gettype($object));
         }
 
         return new self($object);

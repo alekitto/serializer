@@ -19,9 +19,9 @@
 
 namespace Kcs\Serializer\Exclusion;
 
+use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Context;
 
 /**
  * Interface for exclusion strategies.

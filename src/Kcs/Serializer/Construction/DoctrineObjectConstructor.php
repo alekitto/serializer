@@ -20,10 +20,10 @@
 namespace Kcs\Serializer\Construction;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\DeserializationContext;
 
 /**
  * Doctrine object constructor for new (or existing) objects during deserialization.
@@ -41,7 +41,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
      */
     public function __construct(ManagerRegistry $managerRegistry, ObjectConstructorInterface $fallbackConstructor)
     {
-        $this->managerRegistry     = $managerRegistry;
+        $this->managerRegistry = $managerRegistry;
         $this->fallbackConstructor = $fallbackConstructor;
     }
 
@@ -53,7 +53,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         // Locate possible ObjectManager
         $objectManager = $this->managerRegistry->getManagerForClass($metadata->getName());
 
-        if ( ! $objectManager) {
+        if (! $objectManager) {
             // No ObjectManager found, proceed with normal deserialization
             return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
         }
@@ -67,17 +67,17 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         }
 
         // Managed entity, check for proxy load
-        if ( ! is_array($data)) {
+        if (! is_array($data)) {
             // Single identifier, load proxy
             return $objectManager->getReference($metadata->getName(), $data);
         }
 
         // Fallback to default constructor if missing identifier(s)
-        $classMetadata  = $objectManager->getClassMetadata($metadata->getName());
-        $identifierList = array();
+        $classMetadata = $objectManager->getClassMetadata($metadata->getName());
+        $identifierList = [];
 
         foreach ($classMetadata->getIdentifierFieldNames() as $name) {
-            if ( ! array_key_exists($name, $data)) {
+            if (! array_key_exists($name, $data)) {
                 return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
             }
 

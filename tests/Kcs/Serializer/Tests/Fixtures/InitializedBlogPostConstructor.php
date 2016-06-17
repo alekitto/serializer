@@ -19,11 +19,11 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 
 class InitializedBlogPostConstructor extends UnserializeObjectConstructor
 {

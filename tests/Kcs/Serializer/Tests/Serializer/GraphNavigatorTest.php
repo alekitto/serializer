@@ -19,16 +19,16 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\HandlerRegistry;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
-use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -62,7 +62,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
     public function testNavigatorPassesInstanceOnSerialization()
     {
         $context = $this->getMock('Kcs\Serializer\SerializationContext');
-        $object = new SerializableClass;
+        $object = new SerializableClass();
         $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
 
         $self = $this;
@@ -73,8 +73,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $visitor = $this->getMock('Kcs\Serializer\VisitorInterface');
         $visitor->expects($this->any())
             ->method('visitObject')
-            ->will($this->returnCallback(function(ClassMetadata $passedMetadata, $data, Type $type, Context $passedContext, ObjectConstructorInterface $objectConstructor)
-                use ($context, $metadata, $self) {
+            ->will($this->returnCallback(function (ClassMetadata $passedMetadata, $data, Type $type, Context $passedContext, ObjectConstructorInterface $objectConstructor) use ($context, $metadata, $self) {
                 $self->assertSame($metadata, $passedMetadata);
                 $self->assertTrue($context === $passedContext);
             }));
@@ -89,10 +88,10 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
     public function testNavigatorChangeTypeOnSerialization()
     {
-        $object = new SerializableClass;
+        $object = new SerializableClass();
         $typeName = 'JsonSerializable';
 
-        $this->dispatcher->addListener('serializer.pre_serialize', function($event) use ($typeName) {
+        $this->dispatcher->addListener('serializer.pre_serialize', function ($event) use ($typeName) {
             $type = $event->getType();
             $type->setName($typeName);
         });
@@ -132,12 +131,14 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
 {
     public static function getSubscribingMethods()
     {
-        return array(array(
+        return [[
             'type' => 'JsonSerializable',
             'direction' => Direction::DIRECTION_SERIALIZATION,
-            'method' => 'serialize'
-        ));
+            'method' => 'serialize',
+        ]];
     }
 
-    public function serialize() {}
+    public function serialize()
+    {
+    }
 }

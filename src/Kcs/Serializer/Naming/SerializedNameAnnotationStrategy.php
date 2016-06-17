@@ -36,7 +36,7 @@ class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterfac
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function translateName(PropertyMetadata $property)
     {

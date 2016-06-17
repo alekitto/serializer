@@ -37,5 +37,5 @@ final class AccessorOrder
     /**
      * @var array<string>
      */
-    public $custom = array();
+    public $custom = [];
 }

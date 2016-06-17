@@ -19,17 +19,17 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlNamespace;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlElement;
-use Kcs\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Annotation\Groups;
+use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\XmlElement;
+use Kcs\Serializer\Annotation\XmlList;
+use Kcs\Serializer\Annotation\XmlMap;
+use Kcs\Serializer\Annotation\XmlNamespace;
+use Kcs\Serializer\Annotation\XmlRoot;
 use PhpCollection\Map;
 use PhpCollection\Sequence;
 

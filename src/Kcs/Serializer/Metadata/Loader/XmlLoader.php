@@ -19,17 +19,16 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Kcs\Serializer\Direction;
-use Kcs\Serializer\GraphNavigator;
-use Kcs\Serializer\Exception\RuntimeException;
-use Kcs\Serializer\Exception\XmlErrorException;
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoader;
 use Kcs\Metadata\MethodMetadata;
+use Kcs\Serializer\Annotation\ExclusionPolicy;
+use Kcs\Serializer\Direction;
+use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Exception\XmlErrorException;
+use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class XmlLoader extends FileLoader
 {
@@ -47,7 +46,7 @@ class XmlLoader extends FileLoader
             throw new XmlErrorException(libxml_get_last_error());
         }
 
-        if ( ! $elems = $elem->xpath("./class[@name = '".$name."']")) {
+        if (! $elems = $elem->xpath("./class[@name = '".$name."']")) {
             return false;
         }
         $elem = reset($elems);
@@ -74,9 +73,9 @@ class XmlLoader extends FileLoader
         $metadata->readOnly = 'true' === strtolower($elem->attributes()->{'read-only'});
 
         $discriminatorFieldName = (string) $elem->attributes()->{'discriminator-field-name'};
-        $discriminatorMap = array();
+        $discriminatorMap = [];
         foreach ($elem->xpath('./discriminator-class') as $entry) {
-            if ( ! isset($entry->attributes()->value)) {
+            if (! isset($entry->attributes()->value)) {
                 throw new RuntimeException('Each discriminator-class element must have a "value" attribute.');
             }
 
@@ -85,12 +84,12 @@ class XmlLoader extends FileLoader
 
         if ('true' === (string) $elem->attributes()->{'discriminator-disabled'}) {
             $metadata->discriminatorDisabled = true;
-        } elseif ( ! empty($discriminatorFieldName) || ! empty($discriminatorMap)) {
+        } elseif (! empty($discriminatorFieldName) || ! empty($discriminatorMap)) {
             $metadata->setDiscriminator($discriminatorFieldName, $discriminatorMap);
         }
 
         foreach ($elem->xpath('./xml-namespace') as $xmlNamespace) {
-            if ( ! isset($xmlNamespace->attributes()->uri)) {
+            if (! isset($xmlNamespace->attributes()->uri)) {
                 throw new RuntimeException('The prefix attribute must be set for all xml-namespace elements.');
             }
 
@@ -104,14 +103,13 @@ class XmlLoader extends FileLoader
         }
 
         foreach ($elem->xpath('./virtual-property') as $method) {
-            if ( ! isset($method->attributes()->method)) {
+            if (! isset($method->attributes()->method)) {
                 throw new RuntimeException('The method attribute must be set for all virtual-property elements.');
             }
 
             $virtualPropertyMetadata = new VirtualPropertyMetadata($name, (string) $method->attributes()->method);
             $this->loadExposedAttribute($virtualPropertyMetadata, $method, $metadata);
         }
-
 
         foreach ($class->getProperties() as $property) {
             if ($name !== $property->class) {
@@ -129,10 +127,10 @@ class XmlLoader extends FileLoader
         }
 
         foreach ($elem->xpath('./callback-method') as $method) {
-            if ( ! isset($method->attributes()->type)) {
+            if (! isset($method->attributes()->type)) {
                 throw new RuntimeException('The type attribute must be set for all callback-method elements.');
             }
-            if ( ! isset($method->attributes()->name)) {
+            if (! isset($method->attributes()->name)) {
                 throw new RuntimeException('The name attribute must be set for all callback-method elements.');
             }
 
@@ -150,10 +148,10 @@ class XmlLoader extends FileLoader
                     break;
 
                 case 'handler':
-                    if ( ! isset($method->attributes()->format)) {
+                    if (! isset($method->attributes()->format)) {
                         throw new RuntimeException('The format attribute must be set for "handler" callback methods.');
                     }
-                    if ( ! isset($method->attributes()->direction)) {
+                    if (! isset($method->attributes()->direction)) {
                         throw new RuntimeException('The direction attribute must be set for "handler" callback methods.');
                     }
 

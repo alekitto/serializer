@@ -34,7 +34,7 @@ class SerializationContext extends Context
     {
         parent::initialize($format, $visitor, $navigator, $factory);
 
-        $this->visitingSet = array();
+        $this->visitingSet = [];
     }
 
     public function startVisiting($object)
@@ -46,13 +46,14 @@ class SerializationContext extends Context
     public function stopVisiting($object)
     {
         $hash = spl_object_hash($object);
-        unset ($this->visitingSet[$hash]);
+        unset($this->visitingSet[$hash]);
     }
 
     public function isVisiting($object)
     {
         $hash = spl_object_hash($object);
-        return isset ($this->visitingSet[$hash]);
+
+        return isset($this->visitingSet[$hash]);
     }
 
     public function getDirection()

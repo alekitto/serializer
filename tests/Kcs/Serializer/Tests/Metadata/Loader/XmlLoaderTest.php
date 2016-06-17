@@ -19,11 +19,11 @@
 
 namespace Kcs\Serializer\Tests\Metadata\Driver;
 
+use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\XmlsLoader;
-use Kcs\Serializer\Tests\Metadata\Loader\BaseLoaderTest;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
+use Kcs\Serializer\Tests\Metadata\Loader\BaseLoaderTest;
 use Kcs\Serializer\Type\Type;
 
 class XmlLoaderTest extends BaseLoaderTest
@@ -35,7 +35,7 @@ class XmlLoaderTest extends BaseLoaderTest
 
         $this->assertArrayHasKey('title', $m->getAttributesMetadata());
 
-        $excluded = array('createdAt', 'published', 'comments', 'author');
+        $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
             $this->assertArrayNotHasKey($key, $m->getAttributesMetadata());
         }
@@ -48,7 +48,7 @@ class XmlLoaderTest extends BaseLoaderTest
 
         $this->assertArrayNotHasKey('title', $m->getAttributesMetadata());
 
-        $excluded = array('createdAt', 'published', 'comments', 'author');
+        $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
             $this->assertArrayHasKey($key, $m->getAttributesMetadata());
         }
@@ -85,6 +85,7 @@ class XmlLoaderTest extends BaseLoaderTest
         }
 
         $locator = new IteratorFileLocator();
+
         return new XmlsLoader($locator->locate(__DIR__.'/xml'.$append, '.xml'));
     }
 }

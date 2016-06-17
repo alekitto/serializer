@@ -19,19 +19,19 @@
 
 namespace Kcs\Serializer\Tests\Metadata;
 
-use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 {
     public function getAccessOrderCases()
     {
         return [
-            [array('b', 'a'), array('b', 'a')],
-            [array('a', 'b'), array('a', 'b')],
-            [array('b'), array('b', 'a')],
-            [array('a'), array('a', 'b')],
-            [array('foo', 'bar'), array('b', 'a')],
+            [['b', 'a'], ['b', 'a']],
+            [['a', 'b'], ['a', 'b']],
+            [['b'], ['b', 'a']],
+            [['a'], ['a', 'b']],
+            [['foo', 'bar'], ['b', 'a']],
         ];
     }
 
@@ -43,7 +43,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder'));
         $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
         $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
+        $this->assertEquals(['b', 'a'], array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, $order);
         $this->assertEquals($expected, array_keys($metadata->getAttributesMetadata()));
@@ -55,10 +55,10 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
         $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
 
-        $this->assertEquals(array('b', 'a'), array_keys($metadata->getAttributesMetadata()));
+        $this->assertEquals(['b', 'a'], array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL);
-        $this->assertEquals(array('a', 'b'), array_keys($metadata->getAttributesMetadata()));
+        $this->assertEquals(['a', 'b'], array_keys($metadata->getAttributesMetadata()));
     }
 
     /**
@@ -100,21 +100,21 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
     public function providerPublicMethodData()
     {
-        return array(
-            array('a', null, null, 'getA', 'setA'),
-            array('b', null, null, 'isB', 'setB'),
-            array('c', null, null, 'hasC', 'setC'),
-            array('d', 'fetchd', 'saved', 'fetchd', 'saved')
-        );
+        return [
+            ['a', null, null, 'getA', 'setA'],
+            ['b', null, null, 'isB', 'setB'],
+            ['c', null, null, 'hasC', 'setC'],
+            ['d', 'fetchd', 'saved', 'fetchd', 'saved'],
+        ];
     }
 
     public function providerPublicMethodException()
     {
-        return array(
-            array(null, null),
-            array(null, 'setx'),
-            array('getx', null),
-        );
+        return [
+            [null, null],
+            [null, 'setx'],
+            ['getx', null],
+        ];
     }
 }
 
@@ -129,41 +129,41 @@ class PropertyMetadataPublicMethod
 
     public function getA()
     {
-        return 'A:' . $this->a;
+        return 'A:'.$this->a;
     }
 
     public function setA($a)
     {
-        $this->a = 'A:' . $a;
+        $this->a = 'A:'.$a;
     }
 
     public function isB()
     {
-        return 'B:' . $this->b;
+        return 'B:'.$this->b;
     }
 
     public function setB($b)
     {
-        $this->b = 'B:' . $b;
+        $this->b = 'B:'.$b;
     }
 
     public function hasC()
     {
-        return 'C:' . $this->c;
+        return 'C:'.$this->c;
     }
 
     public function setC($c)
     {
-        $this->c = 'C:' . $c;
+        $this->c = 'C:'.$c;
     }
 
     public function fetchD()
     {
-        return 'D:' . $this->d;
+        return 'D:'.$this->d;
     }
 
     public function saveD($d)
     {
-        $this->d = 'D:' . $d;
+        $this->d = 'D:'.$d;
     }
 }

@@ -19,10 +19,10 @@
 
 namespace Kcs\Serializer\Construction;
 
+use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\DeserializationContext;
 
 /**
  * Object constructor that allows deserialization into already constructed
@@ -53,5 +53,4 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
 
         return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
     }
-
 }

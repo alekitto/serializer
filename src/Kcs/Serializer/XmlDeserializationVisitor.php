@@ -20,19 +20,19 @@
 namespace Kcs\Serializer;
 
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
-use Kcs\Serializer\Exception\XmlErrorException;
-use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\InvalidArgumentException;
+use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\RuntimeException;
-use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
 class XmlDeserializationVisitor extends GenericDeserializationVisitor
 {
     private $disableExternalEntities = true;
-    private $doctypeWhitelist = array();
-    private $docNamespaces = array();
+    private $doctypeWhitelist = [];
+    private $docNamespaces = [];
 
     public function enableExternalEntities()
     {
@@ -73,7 +73,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $currentMetadata = ($metadataStack->count() && $metadataStack->top() instanceof PropertyMetadata) ? $metadataStack->top() : null;
 
         $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
-        $result = array();
+        $result = [];
 
         switch ($type->countParams()) {
             case 0:
@@ -98,7 +98,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 $keyType = $type->getParam(0);
                 $entryType = $type->getParam(1);
                 foreach ($data->$entryName as $v) {
-                    if ( ! isset($v[$currentMetadata->xmlKeyAttribute])) {
+                    if (! isset($v[$currentMetadata->xmlKeyAttribute])) {
                         throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
                     }
 
@@ -118,6 +118,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         }
 
         $this->setData($result);
+
         return $result;
     }
 
@@ -125,7 +126,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     {
         $name = $this->namingStrategy->translateName($metadata);
 
-        if ( ! $metadata->type) {
+        if (null === $metadata->type) {
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
@@ -138,7 +139,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 }
                 $attributeName = ($prefix === '') ? $name : $prefix.':'.$name;
                 $nodes = $data->xpath('./@'.$attributeName);
-                if ( ! empty($nodes)) {
+                if (! empty($nodes)) {
                     return (string) reset($nodes);
                 }
             } elseif (isset($data[$name])) {
@@ -154,7 +155,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
         if ($metadata->xmlCollection) {
             $enclosingElem = $data;
-            if ( ! $metadata->xmlCollectionInline && isset($data->$name)) {
+            if (! $metadata->xmlCollectionInline && isset($data->$name)) {
                 $enclosingElem = $data->$name;
             }
 
@@ -174,7 +175,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             }
             $node = reset($nodes);
         } else {
-            if ( ! isset($data->$name)) {
+            if (! isset($data->$name)) {
                 return null;
             }
             $node = $data->$name;
@@ -288,9 +289,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         } while ($braces > 0);
 
         $internalSubset = substr($data, $startPos, $endPos - $startPos);
-        $internalSubset = str_replace(array("\n", "\r"), '', $internalSubset);
+        $internalSubset = str_replace(["\n", "\r"], '', $internalSubset);
         $internalSubset = preg_replace('/\s{2,}/', ' ', $internalSubset);
-        $internalSubset = str_replace(array("[ <!", "> ]>"), array('[<!', '>]>'), $internalSubset);
+        $internalSubset = str_replace(['[ <!', '> ]>'], ['[<!', '>]>'], $internalSubset);
 
         return $internalSubset;
     }

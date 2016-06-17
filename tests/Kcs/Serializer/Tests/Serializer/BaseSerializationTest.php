@@ -19,27 +19,80 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Collections\ArrayCollection;
+use Kcs\Serializer\Construction\InitializedObjectConstructor;
+use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
+use Kcs\Serializer\Exclusion\DepthExclusionStrategy;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
-use Kcs\Serializer\GraphNavigator;
+use Kcs\Serializer\Handler\ArrayCollectionHandler;
+use Kcs\Serializer\Handler\ConstraintViolationHandler;
+use Kcs\Serializer\Handler\DateHandler;
+use Kcs\Serializer\Handler\FormErrorHandler;
+use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
+use Kcs\Serializer\JsonDeserializationVisitor;
+use Kcs\Serializer\JsonSerializationVisitor;
+use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
+use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\SerializationContext;
+use Kcs\Serializer\Serializer;
+use Kcs\Serializer\Tests\Fixtures\AccessorOrderChild;
+use Kcs\Serializer\Tests\Fixtures\AccessorOrderMethod;
+use Kcs\Serializer\Tests\Fixtures\AccessorOrderParent;
+use Kcs\Serializer\Tests\Fixtures\Article;
+use Kcs\Serializer\Tests\Fixtures\Author;
+use Kcs\Serializer\Tests\Fixtures\AuthorList;
+use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
+use Kcs\Serializer\Tests\Fixtures\AuthorReadOnlyPerClass;
+use Kcs\Serializer\Tests\Fixtures\BlogPost;
+use Kcs\Serializer\Tests\Fixtures\CircularReferenceParent;
+use Kcs\Serializer\Tests\Fixtures\Comment;
+use Kcs\Serializer\Tests\Fixtures\CurrencyAwareOrder;
+use Kcs\Serializer\Tests\Fixtures\CurrencyAwarePrice;
+use Kcs\Serializer\Tests\Fixtures\CustomDeserializationObject;
 use Kcs\Serializer\Tests\Fixtures\DateTimeArraysObject;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Car;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Moped;
 use Kcs\Serializer\Tests\Fixtures\Garage;
+use Kcs\Serializer\Tests\Fixtures\GetSetObject;
+use Kcs\Serializer\Tests\Fixtures\GroupsObject;
+use Kcs\Serializer\Tests\Fixtures\IndexedCommentsBlogPost;
+use Kcs\Serializer\Tests\Fixtures\InitializedBlogPostConstructor;
 use Kcs\Serializer\Tests\Fixtures\InlineChildEmpty;
+use Kcs\Serializer\Tests\Fixtures\InlineParent;
+use Kcs\Serializer\Tests\Fixtures\Input;
+use Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject;
+use Kcs\Serializer\Tests\Fixtures\Log;
 use Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject;
+use Kcs\Serializer\Tests\Fixtures\Node;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithEmptyHash;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithLifecycleCallbacks;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithNullProperty;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithVersionedVirtualProperties;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualProperties;
+use Kcs\Serializer\Tests\Fixtures\Order;
+use Kcs\Serializer\Tests\Fixtures\Price;
+use Kcs\Serializer\Tests\Fixtures\Publisher;
+use Kcs\Serializer\Tests\Fixtures\SimpleObject;
+use Kcs\Serializer\Tests\Fixtures\SimpleObjectProxy;
 use Kcs\Serializer\Tests\Fixtures\Timestamp;
 use Kcs\Serializer\Tests\Fixtures\Tree;
 use Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage;
 use Kcs\Serializer\Type\Type;
+use Kcs\Serializer\VisitorInterface;
+use Kcs\Serializer\XmlDeserializationVisitor;
+use Kcs\Serializer\XmlSerializationVisitor;
 use Kcs\Serializer\YamlDeserializationVisitor;
+use Kcs\Serializer\YamlSerializationVisitor;
 use PhpCollection\Sequence;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -47,68 +100,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormConfigBuilder;
-use Symfony\Component\Form\FormFactoryBuilder;
-use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Translation\IdentityTranslator;
-use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
-use Kcs\Serializer\Handler\HandlerRegistry;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Collections\ArrayCollection;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
-use Kcs\Serializer\Construction\UnserializeObjectConstructor;
-use Kcs\Serializer\Handler\ArrayCollectionHandler;
-use Kcs\Serializer\Handler\ConstraintViolationHandler;
-use Kcs\Serializer\Handler\DateHandler;
-use Kcs\Serializer\Handler\FormErrorHandler;
-use Kcs\Serializer\JsonDeserializationVisitor;
-use Kcs\Serializer\JsonSerializationVisitor;
-use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
-use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
-use Kcs\Serializer\Serializer;
-use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\XmlDeserializationVisitor;
-use Kcs\Serializer\XmlSerializationVisitor;
-use Kcs\Serializer\YamlSerializationVisitor;
-use Kcs\Serializer\Tests\Fixtures\AccessorOrderChild;
-use Kcs\Serializer\Tests\Fixtures\AccessorOrderParent;
-use Kcs\Serializer\Tests\Fixtures\AccessorOrderMethod;
-use Kcs\Serializer\Tests\Fixtures\Author;
-use Kcs\Serializer\Tests\Fixtures\Publisher;
-use Kcs\Serializer\Tests\Fixtures\AuthorList;
-use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
-use Kcs\Serializer\Tests\Fixtures\BlogPost;
-use Kcs\Serializer\Tests\Fixtures\CircularReferenceParent;
-use Kcs\Serializer\Tests\Fixtures\Comment;
-use Kcs\Serializer\Tests\Fixtures\CurrencyAwareOrder;
-use Kcs\Serializer\Tests\Fixtures\CurrencyAwarePrice;
-use Kcs\Serializer\Tests\Fixtures\CustomDeserializationObject;
-use Kcs\Serializer\Tests\Fixtures\GetSetObject;
-use Kcs\Serializer\Tests\Fixtures\GroupsObject;
-use Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject;
-use Kcs\Serializer\Tests\Fixtures\IndexedCommentsBlogPost;
-use Kcs\Serializer\Tests\Fixtures\InlineParent;
-use Kcs\Serializer\Construction\InitializedObjectConstructor;
-use Kcs\Serializer\Tests\Fixtures\InitializedBlogPostConstructor;
-use Kcs\Serializer\Tests\Fixtures\Log;
-use Kcs\Serializer\Tests\Fixtures\ObjectWithLifecycleCallbacks;
-use Kcs\Serializer\Tests\Fixtures\ObjectWithVersionedVirtualProperties;
-use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualProperties;
-use Kcs\Serializer\Tests\Fixtures\Order;
-use Kcs\Serializer\Tests\Fixtures\Price;
-use Kcs\Serializer\Tests\Fixtures\SimpleObject;
-use Kcs\Serializer\Tests\Fixtures\ObjectWithNullProperty;
-use Kcs\Serializer\Tests\Fixtures\SimpleObjectProxy;
-use Kcs\Serializer\Tests\Fixtures\Article;
-use Kcs\Serializer\Tests\Fixtures\Input;
-use Kcs\Serializer\Tests\Fixtures\ObjectWithEmptyHash;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormConfigBuilder;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormFactoryBuilder;
+use Symfony\Component\Translation\IdentityTranslator;
+use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
-use Kcs\Serializer\Exclusion\DepthExclusionStrategy;
-use Kcs\Serializer\Tests\Fixtures\Node;
-use Kcs\Serializer\Tests\Fixtures\AuthorReadOnlyPerClass;
 
 abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 {
@@ -123,7 +122,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testSerializeNullArray()
     {
-        $arr = array('foo' => 'bar', 'baz' => null, null);
+        $arr = ['foo' => 'bar', 'baz' => null, null];
 
         $this->assertEquals(
             $this->getContent('nullable'),
@@ -155,14 +154,14 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function getTypes()
     {
-        return array(
-            array('NULL'),
-            array('integer'),
-            array('double'),
-            array('float'),
-            array('string'),
-            array('DateTime'),
-        );
+        return [
+            ['NULL'],
+            ['integer'],
+            ['double'],
+            ['float'],
+            ['string'],
+            ['DateTime'],
+        ];
     }
 
     public function testString()
@@ -188,7 +187,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function getBooleans()
     {
-        return array(array('true', true), array('false', false));
+        return [['true', true], ['false', false]];
     }
 
     /**
@@ -205,13 +204,13 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function getNumerics()
     {
-        return array(
-            array('integer', 1, 'integer'),
-            array('float', 4.533, 'double'),
-            array('float', 4.533, 'float'),
-            array('float_trailing_zero', 1.0, 'double'),
-            array('float_trailing_zero', 1.0, 'float'),
-        );
+        return [
+            ['integer', 1, 'integer'],
+            ['float', 4.533, 'double'],
+            ['float', 4.533, 'float'],
+            ['float_trailing_zero', 1.0, 'double'],
+            ['float_trailing_zero', 1.0, 'float'],
+        ];
     }
 
     public function testSimpleObject()
@@ -225,7 +224,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayStrings()
     {
-        $data = array('foo', 'bar');
+        $data = ['foo', 'bar'];
         $this->assertEquals($this->getContent('array_strings'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
@@ -235,7 +234,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayBooleans()
     {
-        $data = array(true, false);
+        $data = [true, false];
         $this->assertEquals($this->getContent('array_booleans'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
@@ -245,7 +244,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayIntegers()
     {
-        $data = array(1, 3, 4);
+        $data = [1, 3, 4];
         $this->assertEquals($this->getContent('array_integers'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
@@ -255,7 +254,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayFloats()
     {
-        $data = array(1.34, 3.0, 6.42);
+        $data = [1.34, 3.0, 6.42];
         $this->assertEquals($this->getContent('array_floats'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
@@ -265,7 +264,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayObjects()
     {
-        $data = array(new SimpleObject('foo', 'bar'), new SimpleObject('baz', 'boo'));
+        $data = [new SimpleObject('foo', 'bar'), new SimpleObject('baz', 'boo')];
         $this->assertEquals($this->getContent('array_objects'), $this->serialize($data));
 
         if ($this->hasDeserializer()) {
@@ -275,7 +274,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testArrayListAndMapDifference()
     {
-        $arrayData = array(0 => 1, 2 => 2, 3 => 3); // Misses key 1
+        $arrayData = [0 => 1, 2 => 2, 3 => 3]; // Misses key 1
         $data = new ObjectWithIntListAndIntMap($arrayData, $arrayData);
 
         $this->assertEquals($this->getContent('array_list_and_map_difference'), $this->serialize($data));
@@ -283,13 +282,13 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testDateTimeArrays()
     {
-        $data = array(
+        $data = [
             new \DateTime('2047-01-01 12:47:47', new \DateTimeZone('UTC')),
-            new \DateTime('2013-12-05 00:00:00', new \DateTimeZone('UTC'))
-        );
+            new \DateTime('2013-12-05 00:00:00', new \DateTimeZone('UTC')),
+        ];
 
         $object = new DateTimeArraysObject($data, $data);
-        $serializedObject = $this->serialize( $object );
+        $serializedObject = $this->serialize($object);
 
         $this->assertEquals($this->getContent('array_datetimes_object'), $serializedObject);
 
@@ -312,13 +311,13 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testNamedDateTimeArrays()
     {
-        $data = array(
+        $data = [
             new \DateTime('2047-01-01 12:47:47', new \DateTimeZone('UTC')),
-            new \DateTime('2013-12-05 00:00:00', new \DateTimeZone('UTC'))
-        );
+            new \DateTime('2013-12-05 00:00:00', new \DateTimeZone('UTC')),
+        ];
 
-        $object = new NamedDateTimeArraysObject(array('testdate1' => $data[0], 'testdate2' => $data[1]));
-        $serializedObject = $this->serialize( $object );
+        $object = new NamedDateTimeArraysObject(['testdate1' => $data[0], 'testdate2' => $data[1]]);
+        $serializedObject = $this->serialize($object);
 
         $this->assertEquals($this->getContent('array_named_datetimes_object'), $serializedObject);
 
@@ -341,10 +340,9 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-
     public function testArrayMixed()
     {
-        $this->assertEquals($this->getContent('array_mixed'), $this->serialize(array('foo', 1, true, new SimpleObject('foo', 'bar'), array(1, 3, true))));
+        $this->assertEquals($this->getContent('array_mixed'), $this->serialize(['foo', 1, true, new SimpleObject('foo', 'bar'), [1, 3, true]]));
     }
 
     /**
@@ -366,9 +364,9 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function getDateTime()
     {
-        return array(
-            array('date_time', new \DateTime('2011-08-30 00:00', new \DateTimeZone('UTC')), 'DateTime'),
-        );
+        return [
+            ['date_time', new \DateTime('2011-08-30 00:00', new \DateTimeZone('UTC')), 'DateTime'],
+        ];
     }
 
     /**
@@ -382,9 +380,9 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function getTimestamp()
     {
-        return array(
-            array('timestamp', new Timestamp(new \DateTime('2016-02-11 00:00:00', new \DateTimeZone('UTC')))),
-        );
+        return [
+            ['timestamp', new Timestamp(new \DateTime('2016-02-11 00:00:00', new \DateTimeZone('UTC')))],
+        ];
     }
 
     public function testDateInterval()
@@ -407,8 +405,8 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             $this->assertAttributeEquals('This is a nice title.', 'title', $deserialized);
             $this->assertAttributeSame(false, 'published', $deserialized);
             $this->assertAttributeSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', 'etag', $deserialized);
-            $this->assertAttributeEquals(new ArrayCollection(array($comment)), 'comments', $deserialized);
-            $this->assertAttributeEquals(new Sequence(array($comment)), 'comments2', $deserialized);
+            $this->assertAttributeEquals(new ArrayCollection([$comment]), 'comments', $deserialized);
+            $this->assertAttributeEquals(new Sequence([$comment]), 'comments2', $deserialized);
             $this->assertAttributeEquals($author, 'author', $deserialized);
         }
     }
@@ -589,10 +587,10 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testFormErrors()
     {
-        $errors = array(
+        $errors = [
             new FormError('This is the form error'),
-            new FormError('Another error')
-        );
+            new FormError('Another error'),
+        ];
 
         $this->assertEquals($this->getContent('form_errors'), $this->serialize($errors));
     }
@@ -646,7 +644,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testConstraintViolation()
     {
-        $violation = new ConstraintViolation('Message of violation', 'Message of violation', array(), null, 'foo', null);
+        $violation = new ConstraintViolation('Message of violation', 'Message of violation', [], null, 'foo', null);
 
         $this->assertEquals($this->getContent('constraint_violation'), $this->serialize($violation));
     }
@@ -654,8 +652,8 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     public function testConstraintViolationList()
     {
         $violations = new ConstraintViolationList();
-        $violations->add(new ConstraintViolation('Message of violation', 'Message of violation', array(), null, 'foo', null));
-        $violations->add(new ConstraintViolation('Message of another violation', 'Message of another violation', array(), null, 'bar', null));
+        $violations->add(new ConstraintViolation('Message of violation', 'Message of violation', [], null, 'foo', null));
+        $violations->add(new ConstraintViolation('Message of another violation', 'Message of another violation', [], null, 'bar', null));
 
         $this->assertEquals($this->getContent('constraint_violation_list'), $this->serialize($violations));
     }
@@ -719,12 +717,12 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->getContent('groups_foo'),
-            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(array('foo')))
+            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['foo']))
         );
 
         $this->assertEquals(
             $this->getContent('groups_foobar'),
-            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(array('foo', 'bar')))
+            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['foo', 'bar']))
         );
 
         $this->assertEquals(
@@ -734,7 +732,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->getContent('groups_default'),
-            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(array('Default')))
+            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['Default']))
         );
     }
 
@@ -774,11 +772,11 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testCustomHandler()
     {
-        if ( ! $this->hasDeserializer()) {
+        if (! $this->hasDeserializer()) {
             return;
         }
 
-        $handler = function() {
+        $handler = function () {
             return new CustomDeserializationObject('customly_unserialized_value');
         };
 
@@ -860,7 +858,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
      */
     public function testNestedPolymorphicObjects()
     {
-        $garage = new Garage(array(new Car(3), new Moped(1)));
+        $garage = new Garage([new Car(3), new Moped(1)]);
         $this->assertEquals(
             $this->getContent('garage'),
             $this->serialize($garage)
@@ -882,7 +880,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
      */
     public function testNestedPolymorphicInterfaces()
     {
-        $garage = new VehicleInterfaceGarage(array(new Car(3), new Moped(1)));
+        $garage = new VehicleInterfaceGarage([new Car(3), new Moped(1)]);
         $this->assertEquals(
             $this->getContent('garage'),
             $this->serialize($garage)
@@ -922,15 +920,15 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         ;
 
         $data = new Tree(
-            new Node(array(
-                new Node(array(
-                    new Node(array(
-                        new Node(array(
+            new Node([
+                new Node([
+                    new Node([
+                        new Node([
                             new Node(),
-                        )),
-                    )),
-                )),
-            ))
+                        ]),
+                    ]),
+                ]),
+            ])
         );
 
         $this->assertEquals($this->getContent('tree'), $this->serializer->serialize($data, $this->getFormat(), $context));
@@ -994,17 +992,17 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',
-            function(VisitorInterface $visitor, $object, Type $type, Context $context) {
+            function (VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($object), $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_DESERIALIZATION, 'AuthorList',
-            function(VisitorInterface $visitor, $data, $type, Context $context) {
+            function (VisitorInterface $visitor, $data, $type, Context $context) {
                 $type = new Type(
                     'array',
                     [
                         Type::from('integer'),
-                        Type::from(Author::class)
+                        Type::from(Author::class),
                     ]
                 );
 
@@ -1026,8 +1024,8 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->serializationVisitors = [
             'array' => new GenericSerializationVisitor($namingStrategy),
             'json' => new JsonSerializationVisitor($namingStrategy),
-            'xml'  => new XmlSerializationVisitor($namingStrategy),
-            'yml'  => new YamlSerializationVisitor($namingStrategy),
+            'xml' => new XmlSerializationVisitor($namingStrategy),
+            'yml' => new YamlSerializationVisitor($namingStrategy),
         ];
         $this->deserializationVisitors = [
             'array' => new GenericDeserializationVisitor($namingStrategy),

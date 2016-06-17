@@ -20,7 +20,7 @@ class PropelCollectionHandlerTest extends \PHPUnit_Framework_TestCase
     public function testSerializePropelObjectCollection()
     {
         $collection = new \PropelObjectCollection();
-        $collection->setData(array(new TestSubject('lolo'), new TestSubject('pepe')));
+        $collection->setData([new TestSubject('lolo'), new TestSubject('pepe')]);
         $json = $this->serializer->serialize($collection, 'json');
 
         $data = json_decode($json, true);

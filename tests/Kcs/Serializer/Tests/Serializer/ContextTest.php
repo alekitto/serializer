@@ -21,21 +21,21 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\SerializationContext;
+use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Tests\Fixtures\InlineChild;
 use Kcs\Serializer\Tests\Fixtures\Node;
-use Kcs\Serializer\SerializerBuilder;
 
 class ContextTest extends \PHPUnit_Framework_TestCase
 {
     public function testSerializationContextPathAndDepth()
     {
-        $object = new Node(array(
+        $object = new Node([
             new Node(),
-            new Node(array(
-                new Node()
-            )),
-        ));
-        $objects = array($object, $object->children[0], $object->children[1], $object->children[1]->children[0]);
+            new Node([
+                new Node(),
+            ]),
+        ]);
+        $objects = [$object, $object->children[0], $object->children[1], $object->children[1]->children[0]];
 
         $navigator = $this->getMockBuilder('Kcs\Serializer\GraphNavigator')
             ->disableOriginalConstructor()
@@ -59,9 +59,9 @@ class ContextTest extends \PHPUnit_Framework_TestCase
 
     public function testSerializationMetadataStack()
     {
-        $object = new Node(array(
+        $object = new Node([
             $child = new InlineChild(),
-        ));
+        ]);
         $self = $this;
 
         $exclusionStrategy = $this->getMock('Kcs\Serializer\Exclusion\ExclusionStrategyInterface');

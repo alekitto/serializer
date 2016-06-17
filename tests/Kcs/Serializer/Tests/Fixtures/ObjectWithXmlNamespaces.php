@@ -21,10 +21,10 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlNamespace;
-use Kcs\Serializer\Annotation\XmlElement;
 use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\XmlElement;
+use Kcs\Serializer\Annotation\XmlNamespace;
+use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
  * @XmlRoot("test-object", namespace="http://example.com/namespace")
@@ -58,7 +58,7 @@ class ObjectWithXmlNamespaces
      * @XmlElement(namespace="http://www.w3.org/2005/Atom")
      */
     private $author;
-    
+
     /**
      * @Type("string")
      * @XmlAttribute(namespace="http://purl.org/dc/elements/1.1/");

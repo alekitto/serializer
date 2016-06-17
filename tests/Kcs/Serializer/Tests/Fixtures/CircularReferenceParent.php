@@ -21,8 +21,8 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\PostDeserialize;
+use Kcs\Serializer\Annotation\Type;
 
 /**
  * @AccessType("property")
@@ -30,7 +30,7 @@ use Kcs\Serializer\Annotation\PostDeserialize;
 class CircularReferenceParent
 {
     /** @Type("array<Kcs\Serializer\Tests\Fixtures\CircularReferenceChild>") */
-    protected $collection = array();
+    protected $collection = [];
 
     /** @Type("ArrayCollection<Kcs\Serializer\Tests\Fixtures\CircularReferenceChild>") */
     private $anotherCollection;
@@ -49,7 +49,7 @@ class CircularReferenceParent
     public function afterDeserialization()
     {
         if (!$this->collection) {
-            $this->collection = array();
+            $this->collection = [];
         }
         foreach ($this->collection as $v) {
             $v->setParent($this);

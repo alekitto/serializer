@@ -25,7 +25,6 @@ use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableConstraintViolation;
 use Kcs\Serializer\Util\SerializableConstraintViolationList;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\GraphNavigator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 

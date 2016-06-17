@@ -19,10 +19,10 @@
 
 namespace Kcs\Serializer\Construction;
 
+use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\DeserializationContext;
 
 /**
  * Implementations of this interface construct new objects during deserialization.

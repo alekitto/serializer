@@ -20,10 +20,10 @@
 namespace Kcs\Serializer\Construction;
 
 use Doctrine\Instantiator\Instantiator;
+use Kcs\Serializer\DeserializationContext;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\DeserializationContext;
 
 class UnserializeObjectConstructor implements ObjectConstructorInterface
 {

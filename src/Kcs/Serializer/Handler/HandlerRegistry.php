@@ -20,9 +20,9 @@
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Direction;
-use Kcs\Serializer\GraphNavigator;
-use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\LogicException;
+use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\GraphNavigator;
 
 class HandlerRegistry implements HandlerRegistryInterface
 {
@@ -46,7 +46,7 @@ class HandlerRegistry implements HandlerRegistryInterface
         }
     }
 
-    public function __construct(array $handlers = array())
+    public function __construct(array $handlers = [])
     {
         $this->handlers = $handlers;
     }
@@ -58,14 +58,14 @@ class HandlerRegistry implements HandlerRegistryInterface
                 throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', get_class($handler)));
             }
 
-            $directions = array(Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION);
+            $directions = [Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION];
             if (isset($methodData['direction'])) {
-                $directions = array($methodData['direction']);
+                $directions = [$methodData['direction']];
             }
 
             foreach ($directions as $direction) {
                 $method = isset($methodData['method']) ? $methodData['method'] : self::getDefaultMethod($direction, $methodData['type']);
-                $this->registerHandler($direction, $methodData['type'], array($handler, $method));
+                $this->registerHandler($direction, $methodData['type'], [$handler, $method]);
             }
         }
     }
@@ -81,7 +81,7 @@ class HandlerRegistry implements HandlerRegistryInterface
 
     public function getHandler($direction, $typeName)
     {
-        if ( ! isset($this->handlers[$direction][$typeName])) {
+        if (! isset($this->handlers[$direction][$typeName])) {
             return null;
         }
 

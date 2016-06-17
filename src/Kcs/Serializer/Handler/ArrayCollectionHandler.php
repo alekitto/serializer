@@ -20,15 +20,13 @@
 namespace Kcs\Serializer\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\PersistentCollection;
-use Doctrine\ODM\MongoDB\PersistentCollection as MongoBDPersistentCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
+use Doctrine\ORM\PersistentCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
-use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Doctrine\Common\Collections\Collection;
 
 class ArrayCollectionHandler implements SubscribingHandlerInterface
 {

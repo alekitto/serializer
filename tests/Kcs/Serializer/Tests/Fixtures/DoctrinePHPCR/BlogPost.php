@@ -19,14 +19,14 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\DoctrinePHPCR;
 
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;
+use Kcs\Serializer\Annotation\Groups;
+use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\XmlList;
+use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
  * @PHPCRODM\Document

@@ -33,7 +33,7 @@ class Node
 
     public $foo = 'bar';
 
-    public function __construct($children = array())
+    public function __construct($children = [])
     {
         $this->children = $children;
     }

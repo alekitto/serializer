@@ -19,19 +19,18 @@
 
 namespace Kcs\Serializer\Metadata;
 
-use Kcs\Serializer\Type\Parser\Parser;
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
-    const ACCESS_TYPE_PROPERTY        = 'property';
-    const ACCESS_TYPE_PUBLIC_METHOD   = 'public_method';
+    const ACCESS_TYPE_PROPERTY = 'property';
+    const ACCESS_TYPE_PUBLIC_METHOD = 'public_method';
 
     public $sinceVersion;
     public $untilVersion;
-    public $groups = array ();
+    public $groups = [];
     public $serializedName;
     public $type;
     public $xmlCollection = false;
@@ -74,8 +73,9 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public function getValue($obj)
     {
-        if (PropertyMetadata::ACCESS_TYPE_PROPERTY === $this->accessorType) {
+        if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();
+
             return $reflector->getValue($obj);
         }
 
@@ -92,9 +92,10 @@ class PropertyMetadata extends BasePropertyMetadata
             return;
         }
 
-        if (PropertyMetadata::ACCESS_TYPE_PROPERTY === $this->accessorType) {
+        if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();
             $reflector->setValue($obj, $value);
+
             return;
         }
 
@@ -116,12 +117,13 @@ class PropertyMetadata extends BasePropertyMetadata
             'get'.ucfirst($this->name),
             'is'.ucfirst($this->name),
             'has'.ucfirst($this->name),
-            $this->name
+            $this->name,
         ];
 
         foreach ($methods as $method) {
             if ($this->checkMethod($method)) {
                 $this->getter = $method;
+
                 return;
             }
         }
@@ -133,6 +135,7 @@ class PropertyMetadata extends BasePropertyMetadata
     {
         if ($this->checkMethod($setter = 'set'.ucfirst($this->name))) {
             $this->setter = $setter;
+
             return;
         }
 
