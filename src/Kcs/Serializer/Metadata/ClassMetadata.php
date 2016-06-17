@@ -215,6 +215,29 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
+    public function getSubtype($data)
+    {
+        if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
+            $typeValue = (string)$data[$this->discriminatorFieldName];
+        } elseif (isset($data->{$this->discriminatorFieldName})) {
+            $typeValue = (string) $data->{$this->discriminatorFieldName};
+        } else {
+            throw new \LogicException(
+                "The discriminator field name '{$this->discriminatorFieldName}' for " .
+                "base-class '{$this->getName()}' was not found in input data."
+            );
+        }
+
+        if ( ! isset($this->discriminatorMap[$typeValue])) {
+            throw new \LogicException(
+                "The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: " .
+                implode(', ', array_keys($this->discriminatorMap))
+            );
+        }
+
+        return $this->discriminatorMap[$typeValue];
+    }
+
     private function sortProperties()
     {
         switch ($this->accessorOrder) {

@@ -57,7 +57,7 @@ class SerializationContext extends Context
 
     public function getDirection()
     {
-        return GraphNavigator::DIRECTION_SERIALIZATION;
+        return Direction::DIRECTION_SERIALIZATION;
     }
 
     public function getDepth()

@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
@@ -197,7 +198,7 @@ class YamlLoader extends FileLoader
         if (isset($config['handler_callbacks'])) {
             foreach ($config['handler_callbacks'] as $direction => $formats) {
                 foreach ($formats as $format => $methodName) {
-                    $direction = GraphNavigator::parseDirection($direction);
+                    $direction = Direction::parseDirection($direction);
                     $metadata->addHandlerCallback($direction, $format, $methodName);
                 }
             }

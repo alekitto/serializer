@@ -28,7 +28,6 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -43,34 +42,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 /* final */ class GraphNavigator
 {
-    const DIRECTION_SERIALIZATION = 1;
-    const DIRECTION_DESERIALIZATION = 2;
-
     private $dispatcher;
     private $metadataFactory;
     private $handlerRegistry;
     private $objectConstructor;
 
-    /**
-     * Parses a direction string to one of the direction constants.
-     *
-     * @param string $dirStr
-     *
-     * @return integer
-     */
-    public static function parseDirection($dirStr)
-    {
-        switch (strtolower($dirStr)) {
-            case 'serialization':
-                return self::DIRECTION_SERIALIZATION;
-
-            case 'deserialization':
-                return self::DIRECTION_DESERIALIZATION;
-
-            default:
-                throw new InvalidArgumentException(sprintf('The direction "%s" does not exist.', $dirStr));
-        }
-    }
 
     public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, EventDispatcherInterface $dispatcher = null)
     {
@@ -113,37 +89,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
     private function guessType($data)
     {
         return new Type(is_object($data) ? get_class($data) : gettype($data));
-    }
-
-    private function resolveMetadata($data, ClassMetadata $metadata)
-    {
-        switch (true) {
-            case is_array($data) && isset($data[$metadata->discriminatorFieldName]):
-                $typeValue = (string) $data[$metadata->discriminatorFieldName];
-                break;
-
-            case is_object($data) && isset($data->{$metadata->discriminatorFieldName}):
-                $typeValue = (string) $data->{$metadata->discriminatorFieldName};
-                break;
-
-            default:
-                throw new \LogicException(sprintf(
-                    'The discriminator field name "%s" for base-class "%s" was not found in input data.',
-                    $metadata->discriminatorFieldName,
-                    $metadata->getName()
-                ));
-        }
-
-        if ( ! isset($metadata->discriminatorMap[$typeValue])) {
-            throw new \LogicException(sprintf(
-                'The type value "%s" does not exist in the discriminator map of class "%s". Available types: %s',
-                $typeValue,
-                $metadata->getName(),
-                implode(', ', array_keys($metadata->discriminatorMap))
-            ));
-        }
-
-        return $this->metadataFactory->getMetadataFor($metadata->discriminatorMap[$typeValue]);
     }
 
     private function serialize($data, Type $type, SerializationContext $context)
@@ -209,7 +154,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         $metadata = $this->getMetadataForType($type);
         if (null !== $metadata) {
             if (! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
-                $metadata = $this->resolveMetadata($data, $metadata);
+                $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
             }
         }
 

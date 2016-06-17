@@ -21,6 +21,7 @@ namespace Kcs\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Annotations\Reader;
 use Kcs\Serializer\Annotation;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Metadata\ClassMetadata;
@@ -146,7 +147,7 @@ class AnnotationLoader implements LoaderInterface
 
                 case $annotation instanceof Annotation\HandlerCallback: {
                     $classMetadata->addHandlerCallback(
-                        GraphNavigator::parseDirection($annotation->direction),
+                        Direction::parseDirection($annotation->direction),
                         $annotation->format,
                         $method->name
                     );

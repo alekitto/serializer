@@ -22,6 +22,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
@@ -53,7 +54,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->getMock('Kcs\Serializer\VisitorInterface')));
         $context->expects($this->any())
             ->method('getDirection')
-            ->will($this->returnValue(GraphNavigator::DIRECTION_SERIALIZATION));
+            ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
 
         $this->navigator->accept(STDIN, null, $context);
     }
@@ -67,7 +68,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $self = $this;
         $context->expects($this->any())
             ->method('getDirection')
-            ->will($this->returnValue(GraphNavigator::DIRECTION_SERIALIZATION));
+            ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
 
         $visitor = $this->getMock('Kcs\Serializer\VisitorInterface');
         $visitor->expects($this->any())
@@ -101,7 +102,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $context = $this->getMock('Kcs\Serializer\SerializationContext');
         $context->expects($this->any())
             ->method('getDirection')
-            ->will($this->returnValue(GraphNavigator::DIRECTION_SERIALIZATION));
+            ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
 
         $context->expects($this->any())
             ->method('getVisitor')
@@ -133,7 +134,7 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
     {
         return array(array(
             'type' => 'JsonSerializable',
-            'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+            'direction' => Direction::DIRECTION_SERIALIZATION,
             'method' => 'serialize'
         ));
     }

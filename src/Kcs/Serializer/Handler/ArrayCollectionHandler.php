@@ -24,6 +24,7 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\ODM\MongoDB\PersistentCollection as MongoBDPersistentCollection;
 use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
@@ -44,13 +45,13 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
         foreach ($collectionTypes as $type) {
             $methods[] = [
-                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => $type,
                 'method' => 'serializeCollection',
             ];
 
             $methods[] = [
-                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::DIRECTION_DESERIALIZATION,
                 'type' => $type,
                 'method' => 'deserializeCollection',
             ];

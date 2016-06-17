@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\EventDispatcher\Event;
 use Kcs\Serializer\GraphNavigator;
@@ -113,7 +114,7 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testAddLinksToOutput()
     {
         $this->dispatcher->addSubscriber(new LinkAddingSubscriber());
-        $this->handlerRegistry->registerHandler(GraphNavigator::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList',
+        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList',
             function(VisitorInterface $visitor, AuthorList $data, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($data), $type, $context);
             }

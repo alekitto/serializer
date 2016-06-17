@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Handler;
 
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
@@ -40,13 +41,13 @@ class PropelCollectionHandler implements SubscribingHandlerInterface
 
         foreach ($collectionTypes as $type) {
             $methods[] = [
-                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => $type,
                 'method' => 'serializeCollection',
             ];
 
             $methods[] = [
-                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::DIRECTION_DESERIALIZATION,
                 'type' => $type,
                 'method' => 'deserializeCollection',
             ];

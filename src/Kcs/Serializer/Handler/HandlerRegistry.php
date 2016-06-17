@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Handler;
 
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\LogicException;
@@ -34,10 +35,10 @@ class HandlerRegistry implements HandlerRegistryInterface
         }
 
         switch ($direction) {
-            case GraphNavigator::DIRECTION_DESERIALIZATION:
+            case Direction::DIRECTION_DESERIALIZATION:
                 return 'deserialize'.$type;
 
-            case GraphNavigator::DIRECTION_SERIALIZATION:
+            case Direction::DIRECTION_SERIALIZATION:
                 return 'serialize'.$type;
 
             default:
@@ -57,7 +58,7 @@ class HandlerRegistry implements HandlerRegistryInterface
                 throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', get_class($handler)));
             }
 
-            $directions = array(GraphNavigator::DIRECTION_DESERIALIZATION, GraphNavigator::DIRECTION_SERIALIZATION);
+            $directions = array(Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION);
             if (isset($methodData['direction'])) {
                 $directions = array($methodData['direction']);
             }
@@ -72,7 +73,7 @@ class HandlerRegistry implements HandlerRegistryInterface
     public function registerHandler($direction, $typeName, callable $handler)
     {
         if (is_string($direction)) {
-            $direction = GraphNavigator::parseDirection($direction);
+            $direction = Direction::parseDirection($direction);
         }
 
         $this->handlers[$direction][$typeName] = $handler;

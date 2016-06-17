@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
@@ -38,13 +39,13 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
         foreach ($collectionTypes as $type => $shortName) {
             $methods[] = [
-                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => $type,
                 'method' => 'serialize'.$shortName,
             ];
 
             $methods[] = [
-                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::DIRECTION_DESERIALIZATION,
                 'type' => $type,
                 'method' => 'deserialize'.$shortName,
             ];

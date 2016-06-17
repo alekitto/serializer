@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableConstraintViolation;
 use Kcs\Serializer\Util\SerializableConstraintViolationList;
@@ -34,11 +35,11 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
     {
         return [
             [
-                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => ConstraintViolationList::class,
                 'method' => 'serializeList',
             ], [
-                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => ConstraintViolation::class,
                 'method' => 'serializeViolation',
             ],

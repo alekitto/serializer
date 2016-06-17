@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\XmlErrorException;
@@ -156,7 +157,7 @@ class XmlLoader extends FileLoader
                         throw new RuntimeException('The direction attribute must be set for "handler" callback methods.');
                     }
 
-                    $direction = GraphNavigator::parseDirection((string) $method->attributes()->direction);
+                    $direction = Direction::parseDirection((string)$method->attributes()->direction);
                     $format = (string) $method->attributes()->format;
                     $metadata->addHandlerCallback($direction, $format, (string) $method->attributes()->name);
 
