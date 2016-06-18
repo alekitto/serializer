@@ -1,19 +1,16 @@
 <?php
 
-if (! isset($_SERVER['argv'][1], $_SERVER['argv'][2])) {
-    echo 'Usage: php benchmark.php <format> <iterations> [output-file]'.PHP_EOL;
-    exit(1);
-}
-
-list(, $format, $iterations) = $_SERVER['argv'];
-
 require_once 'bootstrap.php';
 
-function benchmark(\Closure $f, $times = 10)
+$input = new \Symfony\Component\Console\Input\ArgvInput();
+$output = new \Symfony\Component\Console\Output\ConsoleOutput();
+
+function benchmark(\Closure $f, $format)
 {
+    $times = 20;
     $time = microtime(true);
     for ($i = 0; $i < $times; ++$i) {
-        $f();
+        $f($format);
     }
 
     return (microtime(true) - $time) / $times;
@@ -49,21 +46,44 @@ $serializer = \Kcs\Serializer\SerializerBuilder::create()
     ->build();
 $collection = createCollection();
 $metrics = [];
-$f = function () use ($serializer, $collection, $format) {
+$f = function ($format) use ($serializer, $collection) {
     $serializer->serialize($collection, $format);
 };
 
 // Load all necessary classes into memory.
-benchmark($f, 1);
+$f('array');
 
-printf('Benchmarking collection for format "%s".'.PHP_EOL, $format);
-$metrics['benchmark-collection-'.$format] = benchmark($f, $iterations);
+$table = new \Symfony\Component\Console\Helper\Table($output);
+$table->setHeaders(['Format', 'Direction', 'Time']);
 
-$output = json_encode(['metrics' => $metrics]);
+$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 8);
+$progressBar->start();
 
-if (isset($_SERVER['argv'][3])) {
-    file_put_contents($_SERVER['argv'][3], $output);
-    echo 'Done.'.PHP_EOL;
-} else {
-    echo $output.PHP_EOL;
+foreach (['array', 'json', 'yml', 'xml'] as $format) {
+    $table->addRow([$format, 'serialize', benchmark($f, $format)]);
+    $progressBar->advance();
 }
+
+$serialized = [
+    'array' => $serializer->serialize($collection, 'array'),
+    'json' => $serializer->serialize($collection, 'json'),
+    'yml' => $serializer->serialize($collection, 'yml'),
+    'xml' => $serializer->serialize($collection, 'xml'),
+];
+
+$type = new \Kcs\Serializer\Type\Type('array', [
+    \Kcs\Serializer\Type\Type::from(\Kcs\Serializer\Tests\Fixtures\BlogPost::class)
+]);
+$d = function ($format) use ($serializer, $serialized, $type) {
+    $serializer->deserialize($serialized[$format], $type, $format);
+};
+
+foreach (['array', 'json', 'yml', 'xml'] as $format) {
+    $table->addRow([$format, 'deserialize', benchmark($d, $format)]);
+    $progressBar->advance();
+}
+
+$progressBar->finish();
+$progressBar->clear();
+
+$table->render();
