@@ -39,21 +39,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * on visitors, or custom handlers to process its nodes.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ * @author Alessandro Chitolina <alekitto@gmail.com>
  */
-/* final */ class GraphNavigator
- {
-     private $dispatcher;
-     private $metadataFactory;
-     private $handlerRegistry;
-     private $objectConstructor;
+class GraphNavigator
+{
+    private $dispatcher;
+    private $metadataFactory;
+    private $handlerRegistry;
+    private $objectConstructor;
 
-     public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, EventDispatcherInterface $dispatcher = null)
-     {
-         $this->dispatcher = $dispatcher;
-         $this->metadataFactory = $metadataFactory;
-         $this->handlerRegistry = $handlerRegistry;
-         $this->objectConstructor = $objectConstructor;
-     }
+    public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, EventDispatcherInterface $dispatcher = null)
+    {
+        $this->dispatcher = $dispatcher;
+        $this->metadataFactory = $metadataFactory;
+        $this->handlerRegistry = $handlerRegistry;
+        $this->objectConstructor = $objectConstructor;
+    }
 
     /**
      * Called for each node of the graph that is being traversed.
@@ -85,21 +86,21 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         return $this->deserialize($data, $type, $context);
     }
 
-     private function guessType($data)
-     {
-         return new Type(is_object($data) ? get_class($data) : gettype($data));
-     }
+    private function guessType($data)
+    {
+        return new Type(is_object($data) ? get_class($data) : gettype($data));
+    }
 
-     private function serialize($data, Type $type, SerializationContext $context)
-     {
-         $inVisitingStack = is_object($data) && null !== $data;
-         if ($inVisitingStack) {
-             if ($context->isVisiting($data)) {
-                 return null;
-             }
+    private function serialize($data, Type $type, SerializationContext $context)
+    {
+        $inVisitingStack = is_object($data) && null !== $data;
+        if ($inVisitingStack) {
+            if ($context->isVisiting($data)) {
+                return null;
+            }
 
-             $context->startVisiting($data);
-         }
+            $context->startVisiting($data);
+        }
 
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
@@ -107,85 +108,85 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
             $type = new Type(get_class($data));
         }
 
-         if (null !== $this->dispatcher && ! is_scalar($data)) {
-             $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
-             $data = $event->getData();
-         }
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
+            $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
+            $data = $event->getData();
+        }
 
-         $metadata = $this->getMetadataForType($type);
-         if (null !== $metadata) {
-             foreach ($metadata->preSerializeMethods as $method) {
-                 $method->getReflection()->invoke($data);
-             }
-         }
+        $metadata = $this->getMetadataForType($type);
+        if (null !== $metadata) {
+            foreach ($metadata->preSerializeMethods as $method) {
+                $method->getReflection()->invoke($data);
+            }
+        }
 
-         $context->getVisitor()->startVisiting($data, $type, $context);
-         $this->callVisitor($data, $type, $context, $metadata);
+        $context->getVisitor()->startVisiting($data, $type, $context);
+        $this->callVisitor($data, $type, $context, $metadata);
 
-         if (null !== $metadata) {
-             foreach ($metadata->postSerializeMethods as $method) {
-                 $method->getReflection()->invoke($data);
-             }
-         }
+        if (null !== $metadata) {
+            foreach ($metadata->postSerializeMethods as $method) {
+                $method->getReflection()->invoke($data);
+            }
+        }
 
-         if (null !== $this->dispatcher && ! is_scalar($data)) {
-             $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
-         }
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
+            $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
+        }
 
-         $rs = $context->getVisitor()->endVisiting($data, $type, $context);
+        $rs = $context->getVisitor()->endVisiting($data, $type, $context);
 
-         if ($inVisitingStack) {
-             $context->stopVisiting($data);
-         }
+        if ($inVisitingStack) {
+            $context->stopVisiting($data);
+        }
 
-         return $rs;
-     }
+        return $rs;
+    }
 
-     private function deserialize($data, Type $type, DeserializationContext $context)
-     {
-         $context->increaseDepth();
+    private function deserialize($data, Type $type, DeserializationContext $context)
+    {
+        $context->increaseDepth();
 
-         if (null !== $this->dispatcher && ! is_scalar($data)) {
-             $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
-             $data = $event->getData();
-         }
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
+            $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
+            $data = $event->getData();
+        }
 
-         $metadata = $this->getMetadataForType($type);
-         if (null !== $metadata) {
-             if (! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
-                 $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
-             }
-         }
+        $metadata = $this->getMetadataForType($type);
+        if (null !== $metadata) {
+            if (! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
+                $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
+            }
+        }
 
-         $context->getVisitor()->startVisiting($data, $type, $context);
-         $rs = $this->callVisitor($data, $type, $context, $metadata);
+        $context->getVisitor()->startVisiting($data, $type, $context);
+        $rs = $this->callVisitor($data, $type, $context, $metadata);
 
-         if (null !== $metadata) {
-             foreach ($metadata->postDeserializeMethods as $method) {
-                 $method->getReflection()->invoke($rs);
-             }
-         }
+        if (null !== $metadata) {
+            foreach ($metadata->postDeserializeMethods as $method) {
+                $method->getReflection()->invoke($rs);
+            }
+        }
 
-         if (null !== $this->dispatcher && ! is_scalar($data)) {
-             $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
-         }
+        if (null !== $this->dispatcher && ! is_scalar($data)) {
+            $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
+        }
 
-         $rs = $context->getVisitor()->endVisiting($rs, $type, $context);
-         $context->decreaseDepth();
+        $rs = $context->getVisitor()->endVisiting($rs, $type, $context);
+        $context->decreaseDepth();
 
-         return $rs;
-     }
+        return $rs;
+    }
 
-     private function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
-     {
-         $visitor = $context->getVisitor();
+    private function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
+    {
+        $visitor = $context->getVisitor();
 
         // First, try whether a custom handler exists for the given type
         if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type->getName())) {
             return $visitor->visitCustom($handler, $data, $type, $context);
         }
 
-         switch ($type->getName()) {
+        switch ($type->getName()) {
             case 'NULL':
                 return $visitor->visitNull($data, $type, $context);
 
@@ -218,7 +219,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
                 return $visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
         }
-     }
+    }
 
     /**
      * Get ClassMetadata instance for type. Returns null if class does not exist
@@ -236,12 +237,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
         return $this->metadataFactory->getMetadataFor($type->getName());
     }
 
-     private function visitArray(VisitorInterface $visitor, $data, Type $type, $context)
-     {
-         if ($context instanceof SerializationContext && $type->hasParam(0) && ! $type->hasParam(1)) {
-             $data = array_values($data);
-         }
+    private function visitArray(VisitorInterface $visitor, $data, Type $type, $context)
+    {
+        if ($context instanceof SerializationContext && $type->hasParam(0) && ! $type->hasParam(1)) {
+            $data = array_values($data);
+        }
 
-         return $visitor->visitArray($data, $type, $context);
-     }
- }
+        return $visitor->visitArray($data, $type, $context);
+    }
+}

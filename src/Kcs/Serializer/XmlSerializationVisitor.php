@@ -27,8 +27,6 @@ use Kcs\Serializer\Type\Type;
 
 /**
  * XmlSerializationVisitor.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class XmlSerializationVisitor extends AbstractVisitor
 {
