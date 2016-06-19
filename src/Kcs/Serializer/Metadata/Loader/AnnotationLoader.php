@@ -147,7 +147,6 @@ class AnnotationLoader implements LoaderInterface
                 case $annotation instanceof Annotation\HandlerCallback: {
                     $classMetadata->addHandlerCallback(
                         Direction::parseDirection($annotation->direction),
-                        $annotation->format,
                         $method->name
                     );
                 } break;

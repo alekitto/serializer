@@ -81,8 +81,8 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         $exclusionStrategy = $context->getExclusionStrategy();
 
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
-        if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
-            $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+        if (isset($metadata->handlerCallbacks[$context->getDirection()])) {
+            $callback = $metadata->handlerCallbacks[$context->getDirection()];
             $object->$callback($this, $data, $context);
 
             $this->setData($object);
@@ -125,7 +125,6 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         }
 
         $v = $data[$name] !== null ? $context->accept($data[$name], $metadata->type) : null;
-
         $this->addData($name, $v);
 
         return $v;

@@ -31,11 +31,5 @@ final class HandlerCallback
      * @Required
      * @var string
      */
-    public $format;
-
-    /**
-     * @Required
-     * @var string
-     */
     public $direction;
 }

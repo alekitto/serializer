@@ -94,8 +94,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
-        if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
-            $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+        if (isset($metadata->handlerCallbacks[$context->getDirection()])) {
+            $callback = $metadata->handlerCallbacks[$context->getDirection()];
             $this->currentNodes = $data->$callback($this, null, $context);
 
             if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {

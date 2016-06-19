@@ -126,12 +126,11 @@ class ClassMetadata extends BaseClassMetadata
 
     /**
      * @param int $direction
-     * @param string|int $format
      * @param string $methodName
      */
-    public function addHandlerCallback($direction, $format, $methodName)
+    public function addHandlerCallback($direction, $methodName)
     {
-        $this->handlerCallbacks[$direction][$format] = $methodName;
+        $this->handlerCallbacks[$direction] = $methodName;
     }
 
     public function merge(MetadataInterface $object)

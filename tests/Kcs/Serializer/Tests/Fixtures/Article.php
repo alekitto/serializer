@@ -30,37 +30,25 @@ class Article
     public $element;
     public $value;
 
-    /** @HandlerCallback("xml", direction = "serialization") */
-    public function serializeToXml(XmlSerializationVisitor $visitor, $data, Context $context)
+    /** @HandlerCallback("serialization") */
+    public function serialize(VisitorInterface $visitor)
     {
-        return $visitor->document->createElement($this->element, $this->value);
-    }
-
-    /**
-     * @HandlerCallback("json", direction = "serialization")
-     * @HandlerCallback("yml", direction = "serialization")
-     */
-    public function serializeToYamlAndJson(VisitorInterface $visitor, $data, Context $context)
-    {
-        $visitor->addData($this->element, $this->value);
+        if ($visitor instanceof XmlSerializationVisitor) {
+            return $visitor->document->createElement($this->element, $this->value);
+        }
 
         return [$this->element => $this->value];
     }
 
-    /** @HandlerCallback("xml", direction = "deserialization") */
-    public function deserializeFromXml(XmlDeserializationVisitor $visitor, \SimpleXMLElement $data)
+    /** @HandlerCallback("deserialization") */
+    public function deserialize(VisitorInterface $visitor, $data)
     {
-        $this->element = $data->getName();
-        $this->value = (string) $data;
-    }
-
-    /**
-     * @HandlerCallback("json", direction = "deserialization")
-     * @HandlerCallback("yml", direction = "deserialization")
-     */
-    public function deserializeFromJson(VisitorInterface $visitor, array $data)
-    {
-        $this->element = key($data);
-        $this->value = reset($data);
+        if ($visitor instanceof XmlDeserializationVisitor) {
+            $this->element = $data->getName();
+            $this->value = (string) $data;
+        } else {
+            $this->element = key($data);
+            $this->value = reset($data);
+        }
     }
 }

@@ -84,12 +84,13 @@ class GenericSerializationVisitor extends AbstractVisitor
     {
         $this->data = [];
 
-        $exclusionStrategy = $context->getExclusionStrategy();
-        if (isset($metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()])) {
-            $callback = $metadata->handlerCallbacks[$context->getDirection()][$context->getFormat()];
+        if (isset($metadata->handlerCallbacks[$context->getDirection()])) {
+            $callback = $metadata->handlerCallbacks[$context->getDirection()];
 
             return $this->data = $data->$callback($this, null, $context);
         }
+
+        $exclusionStrategy = $context->getExclusionStrategy();
 
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
