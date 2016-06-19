@@ -19,36 +19,8 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\HandlerCallback;
-use Kcs\Serializer\Context;
-use Kcs\Serializer\VisitorInterface;
-use Kcs\Serializer\XmlDeserializationVisitor;
-use Kcs\Serializer\XmlSerializationVisitor;
-
 class Article
 {
     public $element;
     public $value;
-
-    /** @HandlerCallback("serialization") */
-    public function serialize(VisitorInterface $visitor)
-    {
-        if ($visitor instanceof XmlSerializationVisitor) {
-            return $visitor->document->createElement($this->element, $this->value);
-        }
-
-        return [$this->element => $this->value];
-    }
-
-    /** @HandlerCallback("deserialization") */
-    public function deserialize(VisitorInterface $visitor, $data)
-    {
-        if ($visitor instanceof XmlDeserializationVisitor) {
-            $this->element = $data->getName();
-            $this->value = (string) $data;
-        } else {
-            $this->element = key($data);
-            $this->value = reset($data);
-        }
-    }
 }

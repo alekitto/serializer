@@ -54,7 +54,6 @@ class ClassMetadata extends BaseClassMetadata
     public $xmlNamespaces = [];
     public $accessorOrder;
     public $customOrder;
-    public $handlerCallbacks = [];
 
     public $discriminatorDisabled = false;
     public $discriminatorBaseClass;
@@ -122,15 +121,6 @@ class ClassMetadata extends BaseClassMetadata
     public function addPostDeserializeMethod(MethodMetadata $method)
     {
         $this->postDeserializeMethods[] = $method;
-    }
-
-    /**
-     * @param int $direction
-     * @param string $methodName
-     */
-    public function addHandlerCallback($direction, $methodName)
-    {
-        $this->handlerCallbacks[$direction] = $methodName;
     }
 
     public function merge(MetadataInterface $object)

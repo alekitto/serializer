@@ -79,16 +79,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $exclusionStrategy = $context->getExclusionStrategy();
-
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
-        if (isset($metadata->handlerCallbacks[$context->getDirection()])) {
-            $callback = $metadata->handlerCallbacks[$context->getDirection()];
-            $object->$callback($this, $data, $context);
-
-            $this->setData($object);
-
-            return $object;
-        }
 
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {

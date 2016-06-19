@@ -83,13 +83,6 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $this->data = [];
-
-        if (isset($metadata->handlerCallbacks[$context->getDirection()])) {
-            $callback = $metadata->handlerCallbacks[$context->getDirection()];
-
-            return $this->data = $data->$callback($this, null, $context);
-        }
-
         $exclusionStrategy = $context->getExclusionStrategy();
 
         /** @var PropertyMetadata $propertyMetadata */

@@ -143,13 +143,6 @@ class AnnotationLoader implements LoaderInterface
                 case $annotation instanceof Annotation\PostSerialize: {
                     $classMetadata->addPostSerializeMethod(new MethodMetadata($class, $method->name));
                 } break;
-
-                case $annotation instanceof Annotation\HandlerCallback: {
-                    $classMetadata->addHandlerCallback(
-                        Direction::parseDirection($annotation->direction),
-                        $method->name
-                    );
-                } break;
             }
         }
 
