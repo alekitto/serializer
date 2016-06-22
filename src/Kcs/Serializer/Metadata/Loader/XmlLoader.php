@@ -112,7 +112,7 @@ class XmlLoader extends FileLoader
         }
 
         foreach ($class->getProperties() as $property) {
-            if ($name !== $property->class) {
+            if ($name !== $property->getDeclaringClass()->name) {
                 continue;
             }
 

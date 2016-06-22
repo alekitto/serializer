@@ -56,7 +56,7 @@ class AnnotationLoader implements LoaderInterface
         $this->processClassAnnotations($classMetadata);
 
         foreach ($class->getMethods() as $method) {
-            if ($method->class !== $class->name) {
+            if ($method->getDeclaringClass()->name !== $class->name) {
                 continue;
             }
 
@@ -64,7 +64,7 @@ class AnnotationLoader implements LoaderInterface
         }
 
         foreach ($class->getProperties() as $property) {
-            if ($property->class !== $class->name) {
+            if ($property->getDeclaringClass()->name !== $class->name) {
                 continue;
             }
 
