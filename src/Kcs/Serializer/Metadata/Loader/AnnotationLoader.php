@@ -82,44 +82,37 @@ class AnnotationLoader implements LoaderInterface
         $annotations = $this->reader->getClassAnnotations($classMetadata->getReflectionClass());
         foreach ($annotations as $annotation) {
             switch (true) {
-                case $annotation instanceof Annotation\ExclusionPolicy: {
+                case $annotation instanceof Annotation\ExclusionPolicy:
                     $classMetadata->exclusionPolicy = $annotation->policy;
-                }
                     break;
 
-                case $annotation instanceof Annotation\XmlRoot: {
+                case $annotation instanceof Annotation\XmlRoot:
                     $classMetadata->xmlRootName = $annotation->name;
                     $classMetadata->xmlRootNamespace = $annotation->namespace;
-                }
                     break;
 
-                case $annotation instanceof Annotation\XmlNamespace: {
+                case $annotation instanceof Annotation\XmlNamespace:
                     $classMetadata->registerNamespace($annotation->uri, $annotation->prefix);
-                }
                     break;
 
-                case $annotation instanceof Annotation\AccessType: {
+                case $annotation instanceof Annotation\AccessType:
                     $classMetadata->defaultAccessType = $annotation->type;
-                }
                     break;
 
-                case $annotation instanceof Annotation\ReadOnly: {
+                case $annotation instanceof Annotation\ReadOnly:
                     $classMetadata->readOnly = true;
-                }
                     break;
 
-                case $annotation instanceof Annotation\AccessorOrder: {
+                case $annotation instanceof Annotation\AccessorOrder:
                     $classMetadata->setAccessorOrder($annotation->order, $annotation->custom);
-                }
                     break;
 
-                case $annotation instanceof Annotation\Discriminator: {
+                case $annotation instanceof Annotation\Discriminator:
                     if ($annotation->disabled) {
                         $classMetadata->discriminatorDisabled = true;
                     } else {
                         $classMetadata->setDiscriminator($annotation->field, $annotation->map);
                     }
-                }
                     break;
             }
         }
@@ -132,17 +125,17 @@ class AnnotationLoader implements LoaderInterface
         $methodAnnotations = $this->reader->getMethodAnnotations($method);
         foreach ($methodAnnotations as $annotation) {
             switch (true) {
-                case $annotation instanceof Annotation\PreSerialize: {
+                case $annotation instanceof Annotation\PreSerialize:
                     $classMetadata->addPreSerializeMethod(new MethodMetadata($class, $method->name));
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\PostDeserialize: {
+                case $annotation instanceof Annotation\PostDeserialize:
                     $classMetadata->addPostDeserializeMethod(new MethodMetadata($class, $method->name));
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\PostSerialize: {
+                case $annotation instanceof Annotation\PostSerialize:
                     $classMetadata->addPostSerializeMethod(new MethodMetadata($class, $method->name));
-                } break;
+                    break;
             }
         }
 
@@ -178,68 +171,68 @@ class AnnotationLoader implements LoaderInterface
 
         foreach ($annotations as $annotation) {
             switch (true) {
-                case $annotation instanceof Annotation\Since: {
+                case $annotation instanceof Annotation\Since:
                     $metadata->sinceVersion = $annotation->version;
-                } break;
+                break;
 
-                case $annotation instanceof Annotation\Until: {
+                case $annotation instanceof Annotation\Until:
                     $metadata->untilVersion = $annotation->version;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\SerializedName: {
+                case $annotation instanceof Annotation\SerializedName:
                     $metadata->serializedName = $annotation->name;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\Type: {
+                case $annotation instanceof Annotation\Type:
                     $metadata->setType($annotation->name);
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlElement: {
+                case $annotation instanceof Annotation\XmlElement:
                     $metadata->xmlAttribute = false;
                     $metadata->xmlElementCData = $annotation->cdata;
                     $metadata->xmlNamespace = $annotation->namespace;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlList: {
+                case $annotation instanceof Annotation\XmlList:
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlMap: {
+                case $annotation instanceof Annotation\XmlMap:
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
                     $metadata->xmlKeyAttribute = $annotation->keyAttribute;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlKeyValuePairs: {
+                case $annotation instanceof Annotation\XmlKeyValuePairs:
                     $metadata->xmlKeyValuePairs = true;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlAttribute: {
+                case $annotation instanceof Annotation\XmlAttribute:
                     $metadata->xmlAttribute = true;
                     $metadata->xmlNamespace = $annotation->namespace;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlValue: {
+                case $annotation instanceof Annotation\XmlValue:
                     $metadata->xmlValue = true;
                     $metadata->xmlElementCData = $annotation->cdata;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\AccessType: {
+                case $annotation instanceof Annotation\AccessType:
                     $accessType = $annotation->type;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\ReadOnly: {
+                case $annotation instanceof Annotation\ReadOnly:
                     $metadata->readOnly = $annotation->readOnly;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\Accessor: {
+                case $annotation instanceof Annotation\Accessor:
                     $accessor = [$annotation->getter, $annotation->setter];
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\Groups: {
+                case $annotation instanceof Annotation\Groups:
                     $metadata->groups = $annotation->groups;
                     foreach ((array)$metadata->groups as $groupName) {
                         if (false !== strpos($groupName, ',')) {
@@ -250,19 +243,19 @@ class AnnotationLoader implements LoaderInterface
                             ));
                         }
                     }
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\Inline: {
+                case $annotation instanceof Annotation\Inline:
                     $metadata->inline = true;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\XmlAttributeMap: {
+                case $annotation instanceof Annotation\XmlAttributeMap:
                     $metadata->xmlAttributeMap = true;
-                } break;
+                    break;
 
-                case $annotation instanceof Annotation\MaxDepth: {
+                case $annotation instanceof Annotation\MaxDepth:
                     $metadata->maxDepth = $annotation->depth;
-                } break;
+                    break;
 
             }
         }

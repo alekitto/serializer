@@ -27,6 +27,11 @@ use Kcs\Serializer\Type\Type;
  */
 final class Parser
 {
+    /**
+     * @var Lexer
+     */
+    private $lexer;
+
     public function __construct()
     {
         $this->lexer = new Lexer();

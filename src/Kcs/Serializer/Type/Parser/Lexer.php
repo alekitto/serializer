@@ -72,9 +72,12 @@ class Lexer extends AbstractLexer
             return self::T_IDENTIFIER;
         } else {
             switch ($value) {
-                case ',': return self::T_COMMA;
-                case '>': return self::T_CLOSED_BRACKET;
-                case '<': return self::T_OPEN_BRACKET;
+                case ',':
+                    return self::T_COMMA;
+                case '>':
+                    return self::T_CLOSED_BRACKET;
+                case '<':
+                    return self::T_OPEN_BRACKET;
                 default:
                     // Do nothing
                     break;

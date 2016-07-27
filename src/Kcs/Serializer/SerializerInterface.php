@@ -42,7 +42,7 @@ interface SerializerInterface
     /**
      * Deserializes the given data to the specified type.
      *
-     * @param string $data
+     * @param string|mixed $data
      * @param Type $type
      * @param string $format
      * @param DeserializationContext $context

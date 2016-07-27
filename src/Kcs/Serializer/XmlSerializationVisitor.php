@@ -30,6 +30,8 @@ use Kcs\Serializer\Type\Type;
  */
 class XmlSerializationVisitor extends AbstractVisitor
 {
+    use VisitCustomVisitorTrait;
+
     /**
      * @var \DOMDocument
      */
@@ -243,20 +245,10 @@ class XmlSerializationVisitor extends AbstractVisitor
                 $this->currentNodes->setAttribute($attributeName, (string)$k);
             }
 
-            $nodes[$k] = $this->currentNodes;
+            $nodes[] = $this->currentNodes;
         }
 
-        return $this->currentNodes = array_values($nodes);
-    }
-
-    public function visitCustom(callable $handler, $data, Type $type, Context $context)
-    {
-        $args = func_get_args();
-
-        $handler = array_shift($args);
-        array_unshift($args, $this);
-
-        return call_user_func_array($handler, $args);
+        return $this->currentNodes = $nodes;
     }
 
     public function setNavigator(GraphNavigator $navigator = null)
