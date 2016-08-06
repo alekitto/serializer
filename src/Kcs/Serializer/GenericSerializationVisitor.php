@@ -117,7 +117,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $rs;
     }
 
-    public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $v = $metadata->getValue($data);
 

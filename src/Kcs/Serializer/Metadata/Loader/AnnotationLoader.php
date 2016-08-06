@@ -24,7 +24,6 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation;
-use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
@@ -197,12 +196,14 @@ class AnnotationLoader implements LoaderInterface
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
+                    $metadata->xmlEntryNamespace = $annotation->namespace;
                     break;
 
                 case $annotation instanceof Annotation\XmlMap:
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
+                    $metadata->xmlEntryNamespace = $annotation->namespace;
                     $metadata->xmlKeyAttribute = $annotation->keyAttribute;
                     break;
 

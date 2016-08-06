@@ -72,7 +72,7 @@ $serialized = [
 ];
 
 $type = new \Kcs\Serializer\Type\Type('array', [
-    \Kcs\Serializer\Type\Type::from(\Kcs\Serializer\Tests\Fixtures\BlogPost::class)
+    \Kcs\Serializer\Type\Type::from(\Kcs\Serializer\Tests\Fixtures\BlogPost::class),
 ]);
 $d = function ($format) use ($serializer, $serialized, $type) {
     $serializer->deserialize($serialized[$format], $type, $format);

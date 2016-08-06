@@ -103,7 +103,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $object;
     }
 
-    public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $name = $this->namingStrategy->translateName($metadata);
 

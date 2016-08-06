@@ -23,7 +23,6 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoader;
 use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
@@ -120,6 +119,10 @@ class YamlLoader extends FileLoader
                         if (isset($colConfig['entry_name'])) {
                             $pMetadata->xmlEntryName = (string) $colConfig['entry_name'];
                         }
+
+                        if (isset($colConfig['namespace'])) {
+                            $pMetadata->xmlEntryNamespace = (string) $colConfig['namespace'];
+                        }
                     }
 
                     if (isset($pConfig['xml_map'])) {
@@ -132,6 +135,10 @@ class YamlLoader extends FileLoader
 
                         if (isset($colConfig['entry_name'])) {
                             $pMetadata->xmlEntryName = (string) $colConfig['entry_name'];
+                        }
+
+                        if (isset($colConfig['namespace'])) {
+                            $pMetadata->xmlEntryNamespace = (string) $colConfig['namespace'];
                         }
 
                         if (isset($colConfig['key_attribute_name'])) {

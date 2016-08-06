@@ -21,7 +21,6 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
 /**
@@ -108,15 +107,6 @@ interface VisitorInterface
      * @return mixed
      */
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null);
-
-    /**
-     * @param PropertyMetadata $metadata
-     * @param mixed $data
-     * @param Context $context
-     *
-     * @return void
-     */
-    public function visitProperty(PropertyMetadata $metadata, $data, Context $context);
 
     /**
      * @param callable $handler

@@ -73,14 +73,16 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $currentMetadata = ($metadataStack->count() && $metadataStack->top() instanceof PropertyMetadata) ? $metadataStack->top() : null;
 
         $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
+        $namespace = (null !== $currentMetadata && $currentMetadata->xmlEntryNamespace) ? $currentMetadata->xmlEntryNamespace : null;
         $result = [];
 
+        $nodes = $data->children($namespace)->$entryName;
         switch ($type->countParams()) {
             case 0:
                 throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
 
             case 1:
-                foreach ($data->$entryName as $v) {
+                foreach ($nodes as $v) {
                     if ($this->isNullNode($v)) {
                         $result[] = $this->visitNull(null, Type::null(), $context);
                     } else {
@@ -97,12 +99,13 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
                 $keyType = $type->getParam(0);
                 $entryType = $type->getParam(1);
-                foreach ($data->$entryName as $v) {
-                    if (! isset($v[$currentMetadata->xmlKeyAttribute])) {
+                foreach ($nodes as $v) {
+                    $attrs = $v->attributes();
+                    if (! isset($attrs[$currentMetadata->xmlKeyAttribute])) {
                         throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
                     }
 
-                    $k = $context->accept($v[$currentMetadata->xmlKeyAttribute], $keyType);
+                    $k = $context->accept($attrs[$currentMetadata->xmlKeyAttribute], $keyType);
 
                     if ($this->isNullNode($v)) {
                         $result[$k] = $this->visitNull(null, Type::null(), $context);
@@ -122,7 +125,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $result;
     }
 
-    public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $name = $this->namingStrategy->translateName($metadata);
 
@@ -131,19 +134,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         }
 
         if ($metadata->xmlAttribute) {
-            if ('' !== $namespace = (string) $metadata->xmlNamespace) {
-                $registeredNamespaces = $data->getDocNamespaces();
-                if (false === $prefix = array_search($namespace, $registeredNamespaces)) {
-                    $prefix = uniqid('ns-');
-                    $data->registerXPathNamespace($prefix, $namespace);
-                }
-                $attributeName = ($prefix === '') ? $name : $prefix.':'.$name;
-                $nodes = $data->xpath('./@'.$attributeName);
-                if (! empty($nodes)) {
-                    return (string) reset($nodes);
-                }
-            } elseif (isset($data[$name])) {
-                return $context->accept($data[$name], $metadata->type);
+            $attributes = $data->attributes($metadata->xmlNamespace);
+            if (isset($attributes[$name])) {
+                return $context->accept($attributes[$name], $metadata->type);
             }
 
             return null;
@@ -155,30 +148,37 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
         if ($metadata->xmlCollection) {
             $enclosingElem = $data;
-            if (! $metadata->xmlCollectionInline && isset($data->$name)) {
-                $enclosingElem = $data->$name;
+            if (! $metadata->xmlCollectionInline) {
+                $enclosingElem = $data->children($metadata->xmlNamespace)->$name;
             }
 
             return $context->accept($enclosingElem, $metadata->type);
         }
 
-        if ('' !== $namespace = (string) $metadata->xmlNamespace) {
-            $registeredNamespaces = $data->getDocNamespaces();
-            if (false === $prefix = array_search($namespace, $registeredNamespaces)) {
-                $prefix = uniqid('ns-');
-                $data->registerXPathNamespace($prefix, $namespace);
-            }
-            $elementName = ($prefix === '') ? $name : $prefix.':'.$name;
-            $nodes = $data->xpath('./'.$elementName);
-            if (empty($nodes)) {
+        if ($metadata->xmlNamespace) {
+            $node = $data->children($metadata->xmlNamespace)->$name;
+            if (! $node->count()) {
                 return null;
             }
-            $node = reset($nodes);
         } else {
-            if (! isset($data->$name)) {
-                return null;
+            $namespaces = $data->getDocNamespaces();
+            if (isset($namespaces[''])) {
+                $prefix = uniqid('ns-');
+                $data->registerXPathNamespace($prefix, $namespaces['']);
+
+                $nodes = $data->xpath('./'.$prefix.':'.$name);
+                if (empty($nodes)) {
+                    return null;
+                }
+
+                $node = reset($nodes);
+            } else {
+                if (! isset($data->$name)) {
+                    return null;
+                }
+
+                $node = $data->$name;
             }
-            $node = $data->$name;
         }
 
         if ($this->isNullNode($node)) {

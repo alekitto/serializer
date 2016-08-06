@@ -349,8 +349,9 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         $this->assertEquals($p, $subm->getAttributeMetadata('qux'));
 
-        if(defined('HHVM_VERSION')) {
+        if (defined('HHVM_VERSION')) {
             $this->markTestSkipped('This test executes partially in HHVM due to wrong class reported in PropertyMetadata');
+
             return;
         }
 

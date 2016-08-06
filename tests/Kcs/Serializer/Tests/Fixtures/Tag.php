@@ -2,7 +2,6 @@
 
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Modifications copyright (c) 2016 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +16,41 @@
  * limitations under the License.
  */
 
-namespace Kcs\Serializer\Annotation;
+namespace Kcs\Serializer\Tests\Fixtures;
 
-abstract class XmlCollection
+use Kcs\Serializer\Annotation as Kcs;
+
+/**
+ * @Kcs\XmlRoot("tag")
+ * @Kcs\XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
+ */
+class Tag
 {
     /**
-     * @var string
+     * @Kcs\XmlElement(cdata=false)
+     * @Kcs\Type("string")
      */
-    public $entry = 'entry';
+    public $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
     /**
-     * @var bool
+     * @return string
      */
-    public $inline = false;
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
-     * @var string
+     * @param string $name
+     * @return Tag
      */
-    public $namespace;
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 }

@@ -54,6 +54,11 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private $validatedMetadata;
 
+    /**
+     * @var array
+     */
+    private $xmlNamespaces = [];
+
     public function visitNull($data, Type $type, Context $context)
     {
         $this->attachNullNamespace = true;
@@ -113,15 +118,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         $nodes = [];
 
-        /** @var \DOMElement $prevNode */
-        $prevNode = $this->nodeStack->top();
         foreach ($metadata->xmlNamespaces as $prefix => $uri) {
-            $attribute = 'xmlns';
-            if ($prefix !== '') {
-                $attribute .= ':'.$prefix;
-            }
-
-            $prevNode->setAttributeNS('http://www.w3.org/2000/xmlns/', $attribute, $uri);
+            $this->xmlNamespaces[$prefix] = $uri;
         }
 
         /** @var PropertyMetadata $propertyMetadata */
@@ -144,7 +142,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $nodes;
     }
 
-    public function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $v = $metadata->getValue($data);
 
@@ -187,15 +185,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         $elementName = $this->namingStrategy->translateName($metadata);
-        if ('' !== $namespace = (string) $metadata->xmlNamespace) {
-            $prevNode = $this->nodeStack->top();
-            if (! $prefix = $prevNode->lookupPrefix($namespace)) {
-                $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
-            }
-            $this->currentNodes = $this->document->createElementNS($namespace, $prefix.':'.$elementName);
-        } else {
-            $this->currentNodes = $this->document->createElement($elementName);
-        }
+        $this->currentNodes = $this->createElement($metadata->xmlNamespace, $elementName);
 
         $context->accept($v, $metadata->type);
 
@@ -231,12 +221,13 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         $attributeName = null !== $metadata ? $metadata->xmlKeyAttribute : null;
+        $namespace = null !== $metadata ? $metadata->xmlEntryNamespace : null;
 
         /** @var \DOMNode[] $nodes */
         $nodes = [];
         foreach ($data as $k => $v) {
             $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string)$k : $nodeName;
-            $this->currentNodes = $this->document->createElement($elementName);
+            $this->currentNodes = $this->createElement($namespace, $elementName);
 
             $context->accept($v, $this->getElementType($type));
             if (null !== $attributeName) {
@@ -298,6 +289,15 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function getResult()
     {
         $this->attachNullNS();
+
+        foreach ($this->xmlNamespaces as $prefix => $uri) {
+            $attribute = 'xmlns';
+            if ($prefix !== '') {
+                $attribute .= ':'.$prefix;
+            }
+
+            $this->document->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', $attribute, $uri);
+        }
 
         return $this->document->saveXML();
     }
@@ -408,16 +408,35 @@ class XmlSerializationVisitor extends AbstractVisitor
     private function createAttributeNode(PropertyMetadata $metadata, $attributeName)
     {
         if ('' !== $namespace = (string)$metadata->xmlNamespace) {
-            $prevNode = $this->nodeStack->top();
-            if (! $prefix = $prevNode->lookupPrefix($namespace)) {
-                $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
-            }
-
+            $prefix = $this->lookupPrefix($namespace);
             $node = $this->document->createAttributeNS($namespace, $prefix.':'.$attributeName);
         } else {
             $node = $this->document->createAttribute($attributeName);
         }
 
         return $node;
+    }
+
+    private function createElement($namespace, $elementName)
+    {
+        if (! empty($namespace) && $prefix = $this->lookupPrefix($namespace)) {
+            $node = $this->document->createElement($prefix.':'.$elementName);
+        } else {
+            $node = $this->document->createElement($elementName);
+        }
+
+        return $node;
+    }
+
+    private function lookupPrefix($namespace)
+    {
+        if (($prefix = array_search($namespace, $this->xmlNamespaces)) !== false) {
+            return $prefix;
+        }
+
+        $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
+        $this->xmlNamespaces[$prefix] = $namespace;
+
+        return $prefix;
     }
 }

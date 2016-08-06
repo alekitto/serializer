@@ -110,6 +110,12 @@ class BlogPost
      */
     private $publisher;
 
+    /**
+     * @Type("array<Kcs\Serializer\Tests\Fixtures\Tag>")
+     * @XmlList(inline=true, entry="tag", namespace="http://purl.org/dc/elements/1.1/");
+     */
+    private $tag;
+
     public function __construct($title, Author $author, \DateTime $createdAt, Publisher $publisher)
     {
         $this->title = $title;
@@ -138,5 +144,10 @@ class BlogPost
     {
         $this->comments->add($comment);
         $this->comments2->add($comment);
+    }
+
+    public function addTag(Tag $tag)
+    {
+        $this->tag[] = $tag;
     }
 }

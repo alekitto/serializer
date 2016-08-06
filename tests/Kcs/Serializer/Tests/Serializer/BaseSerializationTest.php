@@ -47,7 +47,6 @@ use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Tests\Fixtures\AccessorOrderChild;
 use Kcs\Serializer\Tests\Fixtures\AccessorOrderMethod;
 use Kcs\Serializer\Tests\Fixtures\AccessorOrderParent;
-use Kcs\Serializer\Tests\Fixtures\Article;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
 use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
@@ -84,6 +83,7 @@ use Kcs\Serializer\Tests\Fixtures\Price;
 use Kcs\Serializer\Tests\Fixtures\Publisher;
 use Kcs\Serializer\Tests\Fixtures\SimpleObject;
 use Kcs\Serializer\Tests\Fixtures\SimpleObjectProxy;
+use Kcs\Serializer\Tests\Fixtures\Tag;
 use Kcs\Serializer\Tests\Fixtures\Timestamp;
 use Kcs\Serializer\Tests\Fixtures\Tree;
 use Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage;
@@ -397,6 +397,9 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $post = new BlogPost('This is a nice title.', $author = new Author('Foo Bar'), new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), new Publisher('Bar Foo'));
         $post->addComment($comment = new Comment($author, 'foo'));
 
+        $post->addTag($tag1 = new Tag('tag1'));
+        $post->addTag($tag2 = new Tag('tag2'));
+
         $this->assertEquals($this->getContent('blog_post'), $this->serialize($post));
 
         if ($this->hasDeserializer()) {
@@ -408,6 +411,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             $this->assertAttributeEquals(new ArrayCollection([$comment]), 'comments', $deserialized);
             $this->assertAttributeEquals(new Sequence([$comment]), 'comments2', $deserialized);
             $this->assertAttributeEquals($author, 'author', $deserialized);
+            $this->assertAttributeEquals([$tag1, $tag2], 'tag', $deserialized);
         }
     }
 
@@ -720,7 +724,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Kcs\Serializer\Exception\InvalidArgumentException
+     * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid group name "foo, bar" on "Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject->foo", did you mean to create multiple groups?
      */
     public function testInvalidGroupName()

@@ -26,6 +26,7 @@ use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Tests\Fixtures\InvalidUsageOfXmlValue;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithNamespacesAndList;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualXmlProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
@@ -157,6 +158,33 @@ class XmlSerializationTest extends BaseSerializationTest
         $this->assertEquals(
             $this->getContent('virtual_properties_map'),
             $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['map']))
+        );
+    }
+    public function testObjectWithNamespacesAndList()
+    {
+        $object = new ObjectWithNamespacesAndList();
+        $object->name = 'name';
+        $object->nameAlternativeB = 'nameB';
+
+        $object->phones = ['111', '222'];
+        $object->addresses = ['A' => 'Street 1', 'B' => 'Street 2'];
+
+        $object->phonesAlternativeB = ['555', '666'];
+        $object->addressesAlternativeB = ['A' => 'Street 5', 'B' => 'Street 6'];
+
+        $object->phonesAlternativeC = ['777', '888'];
+        $object->addressesAlternativeC = ['A' => 'Street 7', 'B' => 'Street 8'];
+
+        $object->phonesAlternativeD = ['999', 'AAA'];
+        $object->addressesAlternativeD = ['A' => 'Street 9', 'B' => 'Street A'];
+
+        $this->assertEquals(
+            $this->getContent('object_with_namespaces_and_list'),
+            $this->serialize($object, SerializationContext::create())
+        );
+        $this->assertEquals(
+            $object,
+            $this->deserialize($this->getContent('object_with_namespaces_and_list'), get_class($object))
         );
     }
 
