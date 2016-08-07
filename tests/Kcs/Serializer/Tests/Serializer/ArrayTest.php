@@ -42,9 +42,11 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
+        $loader = new AnnotationLoader();
+        $loader->setReader(new AnnotationReader());
 
         $this->serializer = new Serializer(
-            new MetadataFactory(new AnnotationLoader(new AnnotationReader())),
+            new MetadataFactory($loader),
             new HandlerRegistry(),
             new UnserializeObjectConstructor(),
             ['array' => new GenericSerializationVisitor($namingStrategy)],

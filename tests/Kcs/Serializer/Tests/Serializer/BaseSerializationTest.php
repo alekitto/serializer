@@ -970,7 +970,9 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->factory = new MetadataFactory(new AnnotationLoader(new AnnotationReader()));
+        $loader = new AnnotationLoader();
+        $loader->setReader(new AnnotationReader());
+        $this->factory = new MetadataFactory($loader);
 
         $this->handlerRegistry = new HandlerRegistry();
         $this->handlerRegistry->registerSubscribingHandler(new ConstraintViolationHandler());

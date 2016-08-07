@@ -117,7 +117,9 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $this->handlerRegistry = new HandlerRegistry();
         $this->objectConstructor = new UnserializeObjectConstructor();
 
-        $this->metadataFactory = new MetadataFactory(new AnnotationLoader(new AnnotationReader()));
+        $loader = new AnnotationLoader();
+        $loader->setReader(new AnnotationReader());
+        $this->metadataFactory = new MetadataFactory($loader);
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
     }
 }

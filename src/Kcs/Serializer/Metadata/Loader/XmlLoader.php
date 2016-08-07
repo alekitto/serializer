@@ -37,6 +37,7 @@ class XmlLoader extends AnnotationLoader
 
     public function __construct($filePath)
     {
+        parent::__construct();
         $file_content = $this->loadFile($filePath);
 
         $previous = libxml_use_internal_errors(true);

@@ -26,6 +26,9 @@ class AnnotationLoaderTest extends BaseLoaderTest
 {
     protected function getLoader()
     {
-        return new AnnotationLoader(new AnnotationReader());
+        $loader = new AnnotationLoader();
+        $loader->setReader(new AnnotationReader());
+
+        return $loader;
     }
 }

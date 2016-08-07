@@ -73,8 +73,10 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
             }
         );
 
+        $loader = new AnnotationLoader();
+        $loader->setReader(new AnnotationReader());
         $this->serializer = SerializerBuilder::create()
-            ->setMetadataLoader(new DoctrineTypeLoader(new AnnotationLoader(new AnnotationReader()), $registry))
+            ->setMetadataLoader(new DoctrineTypeLoader($loader, $registry))
             ->setEventDispatcher(new EventDispatcher())
             ->build()
         ;

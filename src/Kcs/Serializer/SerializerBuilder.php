@@ -204,7 +204,8 @@ class SerializerBuilder
 
         $metadataLoader = $this->metadataLoader;
         if (null === $metadataLoader) {
-            $metadataLoader = new AnnotationLoader($annotationReader);
+            $metadataLoader = new AnnotationLoader();
+            $metadataLoader->setReader($annotationReader);
         }
 
         $metadataFactory = new MetadataFactory($metadataLoader, $this->eventDispatcher, $this->cache);

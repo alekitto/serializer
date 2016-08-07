@@ -26,14 +26,31 @@ use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\Loader\Processor\AnnotationProcessor;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class AnnotationLoader implements LoaderInterface
 {
+    /**
+     * @var Reader
+     */
     private $reader;
 
-    public function __construct(Reader $reader)
+    /**
+     * @var AnnotationProcessor
+     */
+    private $processor;
+
+    public function __construct()
+    {
+        $this->processor = new AnnotationProcessor();
+    }
+
+    /**
+     * @param Reader $reader
+     */
+    public function setReader(Reader $reader)
     {
         $this->reader = $reader;
     }
@@ -79,44 +96,7 @@ class AnnotationLoader implements LoaderInterface
     {
         $annotations = $this->getClassAnnotations($classMetadata);
         foreach ($annotations as $annotation) {
-            switch (true) {
-                case $annotation instanceof Annotation\ExclusionPolicy:
-                    $classMetadata->exclusionPolicy = $annotation->policy;
-                    break;
-
-                case $annotation instanceof Annotation\XmlRoot:
-                    $classMetadata->xmlRootName = $annotation->name;
-                    $classMetadata->xmlRootNamespace = $annotation->namespace;
-                    break;
-
-                case $annotation instanceof Annotation\XmlNamespace:
-                    $classMetadata->registerNamespace($annotation->uri, $annotation->prefix);
-                    break;
-
-                case $annotation instanceof Annotation\AccessType:
-                    $classMetadata->defaultAccessType = $annotation->type;
-                    break;
-
-                case $annotation instanceof Annotation\ReadOnly:
-                    $classMetadata->readOnly = true;
-                    break;
-
-                case $annotation instanceof Annotation\AccessorOrder:
-                    if (is_string($annotation->custom)) {
-                        $annotation->custom = explode(',', $annotation->custom);
-                    }
-
-                    $classMetadata->setAccessorOrder($annotation->order, $annotation->custom);
-                    break;
-
-                case $annotation instanceof Annotation\Discriminator:
-                    if ($annotation->disabled) {
-                        $classMetadata->discriminatorDisabled = true;
-                    } else {
-                        $classMetadata->setDiscriminator($annotation->field, $annotation->map);
-                    }
-                    break;
-            }
+            $this->processor->process($annotation, $classMetadata);
         }
     }
 
@@ -168,96 +148,12 @@ class AnnotationLoader implements LoaderInterface
         $accessor = [null, null];
 
         foreach ($annotations as $annotation) {
-            switch (true) {
-                case $annotation instanceof Annotation\Since:
-                    $metadata->sinceVersion = $annotation->version;
-                break;
+            $this->processor->process($annotation, $metadata);
 
-                case $annotation instanceof Annotation\Until:
-                    $metadata->untilVersion = $annotation->version;
-                    break;
-
-                case $annotation instanceof Annotation\SerializedName:
-                    $metadata->serializedName = $annotation->name;
-                    break;
-
-                case $annotation instanceof Annotation\Type:
-                    $metadata->setType($annotation->name);
-                    break;
-
-                case $annotation instanceof Annotation\XmlElement:
-                    $metadata->xmlAttribute = false;
-                    $metadata->xmlElementCData = $annotation->cdata;
-                    $metadata->xmlNamespace = $annotation->namespace;
-                    break;
-
-                case $annotation instanceof Annotation\XmlList:
-                case $annotation instanceof Annotation\XmlMap:
-                    $metadata->xmlCollection = true;
-                    $metadata->xmlCollectionInline = $annotation->inline;
-                    $metadata->xmlEntryName = $annotation->entry;
-                    $metadata->xmlEntryNamespace = $annotation->namespace;
-
-                    if ($annotation instanceof Annotation\XmlMap) {
-                        $metadata->xmlKeyAttribute = $annotation->keyAttribute;
-                    }
-                    break;
-
-                case $annotation instanceof Annotation\XmlKeyValuePairs:
-                    $metadata->xmlKeyValuePairs = true;
-                    break;
-
-                case $annotation instanceof Annotation\XmlAttribute:
-                    $metadata->xmlAttribute = true;
-                    $metadata->xmlNamespace = $annotation->namespace;
-                    break;
-
-                case $annotation instanceof Annotation\XmlValue:
-                    $metadata->xmlValue = true;
-                    $metadata->xmlElementCData = $annotation->cdata;
-                    break;
-
-                case $annotation instanceof Annotation\AccessType:
-                    $accessType = $annotation->type;
-                    break;
-
-                case $annotation instanceof Annotation\ReadOnly:
-                    $metadata->readOnly = $annotation->readOnly;
-                    break;
-
-                case $annotation instanceof Annotation\Accessor:
-                    $accessor = [$annotation->getter, $annotation->setter];
-                    break;
-
-                case $annotation instanceof Annotation\Groups:
-                    if (is_string($annotation->groups)) {
-                        $annotation->groups = array_map('trim', explode(',', $annotation->groups));
-                    }
-
-                    $metadata->groups = (array)$annotation->groups;
-                    foreach ($metadata->groups as $groupName) {
-                        if (false !== strpos($groupName, ',')) {
-                            throw new InvalidArgumentException(sprintf(
-                                'Invalid group name "%s" on "%s", did you mean to create multiple groups?',
-                                implode(', ', $metadata->groups),
-                                $metadata->class.'->'.$metadata->name
-                            ));
-                        }
-                    }
-                    break;
-
-                case $annotation instanceof Annotation\Inline:
-                    $metadata->inline = true;
-                    break;
-
-                case $annotation instanceof Annotation\XmlAttributeMap:
-                    $metadata->xmlAttributeMap = true;
-                    break;
-
-                case $annotation instanceof Annotation\MaxDepth:
-                    $metadata->maxDepth = $annotation->depth;
-                    break;
-
+            if ($annotation instanceof Annotation\AccessType) {
+                $accessType = $annotation->type;
+            } elseif ($annotation instanceof Annotation\Accessor) {
+                $accessor = [$annotation->getter, $annotation->setter];
             }
         }
 
