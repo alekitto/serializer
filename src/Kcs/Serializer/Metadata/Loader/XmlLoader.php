@@ -19,23 +19,25 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
+use Doctrine\Common\Util\Inflector;
 use Kcs\Metadata\ClassMetadataInterface;
-use Kcs\Metadata\Loader\FileLoader;
-use Kcs\Metadata\MethodMetadata;
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Metadata\Loader\FileLoaderTrait;
+use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
-class XmlLoader extends FileLoader
+class XmlLoader extends AnnotationLoader
 {
-    protected function loadClassMetadataFromFile($file_content, ClassMetadataInterface $metadata)
+    use FileLoaderTrait;
+
+    /**
+     * @var \SimpleXMLElement
+     */
+    private $document;
+
+    public function __construct($filePath)
     {
-        /** @var ClassMetadata $metadata */
-        $class = $metadata->getReflectionClass();
-        $name = $class->name;
+        $file_content = $this->loadFile($filePath);
 
         $previous = libxml_use_internal_errors(true);
         $elem = simplexml_load_string($file_content);
@@ -45,251 +47,214 @@ class XmlLoader extends FileLoader
             throw new XmlErrorException(libxml_get_last_error());
         }
 
-        if (! $elems = $elem->xpath("./class[@name = '".$name."']")) {
-            return false;
-        }
-        $elem = reset($elems);
+        $this->document = $elem;
+    }
 
-        if (null !== ($exclude = $elem->attributes()->exclude) && 'true' === strtolower($exclude)) {
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
+    {
+        if (! $this->getClassElement($classMetadata->getName())) {
             return true;
         }
 
-        $metadata->exclusionPolicy = strtoupper($elem->attributes()->{'exclusion-policy'}) ?: ExclusionPolicy::NONE;
-        $metadata->defaultAccessType = (string) ($elem->attributes()->{'access-type'} ?: PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD);
+        return parent::loadClassMetadata($classMetadata);
+    }
 
-        if (null !== $accessorOrder = $elem->attributes()->{'accessor-order'}) {
-            $metadata->setAccessorOrder((string) $accessorOrder, preg_split('/\s*,\s*/', (string) $elem->attributes()->{'custom-accessor-order'}));
+    protected function isExcluded(\ReflectionClass $class)
+    {
+        $element = $this->getClassElement($class->name);
+
+        return $element && ($exclude = $element->attributes()->exclude) && 'true' === strtolower($exclude);
+    }
+
+    protected function getClassAnnotations(ClassMetadata $classMetadata)
+    {
+        $element = $this->getClassElement($classMetadata->getName());
+        if (! $element) {
+            return [];
         }
 
-        if (null !== $xmlRootName = $elem->attributes()->{'xml-root-name'}) {
-            $metadata->xmlRootName = (string) $xmlRootName;
-        }
+        $exclude = [
+            'property',
+            'virtual-property',
+            'pre-serialize',
+            'post-serialize',
+            'post-deserialize',
+            'discriminator'
+        ];
 
-        if (null !== $xmlRootNamespace = $elem->attributes()->{'xml-root-namespace'}) {
-            $metadata->xmlRootNamespace = (string) $xmlRootNamespace;
-        }
+        $annotations = $this->loadComplex($element, ['name'], $exclude);
 
-        $metadata->readOnly = 'true' === strtolower($elem->attributes()->{'read-only'});
-
-        $discriminatorFieldName = (string) $elem->attributes()->{'discriminator-field-name'};
-        $discriminatorMap = [];
-        foreach ($elem->xpath('./discriminator-class') as $entry) {
-            if (! isset($entry->attributes()->value)) {
-                throw new RuntimeException('Each discriminator-class element must have a "value" attribute.');
+        foreach ($element->xpath("./discriminator") as $discriminatorElement) {
+            $discriminator = new Annotations\Discriminator();
+            foreach ($this->loadAnnotationProperties($discriminatorElement) as $attrName => $value) {
+                $discriminator->{$attrName} = $value;
             }
 
-            $discriminatorMap[(string) $entry->attributes()->value] = (string) $entry;
-        }
-
-        if ('true' === (string) $elem->attributes()->{'discriminator-disabled'}) {
-            $metadata->discriminatorDisabled = true;
-        } elseif (! empty($discriminatorFieldName) || ! empty($discriminatorMap)) {
-            $metadata->setDiscriminator($discriminatorFieldName, $discriminatorMap);
-        }
-
-        foreach ($elem->xpath('./xml-namespace') as $xmlNamespace) {
-            if (! isset($xmlNamespace->attributes()->uri)) {
-                throw new RuntimeException('The prefix attribute must be set for all xml-namespace elements.');
+            $map = [];
+            foreach ($discriminatorElement->xpath("./map") as $item) {
+                $v = (string)$item->attributes()->value;
+                $map[ $v ] = (string)$item;
             }
 
-            if (isset($xmlNamespace->attributes()->prefix)) {
-                $prefix = (string) $xmlNamespace->attributes()->prefix;
-            } else {
-                $prefix = null;
-            }
-
-            $metadata->registerNamespace((string) $xmlNamespace->attributes()->uri, $prefix);
+            $discriminator->map = $map;
+            $annotations[] = $discriminator;
         }
 
-        foreach ($elem->xpath('./virtual-property') as $method) {
-            if (! isset($method->attributes()->method)) {
-                throw new RuntimeException('The method attribute must be set for all virtual-property elements.');
-            }
+        return $annotations;
+    }
 
-            $virtualPropertyMetadata = new VirtualPropertyMetadata($name, (string) $method->attributes()->method);
-            $this->loadExposedAttribute($virtualPropertyMetadata, $method, $metadata);
+    protected function getMethodAnnotations(\ReflectionMethod $method)
+    {
+        $element = $this->getClassElement($method->getDeclaringClass()->getName());
+        if (! $element) {
+            return [];
         }
 
-        foreach ($class->getProperties() as $property) {
-            if ($name !== $property->getDeclaringClass()->name) {
+        $annotations = [];
+        $methodName = $method->name;
+
+        if ($pElems = $element->xpath("./virtual-property[@method = '".$methodName."']")) {
+            $annotations[] = new Annotations\VirtualProperty();
+            $annotations = array_merge($annotations, $this->loadComplex(reset($pElems), ['method']));
+        }
+
+        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "pre-serialize[@method = '".$methodName."']"));
+        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "post-serialize[@method = '".$methodName."']"));
+        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "post-deserialize[@method = '".$methodName."']"));
+
+        return $annotations;
+    }
+
+    protected function getPropertyAnnotations(\ReflectionProperty $property)
+    {
+        $element = $this->getClassElement($property->getDeclaringClass()->getName());
+        if (! $element) {
+            return [];
+        }
+
+        $annotations = [];
+        $propertyName = $property->name;
+
+        if ($pElems = $element->xpath("./property[@name = '".$propertyName."']")) {
+            $annotations = $this->loadComplex(reset($pElems));
+        }
+
+        return $annotations;
+    }
+
+    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    {
+        $element = $this->getClassElement($property->getDeclaringClass()->getName());
+        if (! $element) {
+            return false;
+        }
+
+        $pElems = $element->xpath("./property[@name = '".$property->name."']");
+        $pElem = reset($pElems);
+
+        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
+            return ! $pElem || null === $pElem->attributes()->expose;
+        }
+
+        return $pElem && null !== $pElem->attributes()->exclude;
+    }
+
+    private function loadComplex(\SimpleXMLElement $element, array $excludedAttributes = ['name'], array $excludedChildren = [])
+    {
+        $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
+
+        foreach($element->children() as $name => $child) {
+            if (in_array($name, $excludedChildren)) {
                 continue;
             }
 
-            $pMetadata = new PropertyMetadata($name, $pName = $property->getName());
-            $pElems = $elem->xpath("./property[@name = '".$pName."']");
-
-            if (! empty($pElems)) {
-                $this->processPropertyMetadata($pMetadata, reset($pElems), $metadata);
-            } elseif ($metadata->exclusionPolicy === ExclusionPolicy::NONE) {
-                $metadata->addAttributeMetadata($pMetadata);
-            }
+            $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, $name));
         }
 
-        foreach ($elem->xpath('./callback-method') as $method) {
-            if (! isset($method->attributes()->type)) {
-                throw new RuntimeException('The type attribute must be set for all callback-method elements.');
-            }
-            if (! isset($method->attributes()->name)) {
-                throw new RuntimeException('The name attribute must be set for all callback-method elements.');
-            }
-
-            switch ((string) $method->attributes()->type) {
-                case 'pre-serialize':
-                    $metadata->addPreSerializeMethod(new MethodMetadata($name, (string) $method->attributes()->name));
-                    break;
-
-                case 'post-serialize':
-                    $metadata->addPostSerializeMethod(new MethodMetadata($name, (string) $method->attributes()->name));
-                    break;
-
-                case 'post-deserialize':
-                    $metadata->addPostDeserializeMethod(new MethodMetadata($name, (string) $method->attributes()->name));
-                    break;
-
-                default:
-                    throw new RuntimeException(sprintf('The type "%s" is not supported.', $method->attributes()->name));
-            }
-        }
-
-        return true;
+        return $annotations;
     }
 
-    private function processPropertyMetadata(PropertyMetadata $pMetadata, $pElem, ClassMetadata $metadata)
+    private function getAnnotationFromElement(\SimpleXMLElement $element, $name)
     {
-        $isExclude = false;
-        $isExpose = true;
+        $annotations = [];
 
-        if (null !== $exclude = $pElem->attributes()->exclude) {
-            $isExclude = 'true' === strtolower($exclude);
+        foreach ($element->xpath("./".$name) as $elem) {
+            $annotation = $this->createAnnotationObject($name);
+
+            if ($value = (string)$elem) {
+                $annotationReflection = new \ReflectionClass($annotation);
+                $property = $annotationReflection->getProperties()[0]->name;
+
+                $annotation->{$property} = $value;
+            }
+
+            foreach ($this->loadAnnotationProperties($elem) as $attrName => $value) {
+                $annotation->{Inflector::camelize($attrName)} = $value;
+            }
+
+            $annotations[] = $annotation;
         }
 
-        if (null !== $expose = $pElem->attributes()->expose) {
-            $isExpose = 'true' === strtolower($expose);
-        }
-
-        if (($metadata->exclusionPolicy === ExclusionPolicy::NONE && ! $isExclude) ||
-            ($metadata->exclusionPolicy === ExclusionPolicy::ALL && $isExpose)) {
-            $this->loadExposedAttribute($pMetadata, $pElem, $metadata);
-        }
+        return $annotations;
     }
 
-    private function loadExposedAttribute(PropertyMetadata $pMetadata, $pElem, ClassMetadata $metadata)
+    private function getClassElement($class)
     {
-        if (null !== $version = $pElem->attributes()->{'since-version'}) {
-            $pMetadata->sinceVersion = (string) $version;
+        if (! $elems = $this->document->xpath("./class[@name = '".$class."']")) {
+            return false;
         }
 
-        if (null !== $version = $pElem->attributes()->{'until-version'}) {
-            $pMetadata->untilVersion = (string) $version;
-        }
-
-        if (null !== $serializedName = $pElem->attributes()->{'serialized-name'}) {
-            $pMetadata->serializedName = (string) $serializedName;
-        }
-
-        if (null !== $type = $pElem->attributes()->type) {
-            $pMetadata->setType((string) $type);
-        } elseif (isset($pElem->type)) {
-            $pMetadata->setType((string) $pElem->type);
-        }
-
-        if (null !== $groups = $pElem->attributes()->groups) {
-            $pMetadata->groups = preg_split('/\s*,\s*/', (string) $groups);
-        }
-
-        if (isset($pElem->{'xml-list'})) {
-            $pMetadata->xmlCollection = true;
-
-            $colConfig = $pElem->{'xml-list'};
-            if (isset($colConfig->attributes()->inline)) {
-                $pMetadata->xmlCollectionInline = 'true' === (string) $colConfig->attributes()->inline;
-            }
-
-            if (isset($colConfig->attributes()->{'entry-name'})) {
-                $pMetadata->xmlEntryName = (string) $colConfig->attributes()->{'entry-name'};
-            }
-
-            if (isset($colConfig->attributes()->namespace)) {
-                $pMetadata->xmlEntryNamespace = (string) $colConfig->attributes()->namespace;
-            }
-        }
-
-        if (isset($pElem->{'xml-map'})) {
-            $pMetadata->xmlCollection = true;
-
-            $colConfig = $pElem->{'xml-map'};
-            if (isset($colConfig->attributes()->inline)) {
-                $pMetadata->xmlCollectionInline = 'true' === (string) $colConfig->attributes()->inline;
-            }
-
-            if (isset($colConfig->attributes()->{'entry-name'})) {
-                $pMetadata->xmlEntryName = (string) $colConfig->attributes()->{'entry-name'};
-            }
-
-            if (isset($colConfig->attributes()->{'key-attribute-name'})) {
-                $pMetadata->xmlKeyAttribute = (string) $colConfig->attributes()->{'key-attribute-name'};
-            }
-
-            if (isset($colConfig->attributes()->namespace)) {
-                $pMetadata->xmlEntryNamespace = (string) $colConfig->attributes()->namespace;
-            }
-        }
-
-        if (isset($pElem->{'xml-element'})) {
-            $colConfig = $pElem->{'xml-element'};
-            if (isset($colConfig->attributes()->cdata)) {
-                $pMetadata->xmlElementCData = 'true' === (string) $colConfig->attributes()->cdata;
-            }
-
-            if (isset($colConfig->attributes()->namespace)) {
-                $pMetadata->xmlNamespace = (string) $colConfig->attributes()->namespace;
-            }
-        }
-
-        if (isset($pElem->attributes()->{'xml-attribute'})) {
-            $pMetadata->xmlAttribute = 'true' === (string) $pElem->attributes()->{'xml-attribute'};
-        }
-
-        if (isset($pElem->attributes()->{'xml-attribute-map'})) {
-            $pMetadata->xmlAttribute = 'true' === (string) $pElem->attributes()->{'xml-attribute-map'};
-        }
-
-        if (isset($pElem->attributes()->{'xml-value'})) {
-            $pMetadata->xmlValue = 'true' === (string) $pElem->attributes()->{'xml-value'};
-        }
-
-        if (isset($pElem->attributes()->{'xml-key-value-pairs'})) {
-            $pMetadata->xmlKeyValuePairs = 'true' === (string) $pElem->attributes()->{'xml-key-value-pairs'};
-        }
-
-        if (isset($pElem->attributes()->{'max-depth'})) {
-            $pMetadata->maxDepth = (int) $pElem->attributes()->{'max-depth'};
-        }
-
-        //we need read-only before setter and getter set, because that method depends on flag being set
-        if (null !== $readOnly = $pElem->attributes()->{'read-only'}) {
-            $pMetadata->readOnly = 'true' === strtolower($readOnly);
-        } else {
-            $pMetadata->readOnly = $pMetadata->readOnly || $metadata->readOnly;
-        }
-
-        $getter = $pElem->attributes()->{'accessor-getter'};
-        $setter = $pElem->attributes()->{'accessor-setter'};
-        $pMetadata->setAccessor(
-            (string) ($pElem->attributes()->{'access-type'} ?: $metadata->defaultAccessType),
-            $getter ? (string) $getter : null,
-            $setter ? (string) $setter : null
-        );
-
-        if (null !== $inline = $pElem->attributes()->inline) {
-            $pMetadata->inline = 'true' === strtolower($inline);
-        }
-
-        $metadata->addAttributeMetadata($pMetadata);
+        return reset($elems);
     }
 
-    protected function getExtension()
+    private function createAnnotationObject($name)
     {
-        return 'xml';
+        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
+        $annotation = new $annotationClass();
+
+        return $annotation;
+    }
+
+    private function getAnnotationsFromAttributes(\SimpleXMLElement $element, array $excludeAttributes = [])
+    {
+        $annotations = [];
+
+        foreach ($this->loadAnnotationProperties($element) as $attrName => $value) {
+            if (in_array($attrName, $excludeAttributes)) {
+                continue;
+            }
+
+            $annotation = $this->createAnnotationObject($attrName);
+            $annotationReflection = new \ReflectionClass($annotation);
+
+            $properties = $annotationReflection->getProperties();
+            if ($property = reset($properties)) {
+                $property = $property->name;
+
+                $annotation->{$property} = $value;
+                $annotations[] = $annotation;
+            }
+        }
+
+        return $annotations;
+    }
+
+    /**
+     * @param \SimpleXMLElement $elem
+     * @return \Generator
+     */
+    private function loadAnnotationProperties(\SimpleXMLElement $elem)
+    {
+        foreach ($elem->attributes() as $attrName => $value) {
+            $value = (string)$value;
+
+            if ($value === 'true') {
+                $value = true;
+            } elseif ($value === 'false') {
+                $value = false;
+            }
+
+            yield $attrName => $value;
+        }
     }
 }

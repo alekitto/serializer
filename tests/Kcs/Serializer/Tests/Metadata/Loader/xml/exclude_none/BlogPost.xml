@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serializer>
-    <class name="Kcs\Serializer\Tests\Fixtures\BlogPost" xml-root-name="blog-post" exclusion-policy="NONE">
+    <class name="Kcs\Serializer\Tests\Fixtures\BlogPost" exclusion-policy="NONE">
+        <xml-root name="blog-post"/>
         <property name="title" type="string" exclude="true" />
     </class>
 </serializer>

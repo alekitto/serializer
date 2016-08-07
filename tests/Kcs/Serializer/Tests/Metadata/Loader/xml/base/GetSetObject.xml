@@ -2,6 +2,8 @@
 <serializer>
     <class name="Kcs\Serializer\Tests\Fixtures\GetSetObject" access-type="public_method">
         <property name="id" type="integer" access-type="property" />
-        <property name="name" type="string" accessor-getter="getTrimmedName" accessor-setter="setCapitalizedName" />
+        <property name="name" type="string">
+            <accessor getter="getTrimmedName" setter="setCapitalizedName" />
+        </property>
     </class>
 </serializer>

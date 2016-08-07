@@ -29,8 +29,12 @@ final class SerializedName
 {
     public $name;
 
-    public function __construct(array $values)
+    public function __construct(array $values = null)
     {
+        if (empty($values)) {
+            return;
+        }
+
         if (! is_string($values['value'])) {
             throw new RuntimeException(sprintf('"value" must be a string.'));
         }

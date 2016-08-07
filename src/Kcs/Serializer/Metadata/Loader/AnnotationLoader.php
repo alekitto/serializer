@@ -47,8 +47,7 @@ class AnnotationLoader implements LoaderInterface
         /** @var ClassMetadata $classMetadata */
         $class = $classMetadata->getReflectionClass();
 
-        $excludeAnnotation = $this->reader->getClassAnnotation($class, 'Kcs\Serializer\Annotation\Exclude');
-        if (null !== $excludeAnnotation) {
+        if ($this->isExcluded($class)) {
             return true;
         }
 
@@ -78,7 +77,7 @@ class AnnotationLoader implements LoaderInterface
      */
     private function processClassAnnotations(ClassMetadata $classMetadata)
     {
-        $annotations = $this->reader->getClassAnnotations($classMetadata->getReflectionClass());
+        $annotations = $this->getClassAnnotations($classMetadata);
         foreach ($annotations as $annotation) {
             switch (true) {
                 case $annotation instanceof Annotation\ExclusionPolicy:
@@ -103,6 +102,10 @@ class AnnotationLoader implements LoaderInterface
                     break;
 
                 case $annotation instanceof Annotation\AccessorOrder:
+                    if (is_string($annotation->custom)) {
+                        $annotation->custom = explode(',', $annotation->custom);
+                    }
+
                     $classMetadata->setAccessorOrder($annotation->order, $annotation->custom);
                     break;
 
@@ -121,7 +124,7 @@ class AnnotationLoader implements LoaderInterface
     {
         $class = $method->class;
 
-        $methodAnnotations = $this->reader->getMethodAnnotations($method);
+        $methodAnnotations = $this->getMethodAnnotations($method);
         foreach ($methodAnnotations as $annotation) {
             switch (true) {
                 case $annotation instanceof Annotation\PreSerialize:
@@ -135,12 +138,12 @@ class AnnotationLoader implements LoaderInterface
                 case $annotation instanceof Annotation\PostSerialize:
                     $classMetadata->addPostSerializeMethod(new MethodMetadata($class, $method->name));
                     break;
-            }
-        }
 
-        if (null !== $this->reader->getMethodAnnotation($method, 'Kcs\Serializer\Annotation\VirtualProperty')) {
-            $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
-            $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
+                case $annotation instanceof Annotation\VirtualProperty:
+                    $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
+                    $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
+                    break;
+            }
         }
     }
 
@@ -148,17 +151,13 @@ class AnnotationLoader implements LoaderInterface
     {
         $class = $property->class;
 
-        $metadata = new PropertyMetadata($class, $property->name);
-        $annotations = $this->reader->getPropertyAnnotations($property);
-
-        if (
-            ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::NONE &&
-            null === $this->reader->getPropertyAnnotation($property, 'Kcs\Serializer\Annotation\Exclude')) ||
-            ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::ALL &&
-            null !== $this->reader->getPropertyAnnotation($property, 'Kcs\Serializer\Annotation\Expose'))
-        ) {
-            $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
+        if ($this->isPropertyExcluded($property, $classMetadata)) {
+            return;
         }
+
+        $metadata = new PropertyMetadata($class, $property->name);
+        $annotations = $this->getPropertyAnnotations($property);
+        $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
     }
 
     private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata)
@@ -193,18 +192,15 @@ class AnnotationLoader implements LoaderInterface
                     break;
 
                 case $annotation instanceof Annotation\XmlList:
-                    $metadata->xmlCollection = true;
-                    $metadata->xmlCollectionInline = $annotation->inline;
-                    $metadata->xmlEntryName = $annotation->entry;
-                    $metadata->xmlEntryNamespace = $annotation->namespace;
-                    break;
-
                 case $annotation instanceof Annotation\XmlMap:
                     $metadata->xmlCollection = true;
                     $metadata->xmlCollectionInline = $annotation->inline;
                     $metadata->xmlEntryName = $annotation->entry;
                     $metadata->xmlEntryNamespace = $annotation->namespace;
-                    $metadata->xmlKeyAttribute = $annotation->keyAttribute;
+
+                    if ($annotation instanceof Annotation\XmlMap) {
+                        $metadata->xmlKeyAttribute = $annotation->keyAttribute;
+                    }
                     break;
 
                 case $annotation instanceof Annotation\XmlKeyValuePairs:
@@ -234,8 +230,12 @@ class AnnotationLoader implements LoaderInterface
                     break;
 
                 case $annotation instanceof Annotation\Groups:
-                    $metadata->groups = $annotation->groups;
-                    foreach ((array)$metadata->groups as $groupName) {
+                    if (is_string($annotation->groups)) {
+                        $annotation->groups = array_map('trim', explode(',', $annotation->groups));
+                    }
+
+                    $metadata->groups = (array)$annotation->groups;
+                    foreach ($metadata->groups as $groupName) {
                         if (false !== strpos($groupName, ',')) {
                             throw new InvalidArgumentException(sprintf(
                                 'Invalid group name "%s" on "%s", did you mean to create multiple groups?',
@@ -263,5 +263,34 @@ class AnnotationLoader implements LoaderInterface
 
         $metadata->setAccessor($accessType, $accessor[0], $accessor[1]);
         $classMetadata->addAttributeMetadata($metadata);
+    }
+
+    protected function isExcluded(\ReflectionClass $class)
+    {
+        return null !== $this->reader->getClassAnnotation($class, Annotation\Exclude::class);
+    }
+
+    protected function getClassAnnotations(ClassMetadata $classMetadata)
+    {
+        return $this->reader->getClassAnnotations($classMetadata->getReflectionClass());
+    }
+
+    protected function getMethodAnnotations(\ReflectionMethod $method)
+    {
+        return $this->reader->getMethodAnnotations($method);
+    }
+
+    protected function getPropertyAnnotations(\ReflectionProperty $property)
+    {
+        return $this->reader->getPropertyAnnotations($property);
+    }
+
+    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    {
+        if ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::ALL) {
+            return null === $this->reader->getPropertyAnnotation($property, Annotation\Expose::class);
+        }
+
+        return null !== $this->reader->getPropertyAnnotation($property, Annotation\Exclude::class);
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <serializer>
-    <class name="Kcs\Serializer\Tests\Fixtures\Person" xml-root-name="child">
+    <class name="Kcs\Serializer\Tests\Fixtures\Person">
+        <xml-root name="child"/>
         <property name="name" xml-value="true" type="string">
             <xml-element cdata="false"/>
         </property>

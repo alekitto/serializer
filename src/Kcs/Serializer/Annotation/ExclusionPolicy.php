@@ -32,8 +32,12 @@ final class ExclusionPolicy
 
     public $policy;
 
-    public function __construct(array $values)
+    public function __construct(array $values = null)
     {
+        if (empty($values)) {
+            return;
+        }
+
         if (! is_string($values['value'])) {
             throw new RuntimeException('"value" must be a string.');
         }

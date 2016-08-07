@@ -4,8 +4,8 @@
         <xml-namespace prefix="foo" uri="http://foo.example.org"/>
         <xml-namespace prefix="old_foo" uri="http://old.foo.example.org"/>
         <xml-namespace prefix="new_foo" uri="http://new.foo.example.org"/>
-        <property name="foo" type="string" xml-attribute="true">
-            <xml-element namespace="http://old.foo.example.org"/>
+        <property name="foo" type="string">
+            <xml-attribute namespace="http://old.foo.example.org"/>
         </property>
         <property name="bar" type="string">
             <xml-element namespace="http://foo.example.org"/>

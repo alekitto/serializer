@@ -74,7 +74,7 @@ final class Parser
     /**
      * Parse internal type string
      *
-     * @return array
+     * @return Type
      *
      * @throws SyntaxErrorException
      */
