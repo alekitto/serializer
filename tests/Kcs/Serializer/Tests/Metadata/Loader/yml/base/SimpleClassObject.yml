@@ -1,14 +1,13 @@
 Kcs\Serializer\Tests\Fixtures\SimpleClassObject:
-    xml_namespaces:
-        foo: http://foo.example.org
-        old_foo: http://old.foo.example.org
-        new_foo: http://new.foo.example.org
+    xml_namespace:
+        - { prefix: foo, uri: http://foo.example.org }
+        - { prefix: old_foo, uri: http://old.foo.example.org }
+        - { prefix: new_foo, uri: http://new.foo.example.org }
     access_type: property
     properties:
         foo:
             type: string
-            xml_attribute: true
-            xml_element:
+            xml_attribute:
                 namespace: http://old.foo.example.org
         bar:
             type: string

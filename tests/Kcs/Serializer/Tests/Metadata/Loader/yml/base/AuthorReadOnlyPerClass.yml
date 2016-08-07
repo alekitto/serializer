@@ -1,5 +1,6 @@
 Kcs\Serializer\Tests\Fixtures\AuthorReadOnlyPerClass:
-    xml_root_name: author
+    xml_root:
+        name: author
     read_only: true
     properties:
         id:
@@ -7,5 +8,6 @@ Kcs\Serializer\Tests\Fixtures\AuthorReadOnlyPerClass:
         name:
             serialized_name:  full_name
             access_type:      public_method
-            accessor_getter:  getName
+            accessor:
+                getter: getName
             read_only:        false

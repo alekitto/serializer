@@ -1,5 +1,6 @@
 Kcs\Serializer\Tests\Fixtures\Person:
-    xml_root_name: child
+    xml_root:
+        name: child
     properties:
         name:
             type: string

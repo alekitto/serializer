@@ -19,268 +19,187 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
+use Doctrine\Common\Util\Inflector;
 use Kcs\Metadata\ClassMetadataInterface;
-use Kcs\Metadata\Loader\FileLoader;
-use Kcs\Metadata\MethodMetadata;
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Metadata\Loader\FileLoaderTrait;
+use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Symfony\Component\Yaml\Yaml;
 
-class YamlLoader extends FileLoader
+class YamlLoader extends AnnotationLoader
 {
-    protected function loadClassMetadataFromFile($file_content, ClassMetadataInterface $metadata)
+    use FileLoaderTrait;
+
+    /**
+     * @var array
+     */
+    private $config;
+
+    public function __construct($filePath)
     {
-        /** @var ClassMetadata $metadata */
-        $class = $metadata->getReflectionClass();
-        $config = Yaml::parse($file_content);
+        parent::__construct();
 
-        if (! isset($config[$name = $class->name])) {
-            return false;
-        }
-
-        $config = $config[$name];
-        $exclusionPolicy = isset($config['exclusion_policy']) ? strtoupper($config['exclusion_policy']) : 'NONE';
-        $excludeAll = isset($config['exclude']) ? (Boolean) $config['exclude'] : false;
-        $classAccessType = isset($config['access_type']) ? $config['access_type'] : PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
-        $readOnlyClass = isset($config['read_only']) ? (Boolean) $config['read_only'] : false;
-        $this->addClassProperties($metadata, $config);
-
-        $propertiesMetadata = [];
-        if (array_key_exists('virtual_properties', $config)) {
-            foreach ($config['virtual_properties'] as $methodName => $propertySettings) {
-                if (! $class->hasMethod($methodName)) {
-                    throw new RuntimeException('The method '.$methodName.' not found in class '.$class->name);
-                }
-
-                $virtualPropertyMetadata = new VirtualPropertyMetadata($name, $methodName);
-
-                $propertiesMetadata[$methodName] = $virtualPropertyMetadata;
-                $config['properties'][$methodName] = $propertySettings;
-            }
-        }
-
-        if (! $excludeAll) {
-            foreach ($class->getProperties() as $property) {
-                if ($name !== $property->getDeclaringClass()->name) {
-                    continue;
-                }
-
-                $pName = $property->getName();
-                $propertiesMetadata[$pName] = new PropertyMetadata($name, $pName);
-            }
-
-            foreach ($propertiesMetadata as $pName => $pMetadata) {
-                $isExclude = false;
-                $isExpose = $pMetadata instanceof VirtualPropertyMetadata
-                    || (isset($config['properties']) && array_key_exists($pName, $config['properties']));
-
-                if (isset($config['properties'][$pName])) {
-                    $pConfig = $config['properties'][$pName];
-
-                    if (isset($pConfig['exclude'])) {
-                        $isExclude = (Boolean) $pConfig['exclude'];
-                    }
-
-                    if (isset($pConfig['expose'])) {
-                        $isExpose = (Boolean) $pConfig['expose'];
-                    }
-
-                    if (isset($pConfig['since_version'])) {
-                        $pMetadata->sinceVersion = (string) $pConfig['since_version'];
-                    }
-
-                    if (isset($pConfig['until_version'])) {
-                        $pMetadata->untilVersion = (string) $pConfig['until_version'];
-                    }
-
-                    if (isset($pConfig['serialized_name'])) {
-                        $pMetadata->serializedName = (string) $pConfig['serialized_name'];
-                    }
-
-                    if (isset($pConfig['type'])) {
-                        $pMetadata->setType((string) $pConfig['type']);
-                    }
-
-                    if (isset($pConfig['groups'])) {
-                        $pMetadata->groups = $pConfig['groups'];
-                    }
-
-                    if (isset($pConfig['xml_list'])) {
-                        $pMetadata->xmlCollection = true;
-
-                        $colConfig = $pConfig['xml_list'];
-                        if (isset($colConfig['inline'])) {
-                            $pMetadata->xmlCollectionInline = (Boolean) $colConfig['inline'];
-                        }
-
-                        if (isset($colConfig['entry_name'])) {
-                            $pMetadata->xmlEntryName = (string) $colConfig['entry_name'];
-                        }
-
-                        if (isset($colConfig['namespace'])) {
-                            $pMetadata->xmlEntryNamespace = (string) $colConfig['namespace'];
-                        }
-                    }
-
-                    if (isset($pConfig['xml_map'])) {
-                        $pMetadata->xmlCollection = true;
-
-                        $colConfig = $pConfig['xml_map'];
-                        if (isset($colConfig['inline'])) {
-                            $pMetadata->xmlCollectionInline = (Boolean) $colConfig['inline'];
-                        }
-
-                        if (isset($colConfig['entry_name'])) {
-                            $pMetadata->xmlEntryName = (string) $colConfig['entry_name'];
-                        }
-
-                        if (isset($colConfig['namespace'])) {
-                            $pMetadata->xmlEntryNamespace = (string) $colConfig['namespace'];
-                        }
-
-                        if (isset($colConfig['key_attribute_name'])) {
-                            $pMetadata->xmlKeyAttribute = $colConfig['key_attribute_name'];
-                        }
-                    }
-
-                    if (isset($pConfig['xml_element'])) {
-                        $colConfig = $pConfig['xml_element'];
-                        if (isset($colConfig['cdata'])) {
-                            $pMetadata->xmlElementCData = (Boolean) $colConfig['cdata'];
-                        }
-
-                        if (isset($colConfig['namespace'])) {
-                            $pMetadata->xmlNamespace = (string) $colConfig['namespace'];
-                        }
-                    }
-
-                    if (isset($pConfig['xml_attribute'])) {
-                        $pMetadata->xmlAttribute = (Boolean) $pConfig['xml_attribute'];
-                    }
-
-                    if (isset($pConfig['xml_attribute_map'])) {
-                        $pMetadata->xmlAttributeMap = (Boolean) $pConfig['xml_attribute_map'];
-                    }
-
-                    if (isset($pConfig['xml_value'])) {
-                        $pMetadata->xmlValue = (Boolean) $pConfig['xml_value'];
-                    }
-
-                    if (isset($pConfig['xml_key_value_pairs'])) {
-                        $pMetadata->xmlKeyValuePairs = (Boolean) $pConfig['xml_key_value_pairs'];
-                    }
-
-                    //we need read_only before setter and getter set, because that method depends on flag being set
-                    if (isset($pConfig['read_only'])) {
-                        $pMetadata->readOnly = (Boolean) $pConfig['read_only'];
-                    } else {
-                        $pMetadata->readOnly = $pMetadata->readOnly || $readOnlyClass;
-                    }
-
-                    $pMetadata->setAccessor(
-                        isset($pConfig['access_type']) ? $pConfig['access_type'] : $classAccessType,
-                        isset($pConfig['accessor']['getter']) ? $pConfig['accessor']['getter'] : null,
-                        isset($pConfig['accessor']['setter']) ? $pConfig['accessor']['setter'] : null
-                    );
-
-                    if (isset($pConfig['inline'])) {
-                        $pMetadata->inline = (Boolean) $pConfig['inline'];
-                    }
-
-                    if (isset($pConfig['max_depth'])) {
-                        $pMetadata->maxDepth = (int) $pConfig['max_depth'];
-                    }
-                }
-                if ((ExclusionPolicy::NONE === $exclusionPolicy && ! $isExclude)
-                        || (ExclusionPolicy::ALL === $exclusionPolicy && $isExpose)) {
-                    $metadata->addAttributeMetadata($pMetadata);
-                }
-            }
-        }
-
-        if (isset($config['callback_methods'])) {
-            $cConfig = $config['callback_methods'];
-
-            if (isset($cConfig['pre_serialize'])) {
-                $metadata->preSerializeMethods = $this->getCallbackMetadata($class, $cConfig['pre_serialize']);
-            }
-            if (isset($cConfig['post_serialize'])) {
-                $metadata->postSerializeMethods = $this->getCallbackMetadata($class, $cConfig['post_serialize']);
-            }
-            if (isset($cConfig['post_deserialize'])) {
-                $metadata->postDeserializeMethods = $this->getCallbackMetadata($class, $cConfig['post_deserialize']);
-            }
-        }
-
-        return true;
+        $this->config = Yaml::parse($this->loadFile($filePath));
     }
 
-    protected function getExtension()
+    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
     {
-        return 'yml';
+        $config = $this->getClassConfig($classMetadata->getName());
+        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
+            if (array_key_exists($property->name, $config['properties']) && null === $config['properties'][$property->name]) {
+                return false;
+            }
+
+            return ! isset($config['properties'][$property->name]['expose']) || ! $config['properties'][$property->name]['expose'];
+        }
+
+        return isset($config['properties'][$property->name]['exclude']) && $config['properties'][$property->name]['exclude'];
     }
 
-    private function addClassProperties(ClassMetadata $metadata, array $config)
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
     {
-        if (isset($config['custom_accessor_order']) && ! isset($config['accessor_order'])) {
-            $config['accessor_order'] = 'custom';
+        if (! $this->hasClassConfig($classMetadata->getName())) {
+            return true;
         }
 
-        if (isset($config['accessor_order'])) {
-            $metadata->setAccessorOrder($config['accessor_order'], isset($config['custom_accessor_order']) ? $config['custom_accessor_order'] : []);
-        }
-
-        if (isset($config['xml_root_name'])) {
-            $metadata->xmlRootName = (string) $config['xml_root_name'];
-        }
-
-        if (isset($config['xml_root_namespace'])) {
-            $metadata->xmlRootNamespace = (string) $config['xml_root_namespace'];
-        }
-
-        if (array_key_exists('xml_namespaces', $config)) {
-            foreach ($config['xml_namespaces'] as $prefix => $uri) {
-                $metadata->registerNamespace($uri, $prefix);
-            }
-        }
-
-        if (isset($config['discriminator'])) {
-            if (isset($config['discriminator']['disabled']) && true === $config['discriminator']['disabled']) {
-                $metadata->discriminatorDisabled = true;
-            } else {
-                if (! isset($config['discriminator']['field_name'])) {
-                    throw new RuntimeException('The "field_name" attribute must be set for discriminators.');
-                }
-
-                if (! isset($config['discriminator']['map']) || ! is_array($config['discriminator']['map'])) {
-                    throw new RuntimeException('The "map" attribute must be set, and be an array for discriminators.');
-                }
-
-                $metadata->setDiscriminator($config['discriminator']['field_name'], $config['discriminator']['map']);
-            }
-        }
+        return parent::loadClassMetadata($classMetadata);
     }
 
-    private function getCallbackMetadata(\ReflectionClass $class, $config)
+    protected function isExcluded(\ReflectionClass $class)
     {
-        if (is_string($config)) {
-            $config = [$config];
-        } elseif (! is_array($config)) {
-            throw new RuntimeException(sprintf('callback methods expects a string, or an array of strings that represent method names, but got %s.', json_encode($config['pre_serialize'])));
-        }
+        $config = $this->getClassConfig($class->name);
 
-        $methods = [];
-        foreach ($config as $name) {
-            if (! $class->hasMethod($name)) {
-                throw new RuntimeException(sprintf('The method %s does not exist in class %s.', $name, $class->name));
+        return isset($config['exclude']) ? $config['exclude'] : false;
+    }
+
+    protected function getClassAnnotations(ClassMetadata $classMetadata)
+    {
+        $config = $this->getClassConfig($classMetadata->getName());
+
+        $annotations = [];
+        foreach ($config as $key => $value) {
+            if (in_array($key, ['properties', 'virtual_properties'])) {
+                continue;
             }
 
-            $methods[] = new MethodMetadata($class->name, $name);
+            $annotations = array_merge($annotations, $this->createAnnotationsForArray($value, $key));
         }
 
-        return $methods;
+        return $annotations;
+    }
+
+    protected function getMethodAnnotations(\ReflectionMethod $method)
+    {
+        $annotations = [];
+        $methodName = $method->name;
+        $config = $this->getClassConfig($method->class);
+
+        if (array_key_exists($methodName, $config['virtual_properties'])) {
+            $annotations[] = new Annotations\VirtualProperty();
+
+            $methodConfig = $config['virtual_properties'][$methodName] ?: [];
+            $annotations = array_merge($annotations, $this->loadProperty($methodConfig));
+        }
+
+        if (array_search($methodName, $config['pre_serialize'])) {
+            $annotations[] = new Annotations\PreSerialize();
+        }
+        if (array_search($methodName, $config['post_serialize'])) {
+            $annotations[] = new Annotations\PostSerialize();
+        }
+        if (array_search($methodName, $config['post_deserialize'])) {
+            $annotations[] = new Annotations\PostDeserialize();
+        }
+
+        return $annotations;
+    }
+
+    protected function getPropertyAnnotations(\ReflectionProperty $property)
+    {
+        $config = $this->getClassConfig($property->class);
+        $propertyName = $property->name;
+
+        if (! isset($config['properties'][$propertyName])) {
+            return [];
+        }
+
+        return $this->loadProperty($config['properties'][$propertyName]);
+    }
+
+    private static function isAssocArray(array $value)
+    {
+        return array_keys($value) !== array_keys(array_values($value));
+    }
+
+    private function loadProperty(array $config)
+    {
+        $annotations = [];
+
+        foreach ($config as $key => $value) {
+            $annotations = array_merge($annotations, $this->createAnnotationsForArray($value, $key));
+        }
+
+        return $annotations;
+    }
+
+    private function hasClassConfig($class)
+    {
+        return isset($this->config[$class]);
+    }
+
+    private function getClassConfig($class)
+    {
+        $config = isset($this->config[$class]) ? $this->config[$class] : [];
+
+        return array_merge([
+            'virtual_properties' => [],
+            'pre_serialize' => [],
+            'post_serialize' => [],
+            'post_deserialize' => [],
+        ], $config);
+    }
+
+    private function createAnnotationObject($name)
+    {
+        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
+        $annotation = new $annotationClass();
+
+        return $annotation;
+    }
+
+    private function createAnnotationsForArray($value, $key)
+    {
+        $annotations = [];
+
+        if (! is_array($value)) {
+            $annotation = $this->createAnnotationObject($key);
+            $reflectionAnnotation = new \ReflectionClass($annotation);
+            $properties = $reflectionAnnotation->getProperties();
+
+            if (isset($properties[0])) {
+                $property = $properties[0]->name;
+                $annotation->{$property} = $value;
+            }
+
+            $annotations[] = $annotation;
+        } elseif (self::isAssocArray($value)) {
+            $annotation = $this->createAnnotationObject($key);
+            foreach ($value as $property => $val) {
+                $annotation->{$property} = $val;
+            }
+
+            $annotations[] = $annotation;
+        } elseif ($key === 'groups') {
+            $annotation = new Annotations\Groups();
+            $annotation->groups = $value;
+
+            $annotations[] = $annotation;
+        } else {
+            foreach ($value as $annotValue) {
+                $annotations = array_merge($annotations, $this->createAnnotationsForArray($annotValue, $key));
+            }
+        }
+
+        return $annotations;
     }
 }

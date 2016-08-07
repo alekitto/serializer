@@ -1,7 +1,7 @@
 Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject:
-    xml_namespaces:
-        foo: http://better.foo.example.org
-        old_foo: http://foo.example.org
+    xml_namespace:
+        - { prefix: foo, uri: http://better.foo.example.org }
+        - { prefix: old_foo, uri: http://foo.example.org }
     access_type: property
     properties:
         moo:

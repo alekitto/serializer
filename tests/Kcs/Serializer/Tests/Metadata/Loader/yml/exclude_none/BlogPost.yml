@@ -1,5 +1,6 @@
 Kcs\Serializer\Tests\Fixtures\BlogPost:
-    xml_root_name: blog-post
+    xml_root:
+        name: blog-post
     exclusion_policy: NONE
     properties:
         title:

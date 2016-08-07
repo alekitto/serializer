@@ -1,10 +1,11 @@
 Kcs\Serializer\Tests\Fixtures\BlogPost:
-    xml_root_name: blog-post
-    xml_namespaces:
-        "": http://example.com/namespace
-        gd: http://schemas.google.com/g/2005
-        atom: http://www.w3.org/2005/Atom
-        dc: http://purl.org/dc/elements/1.1/
+    xml_root:
+        name: blog-post
+    xml_namespace:
+        - { uri: http://example.com/namespace }
+        - { prefix: gd, uri: http://schemas.google.com/g/2005 }
+        - { prefix: atom, uri: http://www.w3.org/2005/Atom }
+        - { prefix: dc, uri: http://purl.org/dc/elements/1.1/ }
     access_type: property
     properties:
         id:
@@ -19,24 +20,23 @@ Kcs\Serializer\Tests\Fixtures\BlogPost:
                 namespace: http://purl.org/dc/elements/1.1/
         createdAt:
             type: DateTime
-            xml_attribute: true
+            xml_attribute: ~
         published:
             type: boolean
             serialized_name: is_published
-            xml_attribute: true
+            xml_attribute: ~
             groups: [post]
         etag:
             type: string
             groups: [post]
-            xml_attribute: true
-            xml_element:
+            xml_attribute:
                 namespace: http://schemas.google.com/g/2005
         comments:
             type: ArrayCollection<Kcs\Serializer\Tests\Fixtures\Comment>
             groups: [comments]
             xml_list:
                 inline: true
-                entry_name: comment
+                entry: comment
         author:
             type: Kcs\Serializer\Tests\Fixtures\Author
             groups: [post]

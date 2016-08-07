@@ -1,10 +1,11 @@
 Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces:
-    xml_root_name: test-object
-    xml_root_namespace: http://example.com/namespace
-    xml_namespaces:
-        "": http://example.com/namespace
-        gd: http://schemas.google.com/g/2005
-        atom: http://www.w3.org/2005/Atom
+    xml_root:
+        name: test-object
+        namespace: http://example.com/namespace
+    xml_namespace:
+        - { uri: http://example.com/namespace }
+        - { prefix: gd, uri: http://schemas.google.com/g/2005 }
+        - { prefix: atom, uri: http://www.w3.org/2005/Atom }
     access_type: property
     properties:
         title:
@@ -13,11 +14,10 @@ Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces:
                 namespace: http://purl.org/dc/elements/1.1/
         createdAt:
             type: DateTime
-            xml_attribute: true
+            xml_attribute: ~
         etag:
             type: string
-            xml_attribute: true
-            xml_element:
+            xml_attribute:
                 namespace: http://schemas.google.com/g/2005
         author:
             type: string
@@ -25,6 +25,5 @@ Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces:
                 namespace: http://www.w3.org/2005/Atom
         language:
             type: string
-            xml_attribute: true
-            xml_element:
+            xml_attribute:
                 namespace: http://purl.org/dc/elements/1.1/
