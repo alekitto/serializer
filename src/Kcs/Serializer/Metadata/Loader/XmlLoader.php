@@ -80,19 +80,19 @@ class XmlLoader extends AnnotationLoader
             'pre-serialize',
             'post-serialize',
             'post-deserialize',
-            'discriminator'
+            'discriminator',
         ];
 
         $annotations = $this->loadComplex($element, ['name'], $exclude);
 
-        foreach ($element->xpath("./discriminator") as $discriminatorElement) {
+        foreach ($element->xpath('./discriminator') as $discriminatorElement) {
             $discriminator = new Annotations\Discriminator();
             foreach ($this->loadAnnotationProperties($discriminatorElement) as $attrName => $value) {
                 $discriminator->{$attrName} = $value;
             }
 
             $map = [];
-            foreach ($discriminatorElement->xpath("./map") as $item) {
+            foreach ($discriminatorElement->xpath('./map') as $item) {
                 $v = (string)$item->attributes()->value;
                 $map[ $v ] = (string)$item;
             }
@@ -164,7 +164,7 @@ class XmlLoader extends AnnotationLoader
     {
         $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
 
-        foreach($element->children() as $name => $child) {
+        foreach ($element->children() as $name => $child) {
             if (in_array($name, $excludedChildren)) {
                 continue;
             }
@@ -179,7 +179,7 @@ class XmlLoader extends AnnotationLoader
     {
         $annotations = [];
 
-        foreach ($element->xpath("./".$name) as $elem) {
+        foreach ($element->xpath('./'.$name) as $elem) {
             $annotation = $this->createAnnotationObject($name);
 
             if ($value = (string)$elem) {

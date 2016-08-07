@@ -11,7 +11,7 @@ class AnnotationProcessor
     /**
      * @var ProcessorInterface[]
      */
-    const PROCESSORS = [
+    protected static $processor = [
         Annotations\AccessType::class => AccessTypeProcessor::class,
         Annotations\ReadOnly::class => ReadOnlyProcessor::class,
 
@@ -42,15 +42,15 @@ class AnnotationProcessor
     public function process($annotation, MetadataInterface $metadata)
     {
         if (! is_object($annotation)) {
-            throw new InvalidArgumentException("You must pass an annotation object as first parameter of process");
+            throw new InvalidArgumentException('You must pass an annotation object as first parameter of process');
         }
 
         $class = get_class($annotation);
-        if (! array_key_exists($class, static::PROCESSORS)) {
+        if (! array_key_exists($class, static::$processor)) {
             return;
         }
 
-        $processor = static::PROCESSORS[$class];
+        $processor = static::$processor[$class];
         $processor::process($annotation, $metadata);
     }
 }

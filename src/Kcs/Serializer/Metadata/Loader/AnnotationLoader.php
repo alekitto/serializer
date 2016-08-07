@@ -24,7 +24,6 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation;
-use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\Processor\AnnotationProcessor;
 use Kcs\Serializer\Metadata\PropertyMetadata;
