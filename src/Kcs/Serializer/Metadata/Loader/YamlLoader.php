@@ -19,7 +19,6 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Doctrine\Common\Util\Inflector;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoaderTrait;
 use Kcs\Serializer\Annotation as Annotations;
@@ -29,6 +28,7 @@ use Symfony\Component\Yaml\Yaml;
 class YamlLoader extends AnnotationLoader
 {
     use FileLoaderTrait;
+    use LoaderTrait;
 
     /**
      * @var array
@@ -39,7 +39,7 @@ class YamlLoader extends AnnotationLoader
     {
         parent::__construct();
 
-        $this->config = Yaml::parse($this->loadFile($filePath));
+        $this->config = (array)Yaml::parse($this->loadFile($filePath));
     }
 
     protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
@@ -69,7 +69,7 @@ class YamlLoader extends AnnotationLoader
     {
         $config = $this->getClassConfig($class->name);
 
-        return isset($config['exclude']) ? $config['exclude'] : false;
+        return isset($config['exclude']) ? (bool)$config['exclude'] : false;
     }
 
     protected function getClassAnnotations(ClassMetadata $classMetadata)
@@ -159,25 +159,13 @@ class YamlLoader extends AnnotationLoader
         ], $config);
     }
 
-    private function createAnnotationObject($name)
-    {
-        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
-        $annotation = new $annotationClass();
-
-        return $annotation;
-    }
-
     private function createAnnotationsForArray($value, $key)
     {
         $annotations = [];
 
         if (! is_array($value)) {
             $annotation = $this->createAnnotationObject($key);
-            $reflectionAnnotation = new \ReflectionClass($annotation);
-            $properties = $reflectionAnnotation->getProperties();
-
-            if (isset($properties[0])) {
-                $property = $properties[0]->name;
+            if ($property = $this->getDefaultPropertyName($annotation)) {
                 $annotation->{$property} = $value;
             }
 

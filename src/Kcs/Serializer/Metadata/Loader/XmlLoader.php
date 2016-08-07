@@ -29,6 +29,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 class XmlLoader extends AnnotationLoader
 {
     use FileLoaderTrait;
+    use LoaderTrait;
 
     /**
      * @var \SimpleXMLElement
@@ -183,8 +184,7 @@ class XmlLoader extends AnnotationLoader
             $annotation = $this->createAnnotationObject($name);
 
             if ($value = (string)$elem) {
-                $annotationReflection = new \ReflectionClass($annotation);
-                $property = $annotationReflection->getProperties()[0]->name;
+                $property = $this->getDefaultPropertyName($annotation);
 
                 $annotation->{$property} = $value;
             }
@@ -208,14 +208,6 @@ class XmlLoader extends AnnotationLoader
         return reset($elems);
     }
 
-    private function createAnnotationObject($name)
-    {
-        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
-        $annotation = new $annotationClass();
-
-        return $annotation;
-    }
-
     private function getAnnotationsFromAttributes(\SimpleXMLElement $element, array $excludeAttributes = [])
     {
         $annotations = [];
@@ -226,14 +218,10 @@ class XmlLoader extends AnnotationLoader
             }
 
             $annotation = $this->createAnnotationObject($attrName);
-            $annotationReflection = new \ReflectionClass($annotation);
+            $annotations[] = $annotation;
 
-            $properties = $annotationReflection->getProperties();
-            if ($property = reset($properties)) {
-                $property = $property->name;
-
+            if ($property = $this->getDefaultPropertyName($annotation)) {
                 $annotation->{$property} = $value;
-                $annotations[] = $annotation;
             }
         }
 
