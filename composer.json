@@ -2,7 +2,7 @@
     "name": "kcs/serializer",
     "type": "library",
     "description": "Library for (de-)serializing data of any complexity; supports XML, JSON, and YAML.",
-    "keywords": ["serialization", "deserialization", "json", "jaxb", "xml"],
+    "keywords": ["serialization", "deserialization", "json", "yaml", "xml"],
     "license": "Apache2",
     "authors": [
         {
