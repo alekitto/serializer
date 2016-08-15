@@ -47,8 +47,13 @@
         "twig/twig": "~1.12|~2.0"
     },
     "autoload": {
-        "psr-0": {
-            "Kcs\\Serializer": "src/"
+        "psr-4": {
+            "Kcs\\Serializer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kcs\\Serializer\\Tests\\": "tests/"
         }
     },
     "extra": {

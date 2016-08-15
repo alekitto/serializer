@@ -24,8 +24,7 @@ call_user_func(function () {
         throw new \RuntimeException('Did not find vendor/autoload.php. Did you run "composer install --dev"?');
     }
 
-    $loader = require $autoloadFile;
-    $loader->add('Kcs\Serializer\Tests', __DIR__);
+    require $autoloadFile;
 
     AnnotationRegistry::registerAutoloadNamespace('Doctrine\Common\Annotations');
     AnnotationRegistry::registerLoader('class_exists');
