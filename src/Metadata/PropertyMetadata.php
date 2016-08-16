@@ -31,6 +31,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public $sinceVersion;
     public $untilVersion;
     public $groups = [];
+    public $exclusionGroups = [];
     public $serializedName;
     public $type;
     public $xmlCollection = false;

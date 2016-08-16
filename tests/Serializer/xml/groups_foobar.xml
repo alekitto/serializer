@@ -3,4 +3,5 @@
   <foo><![CDATA[foo]]></foo>
   <foobar><![CDATA[foobar]]></foobar>
   <bar><![CDATA[bar]]></bar>
+  <baz><![CDATA[baz]]></baz>
 </result>

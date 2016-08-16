@@ -708,6 +708,11 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(
+            $this->getContent('groups_foo_not_baz'),
+            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['foo', 'baz']))
+        );
+
+        $this->assertEquals(
             $this->getContent('groups_foobar'),
             $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['foo', 'bar']))
         );

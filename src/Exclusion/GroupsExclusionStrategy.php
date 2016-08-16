@@ -57,6 +57,12 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             return ! isset($this->groups[self::DEFAULT_GROUP]);
         }
 
+        foreach ($property->exclusionGroups as $group) {
+            if (isset($this->groups[$group])) {
+                return true;
+            }
+        }
+
         foreach ($property->groups as $group) {
             if (isset($this->groups[$group])) {
                 return false;

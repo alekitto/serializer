@@ -46,6 +46,13 @@ class GroupsObject
      */
     private $bar;
 
+    /**
+     * @Groups({"foo", "!baz"})
+     * @Type("string")
+     * @var string
+     */
+    private $baz;
+
      /**
      * @Type("string")
      */
@@ -57,5 +64,6 @@ class GroupsObject
         $this->bar = 'bar';
         $this->foobar = 'foobar';
         $this->none = 'none';
+        $this->baz = 'baz';
     }
 }

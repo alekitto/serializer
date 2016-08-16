@@ -2,5 +2,4 @@
 <result>
   <foo><![CDATA[foo]]></foo>
   <foobar><![CDATA[foobar]]></foobar>
-  <baz><![CDATA[baz]]></baz>
 </result>
