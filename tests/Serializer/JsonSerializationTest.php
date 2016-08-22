@@ -111,22 +111,6 @@ class JsonSerializationTest extends BaseSerializationTest
         return $outputs[$key];
     }
 
-    public function testAddLinksToOutput()
-    {
-        $this->dispatcher->addSubscriber(new LinkAddingSubscriber());
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\AuthorList',
-            function (VisitorInterface $visitor, AuthorList $data, Type $type, Context $context) {
-                return $visitor->visitArray(iterator_to_array($data), $type, $context);
-            }
-        );
-
-        $list = new AuthorList();
-        $list->add(new Author('foo'));
-        $list->add(new Author('bar'));
-
-        $this->assertEquals('[{"full_name":"foo","_links":{"details":"http:\/\/foo.bar\/details\/foo","comments":"http:\/\/foo.bar\/details\/foo\/comments"}},{"full_name":"bar","_links":{"details":"http:\/\/foo.bar\/details\/bar","comments":"http:\/\/foo.bar\/details\/bar\/comments"}}]', $this->serialize($list));
-    }
-
     public function getPrimitiveTypes()
     {
         return [
@@ -217,29 +201,5 @@ class JsonSerializationTest extends BaseSerializationTest
     protected function getFormat()
     {
         return 'json';
-    }
-}
-
-class LinkAddingSubscriber implements EventSubscriberInterface
-{
-    public function onPostSerialize(Event $event)
-    {
-        if ($event->getContext()->getFormat() !== 'json' || ! $event->getType()->is(Author::class)) {
-            return;
-        }
-
-        $author = $event->getData();
-
-        $event->getVisitor()->addData('_links', [
-            'details' => 'http://foo.bar/details/'.$author->getName(),
-            'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
-        ]);
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            'serializer.post_serialize' => 'onPostSerialize',
-        ];
     }
 }

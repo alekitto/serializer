@@ -117,26 +117,6 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $rs;
     }
 
-    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
-    {
-        $v = $metadata->getValue($data);
-
-        $v = $this->navigator->accept($v, $metadata->type, $context);
-        if (null === $v && ! $context->shouldSerializeNull()) {
-            return;
-        }
-
-        $k = $this->namingStrategy->translateName($metadata);
-
-        if ($metadata->inline) {
-            if (is_array($v)) {
-                $this->data = array_merge($this->data, $v);
-            }
-        } else {
-            $this->data[$k] = $v;
-        }
-    }
-
     public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
         $args = func_get_args();
@@ -145,22 +125,6 @@ class GenericSerializationVisitor extends AbstractVisitor
         array_unshift($args, $this);
 
         return $this->data = call_user_func_array($handler, $args);
-    }
-
-    /**
-     * Allows you to add additional data to the current object/root element.
-     *
-     * @param string $key
-     * @param mixed $value This value must either be a regular scalar, or an array.
-     *                     It must not contain any objects anymore.
-     */
-    public function addData($key, $value)
-    {
-        if (isset($this->data[$key])) {
-            throw new InvalidArgumentException(sprintf('There is already data for "%s".', $key));
-        }
-
-        $this->data[$key] = $value;
     }
 
     public function getRoot()
@@ -182,6 +146,42 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function getResult()
     {
         return $this->getRoot();
+    }
+
+    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    {
+        $v = $metadata->getValue($data);
+
+        $v = $this->navigator->accept($v, $metadata->type, $context);
+        if (null === $v && ! $context->shouldSerializeNull()) {
+            return;
+        }
+
+        $k = $this->namingStrategy->translateName($metadata);
+
+        if ($metadata->inline) {
+            if (is_array($v)) {
+                $this->data = array_merge($this->data, $v);
+            }
+        } else {
+            $this->data[$k] = $v;
+        }
+    }
+
+    /**
+     * Allows you to add additional data to the current object/root element.
+     *
+     * @param string $key
+     * @param mixed $value This value must either be a regular scalar, or an array.
+     *                     It must not contain any objects anymore.
+     */
+    protected function addData($key, $value)
+    {
+        if (isset($this->data[$key])) {
+            throw new InvalidArgumentException(sprintf('There is already data for "%s".', $key));
+        }
+
+        $this->data[$key] = $value;
     }
 
     protected function setData($data)
