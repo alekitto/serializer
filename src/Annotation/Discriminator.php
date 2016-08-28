@@ -33,4 +33,7 @@ class Discriminator
 
     /** @var bool */
     public $disabled = false;
+
+    /** @var array<string> */
+    public $groups;
 }

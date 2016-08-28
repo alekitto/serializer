@@ -25,6 +25,9 @@ use Kcs\Serializer\Annotation as Serializer;
  * @Serializer\Discriminator(field = "type", map = {
  *    "car": "Kcs\Serializer\Tests\Fixtures\Discriminator\Car",
  *    "moped": "Kcs\Serializer\Tests\Fixtures\Discriminator\Moped",
+ * }, groups = {
+ *    "Default",
+ *    "discriminator_group"
  * })
  * @Serializer\AccessType("property")
  */

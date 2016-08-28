@@ -1,6 +1,9 @@
 Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle:
     discriminator:
         field: type
+        groups:
+            - Default
+            - discriminator_group
         map:
             car: Kcs\Serializer\Tests\Fixtures\Discriminator\Car
             moped: Kcs\Serializer\Tests\Fixtures\Discriminator\Moped

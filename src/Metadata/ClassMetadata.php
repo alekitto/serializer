@@ -60,8 +60,9 @@ class ClassMetadata extends BaseClassMetadata
     public $discriminatorFieldName;
     public $discriminatorValue;
     public $discriminatorMap = [];
+    public $discriminatorGroups = [];
 
-    public function setDiscriminator($fieldName, array $map)
+    public function setDiscriminator($fieldName, array $map, array $groups)
     {
         if (empty($fieldName)) {
             throw new \InvalidArgumentException('The $fieldName cannot be empty.');
@@ -74,6 +75,7 @@ class ClassMetadata extends BaseClassMetadata
         $this->discriminatorBaseClass = $this->getName();
         $this->discriminatorFieldName = $fieldName;
         $this->discriminatorMap = $map;
+        $this->discriminatorGroups = $groups;
     }
 
     /**
@@ -166,12 +168,14 @@ class ClassMetadata extends BaseClassMetadata
 
             $this->discriminatorValue = $typeValue;
             $this->discriminatorFieldName = $object->discriminatorFieldName;
+            $this->discriminatorGroups = $object->discriminatorGroups;
 
             $discriminatorProperty = new StaticPropertyMetadata(
                 $this->getName(),
                 $this->discriminatorFieldName,
                 $typeValue
             );
+            $discriminatorProperty->groups = $this->discriminatorGroups;
             $discriminatorProperty->serializedName = $this->discriminatorFieldName;
 
             $this->addAttributeMetadata($discriminatorProperty);

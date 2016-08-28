@@ -42,7 +42,8 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
         ) {
             $classMetadata->setDiscriminator(
                 $doctrineMetadata->discriminatorColumn['name'],
-                $doctrineMetadata->discriminatorMap
+                $doctrineMetadata->discriminatorMap,
+                []
             );
         }
     }

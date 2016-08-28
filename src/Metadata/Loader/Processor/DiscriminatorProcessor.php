@@ -24,10 +24,14 @@ class DiscriminatorProcessor extends ClassMetadataProcessor
 {
     protected static function doProcess($annotation, ClassMetadata $metadata)
     {
+        if (is_string($annotation->groups)) {
+            $annotation->groups = explode(',', $annotation->groups);
+        }
+
         if ($annotation->disabled) {
             $metadata->discriminatorDisabled = true;
         } else {
-            $metadata->setDiscriminator($annotation->field, $annotation->map);
+            $metadata->setDiscriminator($annotation->field, $annotation->map, array_map('trim', (array)$annotation->groups));
         }
     }
 }

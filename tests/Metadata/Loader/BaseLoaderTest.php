@@ -175,6 +175,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
             ],
             $m->discriminatorMap
         );
+        $this->assertEquals(["Default", "discriminator_group"], $m->discriminatorGroups);
     }
 
     public function testLoadDiscriminatorSubClass()
@@ -188,6 +189,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($m->discriminatorBaseClass);
         $this->assertNull($m->discriminatorFieldName);
         $this->assertEquals([], $m->discriminatorMap);
+        $this->assertEquals([], $m->discriminatorGroups);
     }
 
     public function testLoadXmlObjectWithNamespacesMetadata()

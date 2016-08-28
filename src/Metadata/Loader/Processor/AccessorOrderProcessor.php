@@ -28,6 +28,6 @@ class AccessorOrderProcessor extends ClassMetadataProcessor
             $annotation->custom = explode(',', $annotation->custom);
         }
 
-        $metadata->setAccessorOrder($annotation->order, $annotation->custom);
+        $metadata->setAccessorOrder($annotation->order, array_map('trim', (array)$annotation->custom));
     }
 }
