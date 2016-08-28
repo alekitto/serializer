@@ -30,7 +30,9 @@ use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
+use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Type\Type;
+use Kcs\Serializer\VisitorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
@@ -47,11 +49,11 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testResourceThrowsException()
     {
-        $context = $this->getMock('Kcs\Serializer\SerializationContext');
+        $context = $this->createMock(SerializationContext::class);
 
         $context->expects($this->any())
             ->method('getVisitor')
-            ->will($this->returnValue($this->getMock('Kcs\Serializer\VisitorInterface')));
+            ->will($this->returnValue($this->createMock(VisitorInterface::class)));
         $context->expects($this->any())
             ->method('getDirection')
             ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
@@ -61,21 +63,20 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
     public function testNavigatorPassesInstanceOnSerialization()
     {
-        $context = $this->getMock('Kcs\Serializer\SerializationContext');
+        $context = $this->createMock(SerializationContext::class);
         $object = new SerializableClass();
         $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
 
-        $self = $this;
         $context->expects($this->any())
             ->method('getDirection')
             ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
 
-        $visitor = $this->getMock('Kcs\Serializer\VisitorInterface');
+        $visitor = $this->createMock(VisitorInterface::class);
         $visitor->expects($this->any())
             ->method('visitObject')
-            ->will($this->returnCallback(function (ClassMetadata $passedMetadata, $data, Type $type, Context $passedContext, ObjectConstructorInterface $objectConstructor) use ($context, $metadata, $self) {
-                $self->assertSame($metadata, $passedMetadata);
-                $self->assertTrue($context === $passedContext);
+            ->will($this->returnCallback(function (ClassMetadata $passedMetadata, $data, Type $type, Context $passedContext, ObjectConstructorInterface $objectConstructor) use ($context, $metadata) {
+                $this->assertSame($metadata, $passedMetadata);
+                $this->assertTrue($context === $passedContext);
             }));
 
         $context->expects($this->any())
@@ -98,14 +99,14 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
         $this->handlerRegistry->registerSubscribingHandler(new TestSubscribingHandler());
 
-        $context = $this->getMock('Kcs\Serializer\SerializationContext');
+        $context = $this->createMock(SerializationContext::class);
         $context->expects($this->any())
             ->method('getDirection')
             ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
 
         $context->expects($this->any())
             ->method('getVisitor')
-            ->will($this->returnValue($this->getMock('Kcs\Serializer\VisitorInterface')));
+            ->will($this->returnValue($this->createMock(VisitorInterface::class)));
 
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
         $this->navigator->accept($object, null, $context);

@@ -19,6 +19,7 @@
 
 namespace Kcs\Serializer\Tests\Serializer\Naming;
 
+use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy;
 
 class IdenticalPropertyNamingStrategyTest extends \PHPUnit_Framework_TestCase
@@ -37,7 +38,7 @@ class IdenticalPropertyNamingStrategyTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslateName($propertyName)
     {
-        $mockProperty = $this->getMockBuilder('Kcs\Serializer\Metadata\PropertyMetadata')->disableOriginalConstructor()->getMock();
+        $mockProperty = $this->getMockBuilder(PropertyMetadata::class)->disableOriginalConstructor()->getMock();
         $mockProperty->name = $propertyName;
 
         $strategy = new IdenticalPropertyNamingStrategy();

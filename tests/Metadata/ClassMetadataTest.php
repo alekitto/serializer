@@ -40,9 +40,9 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetAccessorOrderCustom(array $order, array $expected)
     {
-        $metadata = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder'));
-        $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
-        $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
+        $metadata = new ClassMetadata(new \ReflectionClass(PropertyMetadataOrder::class));
+        $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'b'));
+        $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'a'));
         $this->assertEquals(['b', 'a'], array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, $order);
@@ -51,9 +51,9 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
     public function testSetAccessorOrderAlphabetical()
     {
-        $metadata = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder'));
-        $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'b'));
-        $metadata->addAttributeMetadata(new PropertyMetadata('Kcs\Serializer\Tests\Metadata\PropertyMetadataOrder', 'a'));
+        $metadata = new ClassMetadata(new \ReflectionClass(PropertyMetadataOrder::class));
+        $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'b'));
+        $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'a'));
 
         $this->assertEquals(['b', 'a'], array_keys($metadata->getAttributesMetadata()));
 

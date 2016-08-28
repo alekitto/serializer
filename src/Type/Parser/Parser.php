@@ -41,7 +41,7 @@ final class Parser
      * Parse a type string
      *
      * @param string $input
-     * @return array
+     * @return Type
      */
     public function parse($input)
     {
@@ -111,6 +111,7 @@ final class Parser
     private function syntaxError()
     {
         throw new SyntaxErrorException(
+            $this->lexer->getInputUntilPosition(PHP_INT_MAX),
             $this->lexer->lookahead['value'] ?: 'end of string',
             $this->lexer->lookahead['position']
         );

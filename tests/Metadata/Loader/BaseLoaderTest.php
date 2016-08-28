@@ -24,15 +24,26 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Kcs\Serializer\Tests\Fixtures\Author;
+use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
+use Kcs\Serializer\Tests\Fixtures\BlogPost;
 use Kcs\Serializer\Tests\Fixtures\Comment;
+use Kcs\Serializer\Tests\Fixtures\Discriminator\Car;
+use Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle;
+use Kcs\Serializer\Tests\Fixtures\Node;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualPropertiesAndExcludeAll;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
+use Kcs\Serializer\Tests\Fixtures\Person;
+use Kcs\Serializer\Tests\Fixtures\SimpleClassObject;
+use Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject;
 use Kcs\Serializer\Type\Type;
 
 abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 {
     public function testLoadBlogPostMetadata()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -112,7 +123,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testVirtualProperty()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualProperties'));
+        $m = new ClassMetadata(new \ReflectionClass(ObjectWithVirtualProperties::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertArrayHasKey('existField', $m->getAttributesMetadata());
@@ -130,7 +141,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testXmlKeyValuePairs()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs'));
+        $m = new ClassMetadata(new \ReflectionClass(ObjectWithXmlKeyValuePairs::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertArrayHasKey('array', $m->getAttributesMetadata());
@@ -153,7 +164,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testReadOnlyDefinedBeforeGetterAndSetter()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\AuthorReadOnly'));
+        $m = new ClassMetadata(new \ReflectionClass(AuthorReadOnly::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -162,7 +173,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadDiscriminator()
     {
         /** @var $m ClassMetadata */
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle'));
+        $m = new ClassMetadata(new \ReflectionClass(Vehicle::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -181,7 +192,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadDiscriminatorSubClass()
     {
         /** @var $m ClassMetadata */
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Discriminator\Car'));
+        $m = new ClassMetadata(new \ReflectionClass(Car::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -194,7 +205,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadXmlObjectWithNamespacesMetadata()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces'));
+        $m = new ClassMetadata(new \ReflectionClass(ObjectWithXmlNamespaces::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -244,7 +255,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testMaxDepth()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Node'));
+        $m = new ClassMetadata(new \ReflectionClass(Node::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertEquals(2, $m->getAttributeMetadata('children')->maxDepth);
@@ -252,7 +263,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testPersonCData()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Person'));
+        $m = new ClassMetadata(new \ReflectionClass(Person::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -261,7 +272,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function testXmlNamespaceInheritanceMetadata()
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\SimpleClassObject'));
+        $m = new ClassMetadata(new \ReflectionClass(SimpleClassObject::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $this->assertNotNull($m);
@@ -293,7 +304,7 @@ abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         $this->assertEquals($p, $m->getAttributeMetadata('moo'));
 
-        $subm = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject'));
+        $subm = new ClassMetadata(new \ReflectionClass(SimpleSubClassObject::class));
         $this->getLoader()->loadClassMetadata($subm);
 
         $this->assertNotNull($subm);

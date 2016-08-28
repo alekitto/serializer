@@ -54,7 +54,7 @@ class DoctrineProxySubscriberTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->subscriber = new DoctrineProxySubscriber();
-        $this->visitor = $this->getMock('Kcs\Serializer\Context');
+        $this->visitor = $this->createMock(Context::class);
     }
 
     private function createEvent($object, Type $type)

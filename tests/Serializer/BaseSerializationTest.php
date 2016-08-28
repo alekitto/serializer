@@ -584,11 +584,11 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testNestedFormErrors()
     {
-        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher);
         $formConfigBuilder->setCompound(true);
-        $formConfigBuilder->setDataMapper($this->getMock('Symfony\Component\Form\DataMapperInterface'));
+        $formConfigBuilder->setDataMapper($this->createMock(DataMapperInterface::class));
         $fooConfig = $formConfigBuilder->getFormConfig();
 
         $form = new Form($fooConfig);
@@ -609,7 +609,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Not using Symfony Form >= 2.3 with submit type');
         }
 
-        $dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $factoryBuilder = new FormFactoryBuilder();
         $factoryBuilder->addType(new SubmitType());
@@ -619,7 +619,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher);
         $formConfigBuilder->setFormFactory($factory);
         $formConfigBuilder->setCompound(true);
-        $formConfigBuilder->setDataMapper($this->getMock(DataMapperInterface::class));
+        $formConfigBuilder->setDataMapper($this->createMock(DataMapperInterface::class));
         $fooConfig = $formConfigBuilder->getFormConfig();
 
         $form = new Form($fooConfig);

@@ -19,13 +19,14 @@
 
 namespace Kcs\Serializer\Tests\Twig;
 
+use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Twig\SerializerExtension;
 
 class SerializerExtensionTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->mockSerializer = $this->getMock('Kcs\Serializer\SerializerInterface');
+        $this->mockSerializer = $this->createMock(SerializerInterface::class);
     }
 
     public function testSerialize()
