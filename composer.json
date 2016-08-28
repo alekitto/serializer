@@ -18,6 +18,7 @@
         "php": ">=5.6.0",
         "doctrine/common": "^2.0",
         "doctrine/instantiator": "~1.0.3",
+        "doctrine/lexer": "^1.0.1",
         "kcs/metadata": "^1.2"
     },
     "conflict": {
