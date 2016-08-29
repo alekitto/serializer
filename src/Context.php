@@ -51,7 +51,7 @@ abstract class Context
     private $exclusionStrategy;
 
     /** @var bool */
-    private $serializeNull;
+    private $serializeNull = false;
 
     private $initialized = false;
 
@@ -174,7 +174,7 @@ abstract class Context
 
     public function setSerializeNull($bool)
     {
-        $this->serializeNull = (boolean) $bool;
+        $this->serializeNull = !! $bool;
 
         return $this;
     }

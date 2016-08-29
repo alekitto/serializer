@@ -92,4 +92,22 @@ class ContextTest extends \PHPUnit_Framework_TestCase
         $serializer = SerializerBuilder::create()->build();
         $serializer->serialize($object, 'json', SerializationContext::create()->addExclusionStrategy($exclusionStrategy));
     }
+
+    public function testSerializeNullOption()
+    {
+        $context = SerializationContext::create();
+        $this->assertFalse($context->shouldSerializeNull());
+
+        $context->setSerializeNull(false);
+        $this->assertFalse($context->shouldSerializeNull());
+
+        $context->setSerializeNull(true);
+        $this->assertTrue($context->shouldSerializeNull());
+
+        $context->setSerializeNull("foo");
+        $this->assertTrue($context->shouldSerializeNull());
+
+        $context->setSerializeNull("0");
+        $this->assertFalse($context->shouldSerializeNull());
+    }
 }
