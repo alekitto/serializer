@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Metadata;
 
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
+use Kcs\Serializer\Context;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 
@@ -73,7 +74,7 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->setter = $setter;
     }
 
-    public function getValue($obj)
+    public function getValue($obj, Context $context)
     {
         if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();

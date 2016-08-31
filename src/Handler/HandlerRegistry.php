@@ -68,6 +68,8 @@ class HandlerRegistry implements HandlerRegistryInterface
                 $this->registerHandler($direction, $methodData['type'], [$handler, $method]);
             }
         }
+
+        return $this;
     }
 
     public function registerHandler($direction, $typeName, callable $handler)
@@ -77,6 +79,8 @@ class HandlerRegistry implements HandlerRegistryInterface
         }
 
         $this->handlers[$direction][$typeName] = $handler;
+
+        return $this;
     }
 
     public function getHandler($direction, $typeName)

@@ -19,18 +19,21 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Annotation as Serializer;
 
 /**
- * @AccessType("property")
+ * @Serializer\AccessType("property")
+ * @Serializer\AdditionalField(name="links", attributes={
+ *     @Serializer\SerializedName("_links"),
+ *     @Serializer\XmlKeyValuePairs(),
+ *     @Serializer\XmlList(inline=true)
+ * })
  */
 class Author
 {
     /**
-     * @Type("string")
-     * @SerializedName("full_name")
+     * @Serializer\Type("string")
+     * @Serializer\SerializedName("full_name")
      */
     private $name;
 

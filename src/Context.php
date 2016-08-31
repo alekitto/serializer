@@ -174,7 +174,7 @@ abstract class Context
 
     public function setSerializeNull($bool)
     {
-        $this->serializeNull = !! $bool;
+        $this->serializeNull = (bool) $bool;
 
         return $this;
     }

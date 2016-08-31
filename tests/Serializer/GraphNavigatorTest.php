@@ -25,6 +25,7 @@ use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\GraphNavigator;
+use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
@@ -42,6 +43,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
     private $objectConstructor;
     private $dispatcher;
     private $navigator;
+    private $additionalFieldRegistry;
 
     /**
      * @expectedException \Kcs\Serializer\Exception\RuntimeException
@@ -83,7 +85,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
             ->method('getVisitor')
             ->will($this->returnValue($visitor));
 
-        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->additionalFieldRegistry, $this->objectConstructor, $this->dispatcher);
         $this->navigator->accept($object, null, $context);
     }
 
@@ -108,7 +110,7 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
             ->method('getVisitor')
             ->will($this->returnValue($this->createMock(VisitorInterface::class)));
 
-        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->additionalFieldRegistry, $this->objectConstructor, $this->dispatcher);
         $this->navigator->accept($object, null, $context);
     }
 
@@ -117,11 +119,12 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
         $this->dispatcher = new EventDispatcher();
         $this->handlerRegistry = new HandlerRegistry();
         $this->objectConstructor = new UnserializeObjectConstructor();
+        $this->additionalFieldRegistry = new AdditionalFieldRegistry();
 
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
         $this->metadataFactory = new MetadataFactory($loader);
-        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->additionalFieldRegistry, $this->objectConstructor, $this->dispatcher);
     }
 }
 

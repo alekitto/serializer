@@ -21,6 +21,7 @@ namespace Kcs\Serializer\Tests\Metadata;
 
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\SerializationContext;
 
 class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,7 +73,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getterInit, $setterInit);
 
         $metadata->setValue($object, 'x');
-        $this->assertEquals(sprintf('%1$s:%1$s:x', strtoupper($property)), $metadata->getValue($object));
+        $this->assertEquals(sprintf('%1$s:%1$s:x', strtoupper($property)), $metadata->getValue($object, new SerializationContext()));
 
         $this->assertEquals($getterName, $metadata->getter);
         $this->assertEquals($setterName, $metadata->setter);
@@ -90,7 +91,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getter, $setter);
 
         if (null === $getter) {
-            $metadata->getValue($object);
+            $metadata->getValue($object, new SerializationContext());
         }
 
         if (null === $setter) {

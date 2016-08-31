@@ -150,7 +150,7 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
-        $v = $metadata->getValue($data);
+        $v = $metadata->getValue($data, $context);
 
         $v = $this->navigator->accept($v, $metadata->type, $context);
         if (null === $v && ! $context->shouldSerializeNull()) {

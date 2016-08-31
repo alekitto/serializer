@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+  <authors>
+    <entry>
+      <details><![CDATA[http://foo.bar/details/Foo]]></details>
+      <comments><![CDATA[http://foo.bar/details/Foo/comments]]></comments>
+      <full_name><![CDATA[Foo]]></full_name>
+    </entry>
+    <entry>
+      <details><![CDATA[http://foo.bar/details/Bar]]></details>
+      <comments><![CDATA[http://foo.bar/details/Bar/comments]]></comments>
+      <full_name><![CDATA[Bar]]></full_name>
+    </entry>
+  </authors>
+</result>

@@ -27,6 +27,7 @@ use Kcs\Serializer\EventDispatcher\PostSerializeEvent;
 use Kcs\Serializer\EventDispatcher\PreDeserializeEvent;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
@@ -46,13 +47,15 @@ class GraphNavigator
     private $dispatcher;
     private $metadataFactory;
     private $handlerRegistry;
+    private $additionalFieldRegistry;
     private $objectConstructor;
 
-    public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, EventDispatcherInterface $dispatcher = null)
+    public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, AdditionalFieldRegistry $additionalFieldRegistry, ObjectConstructorInterface $objectConstructor, EventDispatcherInterface $dispatcher = null)
     {
         $this->dispatcher = $dispatcher;
         $this->metadataFactory = $metadataFactory;
         $this->handlerRegistry = $handlerRegistry;
+        $this->additionalFieldRegistry = $additionalFieldRegistry;
         $this->objectConstructor = $objectConstructor;
     }
 
@@ -84,6 +87,11 @@ class GraphNavigator
         }
 
         return $this->deserialize($data, $type, $context);
+    }
+
+    public function getAdditionalFieldValue($object, $name)
+    {
+        return $this->additionalFieldRegistry->getValue($object, $name);
     }
 
     private function guessType($data)

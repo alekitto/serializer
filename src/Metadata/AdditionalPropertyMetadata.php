@@ -1,8 +1,7 @@
 <?php
 
 /*
- * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Modifications copyright (c) 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright (c) 2016 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,36 +20,26 @@ namespace Kcs\Serializer\Metadata;
 
 use Kcs\Serializer\Context;
 
-class StaticPropertyMetadata extends PropertyMetadata
+class AdditionalPropertyMetadata extends PropertyMetadata
 {
-    private $value;
-
-    public function __construct($className, $fieldName, $fieldValue)
+    public function __construct($class, $name)
     {
-        $this->class = $className;
-        $this->name = $fieldName;
-        $this->value = $fieldValue;
+        $this->class = $class;
+        $this->name = $name;
         $this->readOnly = true;
     }
 
     public function getValue($obj, Context $context)
     {
-        return $this->value;
+        return $context->getNavigator()->getAdditionalFieldValue($obj, $this->name);
     }
 
     public function setValue($obj, $value)
     {
-        throw new \LogicException('StaticPropertyMetadata is immutable.');
+        throw new \LogicException('AdditionalPropertyMetadata is immutable.');
     }
 
     public function setAccessor($type, $getter = null, $setter = null)
     {
-    }
-
-    public function __sleep()
-    {
-        return parent::__sleep() + [
-            'value',
-        ];
     }
 }

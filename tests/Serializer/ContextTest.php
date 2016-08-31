@@ -104,10 +104,10 @@ class ContextTest extends \PHPUnit_Framework_TestCase
         $context->setSerializeNull(true);
         $this->assertTrue($context->shouldSerializeNull());
 
-        $context->setSerializeNull("foo");
+        $context->setSerializeNull('foo');
         $this->assertTrue($context->shouldSerializeNull());
 
-        $context->setSerializeNull("0");
+        $context->setSerializeNull('0');
         $this->assertFalse($context->shouldSerializeNull());
     }
 }

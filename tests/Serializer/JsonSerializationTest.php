@@ -20,14 +20,9 @@
 namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Context;
-use Kcs\Serializer\Direction;
-use Kcs\Serializer\EventDispatcher\Event;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Tests\Fixtures\Author;
-use Kcs\Serializer\Tests\Fixtures\AuthorList;
 use Kcs\Serializer\Type\Type;
-use Kcs\Serializer\VisitorInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class JsonSerializationTest extends BaseSerializationTest
 {
@@ -98,6 +93,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['car_without_type'] = '{"km":5}';
             $outputs['garage'] = '{"vehicles":[{"km":3,"type":"car"},{"km":1,"type":"moped"}]}';
             $outputs['tree'] = '{"tree":{"children":[{"children":[{"children":[],"foo":"bar"}],"foo":"bar"}],"foo":"bar"}}';
+            $outputs['object_with_additional_field'] = '{"authors":[{"_links":{"details":"http:\/\/foo.bar\/details\/Foo","comments":"http:\/\/foo.bar\/details\/Foo\/comments"},"full_name":"Foo"},{"_links":{"details":"http:\/\/foo.bar\/details\/Bar","comments":"http:\/\/foo.bar\/details\/Bar\/comments"},"full_name":"Bar"}]}';
         }
 
         if (PHP_VERSION_ID >= 70000) {

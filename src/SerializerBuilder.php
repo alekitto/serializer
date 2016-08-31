@@ -27,6 +27,7 @@ use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
+use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
@@ -60,6 +61,7 @@ class SerializerBuilder
     private $cache = null;
     private $annotationReader;
     private $metadataLoader = null;
+    private $additionalFieldRegistry = null;
 
     public static function create()
     {
@@ -167,6 +169,13 @@ class SerializerBuilder
         return $this;
     }
 
+    public function setAdditionalFieldRegistry(AdditionalFieldRegistry $additionalFieldRegistry)
+    {
+        $this->additionalFieldRegistry = $additionalFieldRegistry;
+
+        return $this;
+    }
+
     public function addDefaultSerializationVisitors()
     {
         $this->initializePropertyNamingStrategy();
@@ -223,9 +232,14 @@ class SerializerBuilder
             $this->addDefaultDeserializationVisitors();
         }
 
+        if (! $this->additionalFieldRegistry) {
+            $this->additionalFieldRegistry = new AdditionalFieldRegistry();
+        }
+
         return new Serializer(
             $metadataFactory,
             $this->handlerRegistry,
+            $this->additionalFieldRegistry,
             $this->objectConstructor ?: new InitializedObjectConstructor(new UnserializeObjectConstructor()),
             $this->serializationVisitors,
             $this->deserializationVisitors,

@@ -1,0 +1,11 @@
+authors:
+    -
+        _links:
+            details: 'http://foo.bar/details/Foo'
+            comments: 'http://foo.bar/details/Foo/comments'
+        full_name: Foo
+    -
+        _links:
+            details: 'http://foo.bar/details/Bar'
+            comments: 'http://foo.bar/details/Bar/comments'
+        full_name: Bar

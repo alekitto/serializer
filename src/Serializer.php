@@ -23,6 +23,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
+use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -49,18 +50,19 @@ class Serializer implements SerializerInterface
      *
      * @param MetadataFactoryInterface $factory
      * @param Handler\HandlerRegistryInterface $handlerRegistry
+     * @param AdditionalFieldRegistry $additionalFieldRegistry
      * @param Construction\ObjectConstructorInterface $objectConstructor
      * @param VisitorInterface[] $serializationVisitors of VisitorInterface
      * @param VisitorInterface[] $deserializationVisitors of VisitorInterface
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null)
+    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, AdditionalFieldRegistry $additionalFieldRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null)
     {
         $this->factory = $factory;
         $this->serializationVisitors = $serializationVisitors;
         $this->deserializationVisitors = $deserializationVisitors;
 
-        $this->navigator = new GraphNavigator($this->factory, $handlerRegistry, $objectConstructor, $dispatcher);
+        $this->navigator = new GraphNavigator($this->factory, $handlerRegistry, $additionalFieldRegistry, $objectConstructor, $dispatcher);
     }
 
     public function serialize($data, $format, SerializationContext $context = null)

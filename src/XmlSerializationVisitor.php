@@ -144,7 +144,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
-        $v = $metadata->getValue($data);
+        $v = $metadata->getValue($data, $context);
 
         if ($metadata->xmlAttribute) {
             $attributeName = $this->namingStrategy->translateName($metadata);
@@ -181,7 +181,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         if (null === $v && ! $context->shouldSerializeNull()) {
-            return null;
+            return $this->currentNodes = null;
         }
 
         $elementName = $this->namingStrategy->translateName($metadata);

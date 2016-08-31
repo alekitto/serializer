@@ -24,6 +24,7 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation;
+use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\Processor\AnnotationProcessor;
 use Kcs\Serializer\Metadata\PropertyMetadata;
@@ -96,6 +97,11 @@ class AnnotationLoader implements LoaderInterface
         $annotations = $this->getClassAnnotations($classMetadata);
         foreach ($annotations as $annotation) {
             $this->processor->process($annotation, $classMetadata);
+
+            if ($annotation instanceof Annotation\AdditionalField) {
+                $additionalMetadata = new AdditionalPropertyMetadata($classMetadata->name, $annotation->name);
+                $this->loadExposedAttribute($additionalMetadata, $annotation->attributes, $classMetadata);
+            }
         }
     }
 

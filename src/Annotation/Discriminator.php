@@ -23,7 +23,7 @@ namespace Kcs\Serializer\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-class Discriminator
+final class Discriminator
 {
     /** @var array<string> */
     public $map;
