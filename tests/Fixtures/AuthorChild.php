@@ -17,17 +17,15 @@
  * limitations under the License.
  */
 
-namespace Kcs\Serializer\Annotation;
+namespace Kcs\Serializer\Tests\Fixtures;
+
+use Kcs\Serializer\Annotation as Serializer;
 
 /**
- * @Annotation
- * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
+ * @Serializer\AccessType("property")
  */
-final class Type
+class AuthorChild extends Author
 {
-    /**
-     * @Required
-     * @var string
-     */
-    public $name;
+    /** @Serializer\Type("boolean") */
+    private $is_child = true;
 }

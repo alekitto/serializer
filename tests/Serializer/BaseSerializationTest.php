@@ -49,6 +49,7 @@ use Kcs\Serializer\Tests\Fixtures\AccessorOrderChild;
 use Kcs\Serializer\Tests\Fixtures\AccessorOrderMethod;
 use Kcs\Serializer\Tests\Fixtures\AccessorOrderParent;
 use Kcs\Serializer\Tests\Fixtures\Author;
+use Kcs\Serializer\Tests\Fixtures\AuthorChild;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
 use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
 use Kcs\Serializer\Tests\Fixtures\AuthorReadOnlyPerClass;
@@ -973,6 +974,24 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $list->add(new Author('Bar'));
 
         $this->assertEquals($this->getContent('object_with_additional_field'), $this->serialize($list));
+    }
+
+    public function testAdditionalFieldInheritedBySubclasses()
+    {
+        $this->additionalFieldRegistry->addHandler(Author::class, 'links',
+            function (Author $author) {
+                return [
+                    'details' => 'http://foo.bar/details/'.$author->getName(),
+                    'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
+                ];
+            }
+        );
+
+        $list = new AuthorList();
+        $list->add(new AuthorChild('Foo'));
+        $list->add(new AuthorChild('Bar'));
+
+        $this->assertEquals($this->getContent('object_subclass_with_additional_field'), $this->serialize($list));
     }
 
     abstract protected function getContent($key);

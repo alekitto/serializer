@@ -61,7 +61,7 @@ class SerializerBuilder
     private $cache = null;
     private $annotationReader;
     private $metadataLoader = null;
-    private $additionalFieldRegistry = null;
+    private $additionalFieldRegistry;
 
     public static function create()
     {
@@ -71,6 +71,7 @@ class SerializerBuilder
     public function __construct()
     {
         $this->handlerRegistry = new HandlerRegistry();
+        $this->additionalFieldRegistry = new AdditionalFieldRegistry();
         $this->serializationVisitors = [];
         $this->deserializationVisitors = [];
     }
@@ -206,13 +207,10 @@ class SerializerBuilder
 
     public function build()
     {
-        $annotationReader = $this->annotationReader;
-        if (null === $annotationReader) {
-            $annotationReader = new AnnotationReader();
-        }
-
         $metadataLoader = $this->metadataLoader;
         if (null === $metadataLoader) {
+            $annotationReader = $this->annotationReader ?: new AnnotationReader();
+
             $metadataLoader = new AnnotationLoader();
             $metadataLoader->setReader($annotationReader);
         }
@@ -230,10 +228,6 @@ class SerializerBuilder
         if (empty($this->serializationVisitors) && empty($this->deserializationVisitors)) {
             $this->addDefaultSerializationVisitors();
             $this->addDefaultDeserializationVisitors();
-        }
-
-        if (! $this->additionalFieldRegistry) {
-            $this->additionalFieldRegistry = new AdditionalFieldRegistry();
         }
 
         return new Serializer(
