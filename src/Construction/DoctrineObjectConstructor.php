@@ -20,6 +20,7 @@
 namespace Kcs\Serializer\Construction;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
@@ -30,19 +31,25 @@ use Kcs\Serializer\VisitorInterface;
  */
 class DoctrineObjectConstructor implements ObjectConstructorInterface
 {
-    private $managerRegistry;
+    /**
+     * @var \SplObjectStorage|ManagerRegistry[]
+     */
+    private $managerRegistryCollection;
+
+    /**
+     * @var ObjectConstructorInterface
+     */
     private $fallbackConstructor;
 
     /**
      * Constructor.
      *
-     * @param ManagerRegistry            $managerRegistry     Manager registry
      * @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor
      */
-    public function __construct(ManagerRegistry $managerRegistry, ObjectConstructorInterface $fallbackConstructor)
+    public function __construct(ObjectConstructorInterface $fallbackConstructor)
     {
-        $this->managerRegistry = $managerRegistry;
         $this->fallbackConstructor = $fallbackConstructor;
+        $this->managerRegistryCollection = new \SplObjectStorage();
     }
 
     /**
@@ -50,12 +57,54 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
      */
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
     {
-        // Locate possible ObjectManager
-        $objectManager = $this->managerRegistry->getManagerForClass($metadata->getName());
+        $object = $this->loadFromObjectManager($metadata, $data);
 
-        if (! $objectManager) {
-            // No ObjectManager found, proceed with normal deserialization
-            return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
+        return $object ?: $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
+    }
+
+    /**
+     * Add a manager registry to the collection
+     *
+     * @param ManagerRegistry $managerRegistry
+     *
+     * @return $this
+     */
+    public function addManagerRegistry(ManagerRegistry $managerRegistry)
+    {
+        $this->managerRegistryCollection->attach($managerRegistry);
+
+        return $this;
+    }
+
+    /**
+     * Get the object manager handling the specified class
+     * Returns NULL if cannot be found
+     *
+     * @param ClassMetadata $metadata
+     * @return null|ObjectManager
+     */
+    protected function getObjectManager(ClassMetadata $metadata)
+    {
+        foreach ($this->managerRegistryCollection as $managerRegistry) {
+            if ($objectManager = $managerRegistry->getManagerForClass($metadata->getName())) {
+                return $objectManager;
+            }
+        }
+    }
+
+    /**
+     * Try to load an object from doctrine
+     *
+     * @param ClassMetadata $metadata
+     * @param $data
+     *
+     * @return object|null
+     */
+    protected function loadFromObjectManager(ClassMetadata $metadata, $data)
+    {
+        // Locate possible ObjectManager
+        if (null === $objectManager = $this->getObjectManager($metadata)) {
+            return;
         }
 
         // Locate possible ClassMetadata
@@ -63,13 +112,12 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
         if ($classMetadataFactory->isTransient($metadata->getName())) {
             // No ClassMetadata found, proceed with normal deserialization
-            return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
+            return;
         }
 
-        // Managed entity, check for proxy load
         if (! is_array($data)) {
-            // Single identifier, load proxy
-            return $objectManager->getReference($metadata->getName(), $data);
+            // Single identifier, load
+            return $objectManager->find($metadata->getName(), $data);
         }
 
         // Fallback to default constructor if missing identifier(s)
@@ -78,17 +126,13 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
         foreach ($classMetadata->getIdentifierFieldNames() as $name) {
             if (! array_key_exists($name, $data)) {
-                return $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
+                return;
             }
 
             $identifierList[$name] = $data[$name];
         }
 
         // Entity update, load it from database
-        $object = $objectManager->find($metadata->getName(), $identifierList);
-
-        $objectManager->initializeObject($object);
-
-        return $object;
+        return $objectManager->find($metadata->getName(), $identifierList);
     }
 }
