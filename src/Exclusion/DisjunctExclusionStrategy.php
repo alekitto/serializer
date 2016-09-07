@@ -34,24 +34,20 @@ use PhpCollection\SequenceInterface;
  */
 class DisjunctExclusionStrategy implements ExclusionStrategyInterface
 {
-    /** @var \PhpCollection\SequenceInterface */
+    /** @var ExclusionStrategyInterface[] */
     private $delegates;
 
     /**
-     * @param ExclusionStrategyInterface[]|SequenceInterface $delegates
+     * @param ExclusionStrategyInterface[] $delegates
      */
-    public function __construct($delegates)
+    public function __construct(array $delegates)
     {
-        if (! $delegates instanceof SequenceInterface) {
-            $delegates = new Sequence($delegates);
-        }
-
         $this->delegates = $delegates;
     }
 
     public function addStrategy(ExclusionStrategyInterface $strategy)
     {
-        $this->delegates->add($strategy);
+        $this->delegates[] = $strategy;
     }
 
     /**
