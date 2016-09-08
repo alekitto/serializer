@@ -22,8 +22,6 @@ namespace Kcs\Serializer\Exclusion;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use PhpCollection\Sequence;
-use PhpCollection\SequenceInterface;
 
 /**
  * Disjunct Exclusion Strategy.
