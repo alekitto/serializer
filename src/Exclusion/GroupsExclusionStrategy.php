@@ -35,9 +35,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             $groups = [self::DEFAULT_GROUP];
         }
 
-        foreach ($groups as $group) {
-            $this->groups[$group] = true;
-        }
+        $this->groups = $groups;
     }
 
     /**
@@ -53,22 +51,42 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext)
     {
+        $groups = $this->getGroupsFor($navigatorContext);
+
         if (empty($property->groups)) {
-            return ! isset($this->groups[self::DEFAULT_GROUP]);
+            return ! in_array(self::DEFAULT_GROUP, $groups);
         }
 
         foreach ($property->exclusionGroups as $group) {
-            if (isset($this->groups[$group])) {
+            if (in_array($group, $groups)) {
                 return true;
             }
         }
 
         foreach ($property->groups as $group) {
-            if (isset($this->groups[$group])) {
+            if (in_array($group, $groups)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    private function getGroupsFor(Context $navigatorContext)
+    {
+        $groups = $this->groups;
+        foreach ($navigatorContext->getCurrentPath() as $index => $path) {
+            if (! array_key_exists($path, $groups)) {
+                if ($index > 0) {
+                    return [self::DEFAULT_GROUP];
+                }
+
+                break;
+            }
+
+            $groups = $groups[$path];
+        }
+
+        return $groups;
     }
 }

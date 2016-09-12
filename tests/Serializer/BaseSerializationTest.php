@@ -65,6 +65,7 @@ use Kcs\Serializer\Tests\Fixtures\Discriminator\Moped;
 use Kcs\Serializer\Tests\Fixtures\Garage;
 use Kcs\Serializer\Tests\Fixtures\GetSetObject;
 use Kcs\Serializer\Tests\Fixtures\GroupsObject;
+use Kcs\Serializer\Tests\Fixtures\GroupsUser;
 use Kcs\Serializer\Tests\Fixtures\IndexedCommentsBlogPost;
 use Kcs\Serializer\Tests\Fixtures\InitializedBlogPostConstructor;
 use Kcs\Serializer\Tests\Fixtures\InlineChildEmpty;
@@ -728,6 +729,55 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $this->getContent('groups_default'),
             $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['Default']))
+        );
+    }
+
+    public function testAdvancedGroups()
+    {
+        $adrien = new GroupsUser(
+            'John',
+            new GroupsUser(
+                'John Manager',
+                null,
+                [
+                    new GroupsUser(
+                        'John Manager friend 1',
+                        new GroupsUser('John Manager friend 1 manager')
+                    ),
+                    new GroupsUser('John Manager friend 2'),
+                ]
+            ),
+            [
+                new GroupsUser(
+                    'John friend 1',
+                    new GroupsUser('John friend 1 manager')
+                ),
+                new GroupsUser(
+                    'John friend 2',
+                    new GroupsUser('John friend 2 manager')
+                ),
+            ]
+        );
+
+        $this->assertEquals(
+            $this->getContent('groups_advanced'),
+            $this->serializer->serialize(
+                $adrien,
+                $this->getFormat(),
+                SerializationContext::create()->setGroups([
+                    'Default',
+                    'manager_group',
+                    'friends_group',
+                    'manager' => [
+                        'Default',
+                        'friends_group',
+                        'friends' => ['nickname_group'],
+                    ],
+                    'friends' => [
+                        'manager_group',
+                    ],
+                ])
+            )
         );
     }
 

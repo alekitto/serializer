@@ -83,14 +83,9 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $this->data = [];
-        $exclusionStrategy = $context->getExclusionStrategy();
 
         /** @var PropertyMetadata $propertyMetadata */
-        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
-            if (null !== $exclusionStrategy && $exclusionStrategy->shouldSkipProperty($propertyMetadata, $context)) {
-                continue;
-            }
-
+        foreach ($context->getNonSkippedProperties($metadata) as $propertyMetadata) {
             $context->pushPropertyMetadata($propertyMetadata);
             $this->visitProperty($propertyMetadata, $data, $context);
             $context->popPropertyMetadata();

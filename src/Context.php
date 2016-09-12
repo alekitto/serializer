@@ -63,9 +63,15 @@ abstract class Context
      */
     private $nonSkippedProperties;
 
+    /**
+     * @var string[]
+     */
+    private $currentPath;
+
     public function __construct()
     {
         $this->attributes = new AttributesMap();
+        $this->currentPath = [];
     }
 
     public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
@@ -192,13 +198,25 @@ abstract class Context
     public function pushPropertyMetadata(PropertyMetadata $metadata)
     {
         $this->metadataStack->push($metadata);
+        $this->currentPath[] = $metadata->name;
     }
 
     public function popPropertyMetadata()
     {
         $metadata = $this->metadataStack->pop();
+        array_pop($this->currentPath);
 
         return $metadata;
+    }
+
+    /**
+     * Get current property path
+     *
+     * @return string[]
+     */
+    public function getCurrentPath()
+    {
+        return $this->currentPath;
     }
 
     public function getMetadataStack()
@@ -218,8 +236,10 @@ abstract class Context
         $this->assertInitialized();
 
         $class = $metadata->getName();
-        if (isset($this->nonSkippedProperties[$class])) {
-            return $this->nonSkippedProperties[$class];
+        $path = implode('.', $this->getCurrentPath());
+        $cacheKey = $class.'::'.$path;
+        if (isset($this->nonSkippedProperties[$cacheKey])) {
+            return $this->nonSkippedProperties[$cacheKey];
         }
 
         $properties = $metadata->getAttributesMetadata();
@@ -228,16 +248,12 @@ abstract class Context
             $properties = array_filter(
                 $properties,
                 function (PropertyMetadata $propertyMetadata) {
-                    $this->pushPropertyMetadata($propertyMetadata);
-                    $result = ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
-                    $this->popPropertyMetadata();
-
-                    return $result;
+                    return ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
                 }
             );
         }
 
-        return $this->nonSkippedProperties[$class] = $properties;
+        return $this->nonSkippedProperties[$cacheKey] = $properties;
     }
 
     abstract public function getDepth();
