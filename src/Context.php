@@ -235,13 +235,6 @@ abstract class Context
     {
         $this->assertInitialized();
 
-        $class = $metadata->getName();
-        $path = implode('.', $this->getCurrentPath());
-        $cacheKey = $class.'::'.$path;
-        if (isset($this->nonSkippedProperties[$cacheKey])) {
-            return $this->nonSkippedProperties[$cacheKey];
-        }
-
         $properties = $metadata->getAttributesMetadata();
         if (null !== $this->exclusionStrategy) {
             /** @var PropertyMetadata[] $properties */
@@ -253,7 +246,7 @@ abstract class Context
             );
         }
 
-        return $this->nonSkippedProperties[$cacheKey] = $properties;
+        return $properties;
     }
 
     abstract public function getDepth();
