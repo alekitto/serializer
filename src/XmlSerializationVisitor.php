@@ -368,11 +368,6 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function validateObjectProperties(ClassMetadata $metadata, $properties)
     {
-        $class = $metadata->getName();
-        if (isset($this->validatedMetadata[ $class ])) {
-            return;
-        }
-
         $has_xml_value = false;
         foreach ($properties as $property) {
             if ($property->xmlValue && !$has_xml_value) {
@@ -395,8 +390,6 @@ class XmlSerializationVisitor extends AbstractVisitor
                 }
             }
         }
-
-        $this->validatedMetadata[ $class ] = true;
     }
 
     /**

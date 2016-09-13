@@ -238,7 +238,7 @@ abstract class Context
         $properties = $metadata->getAttributesMetadata();
         if (null !== $this->exclusionStrategy) {
             /** @var PropertyMetadata[] $properties */
-            $properties = array_filter(
+            return array_filter(
                 $properties,
                 function (PropertyMetadata $propertyMetadata) {
                     return ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
