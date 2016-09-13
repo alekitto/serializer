@@ -1,4 +1,4 @@
-Serializer [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/schmittjoh/serializer/badges/quality-score.png?s=189df68e00c75d3fe155bc0da0b53b53709a9895)](https://scrutinizer-ci.com/g/schmittjoh/serializer/)
+Serializer [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alekitto/serializer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alekitto/serializer/) [![Build Status](https://travis-ci.org/alekitto/serializer.svg?branch=master)](https://travis-ci.org/alekitto/serializer) 
 ==========
 
-Learn more about it in its [documentation](http://jmsyst.com/libs/serializer).
+Learn more about it in its [documentation](https://github.com/alekitto/serializer/blob/master/doc/index.rst).
