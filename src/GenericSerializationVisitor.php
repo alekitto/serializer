@@ -67,8 +67,10 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function visitArray($data, Type $type, Context $context)
     {
         $rs = [];
+        $elementType = $this->getElementType($type);
+
         foreach ($data as $k => $v) {
-            $v = $this->navigator->accept($v, $this->getElementType($type), $context);
+            $v = $this->navigator->accept($v, $elementType, $context);
 
             if (null === $v && (! is_string($k) || ! $context->shouldSerializeNull())) {
                 continue;

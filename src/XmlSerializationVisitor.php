@@ -225,11 +225,12 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         /** @var \DOMNode[] $nodes */
         $nodes = [];
+        $elementType = $this->getElementType($type);
         foreach ($data as $k => $v) {
             $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string)$k : $nodeName;
             $this->currentNodes = $this->createElement($namespace, $elementName);
 
-            $context->accept($v, $this->getElementType($type));
+            $context->accept($v, $elementType);
             if (null !== $attributeName) {
                 $this->currentNodes->setAttribute($attributeName, (string)$k);
             }

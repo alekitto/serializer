@@ -29,13 +29,14 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
     public function onPreSerialize(PreSerializeEvent $event)
     {
         $object = $event->getData();
-        $type = $event->getType();
 
         if (! $object instanceof Proxy) {
             return;
         }
 
         $object->__load();
+        $type = $event->getType();
+
         if ($type->is(get_class($object))) {
             $type->setName(get_parent_class($object));
         }
