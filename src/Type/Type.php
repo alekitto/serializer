@@ -18,6 +18,7 @@
 
 namespace Kcs\Serializer\Type;
 
+use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Type\Parser\Parser;
 
@@ -35,6 +36,11 @@ class Type
      * @var array
      */
     private $params;
+
+    /**
+     * @var MetadataInterface
+     */
+    private $metadata;
 
     /**
      * Type constructor
@@ -110,11 +116,12 @@ class Type
 
     /**
      * @param string $name
-     * @return Type
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+        $this->metadata = null;
 
         return $this;
     }
@@ -129,7 +136,7 @@ class Type
 
     /**
      * @param array $params
-     * @return Type
+     * @return $this
      */
     public function setParams(array $params)
     {
@@ -174,5 +181,24 @@ class Type
     public function getParam($index)
     {
         return $this->params[$index];
+    }
+
+    /**
+     * @return MetadataInterface
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * @param MetadataInterface $metadata
+     *
+     * @return $this
+     */
+    public function setMetadata(MetadataInterface $metadata)
+    {
+        $this->metadata = $metadata;
+        return $this;
     }
 }

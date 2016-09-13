@@ -238,11 +238,18 @@ class GraphNavigator
      */
     private function getMetadataForType(Type $type)
     {
+        if ($metadata = $type->getMetadata()) {
+            return $metadata;
+        }
+
         if (!class_exists($type->getName(), false) && !interface_exists($type->getName(), false)) {
             return null;
         }
 
-        return $this->metadataFactory->getMetadataFor($type->getName());
+        $metadata = $this->metadataFactory->getMetadataFor($type->getName());
+        $type->setMetadata($metadata);
+
+        return $metadata;
     }
 
     private function visitArray(VisitorInterface $visitor, $data, Type $type, $context)

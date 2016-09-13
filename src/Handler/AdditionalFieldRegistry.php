@@ -40,14 +40,14 @@ class AdditionalFieldRegistry
      */
     public function getValue($object, $name)
     {
-        $reflClass = new \ReflectionClass($object);
+        $class = get_class($object);
         do {
-            $handler = $this->getHandler($reflClass->name, $name);
+            $handler = $this->getHandler($class, $name);
 
             if (null !== $handler) {
                 return $handler($object);
             }
-        } while ($reflClass = $reflClass->getParentClass());
+        } while ($class = get_parent_class($class));
     }
 
     /**
