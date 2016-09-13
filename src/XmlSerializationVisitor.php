@@ -240,16 +240,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $nodes;
     }
 
-    public function visitCustom(callable $handler, $data, Type $type, Context $context)
-    {
-        $args = func_get_args();
-
-        $handler = array_shift($args);
-        array_unshift($args, $this);
-
-        return call_user_func_array($handler, $args);
-    }
-
     public function setNavigator(GraphNavigator $navigator = null)
     {
         $this->currentNodes = $this->document = $this->createDocument();

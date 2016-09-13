@@ -42,6 +42,16 @@ abstract class AbstractVisitor implements VisitorInterface
         return $data;
     }
 
+    public function visitCustom(callable $handler, $data, Type $type, Context $context)
+    {
+        $args = func_get_args();
+
+        $handler = array_shift($args);
+        array_unshift($args, $this);
+
+        return call_user_func_array($handler, $args);
+    }
+
     protected function getElementType(Type $type)
     {
         if (0 === $type->countParams()) {
