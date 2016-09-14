@@ -43,4 +43,8 @@ class VirtualPropertyMetadata extends PropertyMetadata
     public function setAccessor($type, $getter = null, $setter = null)
     {
     }
+
+    public function __wakeup()
+    {
+    }
 }
