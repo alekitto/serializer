@@ -35,9 +35,9 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 {
     /**
      * Map of doctrine 2 field types to Kcs\Serializer types
-     * @var array
+     * @const array
      */
-    protected $fieldMapping = [
+    const FIELD_MAPPING = [
         'string' => 'string',
         'text' => 'string',
         'blob' => 'string',
@@ -151,10 +151,10 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     protected function normalizeFieldType($type)
     {
-        if (! isset($this->fieldMapping[$type])) {
+        if (! array_key_exists($type, static::FIELD_MAPPING)) {
             return null;
         }
 
-        return $this->fieldMapping[$type];
+        return static::FIELD_MAPPING[$type];
     }
 }
