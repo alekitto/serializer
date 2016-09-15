@@ -199,6 +199,7 @@ class Type
     public function setMetadata(MetadataInterface $metadata)
     {
         $this->metadata = $metadata;
+
         return $this;
     }
 }

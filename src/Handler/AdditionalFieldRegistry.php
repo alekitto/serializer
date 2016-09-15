@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
