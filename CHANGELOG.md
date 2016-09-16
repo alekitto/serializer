@@ -17,6 +17,7 @@ For instructions on how to upgrade from one version to another, please see the d
   some xml and yaml mapping elements have been changed.
 - [BC Break] `GenericSerializationVisitor::addData` cannot be publicly accessed. Use
   `@AdditionalField` annotation to replace it if called in a POST_SERIALIZE event
+- [BC Break] Removed Twig extension
 - Added `InitializedObjectConstructor`: uses `target` attribute for root object deserialization
 - Refactored `GraphNavigator`
 - Serialize timestamp (DateTime<'U'>) as integer
