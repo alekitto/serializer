@@ -74,7 +74,7 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->setter = $setter;
     }
 
-    public function getValue($obj, Context $context)
+    public function getValue($obj)
     {
         if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();

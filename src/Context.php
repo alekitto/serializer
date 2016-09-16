@@ -224,6 +224,11 @@ abstract class Context
         return $this->metadataStack;
     }
 
+    public function getCurrentPropertyMetadata()
+    {
+        return $this->metadataStack->isEmpty() ? null : $this->metadataStack->top();
+    }
+
     /**
      * Get the array of properties that should be serialized in an object
      *

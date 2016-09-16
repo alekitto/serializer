@@ -18,8 +18,6 @@
 
 namespace Kcs\Serializer\Metadata;
 
-use Kcs\Serializer\Context;
-
 class AdditionalPropertyMetadata extends PropertyMetadata
 {
     public function __construct($class, $name)
@@ -27,11 +25,13 @@ class AdditionalPropertyMetadata extends PropertyMetadata
         $this->class = $class;
         $this->name = $name;
         $this->readOnly = true;
+
+        $this->setType($class.'::'.$name);
     }
 
-    public function getValue($obj, Context $context)
+    public function getValue($obj)
     {
-        return $context->getNavigator()->getAdditionalFieldValue($obj, $this->name);
+        return $obj;
     }
 
     public function setValue($obj, $value)

@@ -21,6 +21,7 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
@@ -77,7 +78,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function visitString($data, Type $type, Context $context)
     {
         /** @var PropertyMetadata $metadata */
-        $metadata = $this->getCurrentPropertyMetadata($context);
+        $metadata = $context->getCurrentPropertyMetadata();
 
         return $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
     }
@@ -144,7 +145,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
-        $v = $metadata->getValue($data, $context);
+        $v = $metadata->getValue($data);
 
         if ($metadata->xmlAttribute) {
             $attributeName = $this->namingStrategy->translateName($metadata);
@@ -189,7 +190,9 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         $context->accept($v, $metadata->type);
 
-        if (is_object($v) && null !== $v && $context->isVisiting($v)) {
+        if (is_object($v) && null !== $v &&
+            ! $metadata instanceof AdditionalPropertyMetadata &&
+            $context->isVisiting($v)) {
             return $this->currentNodes = null;
         }
 
@@ -216,7 +219,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         /** @var PropertyMetadata $metadata */
         $nodeName = 'entry';
-        if (($metadata = $this->getCurrentPropertyMetadata($context)) && ! empty($metadata->xmlEntryName)) {
+        if (($metadata = $context->getCurrentPropertyMetadata()) && ! empty($metadata->xmlEntryName)) {
             $nodeName = $metadata->xmlEntryName;
         }
 
@@ -329,16 +332,6 @@ class XmlSerializationVisitor extends AbstractVisitor
             'xmlns:xsi',
             'http://www.w3.org/2001/XMLSchema-instance'
         );
-    }
-
-    public function getCurrentPropertyMetadata(Context $context)
-    {
-        $stack = $context->getMetadataStack();
-        if ($stack->count() === 0) {
-            return null;
-        }
-
-        return $stack->top();
     }
 
     /**

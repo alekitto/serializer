@@ -21,7 +21,6 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Exception\InvalidArgumentException;
-use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\SerializationContext;
@@ -203,9 +202,8 @@ class XmlSerializationTest extends BaseSerializationTest
         $handlerRegistry = new HandlerRegistry();
         $handlerRegistry->registerSubscribingHandler(new DateHandler(\DateTime::ISO8601, 'UTC', false));
         $objectConstructor = new UnserializeObjectConstructor();
-        $additionalFieldRegistry = new AdditionalFieldRegistry();
 
-        $serializer = new Serializer($this->factory, $handlerRegistry, $additionalFieldRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors);
+        $serializer = new Serializer($this->factory, $handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors);
 
         $this->assertEquals($this->getContent($key.'_no_cdata'), $serializer->serialize($value, $this->getFormat()));
     }

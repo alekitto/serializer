@@ -33,7 +33,7 @@ class StaticPropertyMetadata extends PropertyMetadata
         $this->readOnly = true;
     }
 
-    public function getValue($obj, Context $context)
+    public function getValue($obj)
     {
         return $this->value;
     }

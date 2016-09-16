@@ -30,7 +30,6 @@ use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Exclusion\DepthExclusionStrategy;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
-use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\Handler\ConstraintViolationHandler;
 use Kcs\Serializer\Handler\DateHandler;
@@ -122,7 +121,6 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     protected $handlerRegistry;
     protected $serializationVisitors;
     protected $deserializationVisitors;
-    protected $additionalFieldRegistry;
 
     public function testSerializeNullArray()
     {
@@ -422,7 +420,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     public function testDeserializingNull()
     {
         $objectConstructor = new InitializedBlogPostConstructor();
-        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $this->additionalFieldRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
+        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
 
         $post = new BlogPost('This is a nice title.', $author = new Author('Foo Bar'), new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), new Publisher('Bar Foo'));
 
@@ -987,7 +985,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
         $objectConstructor = new InitializedObjectConstructor(new UnserializeObjectConstructor());
         $serializer = new Serializer(
-            $this->factory, $this->handlerRegistry, $this->additionalFieldRegistry, $objectConstructor,
+            $this->factory, $this->handlerRegistry, $objectConstructor,
             $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher
         );
 
@@ -1010,12 +1008,12 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testAdditionalField()
     {
-        $this->additionalFieldRegistry->addHandler(Author::class, 'links',
-            function (Author $author) {
-                return [
+        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
+            function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
+                return $visitor->visitArray([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
                     'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
-                ];
+                ], Type::parse('array<string,string>'), $context);
             }
         );
 
@@ -1028,12 +1026,12 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testAdditionalFieldInheritedBySubclasses()
     {
-        $this->additionalFieldRegistry->addHandler(Author::class, 'links',
-            function (Author $author) {
-                return [
+        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
+            function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
+                return $visitor->visitArray([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
                     'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
-                ];
+                ], Type::parse('array<string,string>'), $context);
             }
         );
 
@@ -1099,8 +1097,6 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->additionalFieldRegistry = new AdditionalFieldRegistry();
-
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addSubscriber(new DoctrineProxySubscriber());
 
@@ -1119,7 +1115,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             'json' => new JsonDeserializationVisitor($namingStrategy),
         ];
 
-        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $this->additionalFieldRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
+        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
     }
 
     protected function getField($obj, $name)

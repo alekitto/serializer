@@ -23,7 +23,6 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
-use Kcs\Serializer\Handler\AdditionalFieldRegistry;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
@@ -49,7 +48,6 @@ class ArrayTest extends \PHPUnit_Framework_TestCase
         $this->serializer = new Serializer(
             new MetadataFactory($loader),
             new HandlerRegistry(),
-            new AdditionalFieldRegistry(),
             new UnserializeObjectConstructor(),
             ['array' => new GenericSerializationVisitor($namingStrategy)],
             ['array' => new GenericDeserializationVisitor($namingStrategy)]
