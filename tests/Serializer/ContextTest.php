@@ -83,7 +83,7 @@ class ContextTest extends \PHPUnit_Framework_TestCase
 
                 if (InlineChild::class === $propertyMetadata->class) {
                     $this->assertEquals(1, $stack->count());
-                    $this->assertEquals('children', $stack[0]->getName());
+                    $this->assertEquals('children', $stack->getCurrent()->getName());
                 }
 
                 return false;

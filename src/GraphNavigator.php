@@ -96,7 +96,7 @@ class GraphNavigator
     {
         $inVisitingStack =
             is_object($data) && null !== $data &&
-            ! $context->getCurrentPropertyMetadata() instanceof AdditionalPropertyMetadata
+            ! $context->getMetadataStack()->getCurrent() instanceof AdditionalPropertyMetadata
         ;
 
         if ($inVisitingStack) {

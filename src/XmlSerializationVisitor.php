@@ -78,7 +78,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function visitString($data, Type $type, Context $context)
     {
         /** @var PropertyMetadata $metadata */
-        $metadata = $context->getCurrentPropertyMetadata();
+        $metadata = $context->getMetadataStack()->getCurrent();
 
         return $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
     }
@@ -125,9 +125,9 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($properties as $propertyMetadata) {
-            $context->pushPropertyMetadata($propertyMetadata);
+            $context->getMetadataStack()->push($propertyMetadata);
             $this->visitProperty($propertyMetadata, $data, $context);
-            $context->popPropertyMetadata();
+            $context->getMetadataStack()->pop();
 
             $currentNode = $this->currentNodes;
 
@@ -219,7 +219,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         /** @var PropertyMetadata $metadata */
         $nodeName = 'entry';
-        if (($metadata = $context->getCurrentPropertyMetadata()) && ! empty($metadata->xmlEntryName)) {
+        if (($metadata = $context->getMetadataStack()->getCurrent()) && ! empty($metadata->xmlEntryName)) {
             $nodeName = $metadata->xmlEntryName;
         }
 

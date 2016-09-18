@@ -26,16 +26,16 @@ use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
 use Kcs\Serializer\Exclusion\GroupsExclusionStrategy;
 use Kcs\Serializer\Exclusion\VersionExclusionStrategy;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
 abstract class Context
 {
-    /**
-     * @var AttributesMap
-     */
+    /** @var AttributesMap */
     public $attributes;
 
+    /** @var string */
     private $format;
 
     /** @var VisitorInterface */
@@ -55,23 +55,15 @@ abstract class Context
 
     private $initialized = false;
 
-    /** @var \SplStack */
+    /** @var MetadataStack */
     private $metadataStack;
 
-    /**
-     * @var array
-     */
+    /** @var PropertyMetadata[] */
     private $nonSkippedProperties;
-
-    /**
-     * @var string[]
-     */
-    private $currentPath;
 
     public function __construct()
     {
         $this->attributes = new AttributesMap();
-        $this->currentPath = [];
     }
 
     public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
@@ -85,7 +77,7 @@ abstract class Context
         $this->visitor = $visitor;
         $this->navigator = $navigator;
         $this->metadataFactory = $factory;
-        $this->metadataStack = new \SplStack();
+        $this->metadataStack = new MetadataStack();
         $this->nonSkippedProperties = [];
 
         $this->addVersionExclusionStrategy();
@@ -195,38 +187,12 @@ abstract class Context
         return $this->format;
     }
 
-    public function pushPropertyMetadata(PropertyMetadata $metadata)
-    {
-        $this->metadataStack->push($metadata);
-        $this->currentPath[] = $metadata->name;
-    }
-
-    public function popPropertyMetadata()
-    {
-        $metadata = $this->metadataStack->pop();
-        array_pop($this->currentPath);
-
-        return $metadata;
-    }
-
     /**
-     * Get current property path
-     *
-     * @return string[]
+     * @return MetadataStack
      */
-    public function getCurrentPath()
-    {
-        return $this->currentPath;
-    }
-
     public function getMetadataStack()
     {
         return $this->metadataStack;
-    }
-
-    public function getCurrentPropertyMetadata()
-    {
-        return $this->metadataStack->isEmpty() ? null : $this->metadataStack->top();
     }
 
     /**

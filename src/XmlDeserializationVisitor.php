@@ -69,7 +69,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
     public function visitArray($data, Type $type, Context $context)
     {
-        $currentMetadata = $context->getCurrentPropertyMetadata();
+        $currentMetadata = $context->getMetadataStack()->getCurrent();
 
         $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
         $namespace = (null !== $currentMetadata && $currentMetadata->xmlEntryNamespace) ? $currentMetadata->xmlEntryNamespace : null;

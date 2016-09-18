@@ -20,7 +20,6 @@
 namespace Kcs\Serializer\Metadata;
 
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
-use Kcs\Serializer\Context;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 

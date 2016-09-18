@@ -30,6 +30,7 @@ use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
+use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
@@ -64,7 +65,10 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
     public function testNavigatorPassesInstanceOnSerialization()
     {
+        $metadataStack = $this->createMock(MetadataStack::class);
         $context = $this->createMock(SerializationContext::class);
+        $context->method('getMetadataStack')->willReturn($metadataStack);
+
         $object = new SerializableClass();
         $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
 
@@ -100,7 +104,9 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
 
         $this->handlerRegistry->registerSubscribingHandler(new TestSubscribingHandler());
 
+        $metadataStack = $this->createMock(MetadataStack::class);
         $context = $this->createMock(SerializationContext::class);
+        $context->method('getMetadataStack')->willReturn($metadataStack);
         $context->expects($this->any())
             ->method('getDirection')
             ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));

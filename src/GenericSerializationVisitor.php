@@ -88,9 +88,9 @@ class GenericSerializationVisitor extends AbstractVisitor
 
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($context->getNonSkippedProperties($metadata) as $propertyMetadata) {
-            $context->pushPropertyMetadata($propertyMetadata);
+            $context->getMetadataStack()->push($propertyMetadata);
             $this->visitProperty($propertyMetadata, $data, $context);
-            $context->popPropertyMetadata();
+            $context->getMetadataStack()->pop();
         }
 
         return $this->data;

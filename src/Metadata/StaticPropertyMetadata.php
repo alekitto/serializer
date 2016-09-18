@@ -19,8 +19,6 @@
 
 namespace Kcs\Serializer\Metadata;
 
-use Kcs\Serializer\Context;
-
 class StaticPropertyMetadata extends PropertyMetadata
 {
     private $value;

@@ -91,9 +91,9 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 continue;
             }
 
-            $context->pushPropertyMetadata($propertyMetadata);
+            $context->getMetadataStack()->push($propertyMetadata);
             $v = $this->visitProperty($propertyMetadata, $data, $context);
-            $context->popPropertyMetadata();
+            $context->getMetadataStack()->pop();
 
             $propertyMetadata->setValue($object, $v);
         }
