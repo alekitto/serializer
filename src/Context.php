@@ -117,24 +117,6 @@ abstract class Context
         return $this;
     }
 
-    private function assertMutable()
-    {
-        if (! $this->initialized) {
-            return;
-        }
-
-        throw new \LogicException('This context was already initialized and is immutable; you cannot modify it anymore.');
-    }
-
-    private function assertInitialized()
-    {
-        if ($this->initialized) {
-            return;
-        }
-
-        throw new \LogicException('This context is not initialized.');
-    }
-
     public function addExclusionStrategy(ExclusionStrategyInterface $strategy)
     {
         $this->assertMutable();
@@ -206,18 +188,10 @@ abstract class Context
     {
         $this->assertInitialized();
 
+        /** @var PropertyMetadata[] $properties */
         $properties = $metadata->getAttributesMetadata();
-        if (null !== $this->exclusionStrategy) {
-            /** @var PropertyMetadata[] $properties */
-            return array_filter(
-                $properties,
-                function (PropertyMetadata $propertyMetadata) {
-                    return ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
-                }
-            );
-        }
 
-        return $properties;
+        return array_filter($properties, [$this, 'filterPropertyMetadata']);
     }
 
     abstract public function getDepth();
@@ -226,6 +200,33 @@ abstract class Context
      * @return int
      */
     abstract public function getDirection();
+
+    protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata)
+    {
+        if (null === $this->exclusionStrategy) {
+            return true;
+        }
+
+        return ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
+    }
+
+    private function assertMutable()
+    {
+        if (! $this->initialized) {
+            return;
+        }
+
+        throw new \LogicException('This context was already initialized and is immutable; you cannot modify it anymore.');
+    }
+
+    private function assertInitialized()
+    {
+        if ($this->initialized) {
+            return;
+        }
+
+        throw new \LogicException('This context is not initialized.');
+    }
 
     /**
      * Set or add exclusion strategy

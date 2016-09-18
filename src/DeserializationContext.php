@@ -19,6 +19,8 @@
 
 namespace Kcs\Serializer;
 
+use Kcs\Serializer\Metadata\PropertyMetadata;
+
 class DeserializationContext extends Context
 {
     private $depth = 0;
@@ -50,5 +52,14 @@ class DeserializationContext extends Context
         }
 
         $this->depth -= 1;
+    }
+
+    protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata)
+    {
+        if ($propertyMetadata->readOnly) {
+            return false;
+        }
+
+        return parent::filterPropertyMetadata($propertyMetadata);
     }
 }
