@@ -25,11 +25,6 @@ class DeserializationContext extends Context
 {
     private $depth = 0;
 
-    public static function create()
-    {
-        return new self();
-    }
-
     public function getDirection()
     {
         return Direction::DIRECTION_DESERIALIZATION;

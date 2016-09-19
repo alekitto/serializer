@@ -58,12 +58,14 @@ abstract class Context
     /** @var MetadataStack */
     private $metadataStack;
 
-    /** @var PropertyMetadata[] */
-    private $nonSkippedProperties;
-
     public function __construct()
     {
         $this->attributes = new AttributesMap();
+    }
+
+    public static function create()
+    {
+        return new static();
     }
 
     public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
@@ -78,7 +80,6 @@ abstract class Context
         $this->navigator = $navigator;
         $this->metadataFactory = $factory;
         $this->metadataStack = new MetadataStack();
-        $this->nonSkippedProperties = [];
 
         $this->addVersionExclusionStrategy();
         $this->addGroupsExclusionStrategy();

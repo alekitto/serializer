@@ -23,37 +23,31 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 
 class SerializationContext extends Context
 {
+    /**
+     * @var \SplObjectStorage
+     */
     private $visitingSet;
-
-    public static function create()
-    {
-        return new self();
-    }
 
     public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
     {
         parent::initialize($format, $visitor, $navigator, $factory);
 
-        $this->visitingSet = [];
+        $this->visitingSet = new \SplObjectStorage();
     }
 
     public function startVisiting($object)
     {
-        $hash = spl_object_hash($object);
-        $this->visitingSet[$hash] = true;
+        $this->visitingSet->attach($object);
     }
 
     public function stopVisiting($object)
     {
-        $hash = spl_object_hash($object);
-        unset($this->visitingSet[$hash]);
+        $this->visitingSet->detach($object);
     }
 
     public function isVisiting($object)
     {
-        $hash = spl_object_hash($object);
-
-        return isset($this->visitingSet[$hash]);
+        return $this->visitingSet->contains($object);
     }
 
     public function getDirection()
@@ -63,11 +57,6 @@ class SerializationContext extends Context
 
     public function getDepth()
     {
-        return count($this->visitingSet);
-    }
-
-    public function getVisitingSet()
-    {
-        return $this->visitingSet;
+        return $this->visitingSet->count();
     }
 }
