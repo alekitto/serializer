@@ -19,9 +19,10 @@
 
 namespace Kcs\Serializer\Tests\Metadata\Driver;
 
+use Kcs\Metadata\Loader\FilesLoader;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\Loader\XmlsLoader;
+use Kcs\Serializer\Metadata\Loader\XmlLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Tests\Metadata\Loader\BaseLoaderTest;
 use Kcs\Serializer\Type\Type;
@@ -86,6 +87,6 @@ class XmlLoaderTest extends BaseLoaderTest
 
         $locator = new IteratorFileLocator();
 
-        return new XmlsLoader($locator->locate(__DIR__.'/xml'.$append, '.xml'));
+        return new FilesLoader($locator->locate(__DIR__.'/xml'.$append, '.xml'), XmlLoader::class);
     }
 }

@@ -19,9 +19,10 @@
 
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
+use Kcs\Metadata\Loader\FilesLoader;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\Loader\YamlsLoader;
+use Kcs\Serializer\Metadata\Loader\YamlLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
@@ -96,7 +97,7 @@ class YamlLoaderTest extends BaseLoaderTest
     {
         $locator = new IteratorFileLocator();
 
-        return new YamlsLoader($locator->locate(__DIR__.'/yml'.($subDir ? '/'.$subDir : ''), '.yml'));
+        return new FilesLoader($locator->locate(__DIR__.'/yml'.($subDir ? '/'.$subDir : ''), '.yml'), YamlLoader::class);
     }
 
     protected function getLoader()
