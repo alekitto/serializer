@@ -104,17 +104,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->validateObjectProperties($metadata, $properties);
 
         if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
-            $rootName = $metadata->xmlRootName ?: 'result';
-            if (($rootNamespace = $metadata->xmlRootNamespace)) {
-                $rootNode = $this->document->createElementNS($rootNamespace, $rootName);
-            } else {
-                $rootNode = $this->document->createElement($rootName);
-            }
-
-            $this->document->appendChild($rootNode);
-
-            $this->nodeStack->pop();
-            $this->nodeStack->push($rootNode);
+            $this->createRootNode($metadata);
         }
 
         $nodes = [];
@@ -211,10 +201,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function visitArray($data, Type $type, Context $context)
     {
         if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
-            $this->document->appendChild($rootNode = $this->document->createElement('result'));
-
-            $this->nodeStack->pop();
-            $this->nodeStack->push($rootNode);
+            $this->createRootNode();
         }
 
         /** @var PropertyMetadata $metadata */
@@ -415,5 +402,23 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->xmlNamespaces[$prefix] = $namespace;
 
         return $prefix;
+    }
+
+    /**
+     * @param ClassMetadata $metadata
+     */
+    private function createRootNode(ClassMetadata $metadata = null)
+    {
+        $rootName = null !== $metadata && $metadata->xmlRootName ? $metadata->xmlRootName : 'result';
+        if (null !== $metadata && ($rootNamespace = $metadata->xmlRootNamespace)) {
+            $rootNode = $this->document->createElementNS($rootNamespace, $rootName);
+        } else {
+            $rootNode = $this->document->createElement($rootName);
+        }
+
+        $this->document->appendChild($rootNode);
+
+        $this->nodeStack->pop();
+        $this->nodeStack->push($rootNode);
     }
 }
