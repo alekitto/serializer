@@ -53,11 +53,6 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * @var array
      */
-    private $validatedMetadata;
-
-    /**
-     * @var array
-     */
     private $xmlNamespaces = [];
 
     public function visitNull($data, Type $type, Context $context)
@@ -236,7 +231,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->currentNodes = $this->document = $this->createDocument();
         $this->nodeStack = new \SplStack();
         $this->attachNullNamespace = false;
-        $this->validatedMetadata = [];
     }
 
     public function startVisiting($data, Type $type, Context $context)
@@ -371,7 +365,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function createAttributeNode(PropertyMetadata $metadata, $attributeName)
     {
-        if ('' !== $namespace = (string)$metadata->xmlNamespace) {
+        if ($namespace = (string)$metadata->xmlNamespace) {
             $prefix = $this->lookupPrefix($namespace);
             $node = $this->document->createAttributeNS($namespace, $prefix.':'.$attributeName);
         } else {
