@@ -157,30 +157,7 @@ class ClassMetadata extends BaseClassMetadata
             ));
         }
 
-        if (! empty($object->discriminatorMap) && ! $this->getReflectionClass()->isAbstract()) {
-            if (false === $typeValue = array_search($this->getName(), $object->discriminatorMap, true)) {
-                throw new \LogicException(sprintf(
-                    'The sub-class "%s" is not listed in the discriminator of the base class "%s".',
-                    $this->getName(),
-                    $this->discriminatorBaseClass
-                ));
-            }
-
-            $this->discriminatorValue = $typeValue;
-            $this->discriminatorFieldName = $object->discriminatorFieldName;
-            $this->discriminatorGroups = $object->discriminatorGroups;
-
-            $discriminatorProperty = new StaticPropertyMetadata(
-                $this->getName(),
-                $this->discriminatorFieldName,
-                $typeValue
-            );
-            $discriminatorProperty->groups = $this->discriminatorGroups;
-            $discriminatorProperty->serializedName = $this->discriminatorFieldName;
-
-            $this->addAttributeMetadata($discriminatorProperty);
-        }
-
+        $this->mergeDiscriminatorMap($object);
         $this->sortProperties();
     }
 
@@ -259,5 +236,29 @@ class ClassMetadata extends BaseClassMetadata
                 });
                 break;
         }
+    }
+
+    private function mergeDiscriminatorMap(ClassMetadata $object)
+    {
+        if (empty($object->discriminatorMap) || $this->getReflectionClass()->isAbstract()) {
+            return;
+        }
+
+        if (false === $typeValue = array_search($this->getName(), $object->discriminatorMap, true)) {
+            throw new \LogicException(
+                'The sub-class "'.$this->getName().
+                '" is not listed in the discriminator of the base class "'.$this->discriminatorBaseClass
+            );
+        }
+
+        $this->discriminatorValue = $typeValue;
+        $this->discriminatorFieldName = $object->discriminatorFieldName;
+        $this->discriminatorGroups = $object->discriminatorGroups;
+
+        $discriminatorProperty = new StaticPropertyMetadata($this->getName(), $this->discriminatorFieldName, $typeValue);
+        $discriminatorProperty->groups = $this->discriminatorGroups;
+        $discriminatorProperty->serializedName = $this->discriminatorFieldName;
+
+        $this->addAttributeMetadata($discriminatorProperty);
     }
 }
