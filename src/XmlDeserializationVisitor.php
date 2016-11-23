@@ -75,7 +75,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $namespace = (null !== $currentMetadata && $currentMetadata->xmlEntryNamespace) ? $currentMetadata->xmlEntryNamespace : null;
         $result = [];
 
-        $nodes = $data->children($namespace)->$entryName;
+        $nodes = null !== $namespace ? $data->children($namespace)->$entryName : $data->$entryName;
         switch ($type->countParams()) {
             case 0:
                 throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
