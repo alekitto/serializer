@@ -86,7 +86,7 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->getter instanceof \Closure) {
-            return $this->getter->call($obj);
+            return call_user_func($this->getter->bindTo($obj));
         }
 
         return $obj->{$this->getter}();
@@ -110,7 +110,7 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->setter instanceof \Closure) {
-            return $this->setter->call($obj, $value);
+            return call_user_func($this->setter->bindTo($obj), $value);
         }
 
         $obj->{$this->setter}($value);
@@ -142,13 +142,9 @@ class PropertyMetadata extends BasePropertyMetadata
             $reflector = $this->getReflection();
             if ($reflector->isPublic()) {
                 $name = $this->name;
-
-                $getter = function () use ($name) {
+                $this->getter = function () use ($name) {
                     return $this->$name;
                 };
-                $getter->bindTo(null, $this->class);
-
-                $this->getter = $getter;
 
                 return;
             }
@@ -171,13 +167,9 @@ class PropertyMetadata extends BasePropertyMetadata
             $reflector = $this->getReflection();
             if ($reflector->isPublic()) {
                 $name = $this->name;
-
-                $setter = function ($value) use ($name) {
+                $this->setter = function ($value) use ($name) {
                     $this->$name = $value;
                 };
-                $setter->bindTo(null, $this->class);
-
-                $this->setter = $setter;
 
                 return;
             }
