@@ -91,12 +91,26 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getter, $setter);
 
         if (null === $getter) {
-            $metadata->getValue($object, new SerializationContext());
+            $metadata->getValue($object);
         }
 
         if (null === $setter) {
             $metadata->setValue($object, null);
         }
+    }
+
+    public function testAccessorTypePublicMethodWithPublicPropertyException()
+    {
+        $object = new PropertyMetadataPublicMethod();
+        $object->f = 'FOOBAR';
+
+        $metadata = new PropertyMetadata(get_class($object), 'f');
+        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD);
+
+        $this->assertEquals('FOOBAR', $metadata->getValue($object));
+
+        $metadata->setValue($object, 'BARBAR');
+        $this->assertEquals('BARBAR', $object->f);
     }
 
     public function providerPublicMethodData()
@@ -127,6 +141,7 @@ class PropertyMetadataOrder
 class PropertyMetadataPublicMethod
 {
     private $a, $b, $c, $d, $e;
+    public $f;
 
     public function getA()
     {

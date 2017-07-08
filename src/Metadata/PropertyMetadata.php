@@ -85,6 +85,10 @@ class PropertyMetadata extends BasePropertyMetadata
             $this->initializeGetterAccessor();
         }
 
+        if ($this->getter instanceof \Closure) {
+            return $this->getter->call($obj);
+        }
+
         return $obj->{$this->getter}();
     }
 
@@ -103,6 +107,10 @@ class PropertyMetadata extends BasePropertyMetadata
 
         if (null === $this->setter) {
             $this->initializeSetterAccessor();
+        }
+
+        if ($this->setter instanceof \Closure) {
+            return $this->setter->call($obj, $value);
         }
 
         $obj->{$this->setter}($value);
@@ -130,6 +138,24 @@ class PropertyMetadata extends BasePropertyMetadata
             }
         }
 
+        try {
+            $reflector = $this->getReflection();
+            if ($reflector->isPublic()) {
+                $name = $this->name;
+
+                $getter = function () use ($name) {
+                    return $this->$name;
+                };
+                $getter->bindTo(null, $this->class);
+
+                $this->getter = $getter;
+
+                return;
+            }
+        } catch (\ReflectionException $e) {
+            // Property does not exist.
+        }
+
         throw new RuntimeException(sprintf('There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.', implode('" or "', $methods), $this->class, $this->name));
     }
 
@@ -139,6 +165,24 @@ class PropertyMetadata extends BasePropertyMetadata
             $this->setter = $setter;
 
             return;
+        }
+
+        try {
+            $reflector = $this->getReflection();
+            if ($reflector->isPublic()) {
+                $name = $this->name;
+
+                $setter = function ($value) use ($name) {
+                    $this->$name = $value;
+                };
+                $setter->bindTo(null, $this->class);
+
+                $this->setter = $setter;
+
+                return;
+            }
+        } catch (\ReflectionException $e) {
+            // Property does not exist.
         }
 
         throw new RuntimeException(sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set'.ucfirst($this->name), $this->class, $this->name));

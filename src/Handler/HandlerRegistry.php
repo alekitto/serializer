@@ -22,7 +22,6 @@ namespace Kcs\Serializer\Handler;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\RuntimeException;
-use Kcs\Serializer\GraphNavigator;
 
 class HandlerRegistry implements HandlerRegistryInterface
 {

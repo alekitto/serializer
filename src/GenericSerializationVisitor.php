@@ -27,6 +27,9 @@ use Kcs\Serializer\Type\Type;
 
 class GenericSerializationVisitor extends AbstractVisitor
 {
+    /**
+     * @var GraphNavigator
+     */
     private $navigator;
     private $root;
     private $dataStack;
