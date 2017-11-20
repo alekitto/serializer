@@ -61,7 +61,7 @@ class Type
      *
      * @return Type
      */
-    public static function parse($type)
+    public static function parse($type): self
     {
         static $parser = null;
         if (null === $parser) {
@@ -78,7 +78,7 @@ class Type
      *
      * @return Type
      */
-    public static function from($object)
+    public static function from($object): self
     {
         if ($object instanceof self) {
             return $object;
@@ -98,7 +98,7 @@ class Type
     /**
      * @return Type
      */
-    public static function null()
+    public static function null(): self
     {
         static $nullType = null;
         if (null === $nullType) {
@@ -111,7 +111,7 @@ class Type
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -121,7 +121,7 @@ class Type
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         $this->name = $name;
         $this->metadata = null;
@@ -132,7 +132,7 @@ class Type
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -142,14 +142,14 @@ class Type
      *
      * @return $this
      */
-    public function setParams(array $params)
+    public function setParams(array $params): self
     {
         $this->params = $params;
 
         return $this;
     }
 
-    public function countParams()
+    public function countParams(): int
     {
         return count($this->params);
     }
@@ -161,7 +161,7 @@ class Type
      *
      * @return bool
      */
-    public function is($class)
+    public function is($class): bool
     {
         return $this->name === $class;
     }
@@ -173,7 +173,7 @@ class Type
      *
      * @return bool
      */
-    public function hasParam($index)
+    public function hasParam($index): bool
     {
         return isset($this->params[$index]);
     }
@@ -193,7 +193,7 @@ class Type
     /**
      * @return MetadataInterface
      */
-    public function getMetadata()
+    public function getMetadata(): ?MetadataInterface
     {
         return $this->metadata;
     }
@@ -203,7 +203,7 @@ class Type
      *
      * @return $this
      */
-    public function setMetadata(MetadataInterface $metadata)
+    public function setMetadata(MetadataInterface $metadata): self
     {
         $this->metadata = $metadata;
 
