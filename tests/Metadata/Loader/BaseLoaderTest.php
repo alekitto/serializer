@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,9 @@ use Kcs\Serializer\Tests\Fixtures\Person;
 use Kcs\Serializer\Tests\Fixtures\SimpleClassObject;
 use Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject;
 use Kcs\Serializer\Type\Type;
+use PHPUnit\Framework\TestCase;
 
-abstract class BaseLoaderTest extends \PHPUnit_Framework_TestCase
+abstract class BaseLoaderTest extends TestCase
 {
     public function testLoadBlogPostMetadata()
     {

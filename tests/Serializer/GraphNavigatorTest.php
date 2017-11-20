@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,28 +21,30 @@ namespace Kcs\Serializer\Tests\Serializer;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
-use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\EventDispatcher\Events;
+use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
+use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
-use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
+class GraphNavigatorTest extends TestCase
 {
     private $metadataFactory;
     private $handlerRegistry;
     private $objectConstructor;
     private $dispatcher;
     private $navigator;
-    private $additionalFieldRegistry;
 
     /**
      * @expectedException \Kcs\Serializer\Exception\RuntimeException
@@ -50,72 +52,70 @@ class GraphNavigatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testResourceThrowsException()
     {
-        $context = $this->createMock(SerializationContext::class);
+        $context = $this->prophesize(SerializationContext::class);
+        $context->getVisitor()->willReturn($this->prophesize(VisitorInterface::class));
+        $context->getDirection()->willReturn(Direction::DIRECTION_SERIALIZATION);
 
-        $context->expects($this->any())
-            ->method('getVisitor')
-            ->will($this->returnValue($this->createMock(VisitorInterface::class)));
-        $context->expects($this->any())
-            ->method('getDirection')
-            ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
-
-        $this->navigator->accept(STDIN, null, $context);
+        $this->navigator->accept(STDIN, null, $context->reveal());
     }
 
     public function testNavigatorPassesInstanceOnSerialization()
     {
-        $metadataStack = $this->createMock(MetadataStack::class);
-        $context = $this->createMock(SerializationContext::class);
-        $context->method('getMetadataStack')->willReturn($metadataStack);
+        $context = $this->prophesize(SerializationContext::class);
+        $context->getMetadataStack()->willReturn($this->prophesize(MetadataStack::class));
 
         $object = new SerializableClass();
         $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
 
-        $context->expects($this->any())
-            ->method('getDirection')
-            ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
+        $context->getDirection()->willReturn(Direction::DIRECTION_SERIALIZATION);
+        $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
+        $visitor->visitObject(Argument::cetera())->willReturn();
 
-        $visitor = $this->createMock(VisitorInterface::class);
-        $visitor->expects($this->any())
-            ->method('visitObject')
-            ->will($this->returnCallback(function (ClassMetadata $passedMetadata, $data, Type $type, Context $passedContext, ObjectConstructorInterface $objectConstructor) use ($context, $metadata) {
-                $this->assertSame($metadata, $passedMetadata);
-                $this->assertTrue($context === $passedContext);
-            }));
+        $visitor->startVisiting(Argument::cetera())->willReturn();
+        $visitor->endVisiting(Argument::cetera())->willReturn();
 
-        $context->expects($this->any())
-            ->method('getVisitor')
-            ->will($this->returnValue($visitor));
+        $context->isVisiting(Argument::any())->willReturn(false);
+        $context->startVisiting(Argument::any())->willReturn();
+        $context->stopVisiting(Argument::any())->willReturn();
+        $context->getExclusionStrategy()->willReturn($this->prophesize(ExclusionStrategyInterface::class));
 
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
-        $this->navigator->accept($object, null, $context);
+        $this->navigator->accept($object, null, $context->reveal());
+
+        $visitor->visitObject($metadata, Argument::any(), Argument::type(Type::class), $context, Argument::type(ObjectConstructorInterface::class))
+            ->shouldHaveBeenCalled();
     }
 
     public function testNavigatorChangeTypeOnSerialization()
     {
         $object = new SerializableClass();
-        $typeName = 'JsonSerializable';
 
-        $this->dispatcher->addListener('serializer.pre_serialize', function ($event) use ($typeName) {
+        $this->dispatcher->addListener(Events::PRE_SERIALIZE, function (PreSerializeEvent $event) {
             $type = $event->getType();
-            $type->setName($typeName);
+            $type->setName(\JsonSerializable::class);
         });
 
-        $this->handlerRegistry->registerSubscribingHandler(new TestSubscribingHandler());
+        $this->handlerRegistry->registerSubscribingHandler($handler = new TestSubscribingHandler());
 
-        $metadataStack = $this->createMock(MetadataStack::class);
-        $context = $this->createMock(SerializationContext::class);
-        $context->method('getMetadataStack')->willReturn($metadataStack);
-        $context->expects($this->any())
-            ->method('getDirection')
-            ->will($this->returnValue(Direction::DIRECTION_SERIALIZATION));
+        $context = $this->prophesize(SerializationContext::class);
+        $context->getMetadataStack()->willReturn($this->prophesize(MetadataStack::class));
+        $context->getDirection()->willReturn(Direction::DIRECTION_SERIALIZATION);
 
-        $context->expects($this->any())
-            ->method('getVisitor')
-            ->will($this->returnValue($this->createMock(VisitorInterface::class)));
+        $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
+        $visitor->visitCustom(Argument::cetera())->willReturn();
+
+        $visitor->startVisiting(Argument::cetera())->willReturn();
+        $visitor->endVisiting(Argument::cetera())->willReturn();
+
+        $context->isVisiting(Argument::any())->willReturn(false);
+        $context->startVisiting(Argument::any())->willReturn();
+        $context->stopVisiting(Argument::any())->willReturn();
 
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
-        $this->navigator->accept($object, null, $context);
+        $this->navigator->accept($object, null, $context->reveal());
+
+        $visitor->visitCustom([$handler, 'serialize'], Argument::any(), Argument::type(Type::class), $context)
+            ->shouldHaveBeenCalled();
     }
 
     protected function setUp()
@@ -141,7 +141,7 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
     public static function getSubscribingMethods()
     {
         return [[
-            'type' => 'JsonSerializable',
+            'type' => \JsonSerializable::class,
             'direction' => Direction::DIRECTION_SERIALIZATION,
             'method' => 'serialize',
         ]];

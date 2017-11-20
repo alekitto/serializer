@@ -36,7 +36,7 @@
         "doctrine/phpcr-odm": "~1.0",
         "jackalope/jackalope-doctrine-dbal": "^1.0",
         "phpcollection/phpcollection": "^0.4.0",
-        "phpunit/phpunit": "^5.7",
+        "phpunit/phpunit": "^6.0",
         "propel/propel1": "~1.7",
         "symfony/console": "^2.3|^3.0",
         "symfony/event-dispatcher": "^2.3|^3.0",

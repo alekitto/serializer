@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
+
 /*
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,184 +27,134 @@ use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
-class DoctrineObjectConstructorTest extends \PHPUnit_Framework_TestCase
+class DoctrineObjectConstructorTest extends TestCase
 {
     public function testConstructorUseFallbackIfNoManagerMatch()
     {
-        $fallbackConstructor = $this->createMock(ObjectConstructorInterface::class);
-        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor);
+        $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
+        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
 
-        $registry1 = $this->createMock(ManagerRegistry::class);
-        $registry1->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn(null);
-
-        $registry2 = $this->createMock(ManagerRegistry::class);
-        $registry2->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn(null);
+        $registry1 = $this->prophesize(ManagerRegistry::class);
+        $registry1->getManagerForClass(Argument::any())->willReturn();
+        $registry2 = $this->prophesize(ManagerRegistry::class);
+        $registry2->getManagerForClass(Argument::any())->willReturn();
 
         $objectConstructor
-            ->addManagerRegistry($registry1)
-            ->addManagerRegistry($registry2)
+            ->addManagerRegistry($registry1->reveal())
+            ->addManagerRegistry($registry2->reveal())
         ;
 
-        $fallbackConstructor->expects($this->once())
-            ->method('construct');
+        $visitor = $this->prophesize(VisitorInterface::class);
 
-        $visitor = $this->createMock(VisitorInterface::class);
-        $metadata = $this->createMock(ClassMetadata::class);
-        $context = $this->createMock(DeserializationContext::class);
-        $objectConstructor->construct($visitor, $metadata, [], new Type('EntityObject'), $context);
+        $metadata = $this->prophesize(ClassMetadata::class);
+        $metadata->getName()->willReturn('EntityObject');
+
+        $context = $this->prophesize(DeserializationContext::class);
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), [], new Type('EntityObject'), $context->reveal());
+
+        $fallbackConstructor->construct($visitor, $metadata, [], Argument::type(Type::class), $context)
+            ->shouldHaveBeenCalled();
     }
 
     public function testConstructorUseFallbackIfObjectIsTransient()
     {
-        $fallbackConstructor = $this->createMock(ObjectConstructorInterface::class);
-        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor);
+        $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
+        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
 
-        $registry1 = $this->createMock(ManagerRegistry::class);
-        $registry1->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn(null);
+        $registry1 = $this->prophesize(ManagerRegistry::class);
+        $registry1->getManagerForClass(Argument::any())->willReturn();
 
-        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
-        $metadataFactory->expects($this->once())
-            ->method('isTransient')
-            ->with($this->equalTo('EntityObject'))
-            ->willReturn(true);
+        $registry2 = $this->prophesize(ManagerRegistry::class);
+        $registry2->getManagerForClass(Argument::any())->willReturn($objectManager = $this->prophesize(ObjectManager::class));
 
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager
-            ->method('getMetadataFactory')
-            ->willReturn($metadataFactory);
-
-        $registry2 = $this->createMock(ManagerRegistry::class);
-        $registry2->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($objectManager);
+        $objectManager->getMetadataFactory()->willReturn($metadataFactory = $this->prophesize(ClassMetadataFactory::class));
+        $metadataFactory->isTransient('EntityObject')->willReturn(true);
 
         $objectConstructor
-            ->addManagerRegistry($registry1)
-            ->addManagerRegistry($registry2)
+            ->addManagerRegistry($registry1->reveal())
+            ->addManagerRegistry($registry2->reveal())
         ;
 
-        $fallbackConstructor->expects($this->once())
-            ->method('construct');
+        $visitor = $this->prophesize(VisitorInterface::class);
 
-        $visitor = $this->createMock(VisitorInterface::class);
+        $metadata = $this->prophesize(ClassMetadata::class);
+        $metadata->getName()->willReturn('EntityObject');
 
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata
-            ->method('getName')
-            ->willReturn('EntityObject');
+        $context = $this->prophesize(DeserializationContext::class);
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), [], new Type('EntityObject'), $context->reveal());
 
-        $context = $this->createMock(DeserializationContext::class);
-        $objectConstructor->construct($visitor, $metadata, [], new Type('EntityObject'), $context);
+        $fallbackConstructor->construct($visitor, $metadata, [], Argument::type(Type::class), $context)
+            ->shouldHaveBeenCalled();
     }
 
     public function testConstructorUseFallbackIfFindReturnsNull()
     {
-        $fallbackConstructor = $this->createMock(ObjectConstructorInterface::class);
-        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor);
+        $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
+        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
 
-        $registry1 = $this->createMock(ManagerRegistry::class);
-        $registry1->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn(null);
+        $registry1 = $this->prophesize(ManagerRegistry::class);
+        $registry1->getManagerForClass(Argument::any())->willReturn();
 
-        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
-        $metadataFactory->expects($this->once())
-            ->method('isTransient')
-            ->with($this->equalTo('EntityObject'))
-            ->willReturn(false);
+        $registry2 = $this->prophesize(ManagerRegistry::class);
+        $registry2->getManagerForClass(Argument::any())->willReturn($objectManager = $this->prophesize(ObjectManager::class));
 
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager
-            ->method('getMetadataFactory')
-            ->willReturn($metadataFactory);
-        $objectManager->expects($this->once())
-            ->method('find')
-            ->with($this->equalTo('EntityObject'), $this->equalTo(4))
-            ->willReturn(null);
-
-        $registry2 = $this->createMock(ManagerRegistry::class);
-        $registry2->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($objectManager);
+        $objectManager->find('EntityObject', 4)->willReturn();
+        $objectManager->getMetadataFactory()->willReturn($metadataFactory = $this->prophesize(ClassMetadataFactory::class));
+        $metadataFactory->isTransient('EntityObject')->willReturn(false);
 
         $objectConstructor
-            ->addManagerRegistry($registry1)
-            ->addManagerRegistry($registry2)
+            ->addManagerRegistry($registry1->reveal())
+            ->addManagerRegistry($registry2->reveal())
         ;
 
-        $fallbackConstructor->expects($this->once())
-            ->method('construct');
+        $visitor = $this->prophesize(VisitorInterface::class);
 
-        $visitor = $this->createMock(VisitorInterface::class);
+        $metadata = $this->prophesize(ClassMetadata::class);
+        $metadata->getName()->willReturn('EntityObject');
 
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata
-            ->method('getName')
-            ->willReturn('EntityObject');
+        $context = $this->prophesize(DeserializationContext::class);
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), 4, new Type('EntityObject'), $context->reveal());
 
-        $context = $this->createMock(DeserializationContext::class);
-        $objectConstructor->construct($visitor, $metadata, 4, new Type('EntityObject'), $context);
+        $fallbackConstructor->construct($visitor, $metadata, 4, Argument::type(Type::class), $context)
+            ->shouldHaveBeenCalled();
     }
 
     public function testConstructorUseFallbackIfDataDoesNotContainsIdentifier()
     {
-        $fallbackConstructor = $this->createMock(ObjectConstructorInterface::class);
-        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor);
+        $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
+        $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
 
-        $registry1 = $this->createMock(ManagerRegistry::class);
-        $registry1->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn(null);
+        $registry1 = $this->prophesize(ManagerRegistry::class);
+        $registry1->getManagerForClass(Argument::any())->willReturn();
 
-        $classMetadata = $this->createMock(\Doctrine\Common\Persistence\Mapping\ClassMetadata::class);
-        $classMetadata->expects($this->once())
-            ->method('getIdentifierFieldNames')
-            ->willReturn(['id']);
-        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
-        $metadataFactory->expects($this->once())
-            ->method('isTransient')
-            ->with($this->equalTo('EntityObject'))
-            ->willReturn(false);
+        $registry2 = $this->prophesize(ManagerRegistry::class);
+        $registry2->getManagerForClass(Argument::any())->willReturn($objectManager = $this->prophesize(ObjectManager::class));
 
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager
-            ->method('getMetadataFactory')
-            ->willReturn($metadataFactory);
-        $objectManager->expects($this->never())
-            ->method('find');
-        $objectManager->expects($this->once())
-            ->method('getClassMetadata')
-            ->with($this->equalTo('EntityObject'))
-            ->willReturn($classMetadata);
+        $objectManager->find(Argument::cetera())->shouldNotBeCalled();
+        $objectManager->getMetadataFactory()->willReturn($metadataFactory = $this->prophesize(ClassMetadataFactory::class));
+        $metadataFactory->isTransient('EntityObject')->willReturn(false);
 
-        $registry2 = $this->createMock(ManagerRegistry::class);
-        $registry2->expects($this->once())
-            ->method('getManagerForClass')
-            ->willReturn($objectManager);
+        $objectManager->getClassMetadata('EntityObject')
+            ->willReturn($classMetadata = $this->prophesize(\Doctrine\Common\Persistence\Mapping\ClassMetadata::class));
+        $classMetadata->getIdentifierFieldNames()->willReturn(['id']);
 
         $objectConstructor
-            ->addManagerRegistry($registry1)
-            ->addManagerRegistry($registry2)
+            ->addManagerRegistry($registry1->reveal())
+            ->addManagerRegistry($registry2->reveal())
         ;
 
-        $fallbackConstructor->expects($this->once())
-            ->method('construct');
+        $visitor = $this->prophesize(VisitorInterface::class);
 
-        $visitor = $this->createMock(VisitorInterface::class);
+        $metadata = $this->prophesize(ClassMetadata::class);
+        $metadata->getName()->willReturn('EntityObject');
 
-        $metadata = $this->createMock(ClassMetadata::class);
-        $metadata
-            ->method('getName')
-            ->willReturn('EntityObject');
+        $context = $this->prophesize(DeserializationContext::class);
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), ['field' => 'text'], new Type('EntityObject'), $context->reveal());
 
-        $context = $this->createMock(DeserializationContext::class);
-        $objectConstructor->construct($visitor, $metadata, ['field' => 'text'], new Type('EntityObject'), $context);
+        $fallbackConstructor->construct($visitor, $metadata, ['field' => 'text'], Argument::type(Type::class), $context)
+            ->shouldHaveBeenCalled();
     }
 }
