@@ -1,0 +1,11 @@
+json:
+    path: /json
+    defaults: { _controller: 'AppBundle:Test:serialize', format: 'json' }
+
+xml:
+    path: /xml
+    defaults: { _controller: 'AppBundle:Test:serialize', format: 'xml' }
+
+yaml:
+    path: /yaml
+    defaults: { _controller: 'AppBundle:Test:serialize', format: 'yaml' }

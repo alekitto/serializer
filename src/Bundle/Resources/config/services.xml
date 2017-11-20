@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="kcs_serializer.serializer.class">Kcs\Serializer\Serializer</parameter>
+        <parameter key="kcs_serializer.handler.date.class">Kcs\Serializer\Handler\DateHandler</parameter>
+        <parameter key="kcs_serializer.handler.php_collection.class">Kcs\Serializer\Handler\PhpCollectionHandler</parameter>
+        <parameter key="kcs_serializer.handler.array_collection.class">Kcs\Serializer\Handler\ArrayCollectionHandler</parameter>
+        <parameter key="kcs_serializer.handler.propel_collection.class">Kcs\Serializer\Handler\PropelCollectionHandler</parameter>
+        <parameter key="kcs_serializer.handler.form_error.class">Kcs\Serializer\Handler\FormErrorHandler</parameter>
+        <parameter key="kcs_serializer.handler_registry.class">Kcs\Serializer\Handler\LazyHandlerRegistry</parameter>
+        <parameter key="kcs_serializer.doctrine_proxy_subscriber.class">Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber</parameter>
+
+        <parameter key="kcs_serializer.metadata.loader.class">Kcs\Metadata\Loader\ChainLoader</parameter>
+        <parameter key="kcs_serializer.metadata.loader.files.class">Kcs\Metadata\Loader\FilesLoader</parameter>
+        <parameter key="kcs_serializer.metadata.loader.xml.class">Kcs\Serializer\Metadata\Loader\XmlLoader</parameter>
+        <parameter key="kcs_serializer.metadata.loader.yaml.class">Kcs\Serializer\Metadata\Loader\YamlLoader</parameter>
+        <parameter key="kcs_serializer.metadata.metadata_factory.class">Kcs\Serializer\Metadata\MetadataFactory</parameter>
+
+        <parameter key="kcs_serializer.naming.serialized_name_annotation_strategy.class">Kcs\Serializer\Naming\SerializedNameAnnotationStrategy</parameter>
+        <parameter key="kcs_serializer.naming.cache_strategy.class">Kcs\Serializer\Naming\CacheNamingStrategy</parameter>
+        <parameter key="kcs_serializer.naming_strategy.identical.class">Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy</parameter>
+        <parameter key="kcs_serializer.naming_strategy.camel_case.class">Kcs\Serializer\Naming\CamelCaseNamingStrategy</parameter>
+
+        <parameter key="kcs_serializer.construction.unserialize.class">Kcs\Serializer\Construction\UnserializeObjectConstructor</parameter>
+        <parameter key="kcs_serializer.construction.initialized_object.class">Kcs\Serializer\Construction\InitializedObjectConstructor</parameter>
+        <parameter key="kcs_serializer.construction.doctrine.class">Kcs\Serializer\Construction\DoctrineObjectConstructor</parameter>
+
+        <parameter key="kcs_serializer.serialization_visitor.array.class">Kcs\Serializer\GenericSerializationVisitor</parameter>
+        <parameter key="kcs_serializer.serialization_visitor.xml.class">Kcs\Serializer\XmlSerializationVisitor</parameter>
+        <parameter key="kcs_serializer.serialization_visitor.json.class">Kcs\Serializer\JsonSerializationVisitor</parameter>
+        <parameter key="kcs_serializer.serialization_visitor.yaml.class">Kcs\Serializer\YamlSerializationVisitor</parameter>
+
+        <parameter key="kcs_serializer.deserialization_visitor.array.class">Kcs\Serializer\GenericDeserializationVisitor</parameter>
+        <parameter key="kcs_serializer.deserialization_visitor.xml.class">Kcs\Serializer\XmlDeserializationVisitor</parameter>
+        <parameter key="kcs_serializer.deserialization_visitor.json.class">Kcs\Serializer\JsonDeserializationVisitor</parameter>
+        <parameter key="kcs_serializer.deserialization_visitor.yaml.class">Kcs\Serializer\YamlDeserializationVisitor</parameter>
+    </parameters>
+
+    <services>
+        <service class="%kcs_serializer.serializer.class%" id="kcs_serializer.serializer" public="true">
+            <argument type="service" id="kcs_serializer.metadata.metadata_factory" />
+            <argument type="service" id="kcs_serializer.handler_registry" />
+            <argument type="service" id="kcs_serializer.construction.doctrine" />
+            <argument type="collection">
+                <argument key="array" type="service" id="kcs_serializer.serialization_visitor.array" />
+                <argument key="json" type="service" id="kcs_serializer.serialization_visitor.json" />
+                <argument key="yaml" type="service" id="kcs_serializer.serialization_visitor.yaml" />
+                <argument key="xml" type="service" id="kcs_serializer.serialization_visitor.xml" />
+            </argument>
+            <argument type="collection">
+                <argument key="array" type="service" id="kcs_serializer.deserialization_visitor.array" />
+                <argument key="json" type="service" id="kcs_serializer.deserialization_visitor.json" />
+                <argument key="yaml" type="service" id="kcs_serializer.deserialization_visitor.yaml" />
+                <argument key="xml" type="service" id="kcs_serializer.deserialization_visitor.xml" />
+            </argument>
+            <argument type="service" id="event_dispatcher" />
+        </service>
+
+        <service class="%kcs_serializer.doctrine_proxy_subscriber.class%" id="kcs_serializer.doctrine_proxy_subscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service class="%kcs_serializer.metadata.loader.files.class%" id="kcs_serializer.metadata.loader.xml">
+            <argument type="collection" />
+            <argument>%kcs_serializer.metadata.loader.xml.class%</argument>
+        </service>
+        <service class="%kcs_serializer.metadata.loader.files.class%" id="kcs_serializer.metadata.loader.yaml">
+            <argument type="collection" />
+            <argument>%kcs_serializer.metadata.loader.yaml.class%</argument>
+        </service>
+
+        <service class="%kcs_serializer.metadata.loader.class%" id="kcs_serializer.metadata.loader">
+            <argument />
+        </service>
+
+        <service class="%kcs_serializer.metadata.metadata_factory.class%" id="kcs_serializer.metadata.metadata_factory">
+            <argument type="service" id="kcs_serializer.metadata.loader" />
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="kcs_serializer.metadata.cache" on-invalid="null" />
+        </service>
+
+        <service class="%kcs_serializer.handler.date.class%" id="kcs_serializer.handler.date" />
+        <service class="%kcs_serializer.handler.php_collection.class%" id="kcs_serializer.handler.php_collection" />
+        <service class="%kcs_serializer.handler.array_collection.class%" id="kcs_serializer.handler.array_collection" />
+        <service class="%kcs_serializer.handler.propel_collection.class%" id="kcs_serializer.handler.propel_collection" />
+        <service class="%kcs_serializer.handler.form_error.class%" id="kcs_serializer.handler.form_error">
+            <argument type="service" id="translator" />
+        </service>
+
+        <service class="%kcs_serializer.handler_registry.class%" id="kcs_serializer.handler_registry">
+            <argument type="service" id="service_container" />
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.date" />
+            </call>
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.php_collection" />
+            </call>
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.array_collection" />
+            </call>
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.propel_collection" />
+            </call>
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.form_error" />
+            </call>
+        </service>
+
+        <service class="%kcs_serializer.naming.cache_strategy.class%" id="kcs_serializer.naming.cache_strategy">
+            <argument type="service" id="kcs_serializer.naming.serialized_name_annotation_strategy" />
+        </service>
+        <service class="%kcs_serializer.naming.serialized_name_annotation_strategy.class%" id="kcs_serializer.naming.serialized_name_annotation_strategy">
+            <argument type="service" id="kcs_serializer.naming_strategy" />
+        </service>
+
+        <service class="%kcs_serializer.naming_strategy.identical.class%" id="kcs_serializer.naming_strategy.identical" />
+        <service class="%kcs_serializer.naming_strategy.camel_case.class%" id="kcs_serializer.naming_strategy.camel_case" />
+
+        <service class="%kcs_serializer.construction.unserialize.class%" id="kcs_serializer.construction.unserialize" />
+        <service class="%kcs_serializer.construction.initialized_object.class%" id="kcs_serializer.construction.initialized_object">
+            <argument type="service" id="kcs_serializer.construction.unserialize" />
+        </service>
+
+        <service class="%kcs_serializer.construction.doctrine.class%" id="kcs_serializer.construction.doctrine">
+            <argument type="service" id="kcs_serializer.construction.initialized_object" />
+        </service>
+
+        <service abstract="true" id="kcs_serialization.visitor.prototype">
+            <argument type="service" id="kcs_serializer.naming.strategy" />
+        </service>
+
+        <service class="%kcs_serializer.serialization_visitor.array.class%" id="kcs_serializer.serialization_visitor.array" parent="kcs_serialization.visitor.prototype" />
+        <service class="%kcs_serializer.serialization_visitor.xml.class%" id="kcs_serializer.serialization_visitor.xml" parent="kcs_serialization.visitor.prototype" />
+        <service class="%kcs_serializer.serialization_visitor.json.class%" id="kcs_serializer.serialization_visitor.json" parent="kcs_serialization.visitor.prototype" />
+        <service class="%kcs_serializer.serialization_visitor.yaml.class%" id="kcs_serializer.serialization_visitor.yaml" parent="kcs_serialization.visitor.prototype" />
+
+        <service class="%kcs_serializer.deserialization_visitor.array.class%" id="kcs_serializer.deserialization_visitor.array" parent="kcs_serialization.visitor.prototype" />
+        <service class="%kcs_serializer.deserialization_visitor.xml.class%" id="kcs_serializer.deserialization_visitor.xml" parent="kcs_serialization.visitor.prototype" />
+        <service class="%kcs_serializer.deserialization_visitor.json.class%" id="kcs_serializer.deserialization_visitor.json" parent="kcs_serialization.visitor.prototype" />
+        <service class="%kcs_serializer.deserialization_visitor.yaml.class%" id="kcs_serializer.deserialization_visitor.yaml" parent="kcs_serialization.visitor.prototype" />
+
+        <service alias="kcs_serializer.serializer" id="kcs_serializer" public="true" />
+        <service alias="kcs_serializer.naming.cache_strategy" id="kcs_serializer.naming.strategy" />
+        <service alias="kcs_serializer.naming_strategy.camel_case" id="kcs_serializer.naming_strategy" />
+
+        <service alias="kcs_serializer.serializer" id="Kcs\Serializer\Serializer" public="true"/>
+        <service alias="kcs_serializer.serializer" id="Kcs\Serializer\SerializerInterface" public="true"/>
+    </services>
+</container>
