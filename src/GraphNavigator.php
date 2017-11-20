@@ -60,8 +60,8 @@ class GraphNavigator
     /**
      * Called for each node of the graph that is being traversed.
      *
-     * @param mixed $data the data depends on the direction, and type of visitor
-     * @param Type $type array has the format ["name" => string, "params" => array]
+     * @param mixed                                               $data    the data depends on the direction, and type of visitor
+     * @param Type                                                $type    array has the format ["name" => string, "params" => array]
      * @param SerializationContext|DeserializationContext|Context $context
      *
      * @return mixed the return value depends on the direction, and type of visitor
@@ -216,7 +216,6 @@ class GraphNavigator
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
                 throw new RuntimeException($msg);
-
             default:
                 if (null === $metadata) {
                     // Missing handler for custom type
@@ -233,7 +232,7 @@ class GraphNavigator
     }
 
     /**
-     * Get ClassMetadata instance for type. Returns null if class does not exist
+     * Get ClassMetadata instance for type. Returns null if class does not exist.
      *
      * @param Type $type
      *
@@ -245,7 +244,7 @@ class GraphNavigator
             return $metadata;
         }
 
-        if (!class_exists($type->getName(), false) && !interface_exists($type->getName(), false)) {
+        if (! class_exists($type->getName(), false) && ! interface_exists($type->getName(), false)) {
             return null;
         }
 

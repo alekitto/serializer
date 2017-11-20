@@ -31,7 +31,7 @@ class DiscriminatorProcessor extends ClassMetadataProcessor
         if ($annotation->disabled) {
             $metadata->discriminatorDisabled = true;
         } else {
-            $metadata->setDiscriminator($annotation->field, $annotation->map, array_map('trim', (array)$annotation->groups));
+            $metadata->setDiscriminator($annotation->field, $annotation->map, array_map('trim', (array) $annotation->groups));
         }
     }
 }

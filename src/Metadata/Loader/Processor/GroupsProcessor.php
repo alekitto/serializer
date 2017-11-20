@@ -30,7 +30,7 @@ class GroupsProcessor extends PropertyMetadataProcessor
         }
 
         $groups = $excludeGroups = [];
-        $annotation->groups = array_map('trim', (array)$annotation->groups);
+        $annotation->groups = array_map('trim', (array) $annotation->groups);
         foreach ($annotation->groups as $group) {
             if (false !== strpos($group, ',')) {
                 throw new InvalidArgumentException(sprintf(
@@ -40,7 +40,7 @@ class GroupsProcessor extends PropertyMetadataProcessor
                 ));
             }
 
-            if ($group[0] === '!') {
+            if ('!' === $group[0]) {
                 $excludeGroups[] = substr($group, 1);
             } else {
                 $groups[] = $group;

@@ -30,7 +30,7 @@ class JsonSerializationTest extends BaseSerializationTest
     {
         static $outputs = [];
 
-        if (!$outputs) {
+        if (! $outputs) {
             $outputs['readonly'] = '{"id":123,"full_name":"Ruud Kamphuis"}';
             $outputs['string'] = '"foo"';
             $outputs['boolean_true'] = 'true';
@@ -102,7 +102,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['virtual_properties'] = '{"exist_field":"value","virtual_value":"value","test":"other-name","typed_virtual_property":1}';
         }
 
-        if (!isset($outputs[$key])) {
+        if (! isset($outputs[$key])) {
             throw new RuntimeException(sprintf('The key "%s" is not supported.', $key));
         }
 
@@ -155,7 +155,7 @@ class JsonSerializationTest extends BaseSerializationTest
         $visitor = $this->serializationVisitors['json'];
         $functionToCall = 'visit'.ucfirst($primitiveType);
         $result = $visitor->$functionToCall($data, Type::null(), $this->createMock(Context::class));
-        if ($primitiveType == 'double') {
+        if ('double' == $primitiveType) {
             $primitiveType = 'float';
         }
         $this->assertInternalType($primitiveType, $result);
@@ -171,7 +171,7 @@ class JsonSerializationTest extends BaseSerializationTest
 
     /**
      * @group encoding
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Your data could not be encoded because it contains invalid UTF8 characters.
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff()
@@ -182,7 +182,7 @@ class JsonSerializationTest extends BaseSerializationTest
 
     /**
      * @group encoding
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      * @expectedExceptionMessage Your data could not be encoded because it contains invalid UTF8 characters.
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn()

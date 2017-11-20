@@ -44,8 +44,8 @@ interface VisitorInterface
     public function prepare($data);
 
     /**
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -53,8 +53,8 @@ interface VisitorInterface
     public function visitNull($data, Type $type, Context $context);
 
     /**
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -62,8 +62,8 @@ interface VisitorInterface
     public function visitString($data, Type $type, Context $context);
 
     /**
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -71,8 +71,8 @@ interface VisitorInterface
     public function visitBoolean($data, Type $type, Context $context);
 
     /**
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -80,8 +80,8 @@ interface VisitorInterface
     public function visitDouble($data, Type $type, Context $context);
 
     /**
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -89,8 +89,8 @@ interface VisitorInterface
     public function visitInteger($data, Type $type, Context $context);
 
     /**
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -100,8 +100,8 @@ interface VisitorInterface
     /**
      * @param ClassMetadata $metadata
      * @param $data
-     * @param Type $type
-     * @param Context $context
+     * @param Type                       $type
+     * @param Context                    $context
      * @param ObjectConstructorInterface $objectConstructor
      *
      * @return mixed
@@ -111,7 +111,7 @@ interface VisitorInterface
     /**
      * @param callable $handler
      * @param $data
-     * @param Type $type
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -121,19 +121,17 @@ interface VisitorInterface
     /**
      * Called before the properties of the object are being visited.
      *
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
-     *
-     * @return void
      */
     public function startVisiting($data, Type $type, Context $context);
 
     /**
      * Called after all properties of the object have been visited.
      *
-     * @param mixed $data
-     * @param Type $type
+     * @param mixed   $data
+     * @param Type    $type
      * @param Context $context
      *
      * @return mixed
@@ -144,8 +142,6 @@ interface VisitorInterface
      * Called before serialization/deserialization starts.
      *
      * @param GraphNavigator $navigator
-     *
-     * @return void
      */
     public function setNavigator(GraphNavigator $navigator = null);
 

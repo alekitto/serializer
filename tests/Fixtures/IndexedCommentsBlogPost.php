@@ -50,7 +50,7 @@ class IndexedCommentsBlogPost
         foreach ($this->comments as $comment) {
             $authorName = $comment->getAuthor()->getName();
 
-            if (!isset($indexedComments[$authorName])) {
+            if (! isset($indexedComments[$authorName])) {
                 $indexedComments[$authorName] = new IndexedCommentsList();
             }
 

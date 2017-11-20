@@ -36,7 +36,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
     {
-        /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+        /* @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
 
         return 'lazyPropertiesDefaults' === $propertyMetadata->name
             || $doctrineMetadata->parentMapping === $propertyMetadata->name

@@ -38,6 +38,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
         $this->stack = new \SplStack();
         $this->currentPath = [];
     }
+
     public function push(PropertyMetadata $metadata)
     {
         $this->stack->push($metadata);
@@ -53,7 +54,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Get current property path
+     * Get current property path.
      *
      * @return string[]
      */

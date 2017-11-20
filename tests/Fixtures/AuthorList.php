@@ -23,12 +23,14 @@ use Kcs\Serializer\Annotation as Serializer;
 
 /**
  * An array-acting object that holds many author instances.
+ *
  * @Serializer\AccessType("property")
  */
 class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
 {
     /**
      * @Serializer\Type("array<Kcs\Serializer\Tests\Fixtures\Author>")
+     *
      * @var array
      */
     protected $authors = [];

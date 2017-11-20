@@ -39,13 +39,13 @@ class YamlLoader extends AnnotationLoader
     {
         parent::__construct();
 
-        $this->config = (array)Yaml::parse($this->loadFile($filePath));
+        $this->config = (array) Yaml::parse($this->loadFile($filePath));
     }
 
     protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
     {
         $config = $this->getClassConfig($classMetadata->getName());
-        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
+        if (Annotations\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
             if (array_key_exists($property->name, $config['properties']) && null === $config['properties'][$property->name]) {
                 return false;
             }
@@ -69,7 +69,7 @@ class YamlLoader extends AnnotationLoader
     {
         $config = $this->getClassConfig($class->name);
 
-        return isset($config['exclude']) ? (bool)$config['exclude'] : false;
+        return isset($config['exclude']) ? (bool) $config['exclude'] : false;
     }
 
     protected function getClassAnnotations(ClassMetadata $classMetadata)
@@ -177,7 +177,7 @@ class YamlLoader extends AnnotationLoader
             }
 
             $annotations[] = $annotation;
-        } elseif ($key === 'groups') {
+        } elseif ('groups' === $key) {
             $annotation = new Annotations\Groups();
             $annotation->groups = $value;
 

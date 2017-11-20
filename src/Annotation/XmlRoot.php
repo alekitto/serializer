@@ -27,6 +27,7 @@ final class XmlRoot
 {
     /**
      * @Required
+     *
      * @var string
      */
     public $name;

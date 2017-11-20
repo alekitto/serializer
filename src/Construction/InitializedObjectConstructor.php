@@ -26,7 +26,7 @@ use Kcs\Serializer\VisitorInterface;
 
 /**
  * Object constructor that allows deserialization into already constructed
- * objects passed through the deserialization context
+ * objects passed through the deserialization context.
  */
 class InitializedObjectConstructor implements ObjectConstructorInterface
 {
@@ -47,7 +47,7 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
      */
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
     {
-        if ($context->getDepth() === 1 && $context->attributes->has('target')) {
+        if (1 === $context->getDepth() && $context->attributes->has('target')) {
             return $context->attributes->get('target');
         }
 

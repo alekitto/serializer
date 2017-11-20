@@ -49,12 +49,12 @@ class Serializer implements SerializerInterface
     /**
      * Constructor.
      *
-     * @param MetadataFactoryInterface $factory
-     * @param Handler\HandlerRegistryInterface $handlerRegistry
+     * @param MetadataFactoryInterface                $factory
+     * @param Handler\HandlerRegistryInterface        $handlerRegistry
      * @param Construction\ObjectConstructorInterface $objectConstructor
-     * @param VisitorInterface[] $serializationVisitors of VisitorInterface
-     * @param VisitorInterface[] $deserializationVisitors of VisitorInterface
-     * @param EventDispatcherInterface $dispatcher
+     * @param VisitorInterface[]                      $serializationVisitors   of VisitorInterface
+     * @param VisitorInterface[]                      $deserializationVisitors of VisitorInterface
+     * @param EventDispatcherInterface                $dispatcher
      */
     public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null)
     {
@@ -96,7 +96,7 @@ class Serializer implements SerializerInterface
      *
      * This is useful when the data needs to be passed on to other methods which expect array data.
      *
-     * @param mixed $data anything that converts to an array, typically an object or an array of objects
+     * @param mixed                $data    anything that converts to an array, typically an object or an array of objects
      * @param SerializationContext $context
      *
      * @return array
@@ -119,8 +119,8 @@ class Serializer implements SerializerInterface
     /**
      * Restores objects from an array structure.
      *
-     * @param array $data
-     * @param Type $type
+     * @param array                  $data
+     * @param Type                   $type
      * @param DeserializationContext $context
      *
      * @return mixed this returns whatever the passed type is, typically an object or an array of objects

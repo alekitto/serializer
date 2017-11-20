@@ -54,7 +54,7 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     public function visitBoolean($data, Type $type, Context $context)
     {
-        return $this->data = (boolean) $data;
+        return $this->data = (bool) $data;
     }
 
     public function visitInteger($data, Type $type, Context $context)
@@ -128,7 +128,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * @param array|\ArrayObject $data the passed data must be understood by whatever encoding function is applied later.
+     * @param array|\ArrayObject $data the passed data must be understood by whatever encoding function is applied later
      */
     public function setRoot($data)
     {
@@ -167,8 +167,8 @@ class GenericSerializationVisitor extends AbstractVisitor
      * Allows you to add additional data to the current object/root element.
      *
      * @param string $key
-     * @param mixed $value This value must either be a regular scalar, or an array.
-     *                     It must not contain any objects anymore.
+     * @param mixed  $value This value must either be a regular scalar, or an array.
+     *                      It must not contain any objects anymore.
      */
     protected function addData($key, $value)
     {

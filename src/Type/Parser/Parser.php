@@ -37,9 +37,10 @@ final class Parser
     }
 
     /**
-     * Parse a type string
+     * Parse a type string.
      *
      * @param string $input
+     *
      * @return Type
      */
     public function parse($input)
@@ -51,14 +52,15 @@ final class Parser
     }
 
     /**
-     * Match a token in the lexer
+     * Match a token in the lexer.
      *
      * @param int $type
+     *
      * @return mixed
      *
      * @throws SyntaxErrorException
      */
-    protected function match($type)
+    private function match($type)
     {
         if (! $this->lexer->isNextToken($type)) {
             $this->syntaxError();
@@ -71,7 +73,7 @@ final class Parser
     }
 
     /**
-     * Parse internal type string
+     * Parse internal type string.
      *
      * @return Type
      *
@@ -95,7 +97,7 @@ final class Parser
             } else {
                 $this->syntaxError();
             }
-        } while ($this->lexer->lookahead['type'] === Lexer::T_COMMA && $this->lexer->moveNext());
+        } while (Lexer::T_COMMA === $this->lexer->lookahead['type'] && $this->lexer->moveNext());
 
         $this->match(Lexer::T_CLOSED_BRACKET);
 
@@ -103,7 +105,7 @@ final class Parser
     }
 
     /**
-     * Throw a syntax error exception
+     * Throw a syntax error exception.
      *
      * @throws SyntaxErrorException
      */

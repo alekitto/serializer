@@ -63,7 +63,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     }
 
     /**
-     * Add a manager registry to the collection
+     * Add a manager registry to the collection.
      *
      * @param ManagerRegistry $managerRegistry
      *
@@ -78,9 +78,10 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
     /**
      * Get the object manager handling the specified class
-     * Returns NULL if cannot be found
+     * Returns NULL if cannot be found.
      *
      * @param ClassMetadata $metadata
+     *
      * @return null|ObjectManager
      */
     protected function getObjectManager(ClassMetadata $metadata)
@@ -93,7 +94,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     }
 
     /**
-     * Try to load an object from doctrine
+     * Try to load an object from doctrine.
      *
      * @param ClassMetadata $metadata
      * @param $data

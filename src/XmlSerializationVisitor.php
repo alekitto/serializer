@@ -98,7 +98,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
 
-        if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
+        if (1 === $this->nodeStack->count() && null === $this->document->documentElement) {
             $this->createRootNode($metadata);
         }
 
@@ -195,7 +195,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     public function visitArray($data, Type $type, Context $context)
     {
-        if ($this->nodeStack->count() === 1 && $this->document->documentElement === null) {
+        if (1 === $this->nodeStack->count() && null === $this->document->documentElement) {
             $this->createRootNode();
         }
 
@@ -212,12 +212,12 @@ class XmlSerializationVisitor extends AbstractVisitor
         $nodes = [];
         $elementType = $this->getElementType($type);
         foreach ($data as $k => $v) {
-            $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string)$k : $nodeName;
+            $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string) $k : $nodeName;
             $this->currentNodes = $this->createElement($namespace, $elementName);
 
             $context->accept($v, $elementType);
             if (null !== $attributeName) {
-                $this->currentNodes->setAttribute($attributeName, (string)$k);
+                $this->currentNodes->setAttribute($attributeName, (string) $k);
             }
 
             $nodes[] = $this->currentNodes;
@@ -243,7 +243,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         $nodes = $this->currentNodes ?: [];
         $this->currentNodes = $this->nodeStack->pop();
-        if ($this->nodeStack->count() === 0 && $this->document->documentElement === null) {
+        if (0 === $this->nodeStack->count() && null === $this->document->documentElement) {
             $rootNode = $this->document->createElement('result');
             $this->document->appendChild($rootNode);
 
@@ -267,7 +267,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         foreach ($this->xmlNamespaces as $prefix => $uri) {
             $attribute = 'xmlns';
-            if ($prefix !== '') {
+            if ('' !== $prefix) {
                 $attribute .= ':'.$prefix;
             }
 
@@ -287,7 +287,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * Create a new document object
+     * Create a new document object.
      *
      * @param null $version
      * @param null $encoding
@@ -335,7 +335,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         $has_xml_value = false;
         foreach ($properties as $property) {
-            if ($property->xmlValue && !$has_xml_value) {
+            if ($property->xmlValue && ! $has_xml_value) {
                 $has_xml_value = true;
             } elseif ($property->xmlValue) {
                 throw new RuntimeException(sprintf(
@@ -347,7 +347,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         if ($has_xml_value) {
             foreach ($properties as $property) {
-                if (!$property->xmlValue && !$property->xmlAttribute) {
+                if (! $property->xmlValue && ! $property->xmlAttribute) {
                     throw new RuntimeException(sprintf(
                         'If you make use of @XmlValue, all other properties in the class must have the @XmlAttribute annotation. Invalid usage detected in class %s.',
                         $metadata->getName()
@@ -365,7 +365,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function createAttributeNode(PropertyMetadata $metadata, $attributeName)
     {
-        if ($namespace = (string)$metadata->xmlNamespace) {
+        if ($namespace = (string) $metadata->xmlNamespace) {
             $prefix = $this->lookupPrefix($namespace);
             $node = $this->document->createAttributeNS($namespace, $prefix.':'.$attributeName);
         } else {
@@ -388,7 +388,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function lookupPrefix($namespace)
     {
-        if (($prefix = array_search($namespace, $this->xmlNamespaces)) !== false) {
+        if (false !== ($prefix = array_search($namespace, $this->xmlNamespaces))) {
             return $prefix;
         }
 

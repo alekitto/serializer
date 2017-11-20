@@ -135,12 +135,17 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
 class PropertyMetadataOrder
 {
-    private $b, $a;
+    private $b;
+    private $a;
 }
 
 class PropertyMetadataPublicMethod
 {
-    private $a, $b, $c, $d, $e;
+    private $a;
+    private $b;
+    private $c;
+    private $d;
+    private $e;
     public $f;
 
     public function getA()

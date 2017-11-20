@@ -27,6 +27,7 @@ final class XmlNamespace
 {
     /**
      * @Required
+     *
      * @var string
      */
     public $uri;

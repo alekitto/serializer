@@ -29,8 +29,7 @@ use Kcs\Serializer\Annotation\XmlNamespace;
  * @XmlNamespace(prefix="foo", uri="http://better.foo.example.org");
  * @AccessType("property")
  */
-class SimpleSubClassObject
-    extends SimpleClassObject
+class SimpleSubClassObject extends SimpleClassObject
 {
     /**
      * @Type("string")

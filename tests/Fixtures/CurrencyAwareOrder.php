@@ -23,7 +23,7 @@ use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlRoot;
 
-/** 
+/**
  * @XmlRoot("order")
  * @AccessType("property")
  */

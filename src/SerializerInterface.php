@@ -31,8 +31,8 @@ interface SerializerInterface
     /**
      * Serializes the given data to the specified output format.
      *
-     * @param mixed $data
-     * @param string $format
+     * @param mixed                $data
+     * @param string               $format
      * @param SerializationContext $context
      *
      * @return string
@@ -42,10 +42,11 @@ interface SerializerInterface
     /**
      * Deserializes the given data to the specified type.
      *
-     * @param string|mixed $data
-     * @param Type $type
-     * @param string $format
+     * @param string|mixed           $data
+     * @param Type                   $type
+     * @param string                 $format
      * @param DeserializationContext $context
+     *
      * @return mixed
      */
     public function deserialize($data, Type $type, $format, DeserializationContext $context = null);

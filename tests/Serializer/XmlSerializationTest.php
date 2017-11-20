@@ -160,6 +160,7 @@ class XmlSerializationTest extends BaseSerializationTest
             $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['map']))
         );
     }
+
     public function testObjectWithNamespacesAndList()
     {
         $object = new ObjectWithNamespacesAndList();
@@ -270,7 +271,7 @@ class XmlSerializationTest extends BaseSerializationTest
      */
     protected function getContent($key)
     {
-        if (!file_exists($file = __DIR__.'/xml/'.$key.'.xml')) {
+        if (! file_exists($file = __DIR__.'/xml/'.$key.'.xml')) {
             throw new InvalidArgumentException(sprintf('The key "%s" is not supported.', $key));
         }
 

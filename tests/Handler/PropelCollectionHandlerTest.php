@@ -23,7 +23,7 @@ use Kcs\Serializer\SerializerBuilder;
 
 class PropelCollectionHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  $serializer \Kcs\Serializer\Serializer */
+    /** @var $serializer \Kcs\Serializer\Serializer */
     private $serializer;
 
     public function setUp()

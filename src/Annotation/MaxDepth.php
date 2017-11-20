@@ -27,6 +27,7 @@ final class MaxDepth
 {
     /**
      * @Required
+     *
      * @var int
      */
     public $depth;

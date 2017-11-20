@@ -106,7 +106,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
-        $v = $data[$name] !== null ? $context->accept($data[$name], $metadata->type) : null;
+        $v = null !== $data[$name] ? $context->accept($data[$name], $metadata->type) : null;
         $this->addData($name, $v);
 
         return $v;

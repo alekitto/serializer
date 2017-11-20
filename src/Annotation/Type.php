@@ -27,6 +27,7 @@ final class Type
 {
     /**
      * @Required
+     *
      * @var string
      */
     public $name;

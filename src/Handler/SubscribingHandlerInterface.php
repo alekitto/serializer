@@ -22,7 +22,7 @@ namespace Kcs\Serializer\Handler;
 interface SubscribingHandlerInterface
 {
     /**
-     * Return format:
+     * Return format:.
      *
      *      array(
      *          array(

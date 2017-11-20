@@ -298,7 +298,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
             /** @var DateTimeArraysObject $deserializedObject */
             $deserializedObject = $this->deserialize($this->getContent('array_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\DateTimeArraysObject');
 
-            /** deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
+            /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
             foreach ($deserializedObject->getArrayWithDefaultDateTime() as $dateTime) {
                 $dateTime->setTimezone(new \DateTimeZone('UTC'));
             }
@@ -324,16 +324,15 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->getContent('array_named_datetimes_object'), $serializedObject);
 
         if ($this->hasDeserializer()) {
-
             // skip XML deserialization
-            if ($this->getFormat() === 'xml') {
+            if ('xml' === $this->getFormat()) {
                 return;
             }
 
             /** @var NamedDateTimeArraysObject $deserializedObject */
             $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject');
 
-            /** deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
+            /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
             foreach ($deserializedObject->getNamedArrayWithFormattedDate() as $dateTime) {
                 $dateTime->setTimezone(new \DateTimeZone('UTC'));
             }
@@ -607,7 +606,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testFormErrorsWithNonFormComponents()
     {
-        if (!class_exists(SubmitType::class)) {
+        if (! class_exists(SubmitType::class)) {
             $this->markTestSkipped('Not using Symfony Form >= 2.3 with submit type');
         }
 
@@ -649,7 +648,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testDoctrineProxy()
     {
-        if (!class_exists('Doctrine\ORM\Version')) {
+        if (! class_exists('Doctrine\ORM\Version')) {
             $this->markTestSkipped('Doctrine is not available.');
         }
 
@@ -660,7 +659,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testInitializedDoctrineProxy()
     {
-        if (!class_exists('Doctrine\ORM\Version')) {
+        if (! class_exists('Doctrine\ORM\Version')) {
             $this->markTestSkipped('Doctrine is not available.');
         }
 
@@ -946,7 +945,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
      */
     public function testPolymorphicObjectsInvalidDeserialization()
     {
-        if (!$this->hasDeserializer()) {
+        if (! $this->hasDeserializer()) {
             throw new \LogicException('No deserializer');
         }
 
@@ -979,7 +978,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
 
     public function testDeserializingIntoExistingObject()
     {
-        if (!$this->hasDeserializer()) {
+        if (! $this->hasDeserializer()) {
             return;
         }
 
@@ -1043,6 +1042,7 @@ abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
     }
 
     abstract protected function getContent($key);
+
     abstract protected function getFormat();
 
     protected function hasDeserializer()

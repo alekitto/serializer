@@ -27,7 +27,7 @@ use Kcs\Serializer\Annotation\XmlMap;
 use Kcs\Serializer\Annotation\XmlRoot;
 
 /**
- * @XmlRoot("log") 
+ * @XmlRoot("log")
  * @AccessType("property")
  */
 class Log

@@ -103,6 +103,7 @@ class DateHandler implements SubscribingHandlerInterface
 
     /**
      * @return string
+     *
      * @param Type $type
      */
     private function getFormat(Type $type)
@@ -112,6 +113,7 @@ class DateHandler implements SubscribingHandlerInterface
 
     /**
      * @param \DateInterval $dateInterval
+     *
      * @return string
      */
     public function formatInterval(\DateInterval $dateInterval)

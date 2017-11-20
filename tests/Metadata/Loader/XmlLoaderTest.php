@@ -81,7 +81,7 @@ class XmlLoaderTest extends BaseLoaderTest
     protected function getLoader()
     {
         $append = '/base';
-        if (func_num_args() == 1) {
+        if (1 == func_num_args()) {
             $append = '/'.func_get_arg(0);
         }
 

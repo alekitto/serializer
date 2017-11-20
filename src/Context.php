@@ -179,7 +179,7 @@ abstract class Context
     }
 
     /**
-     * Get the array of properties that should be serialized in an object
+     * Get the array of properties that should be serialized in an object.
      *
      * @param ClassMetadata $metadata
      *
@@ -230,7 +230,7 @@ abstract class Context
     }
 
     /**
-     * Set or add exclusion strategy
+     * Set or add exclusion strategy.
      *
      * @param ExclusionStrategyInterface $strategy
      */

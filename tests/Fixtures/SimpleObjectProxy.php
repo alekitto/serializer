@@ -29,7 +29,7 @@ class SimpleObjectProxy extends SimpleObject implements Proxy
 
     public function __load()
     {
-        if (!$this->__isInitialized__) {
+        if (! $this->__isInitialized__) {
             $this->camelCase = 'proxy-boo';
             $this->__isInitialized__ = true;
         }

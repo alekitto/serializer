@@ -93,8 +93,8 @@ class XmlLoader extends AnnotationLoader
 
             $map = [];
             foreach ($discriminatorElement->xpath('./map') as $item) {
-                $v = (string)$item->attributes()->value;
-                $map[ $v ] = (string)$item;
+                $v = (string) $item->attributes()->value;
+                $map[$v] = (string) $item;
             }
 
             $discriminator->map = $map;
@@ -153,7 +153,7 @@ class XmlLoader extends AnnotationLoader
         $pElems = $element->xpath("./property[@name = '".$property->name."']");
         $pElem = reset($pElems);
 
-        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
+        if (Annotations\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
             return ! $pElem || null === $pElem->attributes()->expose;
         }
 
@@ -182,7 +182,7 @@ class XmlLoader extends AnnotationLoader
         foreach ($element->xpath('./'.$name) as $elem) {
             $annotation = $this->createAnnotationObject($name);
 
-            if ($value = (string)$elem) {
+            if ($value = (string) $elem) {
                 $property = $this->getDefaultPropertyName($annotation);
 
                 $annotation->{$property} = $value;
@@ -229,16 +229,17 @@ class XmlLoader extends AnnotationLoader
 
     /**
      * @param \SimpleXMLElement $elem
+     *
      * @return \Generator
      */
     private function loadAnnotationProperties(\SimpleXMLElement $elem)
     {
         foreach ($elem->attributes() as $attrName => $value) {
-            $value = (string)$value;
+            $value = (string) $value;
 
-            if ($value === 'true') {
+            if ('true' === $value) {
                 $value = true;
-            } elseif ($value === 'false') {
+            } elseif ('false' === $value) {
                 $value = false;
             }
 
