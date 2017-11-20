@@ -11,6 +11,7 @@
         <parameter key="kcs_serializer.handler.array_collection.class">Kcs\Serializer\Handler\ArrayCollectionHandler</parameter>
         <parameter key="kcs_serializer.handler.propel_collection.class">Kcs\Serializer\Handler\PropelCollectionHandler</parameter>
         <parameter key="kcs_serializer.handler.form_error.class">Kcs\Serializer\Handler\FormErrorHandler</parameter>
+        <parameter key="kcs_serializer.handler.uuid.class">Kcs\Serializer\Handler\UuidInterfaceHandler</parameter>
         <parameter key="kcs_serializer.handler_registry.class">Kcs\Serializer\Handler\LazyHandlerRegistry</parameter>
         <parameter key="kcs_serializer.doctrine_proxy_subscriber.class">Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber</parameter>
 
@@ -87,6 +88,7 @@
         <service class="%kcs_serializer.handler.php_collection.class%" id="kcs_serializer.handler.php_collection" />
         <service class="%kcs_serializer.handler.array_collection.class%" id="kcs_serializer.handler.array_collection" />
         <service class="%kcs_serializer.handler.propel_collection.class%" id="kcs_serializer.handler.propel_collection" />
+        <service class="%kcs_serializer.handler.uuid.class%" id="kcs_serializer.handler.uuid" />
         <service class="%kcs_serializer.handler.form_error.class%" id="kcs_serializer.handler.form_error">
             <argument type="service" id="translator" />
         </service>
@@ -107,6 +109,9 @@
             </call>
             <call method="registerSubscribingHandler">
                 <argument type="service" id="kcs_serializer.handler.form_error" />
+            </call>
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.uuid" />
             </call>
         </service>
 
