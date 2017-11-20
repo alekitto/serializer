@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
  * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
