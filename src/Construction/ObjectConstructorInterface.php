@@ -37,10 +37,10 @@ interface ObjectConstructorInterface
      * Implementations could for example create a new object calling "new", use
      * "unserialize" techniques, reflection, or other means.
      *
-     * @param VisitorInterface $visitor
-     * @param ClassMetadata $metadata
-     * @param mixed $data
-     * @param Type $type
+     * @param VisitorInterface       $visitor
+     * @param ClassMetadata          $metadata
+     * @param mixed                  $data
+     * @param Type                   $type
      * @param DeserializationContext $context
      *
      * @return object

@@ -27,7 +27,7 @@ use Kcs\Serializer\VisitorInterface;
 
 class UnserializeObjectConstructor implements ObjectConstructorInterface
 {
-    /** @var Instantiator  */
+    /** @var Instantiator */
     private $instantiator;
 
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)

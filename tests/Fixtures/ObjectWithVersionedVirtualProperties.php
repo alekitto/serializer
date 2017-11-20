@@ -26,7 +26,7 @@ use Kcs\Serializer\Annotation\Until;
 use Kcs\Serializer\Annotation\VirtualProperty;
 
 /**
- * dummy comment
+ * dummy comment.
  */
 class ObjectWithVersionedVirtualProperties
 {

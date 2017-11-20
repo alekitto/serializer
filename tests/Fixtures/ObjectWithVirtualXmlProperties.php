@@ -32,7 +32,6 @@ use Kcs\Serializer\Annotation\XmlValue;
 class ObjectWithVirtualXmlProperties
 {
     /**
-     *
      * @VirtualProperty
      * @SerializedName("foo")
      * @Groups({"attributes"})
@@ -44,7 +43,6 @@ class ObjectWithVirtualXmlProperties
     }
 
     /**
-     *
      * @VirtualProperty
      * @SerializedName("xml-value")
      * @Groups({"values"})
@@ -56,7 +54,6 @@ class ObjectWithVirtualXmlProperties
     }
 
     /**
-     *
      * @VirtualProperty
      * @SerializedName("list")
      * @Groups({"list"})
@@ -68,7 +65,6 @@ class ObjectWithVirtualXmlProperties
     }
 
     /**
-     *
      * @VirtualProperty
      * @SerializedName("map")
      * @Groups({"map"})
@@ -83,7 +79,6 @@ class ObjectWithVirtualXmlProperties
     }
 
     /**
-     *
      * @VirtualProperty
      * @SerializedName("low")
      * @Groups({"versions"})

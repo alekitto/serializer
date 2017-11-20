@@ -21,13 +21,14 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
 
-/** 
+/**
  * @Serializer\AccessorOrder("custom",  custom = {"method", "b", "a"})
  * @Serializer\AccessType("property")
  */
 class AccessorOrderMethod
 {
-    private $b = 'b', $a = 'a';
+    private $b = 'b';
+    private $a = 'a';
 
     /**
      * @Serializer\VirtualProperty

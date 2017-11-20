@@ -188,7 +188,7 @@ class AnnotationLoader implements LoaderInterface
 
     protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
     {
-        if ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::ALL) {
+        if (Annotation\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
             return null === $this->reader->getPropertyAnnotation($property, Annotation\Expose::class);
         }
 

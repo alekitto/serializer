@@ -19,8 +19,6 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation as Serializer;
-
 class InlineChildEmpty
 {
 }

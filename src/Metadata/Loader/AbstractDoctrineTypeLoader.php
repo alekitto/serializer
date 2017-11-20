@@ -34,7 +34,8 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 {
     /**
-     * Map of doctrine 2 field types to Kcs\Serializer types
+     * Map of doctrine 2 field types to Kcs\Serializer types.
+     *
      * @var array
      */
     protected $fieldMapping = [
@@ -79,7 +80,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata)
     {
-        /** @var $classMetadata ClassMetadata */
+        /* @var $classMetadata ClassMetadata */
         $this->delegate->loadClassMetadata($classMetadata);
 
         // Abort if the given class is not a mapped entity
@@ -113,13 +114,13 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     /**
      * @param DoctrineClassMetadata $doctrineMetadata
-     * @param ClassMetadata $classMetadata
+     * @param ClassMetadata         $classMetadata
      */
     abstract protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata);
 
     /**
      * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata $propertyMetadata
+     * @param PropertyMetadata      $propertyMetadata
      *
      * @return bool
      */
@@ -127,7 +128,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     /**
      * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata $propertyMetadata
+     * @param PropertyMetadata      $propertyMetadata
      */
     abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata);
 

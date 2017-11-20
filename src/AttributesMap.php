@@ -23,10 +23,10 @@ class AttributesMap
     private $map = [];
 
     /**
-     * Returns an attribute by name
+     * Returns an attribute by name.
      *
      * @param string $key
-     * @param mixed $default
+     * @param mixed  $default
      *
      * @return mixed
      */
@@ -36,10 +36,10 @@ class AttributesMap
     }
 
     /**
-     * Set an attribute into the map
+     * Set an attribute into the map.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return mixed
      */
@@ -49,7 +49,7 @@ class AttributesMap
     }
 
     /**
-     * Returns TRUE if attribute is set
+     * Returns TRUE if attribute is set.
      *
      * @param $key
      *
@@ -61,7 +61,7 @@ class AttributesMap
     }
 
     /**
-     * Returns a copy of the array map
+     * Returns a copy of the array map.
      *
      * @return array
      */

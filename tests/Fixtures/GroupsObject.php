@@ -49,11 +49,12 @@ class GroupsObject
     /**
      * @Groups({"foo", "!baz"})
      * @Type("string")
+     *
      * @var string
      */
     private $baz;
 
-     /**
+    /**
      * @Type("string")
      */
     private $none;

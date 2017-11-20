@@ -23,7 +23,7 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Type\Parser\Parser;
 
 /**
- * Serialized type representation
+ * Serialized type representation.
  */
 class Type
 {
@@ -43,10 +43,10 @@ class Type
     private $metadata;
 
     /**
-     * Type constructor
+     * Type constructor.
      *
      * @param string $name
-     * @param array $params
+     * @param array  $params
      */
     public function __construct($name, array $params = [])
     {
@@ -55,9 +55,10 @@ class Type
     }
 
     /**
-     * Parse a type string and return a Type instance
+     * Parse a type string and return a Type instance.
      *
      * @param $type
+     *
      * @return Type
      */
     public static function parse($type)
@@ -71,9 +72,10 @@ class Type
     }
 
     /**
-     * Create a new Type from an object or a class string
+     * Create a new Type from an object or a class string.
      *
      * @param mixed $object
+     *
      * @return Type
      */
     public static function from($object)
@@ -116,6 +118,7 @@ class Type
 
     /**
      * @param string $name
+     *
      * @return $this
      */
     public function setName($name)
@@ -136,6 +139,7 @@ class Type
 
     /**
      * @param array $params
+     *
      * @return $this
      */
     public function setParams(array $params)
@@ -151,9 +155,10 @@ class Type
     }
 
     /**
-     * Check if this type represents $class
+     * Check if this type represents $class.
      *
      * @param $class
+     *
      * @return bool
      */
     public function is($class)
@@ -162,9 +167,10 @@ class Type
     }
 
     /**
-     * Returns if this type has param with index $index
+     * Returns if this type has param with index $index.
      *
      * @param $index
+     *
      * @return bool
      */
     public function hasParam($index)
@@ -173,9 +179,10 @@ class Type
     }
 
     /**
-     * Return the param $index
+     * Return the param $index.
      *
      * @param $index
+     *
      * @return mixed
      */
     public function getParam($index)

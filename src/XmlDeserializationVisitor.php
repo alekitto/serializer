@@ -46,7 +46,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
         if (false !== stripos($data, '<!doctype')) {
             $doctype = $this->getDomDocumentType($data);
-            if (!in_array($doctype, $this->doctypeWhitelist, true)) {
+            if (! in_array($doctype, $this->doctypeWhitelist, true)) {
                 throw new InvalidArgumentException(sprintf(
                     'The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.',
                     $doctype
@@ -79,7 +79,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         switch ($type->countParams()) {
             case 0:
                 throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
-
             case 1:
                 foreach ($nodes as $v) {
                     if ($this->isNullNode($v)) {
@@ -268,9 +267,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     }
 
     /**
-     * Retrieves internalSubset even in bugfixed php versions
+     * Retrieves internalSubset even in bugfixed php versions.
      *
      * @param string $data
+     *
      * @return string
      */
     private function getDomDocumentType($data)
@@ -279,10 +279,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $braces = 0;
         do {
             $char = $data[$endPos++];
-            if ($char === '<') {
+            if ('<' === $char) {
                 ++$braces;
             }
-            if ($char === '>') {
+            if ('>' === $char) {
                 --$braces;
             }
         } while ($braces > 0);

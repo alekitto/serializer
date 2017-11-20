@@ -29,6 +29,7 @@ final class AccessType
 {
     /**
      * @Required
+     *
      * @var string
      */
     public $type;

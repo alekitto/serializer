@@ -77,7 +77,7 @@ class ContextTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnCallback(function (PropertyMetadata $propertyMetadata, SerializationContext $context) use ($object, $child) {
                 $stack = $context->getMetadataStack();
 
-                if (Node::class === $propertyMetadata->class && $propertyMetadata->name === 'children') {
+                if (Node::class === $propertyMetadata->class && 'children' === $propertyMetadata->name) {
                     $this->assertEquals(0, $stack->count());
                 }
 

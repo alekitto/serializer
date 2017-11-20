@@ -12,6 +12,7 @@ final class AdditionalField
 {
     /**
      * @Required
+     *
      * @var string
      */
     public $name;

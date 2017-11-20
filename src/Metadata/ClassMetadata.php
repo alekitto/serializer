@@ -82,7 +82,7 @@ class ClassMetadata extends BaseClassMetadata
      * Sets the order of properties in the class.
      *
      * @param string $order
-     * @param array $customOrder
+     * @param array  $customOrder
      *
      * @throws InvalidArgumentException When the accessor order is not valid
      * @throws InvalidArgumentException When the custom order is not valid
@@ -167,7 +167,7 @@ class ClassMetadata extends BaseClassMetadata
             throw new InvalidArgumentException(sprintf('$uri is expected to be a strings, but got value %s.', json_encode($uri)));
         }
 
-        if ($prefix !== null) {
+        if (null !== $prefix) {
             if (! is_string($prefix)) {
                 throw new InvalidArgumentException(sprintf('$prefix is expected to be a strings, but got value %s.', json_encode($prefix)));
             }
@@ -186,7 +186,7 @@ class ClassMetadata extends BaseClassMetadata
     public function getSubtype($data)
     {
         if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
-            $typeValue = (string)$data[$this->discriminatorFieldName];
+            $typeValue = (string) $data[$this->discriminatorFieldName];
         } elseif (isset($data->{$this->discriminatorFieldName})) {
             $typeValue = (string) $data->{$this->discriminatorFieldName};
         } else {

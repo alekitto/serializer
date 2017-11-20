@@ -34,7 +34,7 @@ interface ExclusionStrategyInterface
      * Whether the class should be skipped.
      *
      * @param ClassMetadata $metadata
-     * @param Context $context
+     * @param Context       $context
      *
      * @return bool
      */
@@ -44,7 +44,7 @@ interface ExclusionStrategyInterface
      * Whether the property should be skipped.
      *
      * @param PropertyMetadata $property
-     * @param Context $context
+     * @param Context          $context
      *
      * @return bool
      */
