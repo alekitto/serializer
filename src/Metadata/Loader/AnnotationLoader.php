@@ -55,7 +55,7 @@ class AnnotationLoader implements LoaderInterface
         $this->reader = $reader;
     }
 
-    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $classMetadata instanceof ClassMetadata) {
             throw new \LogicException('wrong metadata class');

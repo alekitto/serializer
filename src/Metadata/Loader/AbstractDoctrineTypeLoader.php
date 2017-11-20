@@ -78,7 +78,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         $this->registry = $registry;
     }
 
-    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         /* @var $classMetadata ClassMetadata */
         $this->delegate->loadClassMetadata($classMetadata);

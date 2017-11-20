@@ -56,7 +56,7 @@ class YamlLoader extends AnnotationLoader
         return isset($config['properties'][$property->name]['exclude']) && $config['properties'][$property->name]['exclude'];
     }
 
-    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $this->hasClassConfig($classMetadata->getName())) {
             return true;

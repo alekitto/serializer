@@ -18,6 +18,7 @@
 
 namespace Kcs\Serializer\Metadata;
 
+use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Factory\AbstractMetadataFactory;
 
 /**
@@ -25,7 +26,7 @@ use Kcs\Metadata\Factory\AbstractMetadataFactory;
  */
 class MetadataFactory extends AbstractMetadataFactory
 {
-    protected function createMetadata(\ReflectionClass $class)
+    protected function createMetadata(\ReflectionClass $class): ClassMetadataInterface
     {
         return new ClassMetadata($class);
     }
