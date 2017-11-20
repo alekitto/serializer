@@ -37,3 +37,5 @@ For instructions on how to upgrade from one version to another, please see the d
 - Use all doctrine registry managers to retrieve an instance of an object to
   deserialize data into
 - Added nested groups support
+- Added symfony bundle (`Kcs\Serializer\Bundle\SerializerBundle`)
+- Added `int` and `bool` shortcut for integer and boolean types
