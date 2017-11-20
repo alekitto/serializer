@@ -25,6 +25,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\SerializationContext;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class DisjunctExclusionStrategyTest extends TestCase
 {
@@ -33,18 +34,16 @@ class DisjunctExclusionStrategyTest extends TestCase
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
         $context = SerializationContext::create();
 
+        $first = $this->prophesize(ExclusionStrategyInterface::class);
+        $last = $this->prophesize(ExclusionStrategyInterface::class);
+
         $strat = new DisjunctExclusionStrategy([
-            $first = $this->createMock(ExclusionStrategyInterface::class),
-            $last = $this->createMock(ExclusionStrategyInterface::class),
+            $first->reveal(),
+            $last->reveal(),
         ]);
 
-        $first->expects($this->once())
-            ->method('shouldSkipClass')
-            ->with($metadata, $context)
-            ->will($this->returnValue(true));
-
-        $last->expects($this->never())
-            ->method('shouldSkipClass');
+        $first->shouldSkipClass($metadata, $context)->willReturn(true);
+        $last->shouldSkipClass(Argument::cetera())->shouldNotBeCalled();
 
         $this->assertTrue($strat->shouldSkipClass($metadata, $context));
     }
@@ -54,20 +53,16 @@ class DisjunctExclusionStrategyTest extends TestCase
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
         $context = SerializationContext::create();
 
+        $first = $this->prophesize(ExclusionStrategyInterface::class);
+        $last = $this->prophesize(ExclusionStrategyInterface::class);
+
         $strat = new DisjunctExclusionStrategy([
-            $first = $this->createMock(ExclusionStrategyInterface::class),
-            $last = $this->createMock(ExclusionStrategyInterface::class),
+            $first->reveal(),
+            $last->reveal(),
         ]);
 
-        $first->expects($this->once())
-            ->method('shouldSkipClass')
-            ->with($metadata, $context)
-            ->will($this->returnValue(false));
-
-        $last->expects($this->once())
-            ->method('shouldSkipClass')
-            ->with($metadata, $context)
-            ->will($this->returnValue(true));
+        $first->shouldSkipClass($metadata, $context)->willReturn(false);
+        $last->shouldSkipClass($metadata, $context)->willReturn(true);
 
         $this->assertTrue($strat->shouldSkipClass($metadata, $context));
     }
@@ -77,20 +72,16 @@ class DisjunctExclusionStrategyTest extends TestCase
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
         $context = SerializationContext::create();
 
+        $first = $this->prophesize(ExclusionStrategyInterface::class);
+        $last = $this->prophesize(ExclusionStrategyInterface::class);
+
         $strat = new DisjunctExclusionStrategy([
-            $first = $this->createMock(ExclusionStrategyInterface::class),
-            $last = $this->createMock(ExclusionStrategyInterface::class),
+            $first->reveal(),
+            $last->reveal(),
         ]);
 
-        $first->expects($this->once())
-            ->method('shouldSkipClass')
-            ->with($metadata, $context)
-            ->will($this->returnValue(false));
-
-        $last->expects($this->once())
-            ->method('shouldSkipClass')
-            ->with($metadata, $context)
-            ->will($this->returnValue(false));
+        $first->shouldSkipClass($metadata, $context)->willReturn(false);
+        $last->shouldSkipClass($metadata, $context)->willReturn(false);
 
         $this->assertFalse($strat->shouldSkipClass($metadata, $context));
     }
@@ -100,18 +91,16 @@ class DisjunctExclusionStrategyTest extends TestCase
         $metadata = new StaticPropertyMetadata(\stdClass::class, 'foo', 'bar');
         $context = SerializationContext::create();
 
+        $first = $this->prophesize(ExclusionStrategyInterface::class);
+        $last = $this->prophesize(ExclusionStrategyInterface::class);
+
         $strat = new DisjunctExclusionStrategy([
-            $first = $this->createMock(ExclusionStrategyInterface::class),
-            $last = $this->createMock(ExclusionStrategyInterface::class),
+            $first->reveal(),
+            $last->reveal(),
         ]);
 
-        $first->expects($this->once())
-            ->method('shouldSkipProperty')
-            ->with($metadata, $context)
-            ->will($this->returnValue(true));
-
-        $last->expects($this->never())
-            ->method('shouldSkipProperty');
+        $first->shouldSkipProperty($metadata, $context)->willReturn(true);
+        $last->shouldSkipProperty(Argument::cetera())->shouldNotBeCalled();
 
         $this->assertTrue($strat->shouldSkipProperty($metadata, $context));
     }
@@ -121,20 +110,16 @@ class DisjunctExclusionStrategyTest extends TestCase
         $metadata = new StaticPropertyMetadata(\stdClass::class, 'foo', 'bar');
         $context = SerializationContext::create();
 
+        $first = $this->prophesize(ExclusionStrategyInterface::class);
+        $last = $this->prophesize(ExclusionStrategyInterface::class);
+
         $strat = new DisjunctExclusionStrategy([
-            $first = $this->createMock(ExclusionStrategyInterface::class),
-            $last = $this->createMock(ExclusionStrategyInterface::class),
+            $first->reveal(),
+            $last->reveal(),
         ]);
 
-        $first->expects($this->once())
-            ->method('shouldSkipProperty')
-            ->with($metadata, $context)
-            ->will($this->returnValue(false));
-
-        $last->expects($this->once())
-            ->method('shouldSkipProperty')
-            ->with($metadata, $context)
-            ->will($this->returnValue(true));
+        $first->shouldSkipProperty($metadata, $context)->willReturn(false);
+        $last->shouldSkipProperty($metadata, $context)->willReturn(true);
 
         $this->assertTrue($strat->shouldSkipProperty($metadata, $context));
     }
@@ -144,20 +129,16 @@ class DisjunctExclusionStrategyTest extends TestCase
         $metadata = new StaticPropertyMetadata(\stdClass::class, 'foo', 'bar');
         $context = SerializationContext::create();
 
+        $first = $this->prophesize(ExclusionStrategyInterface::class);
+        $last = $this->prophesize(ExclusionStrategyInterface::class);
+
         $strat = new DisjunctExclusionStrategy([
-            $first = $this->createMock(ExclusionStrategyInterface::class),
-            $last = $this->createMock(ExclusionStrategyInterface::class),
+            $first->reveal(),
+            $last->reveal(),
         ]);
 
-        $first->expects($this->once())
-            ->method('shouldSkipProperty')
-            ->with($metadata, $context)
-            ->will($this->returnValue(false));
-
-        $last->expects($this->once())
-            ->method('shouldSkipProperty')
-            ->with($metadata, $context)
-            ->will($this->returnValue(false));
+        $first->shouldSkipProperty($metadata, $context)->willReturn(false);
+        $last->shouldSkipProperty($metadata, $context)->willReturn(false);
 
         $this->assertFalse($strat->shouldSkipProperty($metadata, $context));
     }

@@ -586,17 +586,17 @@ abstract class BaseSerializationTest extends TestCase
 
     public function testNestedFormErrors()
     {
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $dispatcher = $this->prophesize(EventDispatcherInterface::class);
 
-        $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher);
+        $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher->reveal());
         $formConfigBuilder->setCompound(true);
-        $formConfigBuilder->setDataMapper($this->createMock(DataMapperInterface::class));
+        $formConfigBuilder->setDataMapper($this->prophesize(DataMapperInterface::class)->reveal());
         $fooConfig = $formConfigBuilder->getFormConfig();
 
         $form = new Form($fooConfig);
         $form->addError(new FormError('This is the form error'));
 
-        $formConfigBuilder = new FormConfigBuilder('bar', null, $dispatcher);
+        $formConfigBuilder = new FormConfigBuilder('bar', null, $dispatcher->reveal());
         $barConfig = $formConfigBuilder->getFormConfig();
         $child = new Form($barConfig);
         $child->addError(new FormError('Error of the child form'));
@@ -611,17 +611,17 @@ abstract class BaseSerializationTest extends TestCase
             $this->markTestSkipped('Not using Symfony Form >= 2.3 with submit type');
         }
 
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $dispatcher = $this->prophesize(EventDispatcherInterface::class);
 
         $factoryBuilder = new FormFactoryBuilder();
         $factoryBuilder->addType(new SubmitType());
         $factoryBuilder->addType(new ButtonType());
         $factory = $factoryBuilder->getFormFactory();
 
-        $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher);
+        $formConfigBuilder = new FormConfigBuilder('foo', null, $dispatcher->reveal());
         $formConfigBuilder->setFormFactory($factory);
         $formConfigBuilder->setCompound(true);
-        $formConfigBuilder->setDataMapper($this->createMock(DataMapperInterface::class));
+        $formConfigBuilder->setDataMapper($this->prophesize(DataMapperInterface::class)->reveal());
         $fooConfig = $formConfigBuilder->getFormConfig();
 
         $form = new Form($fooConfig);

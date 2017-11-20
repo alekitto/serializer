@@ -55,11 +55,11 @@ class DoctrineProxySubscriberTest extends TestCase
     protected function setUp()
     {
         $this->subscriber = new DoctrineProxySubscriber();
-        $this->visitor = $this->createMock(Context::class);
+        $this->visitor = $this->prophesize(Context::class);
     }
 
     private function createEvent($object, Type $type)
     {
-        return new PreSerializeEvent($this->visitor, $object, $type);
+        return new PreSerializeEvent($this->visitor->reveal(), $object, $type);
     }
 }

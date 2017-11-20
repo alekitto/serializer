@@ -28,7 +28,9 @@ use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Tests\Fixtures\InlineChild;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\VisitorInterface;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 
 class ContextTest extends TestCase
 {
@@ -42,16 +44,14 @@ class ContextTest extends TestCase
         ]);
         $objects = [$object, $object->children[0], $object->children[1], $object->children[1]->children[0]];
 
-        $navigator = $this->getMockBuilder(GraphNavigator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $navigator = $this->prophesize(GraphNavigator::class);
 
         $context = new SerializationContext();
         $context->initialize(
             'json',
-            $this->createMock(VisitorInterface::class),
-            $navigator,
-            $this->createMock(MetadataFactoryInterface::class)
+            $this->prophesize(VisitorInterface::class)->reveal(),
+            $navigator->reveal(),
+            $this->prophesize(MetadataFactoryInterface::class)->reveal()
         );
 
         $context->startVisiting($objects[0]);
@@ -68,30 +68,28 @@ class ContextTest extends TestCase
             $child = new InlineChild(),
         ]);
 
-        $exclusionStrategy = $this->createMock(ExclusionStrategyInterface::class);
-        $exclusionStrategy->expects($this->any())
-            ->method('shouldSkipClass')
-            ->will($this->returnValue(false));
-
-        $exclusionStrategy->expects($this->any())
-            ->method('shouldSkipProperty')
-            ->will($this->returnCallback(function (PropertyMetadata $propertyMetadata, SerializationContext $context) use ($object, $child) {
+        $exclusionStrategy = $this->prophesize(ExclusionStrategyInterface::class);
+        $exclusionStrategy->shouldSkipClass(Argument::any(), Argument::any())->willReturn(false);
+        $exclusionStrategy->shouldSkipProperty(Argument::type(PropertyMetadata::class), Argument::type(SerializationContext::class))
+            ->will(function ($args) {
+                /** @var SerializationContext $context */
+                list($propertyMetadata, $context) = $args;
                 $stack = $context->getMetadataStack();
 
                 if (Node::class === $propertyMetadata->class && 'children' === $propertyMetadata->name) {
-                    $this->assertEquals(0, $stack->count());
+                    Assert::assertEquals(0, $stack->count());
                 }
 
                 if (InlineChild::class === $propertyMetadata->class) {
-                    $this->assertEquals(1, $stack->count());
-                    $this->assertEquals('children', $stack->getCurrent()->getName());
+                    Assert::assertEquals(1, $stack->count());
+                    Assert::assertEquals('children', $stack->getCurrent()->getName());
                 }
 
                 return false;
-            }));
+            });
 
         $serializer = SerializerBuilder::create()->build();
-        $serializer->serialize($object, 'json', SerializationContext::create()->addExclusionStrategy($exclusionStrategy));
+        $serializer->serialize($object, 'json', SerializationContext::create()->addExclusionStrategy($exclusionStrategy->reveal()));
     }
 
     public function testSerializeNullOption()
