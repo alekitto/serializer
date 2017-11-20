@@ -19,34 +19,27 @@
 namespace Kcs\Serializer\Tests\Handler;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\SerializerBuilder;
-use PHPUnit\Framework\TestCase;
+use Kcs\Serializer\Handler\PropelCollectionHandler;
+use Kcs\Serializer\Handler\SubscribingHandlerInterface;
+use Kcs\Serializer\Type\Type;
+use Prophecy\Argument;
 
-class PropelCollectionHandlerTest extends TestCase
+class PropelCollectionHandlerTest extends AbstractHandlerTest
 {
-    /** @var $serializer \Kcs\Serializer\Serializer */
-    private $serializer;
-
-    public function setUp()
+    public function testSerializeShouldReturnStringRepresentation()
     {
-        $this->serializer = SerializerBuilder::create()
-            ->addDefaultHandlers() //load PropelCollectionHandler
-            ->build();
+        $data = [new TestSubject('lolo'), new TestSubject('pepe')];
+
+        $collection = new \PropelObjectCollection();
+        $collection->setData($data);
+
+        $this->visitor->visitArray($data, Argument::type(Type::class), $this->context)->shouldBeCalled();
+        $this->handler->serializeCollection($this->visitor->reveal(), $collection, Type::parse(\PropelObjectCollection::class), $this->context->reveal());
     }
 
-    public function testSerializePropelObjectCollection()
+    protected function createHandler(): SubscribingHandlerInterface
     {
-        $collection = new \PropelObjectCollection();
-        $collection->setData([new TestSubject('lolo'), new TestSubject('pepe')]);
-        $json = $this->serializer->serialize($collection, 'json');
-
-        $data = json_decode($json, true);
-
-        $this->assertCount(2, $data); //will fail if PropelCollectionHandler not loaded
-
-        foreach ($data as $testSubject) {
-            $this->assertArrayHasKey('name', $testSubject);
-        }
+        return new PropelCollectionHandler();
     }
 }
 
