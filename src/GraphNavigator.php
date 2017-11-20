@@ -199,9 +199,11 @@ class GraphNavigator
                 return $visitor->visitString($data, $type, $context);
 
             case 'integer':
+            case 'int':
                 return $visitor->visitInteger($data, $type, $context);
 
             case 'boolean':
+            case 'bool':
                 return $visitor->visitBoolean($data, $type, $context);
 
             case 'double':
