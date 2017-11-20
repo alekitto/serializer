@@ -56,7 +56,7 @@ class ObjectWithVirtualProperties
 
     /**
      * @VirtualProperty
-     * @Type("integer")
+     * @Type("int")
      */
     public function getTypedVirtualProperty()
     {

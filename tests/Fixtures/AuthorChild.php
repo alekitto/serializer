@@ -26,6 +26,6 @@ use Kcs\Serializer\Annotation as Serializer;
  */
 class AuthorChild extends Author
 {
-    /** @Serializer\Type("boolean") */
+    /** @Serializer\Type("bool") */
     private $is_child = true;
 }
