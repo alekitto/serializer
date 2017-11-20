@@ -51,7 +51,7 @@ class XmlLoader extends AnnotationLoader
         $this->document = $elem;
     }
 
-    public function loadClassMetadata(ClassMetadataInterface $classMetadata)
+    public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $this->getClassElement($classMetadata->getName())) {
             return true;

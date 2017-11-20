@@ -104,7 +104,7 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
-    public function addAttributeMetadata(MetadataInterface $metadata)
+    public function addAttributeMetadata(MetadataInterface $metadata): void
     {
         parent::addAttributeMetadata($metadata);
         $this->sortProperties();
@@ -125,7 +125,7 @@ class ClassMetadata extends BaseClassMetadata
         $this->postDeserializeMethods[] = $method;
     }
 
-    public function merge(MetadataInterface $object)
+    public function merge(MetadataInterface $object): void
     {
         if (! $object instanceof self) {
             throw new InvalidArgumentException('$object must be an instance of ClassMetadata.');
