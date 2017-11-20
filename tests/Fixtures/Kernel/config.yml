@@ -1,0 +1,16 @@
+framework:
+    test: ~
+    secret: secret
+    router:
+        resource: "%kernel.root_dir%/routing.yml"
+
+services:
+    test_handler:
+        class: Kcs\Serializer\Tests\Fixtures\Kernel\Handler\TestHandler
+        public: true
+        tags:
+            - { name: kcs_serializer.handler }
+
+    handler_registry:
+        alias: kcs_serializer.handler_registry
+        public: true
