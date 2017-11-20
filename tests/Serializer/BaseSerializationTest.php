@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,6 +95,7 @@ use Kcs\Serializer\XmlSerializationVisitor;
 use Kcs\Serializer\YamlDeserializationVisitor;
 use Kcs\Serializer\YamlSerializationVisitor;
 use PhpCollection\Sequence;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
@@ -110,7 +111,7 @@ use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-abstract class BaseSerializationTest extends \PHPUnit_Framework_TestCase
+abstract class BaseSerializationTest extends TestCase
 {
     protected $factory;
     protected $dispatcher;

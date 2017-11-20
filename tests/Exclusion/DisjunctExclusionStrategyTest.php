@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,9 @@ use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\SerializationContext;
+use PHPUnit\Framework\TestCase;
 
-class DisjunctExclusionStrategyTest extends \PHPUnit_Framework_TestCase
+class DisjunctExclusionStrategyTest extends TestCase
 {
     public function testShouldSkipClassShortCircuiting()
     {

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +126,9 @@ class XmlSerializationTest extends BaseSerializationTest
                 <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">
             ]>
             <foo></foo>', Type::from('stdClass'), 'xml');
+
+        // Exception has not thrown
+        $this->assertTrue(true);
     }
 
     public function testVirtualAttributes()

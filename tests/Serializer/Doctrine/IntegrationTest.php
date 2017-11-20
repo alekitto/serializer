@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
- * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
+ * Copyright 2017 Alessandro Chitolina <alekitto@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,10 @@ use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Tests\Fixture\Doctrine\SingleTableInheritance\Clazz;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Student;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Teacher;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class IntegrationTest extends \PHPUnit_Framework_TestCase
+class IntegrationTest extends TestCase
 {
     /** @var ManagerRegistry */
     private $registry;
