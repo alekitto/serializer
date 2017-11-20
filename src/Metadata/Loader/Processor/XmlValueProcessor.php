@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 /*
  * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
  *

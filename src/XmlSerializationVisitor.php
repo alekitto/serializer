@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
  * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
@@ -280,7 +279,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     private function createTextNode($data, $cdata = false)
     {
         if (! $cdata) {
-            return $this->document->createTextNode($data);
+            return $this->document->createTextNode((string) $data);
         }
 
         return $this->document->createCDATASection($data);
@@ -324,7 +323,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function isElementNameValid($name)
     {
-        return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', $name);
+        return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
     /**

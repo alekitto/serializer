@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 /*
  * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
  *
@@ -24,6 +23,6 @@ class SinceProcessor extends PropertyMetadataProcessor
 {
     protected static function doProcess($annotation, PropertyMetadata $metadata)
     {
-        $metadata->sinceVersion = $annotation->version;
+        $metadata->sinceVersion = (string) $annotation->version;
     }
 }

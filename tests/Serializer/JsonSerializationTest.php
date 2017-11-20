@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
  * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
@@ -176,7 +175,7 @@ class JsonSerializationTest extends BaseSerializationTest
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff()
     {
-        ini_set('display_errors', 1);
+        ini_set('display_errors', '1');
         $this->serialize(['foo' => 'bar', 'bar' => pack('H*', 'c32e')]);
     }
 
@@ -187,7 +186,7 @@ class JsonSerializationTest extends BaseSerializationTest
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn()
     {
-        ini_set('display_errors', 0);
+        ini_set('display_errors', '0');
         $this->serialize(['foo' => 'bar', 'bar' => pack('H*', 'c32e')]);
     }
 
