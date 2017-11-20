@@ -39,10 +39,10 @@ class IdenticalPropertyNamingStrategyTest extends TestCase
      */
     public function testTranslateName($propertyName)
     {
-        $mockProperty = $this->getMockBuilder(PropertyMetadata::class)->disableOriginalConstructor()->getMock();
+        $mockProperty = $this->prophesize(PropertyMetadata::class);
         $mockProperty->name = $propertyName;
 
         $strategy = new IdenticalPropertyNamingStrategy();
-        $this->assertEquals($propertyName, $strategy->translateName($mockProperty));
+        $this->assertEquals($propertyName, $strategy->translateName($mockProperty->reveal()));
     }
 }
