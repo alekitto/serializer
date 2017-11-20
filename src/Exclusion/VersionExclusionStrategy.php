@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 /*
  * Copyright 2013 Johannes M. Schmitt <schmittjoh@gmail.com>
  * Copyright 2016 Alessandro Chitolina <alekitto@gmail.com>
@@ -29,7 +28,7 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
 
     public function __construct($version)
     {
-        $this->version = $version;
+        $this->version = (string) $version;
     }
 
     /**

@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 require_once 'bootstrap.php';
 
 $input = new \Symfony\Component\Console\Input\ArgvInput();
