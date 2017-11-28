@@ -2,3 +2,4 @@ foo: foo
 foobar: foobar
 bar: bar
 baz: baz
+none: null

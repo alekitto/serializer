@@ -72,7 +72,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['inline_child_empty'] = '{"c":"c","d":"d"}';
             $outputs['groups_all'] = '{"foo":"foo","foobar":"foobar","bar":"bar","baz":"baz","none":"none"}';
             $outputs['groups_foo'] = '{"foo":"foo","foobar":"foobar","baz":"baz"}';
-            $outputs['groups_foobar'] = '{"foo":"foo","foobar":"foobar","bar":"bar","baz":"baz"}';
+            $outputs['groups_foobar'] = '{"foo":"foo","foobar":"foobar","bar":"bar","baz":"baz","none":null}';
             $outputs['groups_foo_not_baz'] = '{"foo":"foo","foobar":"foobar"}';
             $outputs['groups_default'] = '{"bar":"bar","none":"none"}';
             $outputs['groups_advanced'] = '{"name":"John","manager":{"name":"John Manager","friends":[{"nickname":"nickname"},{"nickname":"nickname"}]},"friends":[{"manager":{"name":"John friend 1 manager"}},{"manager":{"name":"John friend 2 manager"}}]}';

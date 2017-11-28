@@ -90,9 +90,14 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->data = [];
 
         /** @var PropertyMetadata $propertyMetadata */
-        foreach ($context->getNonSkippedProperties($metadata) as $propertyMetadata) {
+        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+            $excluded = $context->isPropertyExcluded($propertyMetadata);
+            if ($excluded && $propertyMetadata->onExclude === PropertyMetadata::ON_EXCLUDE_SKIP) {
+                continue;
+            }
+
             $context->getMetadataStack()->push($propertyMetadata);
-            $this->visitProperty($propertyMetadata, $data, $context);
+            $this->visitProperty($propertyMetadata, $excluded ? null : $data, $context);
             $context->getMetadataStack()->pop();
         }
 
@@ -145,9 +150,7 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
-        $v = $metadata->getValue($data);
-
-        $v = $this->navigator->accept($v, $metadata->type, $context);
+        $v = null !== $data ? $this->navigator->accept($metadata->getValue($data), $metadata->type, $context) : null;
         if (null === $v && ! $context->shouldSerializeNull()) {
             return;
         }
