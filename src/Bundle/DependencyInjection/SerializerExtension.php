@@ -37,7 +37,7 @@ final class SerializerExtension extends Extension
                 ->addTag('kcs_serializer.handler');
         }
 
-        if (class_exists(FilesystemCache::class)) {
+        if (! $container->getParameter('kernel.debug') && class_exists(FilesystemCache::class)) {
             $container->register('kcs_serializer.metadata.cache', FilesystemCache::class)
                 ->addArgument('%kernel.cache_dir%/kcs_serializer');
         }
