@@ -178,6 +178,15 @@ abstract class Context
         return $this->metadataStack;
     }
 
+    public function isPropertyExcluded(PropertyMetadata $metadata): bool
+    {
+        if (null === $this->exclusionStrategy) {
+            return false;
+        }
+
+        return $this->exclusionStrategy->shouldSkipProperty($metadata, $this);
+    }
+
     /**
      * Get the array of properties that should be serialized in an object.
      *
@@ -204,11 +213,7 @@ abstract class Context
 
     protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata)
     {
-        if (null === $this->exclusionStrategy) {
-            return true;
-        }
-
-        return ! $this->exclusionStrategy->shouldSkipProperty($propertyMetadata, $this);
+        return ! $this->isPropertyExcluded($propertyMetadata);
     }
 
     private function assertMutable()

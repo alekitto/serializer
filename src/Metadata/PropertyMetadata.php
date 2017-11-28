@@ -28,10 +28,14 @@ class PropertyMetadata extends BasePropertyMetadata
     const ACCESS_TYPE_PROPERTY = 'property';
     const ACCESS_TYPE_PUBLIC_METHOD = 'public_method';
 
+    const ON_EXCLUDE_NULL = 'null';
+    const ON_EXCLUDE_SKIP = 'skip';
+
     public $sinceVersion;
     public $untilVersion;
     public $groups = [];
     public $exclusionGroups = [];
+    public $onExclude = self::ON_EXCLUDE_NULL;
     public $serializedName;
     public $type;
     public $xmlCollection = false;

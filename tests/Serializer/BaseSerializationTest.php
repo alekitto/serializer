@@ -716,7 +716,7 @@ abstract class BaseSerializationTest extends TestCase
 
         $this->assertEquals(
             $this->getContent('groups_foobar'),
-            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['foo', 'bar']))
+            $this->serializer->serialize($groupsObject, $this->getFormat(), SerializationContext::create()->setGroups(['foo', 'bar'])->setSerializeNull(true))
         );
 
         $this->assertEquals(
