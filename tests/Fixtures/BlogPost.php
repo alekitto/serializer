@@ -22,6 +22,7 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Groups;
+use Kcs\Serializer\Annotation\OnExclude;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlAttribute;
@@ -54,6 +55,7 @@ class BlogPost
      * @Type("string")
      * @Groups({"comments","post"})
      * @XmlElement(namespace="http://purl.org/dc/elements/1.1/");
+     * @OnExclude("skip")
      */
     private $title;
 
