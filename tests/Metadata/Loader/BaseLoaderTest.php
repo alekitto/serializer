@@ -71,6 +71,7 @@ abstract class BaseLoaderTest extends TestCase
         $p->groups = ['comments', 'post'];
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->onExclude = PropertyMetadata::ON_EXCLUDE_SKIP;
         $this->assertEquals($p, $m->getAttributeMetadata('title'));
 
         $p = new PropertyMetadata($m->getName(), 'createdAt');

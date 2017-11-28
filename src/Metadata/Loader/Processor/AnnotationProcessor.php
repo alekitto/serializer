@@ -53,6 +53,7 @@ class AnnotationProcessor
         Annotations\Groups::class => GroupsProcessor::class,
         Annotations\Inline::class => InlineProcessor::class,
         Annotations\MaxDepth::class => MaxDepthProcessor::class,
+        Annotations\OnExclude::class => OnExcludeProcessor::class,
     ];
 
     public function process($annotation, MetadataInterface $metadata)

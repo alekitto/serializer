@@ -16,6 +16,7 @@ Kcs\Serializer\Tests\Fixtures\BlogPost:
         title:
             type: string
             groups: [comments, post]
+            on_exclude: skip
             xml_element:
                 namespace: http://purl.org/dc/elements/1.1/
         createdAt:

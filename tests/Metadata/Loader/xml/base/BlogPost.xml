@@ -9,7 +9,7 @@
         <property name="id" type="string" groups="comments,post">
             <xml-element cdata="false"/>
         </property>
-        <property name="title" type="string" groups="comments,post">
+        <property name="title" type="string" groups="comments,post" on-exclude="skip">
             <xml-element namespace="http://purl.org/dc/elements/1.1/"/>
         </property>
         <property name="createdAt" type="DateTime">
