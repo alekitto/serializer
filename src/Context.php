@@ -46,6 +46,11 @@ abstract class Context
         $this->attributes = new AttributesMap();
     }
 
+    public function __clone()
+    {
+        $this->attributes = clone $this->attributes;
+    }
+
     public static function create()
     {
         return new static();
