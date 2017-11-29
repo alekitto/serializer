@@ -92,4 +92,16 @@ class ContextTest extends TestCase
         $context->setSerializeNull('0');
         $this->assertFalse($context->shouldSerializeNull());
     }
+
+    public function testContextShouldBeCloneable()
+    {
+        $context = SerializationContext::create();
+        $context->setGroups(['foobar']);
+
+        $ctx2 = clone $context;
+        $ctx2->setGroups(['bar', 'foobar']);
+
+        $this->assertEquals(['foobar'], $context->attributes->get('groups'));
+        $this->assertEquals(['bar', 'foobar'], $ctx2->attributes->get('groups'));
+    }
 }
