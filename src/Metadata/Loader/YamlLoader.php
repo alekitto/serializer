@@ -61,6 +61,24 @@ class YamlLoader extends AnnotationLoader
 
         $annotations = [];
         foreach ($config as $key => $value) {
+            if ('static_fields' === $key) {
+                foreach ($value as $property => $item) {
+                    if (! is_array($item)) {
+                        $item = ['value' => $item];
+                    }
+
+                    $annotation = new Annotations\StaticField();
+                    $annotation->name = $property;
+                    $annotation->value = $item['value'];
+                    unset($item['value']);
+
+                    $annotation->attributes = $this->loadProperty($item);
+                    $annotations[] = $annotation;
+                }
+
+                continue;
+            }
+
             if (in_array($key, ['properties', 'virtual_properties'])) {
                 continue;
             }

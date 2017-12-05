@@ -11,6 +11,7 @@ use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\Processor\AnnotationProcessor;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class AnnotationLoader implements LoaderInterface
@@ -84,6 +85,9 @@ class AnnotationLoader implements LoaderInterface
             if ($annotation instanceof Annotation\AdditionalField) {
                 $additionalMetadata = new AdditionalPropertyMetadata($classMetadata->name, $annotation->name);
                 $this->loadExposedAttribute($additionalMetadata, $annotation->attributes, $classMetadata);
+            } elseif ($annotation instanceof Annotation\StaticField) {
+                $staticMetadata = new StaticPropertyMetadata($classMetadata->name, $annotation->name, $annotation->value);
+                $this->loadExposedAttribute($staticMetadata, $annotation->attributes, $classMetadata);
             }
         }
     }

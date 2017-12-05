@@ -1,0 +1,9 @@
+Kcs\Serializer\Tests\Fixtures\ObjectWithStaticFields:
+    properties:
+        existField:
+            type: string
+    static_fields:
+        additional_1:
+            value: '12'
+            type: integer
+        additional_2: 'foobar'

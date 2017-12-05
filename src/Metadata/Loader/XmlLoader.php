@@ -65,6 +65,7 @@ class XmlLoader extends AnnotationLoader
             'post-serialize',
             'post-deserialize',
             'discriminator',
+            'static-field',
         ];
 
         $annotations = $this->loadComplex($element, ['name'], $exclude);
@@ -83,6 +84,16 @@ class XmlLoader extends AnnotationLoader
 
             $discriminator->map = $map;
             $annotations[] = $discriminator;
+        }
+
+        foreach ($element->xpath('./static-field') as $fieldElement) {
+            $field = new Annotations\StaticField();
+            foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
+                $field->{$attrName} = $value;
+            }
+
+            $field->attributes = $this->loadComplex($fieldElement, ['name', 'value']);
+            $annotations[] = $field;
         }
 
         return $annotations;

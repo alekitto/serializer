@@ -5,6 +5,7 @@ namespace Kcs\Serializer\Tests\Metadata\Loader;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
@@ -13,6 +14,7 @@ use Kcs\Serializer\Tests\Fixtures\Comment;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Car;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle;
 use Kcs\Serializer\Tests\Fixtures\Node;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithStaticFields;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualPropertiesAndExcludeAll;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
@@ -104,6 +106,23 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlValue = true;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         $this->assertEquals($p, $m->getAttributeMetadata('price'));
+    }
+
+    public function testStaticFields()
+    {
+        $m = new ClassMetadata(new \ReflectionClass(ObjectWithStaticFields::class));
+        $this->getLoader()->loadClassMetadata($m);
+
+        $this->assertArrayHasKey('existField', $m->getAttributesMetadata());
+        $this->assertArrayHasKey('additional_1', $m->getAttributesMetadata());
+        $this->assertArrayHasKey('additional_2', $m->getAttributesMetadata());
+
+        $p = new StaticPropertyMetadata($m->getName(), 'additional_1', "12");
+        $p->type = Type::parse("integer");
+        $this->assertEquals($p, $m->getAttributeMetadata('additional_1'));
+
+        $p = new StaticPropertyMetadata($m->getName(), 'additional_2', 'foobar');
+        $this->assertEquals($p, $m->getAttributeMetadata('additional_2'));
     }
 
     public function testVirtualProperty()
