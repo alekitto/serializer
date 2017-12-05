@@ -8,7 +8,7 @@ namespace Kcs\Serializer\Annotation;
  *
  * @author Alessandro Chitolina <alekitto@gmail.com>
  */
-final class AdditionalField
+final class StaticField
 {
     /**
      * @Required
@@ -21,4 +21,11 @@ final class AdditionalField
      * @var array
      */
     public $attributes = [];
+
+    /**
+     * @Required
+     *
+     * @var mixed
+     */
+    public $value;
 }

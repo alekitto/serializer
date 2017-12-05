@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serializer>
+    <class name="Kcs\Serializer\Tests\Fixtures\ObjectWithStaticFields">
+        <property name="existField" type="string" />
+        <static-field name="additional_1" value="12">
+            <type name="integer" />
+        </static-field>
+        <static-field name="additional_2" value="foobar" />
+    </class>
+</serializer>
