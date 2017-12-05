@@ -1,6 +1,7 @@
 framework:
     test: ~
     secret: secret
+    translator: ~
     router:
         resource: "%kernel.root_dir%/routing.yml"
 
