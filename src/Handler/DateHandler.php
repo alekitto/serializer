@@ -17,23 +17,33 @@ class DateHandler implements SubscribingHandlerInterface
 
     public static function getSubscribingMethods()
     {
-        $methods = [];
-
-        $methods[] = [
-            'type' => 'DateTime',
+        yield [
+            'type' => \DateTime::class,
             'direction' => Direction::DIRECTION_DESERIALIZATION,
             'method' => 'deserializeDateTime',
         ];
 
-        foreach ([\DateTime::class, \DateInterval::class] as $type) {
-            $methods[] = [
-                'type' => $type,
-                'direction' => Direction::DIRECTION_SERIALIZATION,
-                'method' => 'serialize'.$type,
+        foreach ([\DateTimeImmutable::class, \DateTimeInterface::class] as $class) {
+            yield [
+                'type' => $class,
+                'direction' => Direction::DIRECTION_DESERIALIZATION,
+                'method' => 'deserializeDateTimeImmutable',
             ];
         }
 
-        return $methods;
+
+        foreach ([\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class] as $class) {
+            yield [
+                'type' => $class,
+                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'method' => 'serializeDateTime',
+            ];
+        }
+        yield [
+            'type' => \DateInterval::class,
+            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'method' => 'serializeDateInterval',
+        ];
     }
 
     public function __construct($defaultFormat = \DateTime::ISO8601, $defaultTimezone = 'UTC', $xmlCData = true)
@@ -43,7 +53,7 @@ class DateHandler implements SubscribingHandlerInterface
         $this->xmlCData = $xmlCData;
     }
 
-    public function serializeDateTime(VisitorInterface $visitor, \DateTime $date, Type $type, Context $context)
+    public function serializeDateTime(VisitorInterface $visitor, \DateTimeInterface $date, Type $type, Context $context)
     {
         $format = $this->getFormat($type);
         if ('U' === $format) {
@@ -60,13 +70,23 @@ class DateHandler implements SubscribingHandlerInterface
 
     public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type)
     {
+        return $this->deserializeDateTimeInterface(\DateTime::class, $data, $type);
+    }
+
+    public function deserializeDateTimeImmutable(VisitorInterface $visitor, $data, Type $type)
+    {
+        return $this->deserializeDateTimeInterface(\DateTimeImmutable::class, $data, $type);
+    }
+
+    private function deserializeDateTimeInterface(string $class, $data, Type $type)
+    {
         if (null === $data) {
             return null;
         }
 
         $timezone = $type->hasParam(1) ? new \DateTimeZone($type->getParam(1)) : $this->defaultTimezone;
         $format = $this->getFormat($type);
-        $datetime = \DateTime::createFromFormat($format, (string) $data, $timezone);
+        $datetime = $class::createFromFormat($format, (string) $data, $timezone);
 
         if (false === $datetime) {
             throw new RuntimeException(sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
