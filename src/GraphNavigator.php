@@ -227,7 +227,7 @@ class GraphNavigator
             return $metadata;
         }
 
-        if (! class_exists($type->getName(), false) && ! interface_exists($type->getName(), false)) {
+        if (! class_exists($type->getName()) && ! interface_exists($type->getName())) {
             return null;
         }
 
