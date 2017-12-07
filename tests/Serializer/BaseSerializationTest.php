@@ -56,6 +56,7 @@ use Kcs\Serializer\Tests\Fixtures\Input;
 use Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject;
 use Kcs\Serializer\Tests\Fixtures\Log;
 use Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject;
+use Kcs\Serializer\Tests\Fixtures\NamedDateTimeInterfaceArraysObject;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithEmptyHash;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
@@ -315,6 +316,36 @@ abstract class BaseSerializationTest extends TestCase
 
             /** @var NamedDateTimeArraysObject $deserializedObject */
             $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject');
+
+            /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
+            foreach ($deserializedObject->getNamedArrayWithFormattedDate() as $dateTime) {
+                $dateTime->setTimezone(new \DateTimeZone('UTC'));
+            }
+
+            $this->assertEquals($object, $deserializedObject);
+        }
+    }
+
+    public function testNamedDateTimeInterfaceArrays()
+    {
+        $data = [
+            new \DateTimeImmutable('2047-01-01 12:47:47', new \DateTimeZone('UTC')),
+            new \DateTime('2013-12-05 00:00:00', new \DateTimeZone('UTC')),
+        ];
+
+        $object = new NamedDateTimeInterfaceArraysObject(['testdate1' => $data[0], 'testdate2' => $data[1]]);
+        $serializedObject = $this->serialize($object);
+
+        $this->assertEquals($this->getContent('array_named_datetimes_object'), $serializedObject);
+
+        if ($this->hasDeserializer()) {
+            // skip XML deserialization
+            if ('xml' === $this->getFormat()) {
+                return;
+            }
+
+            /** @var NamedDateTimeInterfaceArraysObject $deserializedObject */
+            $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\NamedDateTimeInterfaceArraysObject');
 
             /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
             foreach ($deserializedObject->getNamedArrayWithFormattedDate() as $dateTime) {
