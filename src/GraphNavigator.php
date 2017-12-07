@@ -93,7 +93,7 @@ class GraphNavigator
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
         if (is_subclass_of($data, $type->getName(), false)) {
-            $type = new Type(get_class($data));
+            $type = new Type(get_class($data), $type->getParams());
         }
 
         if (null !== $this->dispatcher && ! is_scalar($data)) {
