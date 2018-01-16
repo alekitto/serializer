@@ -78,6 +78,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['garage'] = '{"vehicles":[{"km":3,"type":"car"},{"km":1,"type":"moped"}]}';
             $outputs['tree'] = '{"tree":{"children":[{"children":[{"children":[],"foo":"bar"}],"foo":"bar"}],"foo":"bar"}}';
             $outputs['object_with_additional_field'] = '{"authors":[{"_links":{"details":"http:\/\/foo.bar\/details\/Foo","comments":"http:\/\/foo.bar\/details\/Foo\/comments"},"full_name":"Foo"},{"_links":{"details":"http:\/\/foo.bar\/details\/Bar","comments":"http:\/\/foo.bar\/details\/Bar\/comments"},"full_name":"Bar"}]}';
+            $outputs['type_passed_to_serialize'] = '[{"name":"Foo"},{"name":"Bar"}]';
             $outputs['object_subclass_with_additional_field'] = '{"authors":[{"is_child":true,"_links":{"details":"http:\/\/foo.bar\/details\/Foo","comments":"http:\/\/foo.bar\/details\/Foo\/comments"},"full_name":"Foo"},{"is_child":true,"_links":{"details":"http:\/\/foo.bar\/details\/Bar","comments":"http:\/\/foo.bar\/details\/Bar\/comments"},"full_name":"Bar"}]}';
         }
 

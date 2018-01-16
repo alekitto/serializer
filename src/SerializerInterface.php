@@ -4,11 +4,6 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Type\Type;
 
-/**
- * Serializer Interface.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- */
 interface SerializerInterface
 {
     /**
@@ -20,7 +15,7 @@ interface SerializerInterface
      *
      * @return string
      */
-    public function serialize($data, $format, SerializationContext $context = null);
+    public function serialize($data, $format, SerializationContext $context = null, Type $type = null);
 
     /**
      * Deserializes the given data to the specified type.
