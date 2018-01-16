@@ -1038,6 +1038,14 @@ abstract class BaseSerializationTest extends TestCase
         $this->assertEquals($this->getContent('object_with_additional_field'), $this->serialize($list));
     }
 
+    public function testSetTypeInSerialization()
+    {
+        $this->assertEquals($this->getContent('type_passed_to_serialize'), $this->serialize([
+            new Author('Foo'),
+            new Author('Bar'),
+        ], null, Type::parse('array<AuthorAsType>')));
+    }
+
     public function testAdditionalFieldInheritedBySubclasses()
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
@@ -1065,9 +1073,9 @@ abstract class BaseSerializationTest extends TestCase
         return true;
     }
 
-    protected function serialize($data, Context $context = null)
+    protected function serialize($data, Context $context = null, Type $type = null)
     {
-        return $this->serializer->serialize($data, $this->getFormat(), $context);
+        return $this->serializer->serialize($data, $this->getFormat(), $context, $type);
     }
 
     protected function deserialize($content, $type, Context $context = null)
@@ -1090,6 +1098,11 @@ abstract class BaseSerializationTest extends TestCase
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',
             function (VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitArray(iterator_to_array($object), $type, $context);
+            }
+        );
+        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorAsType',
+            function (VisitorInterface $visitor, Author $object, Type $type, Context $context) {
+                return $visitor->visitArray(['name' => $object->getName()], $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_DESERIALIZATION, 'AuthorList',

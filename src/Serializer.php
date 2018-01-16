@@ -10,23 +10,26 @@ use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Serializer Implementation.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- */
 class Serializer implements SerializerInterface
 {
-    /** @var MetadataFactoryInterface */
+    /**
+     * @var MetadataFactoryInterface
+     */
     private $factory;
 
-    /** @var VisitorInterface[] */
+    /**
+     * @var VisitorInterface[]
+     */
     private $serializationVisitors;
 
-    /** @var VisitorInterface[] */
+    /**
+     * @var VisitorInterface[]
+     */
     private $deserializationVisitors;
 
-    /** @var GraphNavigator */
+    /**
+     * @var GraphNavigator
+     */
     private $navigator;
 
     /**
@@ -48,7 +51,10 @@ class Serializer implements SerializerInterface
         $this->navigator = new GraphNavigator($this->factory, $handlerRegistry, $objectConstructor, $dispatcher);
     }
 
-    public function serialize($data, $format, SerializationContext $context = null)
+    /**
+     * @inheritdoc
+     */
+    public function serialize($data, $format, SerializationContext $context = null, Type $type = null)
     {
         if (null === $context) {
             $context = new SerializationContext();
@@ -58,9 +64,12 @@ class Serializer implements SerializerInterface
             throw new UnsupportedFormatException("The format \"$format\" is not supported for serialization");
         }
 
-        return $this->visit($this->serializationVisitors[$format], $context, $data, $format);
+        return $this->visit($this->serializationVisitors[$format], $context, $data, $format, $type);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function deserialize($data, Type $type, $format, DeserializationContext $context = null)
     {
         if (null === $context) {
@@ -79,12 +88,13 @@ class Serializer implements SerializerInterface
      *
      * This is useful when the data needs to be passed on to other methods which expect array data.
      *
-     * @param mixed                $data    anything that converts to an array, typically an object or an array of objects
+     * @param mixed $data anything that converts to an array, typically an object or an array of objects
      * @param SerializationContext $context
+     * @param Type|null $type
      *
      * @return array
      */
-    public function toArray($data, SerializationContext $context = null)
+    public function toArray($data, SerializationContext $context = null, Type $type = null)
     {
         $result = $this->serialize($data, 'array', $context);
 
