@@ -52,7 +52,7 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function serialize($data, $format, SerializationContext $context = null, Type $type = null)
     {
@@ -68,7 +68,7 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function deserialize($data, Type $type, $format, DeserializationContext $context = null)
     {
@@ -88,9 +88,9 @@ class Serializer implements SerializerInterface
      *
      * This is useful when the data needs to be passed on to other methods which expect array data.
      *
-     * @param mixed $data anything that converts to an array, typically an object or an array of objects
+     * @param mixed                $data    anything that converts to an array, typically an object or an array of objects
      * @param SerializationContext $context
-     * @param Type|null $type
+     * @param Type|null            $type
      *
      * @return array
      */

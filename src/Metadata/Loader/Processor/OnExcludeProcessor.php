@@ -9,6 +9,6 @@ class OnExcludeProcessor extends PropertyMetadataProcessor
 {
     protected static function doProcess($annotation, PropertyMetadata $metadata)
     {
-        $metadata->onExclude = $annotation->policy === OnExclude::NULL ? PropertyMetadata::ON_EXCLUDE_NULL : PropertyMetadata::ON_EXCLUDE_SKIP;
+        $metadata->onExclude = OnExclude::NULL === $annotation->policy ? PropertyMetadata::ON_EXCLUDE_NULL : PropertyMetadata::ON_EXCLUDE_SKIP;
     }
 }

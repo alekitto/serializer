@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures\Kernel;
 
 use Kcs\Serializer\Bundle\SerializerBundle;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -39,12 +40,19 @@ class AppKernel extends Kernel
         $cache = new ConfigCache($this->getCacheDir().'/'.$class.'.php', $this->debug);
 
         $container = $this->buildContainer();
+        $container->register('logger', NullLogger::class);
         $container->compile();
         $this->dumpContainer($cache, $container, $class, $this->getContainerBaseClass());
 
-        require_once $cache->getPath();
+        if (Kernel::VERSION_ID >= 30400) {
+            $this->container = require $cache->getPath();
+        } else {
+            // Legacy-compiled container.
+            // Do not require the same file twice, as this will lead to a fatal error.
+            require_once $cache->getPath();
+            $this->container = new $class();
+        }
 
-        $this->container = new $class();
         $this->container->set('kernel', $this);
 
         if ($this->container->has('cache_warmer')) {
