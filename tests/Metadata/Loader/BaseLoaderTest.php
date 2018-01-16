@@ -117,8 +117,8 @@ abstract class BaseLoaderTest extends TestCase
         $this->assertArrayHasKey('additional_1', $m->getAttributesMetadata());
         $this->assertArrayHasKey('additional_2', $m->getAttributesMetadata());
 
-        $p = new StaticPropertyMetadata($m->getName(), 'additional_1', "12");
-        $p->type = Type::parse("integer");
+        $p = new StaticPropertyMetadata($m->getName(), 'additional_1', '12');
+        $p->type = Type::parse('integer');
         $this->assertEquals($p, $m->getAttributeMetadata('additional_1'));
 
         $p = new StaticPropertyMetadata($m->getName(), 'additional_2', 'foobar');

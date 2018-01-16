@@ -75,7 +75,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
             $excluded = $context->isPropertyExcluded($propertyMetadata);
-            if ($excluded && $propertyMetadata->onExclude === PropertyMetadata::ON_EXCLUDE_SKIP) {
+            if ($excluded && PropertyMetadata::ON_EXCLUDE_SKIP === $propertyMetadata->onExclude) {
                 continue;
             }
 

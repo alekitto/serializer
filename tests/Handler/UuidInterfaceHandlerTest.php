@@ -30,7 +30,7 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
         $this->handler->serialize($this->visitor->reveal(), $uuid, Type::parse(Uuid::class), $this->context->reveal());
     }
 
-    protected function createHandler() : SubscribingHandlerInterface
+    protected function createHandler(): SubscribingHandlerInterface
     {
         return new UuidInterfaceHandler();
     }

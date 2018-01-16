@@ -33,5 +33,5 @@ abstract class AbstractHandlerTest extends TestCase
         $this->handler = $this->createHandler();
     }
 
-    abstract protected function createHandler() : SubscribingHandlerInterface;
+    abstract protected function createHandler(): SubscribingHandlerInterface;
 }
