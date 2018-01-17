@@ -13,7 +13,7 @@ use Kcs\Serializer\VisitorInterface;
 
 class ArrayCollectionHandler implements SubscribingHandlerInterface
 {
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         $methods = [];
         $collectionTypes = [

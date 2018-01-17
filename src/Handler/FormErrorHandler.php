@@ -15,7 +15,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
 {
     private $translator;
 
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         return [
             [

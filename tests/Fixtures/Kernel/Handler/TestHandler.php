@@ -7,7 +7,7 @@ use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 
 class TestHandler implements SubscribingHandlerInterface
 {
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         yield [
             'direction' => Direction::DIRECTION_SERIALIZATION,

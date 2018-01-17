@@ -13,7 +13,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class ConstraintViolationHandler implements SubscribingHandlerInterface
 {
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         return [
             [

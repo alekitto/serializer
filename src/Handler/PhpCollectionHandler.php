@@ -11,7 +11,7 @@ use PhpCollection\Sequence;
 
 class PhpCollectionHandler implements SubscribingHandlerInterface
 {
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         $methods = [];
         $collectionTypes = [
