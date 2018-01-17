@@ -15,7 +15,7 @@ class DateHandler implements SubscribingHandlerInterface
     private $defaultTimezone;
     private $xmlCData;
 
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         yield [
             'type' => \DateTime::class,

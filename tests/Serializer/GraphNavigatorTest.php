@@ -122,7 +122,7 @@ class SerializableClass
 
 class TestSubscribingHandler implements SubscribingHandlerInterface
 {
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         return [[
             'type' => \JsonSerializable::class,

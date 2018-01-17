@@ -9,7 +9,7 @@ use Kcs\Serializer\VisitorInterface;
 
 class PropelCollectionHandler implements SubscribingHandlerInterface
 {
-    public static function getSubscribingMethods()
+    public function getSubscribingMethods()
     {
         $methods = [];
 
