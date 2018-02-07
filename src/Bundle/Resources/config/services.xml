@@ -7,6 +7,7 @@
     <parameters>
         <parameter key="kcs_serializer.serializer.class">Kcs\Serializer\Serializer</parameter>
         <parameter key="kcs_serializer.handler.date.class">Kcs\Serializer\Handler\DateHandler</parameter>
+        <parameter key="kcs_serializer.handler.constraint_violation.class">Kcs\Serializer\Handler\ConstraintViolationHandler</parameter>
         <parameter key="kcs_serializer.handler.php_collection.class">Kcs\Serializer\Handler\PhpCollectionHandler</parameter>
         <parameter key="kcs_serializer.handler.array_collection.class">Kcs\Serializer\Handler\ArrayCollectionHandler</parameter>
         <parameter key="kcs_serializer.handler.propel_collection.class">Kcs\Serializer\Handler\PropelCollectionHandler</parameter>
@@ -85,6 +86,7 @@
         </service>
 
         <service class="%kcs_serializer.handler.date.class%" id="kcs_serializer.handler.date" />
+        <service class="%kcs_serializer.handler.constraint_violation.class%" id="kcs_serializer.handler.constraint_violation" />
         <service class="%kcs_serializer.handler.php_collection.class%" id="kcs_serializer.handler.php_collection" />
         <service class="%kcs_serializer.handler.array_collection.class%" id="kcs_serializer.handler.array_collection" />
         <service class="%kcs_serializer.handler.propel_collection.class%" id="kcs_serializer.handler.propel_collection" />
@@ -97,6 +99,9 @@
             <argument type="service" id="service_container" />
             <call method="registerSubscribingHandler">
                 <argument type="service" id="kcs_serializer.handler.date" />
+            </call>
+            <call method="registerSubscribingHandler">
+                <argument type="service" id="kcs_serializer.handler.constraint_violation" />
             </call>
             <call method="registerSubscribingHandler">
                 <argument type="service" id="kcs_serializer.handler.php_collection" />
