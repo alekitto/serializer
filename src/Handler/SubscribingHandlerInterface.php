@@ -5,19 +5,17 @@ namespace Kcs\Serializer\Handler;
 interface SubscribingHandlerInterface
 {
     /**
-     * Return format:.
+     * Return format:
      *
-     *      array(
-     *          array(
-     *              'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
-     *              'type' => 'DateTime',
-     *              'method' => 'serializeDateTimeToJson',
-     *          ),
-     *      )
+     *      yield [
+     *          'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+     *          'type' => 'DateTime',
+     *          'method' => 'serializeDateTimeToJson',
+     *      ];
      *
      * The direction and method keys can be omitted.
      *
-     * @return array
+     * @return iterable
      */
     public function getSubscribingMethods();
 }

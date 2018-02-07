@@ -22,3 +22,4 @@ From 1.0 to 2.0
 - `@HandlerCallback`s have been removed. Can be easily replaced by an handler class
 - `pushPropertyMetadata` and `popPropertyMetadata` methods have been removed from
   `Context` class. Use `$context->getMetadataStack()->push()` (or `pop`) method instead
+- `SubscribingHandlerInterface::getSubscribingMethods` is no more static.
