@@ -22,6 +22,20 @@ class SerializerBundleTest extends WebTestCase
         $this->assertEquals([$client->getContainer()->get('test_handler'), 'serialize'], $handler);
     }
 
+    public function testDefaultHandlersAreRegistered()
+    {
+        $client = $this->createClient();
+        $registry = $client->getContainer()->get('handler_registry');
+
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'ArrayCollection'));
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Validator\ConstraintViolation'));
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, \DateTime::class));
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Form\Form'));
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PhpCollection\Sequence'));
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PropelCollection'));
+        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Ramsey\Uuid\UuidInterface'));
+    }
+
     public function testFunctional()
     {
         $client = $this->createClient();
