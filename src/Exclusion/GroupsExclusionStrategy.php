@@ -36,7 +36,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     {
         $groups = $this->getGroupsFor($navigatorContext);
 
-        if (empty($property->groups)) {
+        if (empty($property->groups) && empty($property->exclusionGroups)) {
             return ! in_array(self::DEFAULT_GROUP, $groups);
         }
 
@@ -52,7 +52,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             }
         }
 
-        return true;
+        return !empty($property->groups);
     }
 
     private function getGroupsFor(Context $navigatorContext)

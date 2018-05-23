@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <result>
+  <virt><![CDATA[virt_1]]></virt>
+  <virt><![CDATA[virt_2]]></virt>
   <foo><![CDATA[foo]]></foo>
   <foobar><![CDATA[foobar]]></foobar>
   <bar><![CDATA[bar]]></bar>
