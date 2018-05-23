@@ -53,11 +53,11 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['accessor_order_methods'] = '{"foo":"c","b":"b","a":"a"}';
             $outputs['inline'] = '{"c":"c","a":"a","b":"b","d":"d"}';
             $outputs['inline_child_empty'] = '{"c":"c","d":"d"}';
-            $outputs['groups_all'] = '{"foo":"foo","foobar":"foobar","bar":"bar","baz":"baz","none":"none"}';
-            $outputs['groups_foo'] = '{"foo":"foo","foobar":"foobar","baz":"baz"}';
-            $outputs['groups_foobar'] = '{"foo":"foo","foobar":"foobar","bar":"bar","baz":"baz","none":null}';
-            $outputs['groups_foo_not_baz'] = '{"foo":"foo","foobar":"foobar"}';
-            $outputs['groups_default'] = '{"bar":"bar","none":"none"}';
+            $outputs['groups_all'] = '{"virt":"virt_2","foo":"foo","foobar":"foobar","bar":"bar","baz":"baz","none":"none"}';
+            $outputs['groups_foo'] = '{"virt":"virt_2","foo":"foo","foobar":"foobar","baz":"baz"}';
+            $outputs['groups_foobar'] = '{"virt":"virt_2","foo":"foo","foobar":"foobar","bar":"bar","baz":"baz","none":null}';
+            $outputs['groups_foo_not_baz'] = '{"virt":"virt_1","foo":"foo","foobar":"foobar"}';
+            $outputs['groups_default'] = '{"virt":"virt_2","bar":"bar","none":"none"}';
             $outputs['groups_advanced'] = '{"name":"John","manager":{"name":"John Manager","friends":[{"nickname":"nickname"},{"nickname":"nickname"}]},"friends":[{"manager":{"name":"John friend 1 manager"}},{"manager":{"name":"John friend 2 manager"}}]}';
             $outputs['virtual_properties'] = '{"exist_field":"value","virtual_value":"value","test":"other-name","typed_virtual_property":1}';
             $outputs['virtual_properties_low'] = '{"low":1}';
