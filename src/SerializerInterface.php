@@ -12,6 +12,7 @@ interface SerializerInterface
      * @param mixed                $data
      * @param string               $format
      * @param SerializationContext $context
+     * @param Type|null            $type
      *
      * @return string
      */

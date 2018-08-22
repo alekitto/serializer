@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": "^7.1",
         "doctrine/common": "^2.0",
         "doctrine/instantiator": "^1.0.3",
         "doctrine/lexer": "^1.0.1",
@@ -55,7 +55,9 @@
         "symfony/validator": "^2.7|^3.0|^4.0",
         "symfony/yaml": "^2.7|^3.0|^4.0",
         "twig/twig": "~1.12|~2.0",
-        "symfony/phpunit-bridge": "^3.4|^4.0"
+        "symfony/phpunit-bridge": "^3.4|^4.0",
+        "symfony/serializer": "^2.7|^3.0|^4.0",
+        "symfony/messenger": "^4.1"
     },
     "autoload": {
         "psr-4": {

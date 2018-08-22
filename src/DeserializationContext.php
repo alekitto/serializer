@@ -20,7 +20,7 @@ class DeserializationContext extends Context
 
     public function increaseDepth()
     {
-        $this->depth += 1;
+        ++$this->depth;
     }
 
     public function decreaseDepth()
@@ -29,7 +29,7 @@ class DeserializationContext extends Context
             throw new \LogicException('Depth cannot be smaller than zero.');
         }
 
-        $this->depth -= 1;
+        --$this->depth;
     }
 
     protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata)

@@ -52,7 +52,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             }
         }
 
-        return !empty($property->groups);
+        return ! empty($property->groups);
     }
 
     private function getGroupsFor(Context $navigatorContext)
