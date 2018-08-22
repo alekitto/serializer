@@ -12,6 +12,10 @@
     syntaxCheck                 = "false"
     bootstrap                   = "tests/bootstrap.php"
 >
+    <php>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+    </php>
+
     <testsuites>
         <testsuite name="Kcs Serializer Test Suite">
             <directory>./tests</directory>
