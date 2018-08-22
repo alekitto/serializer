@@ -4,6 +4,7 @@ namespace Kcs\Serializer\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ODM\MongoDB\PersistentCollection as MongoDBPersistentCollection;
 use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
 use Doctrine\ORM\PersistentCollection;
 use Kcs\Serializer\Context;
