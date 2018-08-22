@@ -15,7 +15,6 @@ use Prophecy\Argument;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class MessengerSerializerTest extends TestCase
 {
@@ -45,7 +44,7 @@ class MessengerSerializerTest extends TestCase
     public function testEncodedWithConfigurationIsDecodable()
     {
         $envelope = Envelope::wrap(new DummyMessage('Hello'))
-            ->with(new SerializerConfiguration([ObjectNormalizer::GROUPS => ['foo']]))
+            ->with(new SerializerConfiguration(['groups' => ['foo']]))
             ->with(new ValidationConfiguration(['foo', 'bar']))
         ;
 
@@ -83,7 +82,7 @@ class MessengerSerializerTest extends TestCase
     public function testEncodedWithSerializationConfiguration()
     {
         $envelope = Envelope::wrap(new DummyMessage('Hello'))
-            ->with(new SerializerConfiguration([ObjectNormalizer::GROUPS => ['foo']]))
+            ->with(new SerializerConfiguration(['groups' => ['foo']]))
             ->with(new ValidationConfiguration(['foo', 'bar']))
         ;
 
