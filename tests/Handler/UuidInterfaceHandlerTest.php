@@ -13,7 +13,7 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
 {
     public function testGetSubscribingMethodsShouldReturnAllTypes()
     {
-        $this->assertCount(3, iterator_to_array($this->handler->getSubscribingMethods()));
+        $this->assertCount(6, iterator_to_array($this->handler->getSubscribingMethods()));
     }
 
     public function testSerializeShouldHandleNullValue()
@@ -28,6 +28,22 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
 
         $uuid = Uuid::fromString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95');
         $this->handler->serialize($this->visitor->reveal(), $uuid, Type::parse(Uuid::class), $this->context->reveal());
+    }
+
+    public function testDeserializeShouldHandleNullValue()
+    {
+        $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled();
+        $this->handler->deserialize($this->visitor->reveal(), null, Type::parse(UuidInterface::class), $this->context->reveal());
+    }
+
+    public function testDeserializeShouldReturnUuidObject()
+    {
+        $uuid = Uuid::fromString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95');
+
+        $this->assertEquals(
+            $uuid,
+            $this->handler->deserialize($this->visitor->reveal(), 'b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95', Type::parse(UuidInterface::class), $this->context->reveal())
+        );
     }
 
     protected function createHandler(): SubscribingHandlerInterface
