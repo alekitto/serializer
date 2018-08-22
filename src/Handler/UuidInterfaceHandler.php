@@ -29,15 +29,36 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
                 'type' => $type,
                 'method' => 'serialize',
             ];
+
+            yield [
+                'direction' => Direction::DIRECTION_DESERIALIZATION,
+                'type' => $type,
+                'method' => 'deserialize',
+            ];
         }
     }
 
-    public function serialize(VisitorInterface $visitor, ? UuidInterface $uuid, Type $type, Context $context)
+    /**
+     * Serializes an Uuid object into a string.
+     */
+    public function serialize(VisitorInterface $visitor, ?UuidInterface $uuid, Type $type, Context $context): ?string
     {
         if (null === $uuid) {
             return $visitor->visitNull(null, Type::null(), $context);
         }
 
         return $visitor->visitString($uuid->toString(), $type, $context);
+    }
+
+    /**
+     * Converts a string representation into an Uuid object.
+     */
+    public function deserialize(VisitorInterface $visitor, $data, Type $type, Context $context): ?UuidInterface
+    {
+        if (empty($data)) {
+            return $visitor->visitNull(null, Type::null(), $context);
+        }
+
+        return Uuid::fromString($data);
     }
 }
