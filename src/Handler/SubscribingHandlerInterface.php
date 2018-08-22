@@ -5,7 +5,7 @@ namespace Kcs\Serializer\Handler;
 interface SubscribingHandlerInterface
 {
     /**
-     * Return format:
+     * Return format:.
      *
      *      yield [
      *          'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
