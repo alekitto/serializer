@@ -42,7 +42,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     {
         $object = $this->loadFromObjectManager($metadata, $data);
 
-        return $object ?: $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
+        return $object ?? $this->fallbackConstructor->construct($visitor, $metadata, $data, $type, $context);
     }
 
     /**
@@ -52,7 +52,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
      *
      * @return $this
      */
-    public function addManagerRegistry(ManagerRegistry $managerRegistry)
+    public function addManagerRegistry(ManagerRegistry $managerRegistry): self
     {
         $this->managerRegistryCollection->attach($managerRegistry);
 
@@ -67,13 +67,15 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
      *
      * @return null|ObjectManager
      */
-    protected function getObjectManager(ClassMetadata $metadata)
+    protected function getObjectManager(ClassMetadata $metadata): ?ObjectManager
     {
         foreach ($this->managerRegistryCollection as $managerRegistry) {
             if ($objectManager = $managerRegistry->getManagerForClass($metadata->getName())) {
                 return $objectManager;
             }
         }
+
+        return null;
     }
 
     /**
@@ -88,7 +90,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     {
         // Locate possible ObjectManager
         if (null === $objectManager = $this->getObjectManager($metadata)) {
-            return;
+            return null;
         }
 
         // Locate possible ClassMetadata
@@ -96,7 +98,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
         if ($classMetadataFactory->isTransient($metadata->getName())) {
             // No ClassMetadata found, proceed with normal deserialization
-            return;
+            return null;
         }
 
         if (! is_array($data)) {
@@ -110,10 +112,14 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
         foreach ($classMetadata->getIdentifierFieldNames() as $name) {
             if (! array_key_exists($name, $data)) {
-                return;
+                continue;
             }
 
             $identifierList[$name] = $data[$name];
+        }
+
+        if (0 === count($identifierList)) {
+            return null;
         }
 
         // Entity update, load it from database
