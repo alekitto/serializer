@@ -10,7 +10,12 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
     const DEFAULT_GROUP = 'Default';
 
-    private $groups = [];
+    private $groups;
+
+    /**
+     * @var bool
+     */
+    private $nestedGroups;
 
     public function __construct(array $groups)
     {
@@ -18,7 +23,21 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             $groups = [self::DEFAULT_GROUP];
         }
 
-        $this->groups = $groups;
+        $this->nestedGroups = (function () use (&$groups): bool {
+            foreach ($groups as $group) {
+                if (is_array($group)) {
+                    return true;
+                }
+            }
+
+            return false;
+        })();
+
+        if ($this->nestedGroups) {
+            $this->groups = $groups;
+        } else {
+            $this->groups = array_combine($groups, array_fill(0, count($groups), true));
+        }
     }
 
     /**
@@ -34,21 +53,39 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext)
     {
-        $groups = $this->getGroupsFor($navigatorContext);
+        if ($this->nestedGroups) {
+            $groups = $this->getGroupsFor($navigatorContext);
 
-        if (empty($property->groups) && empty($property->exclusionGroups)) {
-            return ! in_array(self::DEFAULT_GROUP, $groups);
-        }
-
-        foreach ($property->exclusionGroups as $group) {
-            if (in_array($group, $groups)) {
-                return true;
+            if (empty($property->groups) && empty($property->exclusionGroups)) {
+                return !in_array(self::DEFAULT_GROUP, $groups);
             }
-        }
 
-        foreach ($property->groups as $group) {
-            if (in_array($group, $groups)) {
-                return false;
+            foreach ($property->exclusionGroups as $group) {
+                if (in_array($group, $groups)) {
+                    return true;
+                }
+            }
+
+            foreach ($property->groups as $group) {
+                if (in_array($group, $groups)) {
+                    return false;
+                }
+            }
+        } else {
+            if (empty($property->groups) && empty($property->exclusionGroups)) {
+                return ! isset($this->groups[self::DEFAULT_GROUP]);
+            }
+
+            foreach ($property->exclusionGroups as $group) {
+                if (isset($this->groups[$group])) {
+                    return true;
+                }
+            }
+
+            foreach ($property->groups as $group) {
+                if (isset($this->groups[$group])) {
+                    return false;
+                }
             }
         }
 
