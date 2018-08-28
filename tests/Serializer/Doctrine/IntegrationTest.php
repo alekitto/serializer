@@ -10,7 +10,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -113,7 +112,7 @@ class IntegrationTest extends TestCase
         return $con;
     }
 
-    private function createEntityManager(Connection $con): EntityManagerInterface
+    private function createEntityManager(Connection $con): EntityManager
     {
         $cfg = new Configuration();
         $cfg->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), [
