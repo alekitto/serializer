@@ -23,7 +23,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
         $this->currentPath = [];
     }
 
-    public function push(PropertyMetadata $metadata)
+    public function push(PropertyMetadata $metadata): void
     {
         $this->stack->push($metadata);
         $this->currentPath[] = $metadata->name;
@@ -42,7 +42,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
      *
      * @return string[]
      */
-    public function getPath()
+    public function getPath(): array
     {
         return $this->currentPath;
     }
@@ -55,7 +55,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): iterable
     {
         return $this->stack;
     }
@@ -63,7 +63,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
     /**
      * {@inheritdoc}
      */
-    public function count()
+    public function count(): int
     {
         return $this->stack->count();
     }

@@ -15,30 +15,49 @@ use Kcs\Serializer\Type\Type;
 
 abstract class Context
 {
-    /** @var AttributesMap */
+    /**
+     * @var AttributesMap
+     */
     public $attributes;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $format;
 
-    /** @var VisitorInterface */
+    /**
+     * @var VisitorInterface
+     */
     private $visitor;
 
-    /** @var GraphNavigator */
+    /**
+     * @var GraphNavigator
+     */
     private $navigator;
 
-    /** @var MetadataFactoryInterface */
+    /**
+     * @var MetadataFactoryInterface
+     */
     private $metadataFactory;
 
-    /** @var ExclusionStrategyInterface */
+    /**
+     * @var ExclusionStrategyInterface
+     */
     private $exclusionStrategy;
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $serializeNull = false;
 
+    /**
+     * @var bool
+     */
     private $initialized = false;
 
-    /** @var MetadataStack */
+    /**
+     * @var MetadataStack
+     */
     private $metadataStack;
 
     public function __construct()
@@ -51,13 +70,17 @@ abstract class Context
         $this->attributes = clone $this->attributes;
     }
 
-    public static function create()
+    public static function create(): self
     {
         return new static();
     }
 
-    public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
-    {
+    public function initialize(
+        string $format,
+        VisitorInterface $visitor,
+        GraphNavigator $navigator,
+        MetadataFactoryInterface $factory
+    ): void {
         if ($this->initialized) {
             throw new \LogicException('This context was already initialized, and cannot be re-used.');
         }
@@ -73,32 +96,32 @@ abstract class Context
         $this->addGroupsExclusionStrategy();
     }
 
-    public function accept($data, Type $type = null)
+    public function accept($data, ?Type $type = null)
     {
         return $this->navigator->accept($data, $type, $this);
     }
 
-    public function getMetadataFactory()
+    public function getMetadataFactory(): MetadataFactoryInterface
     {
         return $this->metadataFactory;
     }
 
-    public function getVisitor()
+    public function getVisitor(): VisitorInterface
     {
         return $this->visitor;
     }
 
-    public function getNavigator()
+    public function getNavigator(): GraphNavigator
     {
         return $this->navigator;
     }
 
-    public function getExclusionStrategy()
+    public function getExclusionStrategy(): ?ExclusionStrategyInterface
     {
         return $this->exclusionStrategy;
     }
 
-    public function setAttribute($key, $value)
+    public function setAttribute(string $key, $value): self
     {
         $this->assertMutable();
         $this->attributes->set($key, $value);
@@ -106,7 +129,7 @@ abstract class Context
         return $this;
     }
 
-    public function addExclusionStrategy(ExclusionStrategyInterface $strategy)
+    public function addExclusionStrategy(ExclusionStrategyInterface $strategy): self
     {
         $this->assertMutable();
         $this->_addExclusionStrategy($strategy);
@@ -114,14 +137,14 @@ abstract class Context
         return $this;
     }
 
-    public function setVersion($version)
+    public function setVersion($version): self
     {
         $this->setAttribute('version', $version);
 
         return $this;
     }
 
-    public function setGroups($groups)
+    public function setGroups($groups): self
     {
         if (empty($groups)) {
             $groups = null;
@@ -134,26 +157,26 @@ abstract class Context
         return $this;
     }
 
-    public function enableMaxDepthChecks()
+    public function enableMaxDepthChecks(): self
     {
         $this->addExclusionStrategy(new DepthExclusionStrategy());
 
         return $this;
     }
 
-    public function setSerializeNull($bool)
+    public function setSerializeNull($bool): self
     {
         $this->serializeNull = (bool) $bool;
 
         return $this;
     }
 
-    public function shouldSerializeNull()
+    public function shouldSerializeNull(): bool
     {
         return $this->serializeNull;
     }
 
-    public function getFormat()
+    public function getFormat(): string
     {
         return $this->format;
     }
@@ -161,7 +184,7 @@ abstract class Context
     /**
      * @return MetadataStack
      */
-    public function getMetadataStack()
+    public function getMetadataStack(): MetadataStack
     {
         return $this->metadataStack;
     }
@@ -182,7 +205,7 @@ abstract class Context
      *
      * @return PropertyMetadata[]
      */
-    public function getNonSkippedProperties(ClassMetadata $metadata)
+    public function getNonSkippedProperties(ClassMetadata $metadata): array
     {
         $this->assertInitialized();
 
@@ -192,19 +215,19 @@ abstract class Context
         return array_filter($properties, [$this, 'filterPropertyMetadata']);
     }
 
-    abstract public function getDepth();
+    abstract public function getDepth(): int;
 
     /**
      * @return int
      */
-    abstract public function getDirection();
+    abstract public function getDirection(): int;
 
-    protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata)
+    protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata): bool
     {
         return ! $this->isPropertyExcluded($propertyMetadata);
     }
 
-    private function assertMutable()
+    private function assertMutable(): void
     {
         if (! $this->initialized) {
             return;
@@ -213,7 +236,7 @@ abstract class Context
         throw new \LogicException('This context was already initialized and is immutable; you cannot modify it anymore.');
     }
 
-    private function assertInitialized()
+    private function assertInitialized(): void
     {
         if ($this->initialized) {
             return;
@@ -227,7 +250,7 @@ abstract class Context
      *
      * @param ExclusionStrategyInterface $strategy
      */
-    private function _addExclusionStrategy(ExclusionStrategyInterface $strategy)
+    private function _addExclusionStrategy(ExclusionStrategyInterface $strategy): void
     {
         if (null === $this->exclusionStrategy) {
             $this->exclusionStrategy = $strategy;
@@ -247,7 +270,7 @@ abstract class Context
         ]);
     }
 
-    private function addVersionExclusionStrategy()
+    private function addVersionExclusionStrategy(): void
     {
         if (null === ($version = $this->attributes->get('version'))) {
             return;
@@ -256,7 +279,7 @@ abstract class Context
         $this->_addExclusionStrategy(new VersionExclusionStrategy($version));
     }
 
-    private function addGroupsExclusionStrategy()
+    private function addGroupsExclusionStrategy(): void
     {
         if (null === ($groups = $this->attributes->get('groups'))) {
             return;

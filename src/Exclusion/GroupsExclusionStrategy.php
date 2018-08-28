@@ -10,6 +10,9 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
     const DEFAULT_GROUP = 'Default';
 
+    /**
+     * @var string[]
+     */
     private $groups;
 
     /**
@@ -43,7 +46,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext)
+    public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext): bool
     {
         return false;
     }
@@ -51,7 +54,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext)
+    public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext): bool
     {
         if ($this->nestedGroups) {
             $groups = $this->getGroupsFor($navigatorContext);
@@ -92,7 +95,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
         return ! empty($property->groups);
     }
 
-    private function getGroupsFor(Context $navigatorContext)
+    private function getGroupsFor(Context $navigatorContext): array
     {
         $groups = $this->groups;
         foreach ($navigatorContext->getMetadataStack()->getPath() as $index => $path) {

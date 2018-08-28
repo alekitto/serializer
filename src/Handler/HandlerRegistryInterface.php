@@ -20,8 +20,10 @@ interface HandlerRegistryInterface
      * @param int      $direction one of the GraphNavigator::DIRECTION_??? constants
      * @param string   $typeName
      * @param callable $handler   function(VisitorInterface, mixed $data, array $type): mixed
+     *
+     * @return $this
      */
-    public function registerHandler($direction, $typeName, callable $handler);
+    public function registerHandler(int $direction, string $typeName, callable $handler): self;
 
     /**
      * @param int    $direction one of the GraphNavigator::DIRECTION_??? constants
@@ -29,5 +31,5 @@ interface HandlerRegistryInterface
      *
      * @return callable|null
      */
-    public function getHandler($direction, $typeName);
+    public function getHandler(int $direction, string $typeName): ?callable;
 }

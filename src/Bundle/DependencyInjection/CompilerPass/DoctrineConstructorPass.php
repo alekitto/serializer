@@ -8,7 +8,10 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class DoctrineConstructorPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container): void
     {
         $constructorDef = $container->findDefinition('kcs_serializer.construction.doctrine');
 

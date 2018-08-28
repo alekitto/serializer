@@ -30,6 +30,10 @@
         "symfony/yaml": "Required if you'd like to serialize data to YAML format."
     },
     "require-dev": {
+        "ext-json": "*",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "ext-dom": "*",
         "doctrine/annotations": "^1.0",
         "doctrine/cache": "~1.4",
         "doctrine/doctrine-cache-bundle": "^1.0",
@@ -68,6 +72,9 @@
         "psr-4": {
             "Kcs\\Serializer\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "extra": {
         "branch-alias": {

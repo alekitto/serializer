@@ -7,7 +7,10 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class GroupsProcessor extends PropertyMetadataProcessor
 {
-    protected static function doProcess($annotation, PropertyMetadata $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
         if (is_string($annotation->groups)) {
             $annotation->groups = explode(',', $annotation->groups);

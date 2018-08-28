@@ -4,12 +4,24 @@ namespace Kcs\Serializer\EventDispatcher;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Type\Type;
+use Kcs\Serializer\VisitorInterface;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class Event extends BaseEvent
 {
+    /**
+     * @var Type
+     */
     protected $type;
+
+    /**
+     * @var Context
+     */
     private $context;
+
+    /**
+     * @var mixed
+     */
     private $data;
 
     public function __construct(Context $context, $data, Type $type)
@@ -19,22 +31,22 @@ class Event extends BaseEvent
         $this->data = $data;
     }
 
-    public function getVisitor()
+    public function getVisitor(): VisitorInterface
     {
         return $this->context->getVisitor();
     }
 
-    public function getContext()
+    public function getContext(): Context
     {
         return $this->context;
     }
 
-    public function getType()
+    public function getType(): Type
     {
         return $this->type;
     }
 
-    public function setType(Type $type)
+    public function setType(Type $type): void
     {
         $this->type = $type;
     }
@@ -44,7 +56,7 @@ class Event extends BaseEvent
         return $this->data;
     }
 
-    public function setData($data)
+    public function setData($data): void
     {
         $this->data = $data;
     }

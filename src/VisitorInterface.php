@@ -89,7 +89,13 @@ interface VisitorInterface
      *
      * @return mixed
      */
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null);
+    public function visitObject(
+        ClassMetadata $metadata,
+        $data, Type
+        $type,
+        Context $context,
+        ?ObjectConstructorInterface $objectConstructor = null
+    );
 
     /**
      * @param callable $handler
@@ -108,7 +114,7 @@ interface VisitorInterface
      * @param Type    $type
      * @param Context $context
      */
-    public function startVisiting($data, Type $type, Context $context);
+    public function startVisiting($data, Type $type, Context $context): void;
 
     /**
      * Called after all properties of the object have been visited.
@@ -126,7 +132,7 @@ interface VisitorInterface
      *
      * @param GraphNavigator $navigator
      */
-    public function setNavigator(GraphNavigator $navigator = null);
+    public function setNavigator(?GraphNavigator $navigator = null): void;
 
     /**
      * @return mixed

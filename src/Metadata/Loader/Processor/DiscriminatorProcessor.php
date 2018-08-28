@@ -6,7 +6,10 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 
 class DiscriminatorProcessor extends ClassMetadataProcessor
 {
-    protected static function doProcess($annotation, ClassMetadata $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected static function doProcess($annotation, ClassMetadata $metadata): void
     {
         if (is_string($annotation->groups)) {
             $annotation->groups = explode(',', $annotation->groups);

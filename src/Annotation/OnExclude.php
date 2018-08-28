@@ -13,9 +13,12 @@ final class OnExclude
     const NULL = 'null';
     const SKIP = 'skip';
 
+    /**
+     * @var string
+     */
     public $policy = self::NULL;
 
-    public function __construct(array $values = null)
+    public function __construct(?array $values = null)
     {
         if (empty($values)) {
             return;

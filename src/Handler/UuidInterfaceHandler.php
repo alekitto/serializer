@@ -21,7 +21,7 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getSubscribingMethods()
+    public function getSubscribingMethods(): iterable
     {
         foreach (self::TYPES as $type) {
             yield [

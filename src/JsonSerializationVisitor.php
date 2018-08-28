@@ -8,9 +8,15 @@ use Kcs\Serializer\Type\Type;
 
 class JsonSerializationVisitor extends GenericSerializationVisitor
 {
+    /**
+     * @var int
+     */
     private $options = 0;
 
-    public function getResult()
+    /**
+     * {@inheritdoc}
+     */
+    public function getResult(): string
     {
         $result = @json_encode($this->getRoot(), $this->options);
 
@@ -25,16 +31,19 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         }
     }
 
-    public function getOptions()
+    public function getOptions(): int
     {
         return $this->options;
     }
 
-    public function setOptions($options)
+    public function setOptions(int $options): void
     {
-        $this->options = (int) $options;
+        $this->options = $options;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitArray($data, Type $type, Context $context)
     {
         $result = parent::visitArray($data, $type, $context);
@@ -48,6 +57,9 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $rs = parent::visitObject($metadata, $data, $type, $context, $objectConstructor);

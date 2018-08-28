@@ -20,7 +20,7 @@ final class AccessorOrder
     public $order;
 
     /**
-     * @var array<string>
+     * @var string[]
      */
     public $custom = [];
 }

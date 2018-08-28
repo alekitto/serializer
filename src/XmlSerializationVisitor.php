@@ -19,8 +19,19 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public $document;
 
+    /**
+     * @var string
+     */
     private $defaultVersion = '1.0';
+
+    /**
+     * @var string
+     */
     private $defaultEncoding = 'UTF-8';
+
+    /**
+     * @var bool
+     */
     private $attachNullNamespace = false;
 
     /**
@@ -34,10 +45,13 @@ class XmlSerializationVisitor extends AbstractVisitor
     private $currentNodes;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $xmlNamespaces = [];
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitNull($data, Type $type, Context $context)
     {
         $this->attachNullNamespace = true;
@@ -53,6 +67,9 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $this->createTextNode((string) $data);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitString($data, Type $type, Context $context)
     {
         /** @var PropertyMetadata $metadata */
@@ -61,23 +78,40 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitInteger($data, Type $type, Context $context)
     {
         return $this->currentNodes = $this->createTextNode($data);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitBoolean($data, Type $type, Context $context)
     {
         return $this->currentNodes = $this->createTextNode($data ? 'true' : 'false');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitDouble($data, Type $type, Context $context)
     {
         return $this->currentNodes = $this->createTextNode($data);
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    public function visitObject(
+        ClassMetadata $metadata,
+        $data,
+        Type $type,
+        Context $context,
+        ?ObjectConstructorInterface $objectConstructor = null
+    ) {
         $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
 
@@ -176,6 +210,9 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitArray($data, Type $type, Context $context)
     {
         if (1 === $this->nodeStack->count() && null === $this->document->documentElement) {
@@ -209,19 +246,28 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $nodes;
     }
 
-    public function setNavigator(GraphNavigator $navigator = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function setNavigator(?GraphNavigator $navigator = null): void
     {
         $this->currentNodes = $this->document = $this->createDocument();
         $this->nodeStack = new \SplStack();
         $this->attachNullNamespace = false;
     }
 
-    public function startVisiting($data, Type $type, Context $context)
+    /**
+     * {@inheritdoc}
+     */
+    public function startVisiting($data, Type $type, Context $context): void
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function endVisiting($data, Type $type, Context $context)
     {
         $nodes = $this->currentNodes ?: [];
@@ -244,6 +290,9 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getResult()
     {
         $this->attachNullNS();
@@ -260,7 +309,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->document->saveXML();
     }
 
-    private function createTextNode($data, $cdata = false)
+    private function createTextNode($data, bool $cdata = false)
     {
         if (! $cdata) {
             return $this->document->createTextNode((string) $data);
@@ -272,12 +321,12 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * Create a new document object.
      *
-     * @param null $version
-     * @param null $encoding
+     * @param string|null $version
+     * @param string|null $encoding
      *
      * @return \DOMDocument
      */
-    private function createDocument($version = null, $encoding = null)
+    private function createDocument(?string $version = null, ?string $encoding = null): \DOMDocument
     {
         $doc = new \DOMDocument($version ?: $this->defaultVersion, $encoding ?: $this->defaultEncoding);
         $doc->formatOutput = true;
@@ -285,7 +334,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $doc;
     }
 
-    private function attachNullNS()
+    private function attachNullNS(): void
     {
         if (! $this->attachNullNamespace) {
             return;
@@ -305,21 +354,21 @@ class XmlSerializationVisitor extends AbstractVisitor
      *
      * @return bool
      */
-    private function isElementNameValid($name)
+    private function isElementNameValid($name): bool
     {
         return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
     /**
      * @param ClassMetadata $metadata
-     * @param $properties
+     * @param array         $properties
      */
-    private function validateObjectProperties(ClassMetadata $metadata, $properties)
+    private function validateObjectProperties(ClassMetadata $metadata, array $properties): void
     {
-        $has_xml_value = false;
+        $hasXmlValue = false;
         foreach ($properties as $property) {
-            if ($property->xmlValue && ! $has_xml_value) {
-                $has_xml_value = true;
+            if ($property->xmlValue && ! $hasXmlValue) {
+                $hasXmlValue = true;
             } elseif ($property->xmlValue) {
                 throw new RuntimeException(sprintf(
                     'Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s',
@@ -328,7 +377,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             }
         }
 
-        if ($has_xml_value) {
+        if ($hasXmlValue) {
             foreach ($properties as $property) {
                 if (! $property->xmlValue && ! $property->xmlAttribute) {
                     throw new RuntimeException(sprintf(
@@ -342,11 +391,11 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     /**
      * @param PropertyMetadata $metadata
-     * @param $attributeName
+     * @param string           $attributeName
      *
      * @return \DOMAttr
      */
-    private function createAttributeNode(PropertyMetadata $metadata, $attributeName)
+    private function createAttributeNode(PropertyMetadata $metadata, string $attributeName): \DOMAttr
     {
         if ($namespace = (string) $metadata->xmlNamespace) {
             $prefix = $this->lookupPrefix($namespace);
@@ -358,7 +407,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $node;
     }
 
-    private function createElement($namespace, $elementName)
+    private function createElement(?string $namespace, ?string $elementName): \DOMElement
     {
         if (! empty($namespace) && $prefix = $this->lookupPrefix($namespace)) {
             $node = $this->document->createElement($prefix.':'.$elementName);
@@ -369,7 +418,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $node;
     }
 
-    private function lookupPrefix($namespace)
+    private function lookupPrefix(string $namespace): string
     {
         if (false !== ($prefix = array_search($namespace, $this->xmlNamespaces))) {
             return $prefix;
@@ -384,7 +433,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * @param ClassMetadata $metadata
      */
-    private function createRootNode(ClassMetadata $metadata = null)
+    private function createRootNode(?ClassMetadata $metadata = null): void
     {
         $rootName = null !== $metadata && $metadata->xmlRootName ? $metadata->xmlRootName : 'result';
         if (null !== $metadata && ($rootNamespace = $metadata->xmlRootNamespace)) {

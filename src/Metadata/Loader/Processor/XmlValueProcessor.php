@@ -6,7 +6,10 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class XmlValueProcessor extends PropertyMetadataProcessor
 {
-    protected static function doProcess($annotation, PropertyMetadata $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
         $metadata->xmlValue = true;
         $metadata->xmlElementCData = $annotation->cdata;

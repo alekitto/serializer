@@ -6,6 +6,9 @@ use Kcs\Serializer\Exception\RuntimeException;
 
 class JsonDeserializationVisitor extends GenericDeserializationVisitor
 {
+    /**
+     * {@inheritdoc}
+     */
     public function prepare($str)
     {
         $decoded = json_decode($str, true);
@@ -29,6 +32,9 @@ class JsonDeserializationVisitor extends GenericDeserializationVisitor
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getResult()
     {
         return $this->getRoot();

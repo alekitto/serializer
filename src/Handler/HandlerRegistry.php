@@ -8,9 +8,12 @@ use Kcs\Serializer\Exception\RuntimeException;
 
 class HandlerRegistry implements HandlerRegistryInterface
 {
+    /**
+     * @var SubscribingHandlerInterface[]
+     */
     protected $handlers;
 
-    public static function getDefaultMethod($direction, $type)
+    public static function getDefaultMethod(int $direction, string $type): string
     {
         if (false !== $pos = strrpos($type, '\\')) {
             $type = substr($type, $pos + 1);
@@ -33,7 +36,10 @@ class HandlerRegistry implements HandlerRegistryInterface
         $this->handlers = $handlers;
     }
 
-    public function registerSubscribingHandler(SubscribingHandlerInterface $handler)
+    /**
+     * {@inheritdoc}
+     */
+    public function registerSubscribingHandler(SubscribingHandlerInterface $handler): self
     {
         foreach ($handler->getSubscribingMethods() as $methodData) {
             if (! isset($methodData['type'])) {
@@ -54,7 +60,10 @@ class HandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    public function registerHandler($direction, $typeName, callable $handler)
+    /**
+     * {@inheritdoc}
+     */
+    public function registerHandler(int $direction, string $typeName, callable $handler): HandlerRegistryInterface
     {
         if (is_string($direction)) {
             $direction = Direction::parseDirection($direction);
@@ -65,7 +74,10 @@ class HandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    public function getHandler($direction, $typeName)
+    /**
+     * {@inheritdoc}
+     */
+    public function getHandler(int $direction, string $typeName): ?callable
     {
         if (! isset($this->handlers[$direction][$typeName])) {
             return null;

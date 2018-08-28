@@ -21,5 +21,5 @@ interface PropertyNamingStrategyInterface
      *
      * @return string
      */
-    public function translateName(PropertyMetadata $property);
+    public function translateName(PropertyMetadata $property): string;
 }

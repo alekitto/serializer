@@ -8,7 +8,10 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterHandlersPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container): void
     {
         $registryDef = $container->findDefinition('kcs_serializer.handler_registry');
         foreach ($container->findTaggedServiceIds('kcs_serializer.handler') as $serviceId => $unused) {

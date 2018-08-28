@@ -8,6 +8,9 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class VersionExclusionStrategy implements ExclusionStrategyInterface
 {
+    /**
+     * @var string
+     */
     private $version;
 
     public function __construct($version)
@@ -18,7 +21,7 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext)
+    public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext): bool
     {
         return false;
     }
@@ -26,7 +29,7 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext)
+    public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext): bool
     {
         if ((null !== $version = $property->sinceVersion) && version_compare($this->version, $version, '<')) {
             return true;

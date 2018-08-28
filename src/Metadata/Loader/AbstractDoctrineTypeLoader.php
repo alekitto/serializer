@@ -19,7 +19,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
     /**
      * Map of doctrine 2 field types to Kcs\Serializer types.
      *
-     * @var array
+     * @var string[]
      */
     protected $fieldMapping = [
         'string' => 'string',
@@ -99,7 +99,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
      * @param DoctrineClassMetadata $doctrineMetadata
      * @param ClassMetadata         $classMetadata
      */
-    abstract protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata);
+    abstract protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void;
 
     /**
      * @param DoctrineClassMetadata $doctrineMetadata
@@ -107,20 +107,20 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
      *
      * @return bool
      */
-    abstract protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata);
+    abstract protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool;
 
     /**
      * @param DoctrineClassMetadata $doctrineMetadata
      * @param PropertyMetadata      $propertyMetadata
      */
-    abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata);
+    abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void;
 
     /**
      * @param string $className
      *
      * @return null|DoctrineClassMetadata
      */
-    protected function tryLoadingDoctrineMetadata($className)
+    protected function tryLoadingDoctrineMetadata($className): ?DoctrineClassMetadata
     {
         if (! $manager = $this->registry->getManagerForClass($className)) {
             return null;
@@ -133,7 +133,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         return $manager->getClassMetadata($className);
     }
 
-    protected function normalizeFieldType($type)
+    protected function normalizeFieldType($type): ?string
     {
         if (! isset($this->fieldMapping[$type])) {
             return null;

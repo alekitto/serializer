@@ -11,10 +11,17 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class CamelCaseNamingStrategy implements PropertyNamingStrategyInterface
 {
+    /**
+     * @var string
+     */
     private $separator;
+
+    /**
+     * @var bool
+     */
     private $lowerCase;
 
-    public function __construct($separator = '_', $lowerCase = true)
+    public function __construct(string $separator = '_', bool $lowerCase = true)
     {
         $this->separator = $separator;
         $this->lowerCase = $lowerCase;
@@ -23,7 +30,7 @@ class CamelCaseNamingStrategy implements PropertyNamingStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function translateName(PropertyMetadata $property)
+    public function translateName(PropertyMetadata $property): string
     {
         $name = preg_replace('/[A-Z]/', $this->separator.'\\0', $property->name);
 

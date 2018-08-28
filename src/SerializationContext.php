@@ -11,34 +11,44 @@ class SerializationContext extends Context
      */
     private $visitingSet;
 
-    public function initialize($format, VisitorInterface $visitor, GraphNavigator $navigator, MetadataFactoryInterface $factory)
-    {
+    public function initialize(
+        string $format,
+        VisitorInterface $visitor,
+        GraphNavigator $navigator,
+        MetadataFactoryInterface $factory
+    ): void {
         parent::initialize($format, $visitor, $navigator, $factory);
 
         $this->visitingSet = new \SplObjectStorage();
     }
 
-    public function startVisiting($object)
+    public function startVisiting($object): void
     {
         $this->visitingSet->attach($object);
     }
 
-    public function stopVisiting($object)
+    public function stopVisiting($object): void
     {
         $this->visitingSet->detach($object);
     }
 
-    public function isVisiting($object)
+    public function isVisiting($object): bool
     {
         return $this->visitingSet->contains($object);
     }
 
-    public function getDirection()
+    /**
+     * {@inheritdoc}
+     */
+    public function getDirection(): int
     {
         return Direction::DIRECTION_SERIALIZATION;
     }
 
-    public function getDepth()
+    /**
+     * {@inheritdoc}
+     */
+    public function getDepth(): int
     {
         return $this->visitingSet->count();
     }

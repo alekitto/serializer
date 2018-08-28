@@ -35,16 +35,21 @@ class XmlSerializationTest extends BaseSerializationTest
     /**
      * @dataProvider getXMLBooleans
      */
-    public function testXMLBooleans($xmlBoolean, $boolean)
+    public function testXMLBooleans(string $xmlBoolean, bool $boolean)
     {
         if ($this->hasDeserializer()) {
             $this->assertSame($boolean, $this->deserialize('<result>'.$xmlBoolean.'</result>', 'boolean'));
         }
     }
 
-    public function getXMLBooleans()
+    public function getXMLBooleans(): iterable
     {
-        return [['true', true], ['false', false], ['1', true], ['0', false]];
+        return [
+            ['true', true],
+            ['false', false],
+            ['1', true],
+            ['0', false],
+        ];
     }
 
     public function testPropertyIsObjectWithAttributeAndValue()
@@ -245,7 +250,7 @@ class XmlSerializationTest extends BaseSerializationTest
         $this->assertEquals($this->getContent('simple_subclass_object'), $this->serialize($childObject));
     }
 
-    private function xpathFirstToString(\SimpleXMLElement $xml, $xpath)
+    private function xpathFirstToString(\SimpleXMLElement $xml, string $xpath): string
     {
         $nodes = $xml->xpath($xpath);
 
@@ -253,9 +258,9 @@ class XmlSerializationTest extends BaseSerializationTest
     }
 
     /**
-     * @param string $key
+     * {@inheritdoc}
      */
-    protected function getContent($key)
+    protected function getContent(string $key): string
     {
         if (! file_exists($file = __DIR__.'/xml/'.$key.'.xml')) {
             throw new InvalidArgumentException(sprintf('The key "%s" is not supported.', $key));
@@ -264,7 +269,10 @@ class XmlSerializationTest extends BaseSerializationTest
         return file_get_contents($file);
     }
 
-    protected function getFormat()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFormat(): string
     {
         return 'xml';
     }

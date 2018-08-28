@@ -15,7 +15,9 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class DisjunctExclusionStrategy implements ExclusionStrategyInterface
 {
-    /** @var ExclusionStrategyInterface[] */
+    /**
+     * @var ExclusionStrategyInterface[]
+     */
     private $delegates;
 
     /**
@@ -26,20 +28,15 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
         $this->delegates = $delegates;
     }
 
-    public function addStrategy(ExclusionStrategyInterface $strategy)
+    public function addStrategy(ExclusionStrategyInterface $strategy): void
     {
         $this->delegates[] = $strategy;
     }
 
     /**
-     * Whether the class should be skipped.
-     *
-     * @param ClassMetadata $metadata
-     * @param Context       $context
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function shouldSkipClass(ClassMetadata $metadata, Context $context)
+    public function shouldSkipClass(ClassMetadata $metadata, Context $context): bool
     {
         foreach ($this->delegates as $delegate) {
             /** @var $delegate ExclusionStrategyInterface */
@@ -52,14 +49,9 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
     }
 
     /**
-     * Whether the property should be skipped.
-     *
-     * @param PropertyMetadata $property
-     * @param Context          $context
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function shouldSkipProperty(PropertyMetadata $property, Context $context)
+    public function shouldSkipProperty(PropertyMetadata $property, Context $context): bool
     {
         foreach ($this->delegates as $delegate) {
             /** @var $delegate ExclusionStrategyInterface */

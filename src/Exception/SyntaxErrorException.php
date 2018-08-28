@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Exception;
 
 class SyntaxErrorException extends \Exception
 {
-    public function __construct($original, $value, $position)
+    public function __construct(string $original, string $value, ?int $position)
     {
         if (! $position) {
             $position = strlen($original);

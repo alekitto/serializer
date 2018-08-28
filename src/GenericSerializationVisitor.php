@@ -14,42 +14,75 @@ class GenericSerializationVisitor extends AbstractVisitor
      * @var GraphNavigator
      */
     private $navigator;
+
+    /**
+     * @var string|null
+     */
     private $root;
+
+    /**
+     * @var \SplStack
+     */
     private $dataStack;
+
+    /**
+     * @var mixed
+     */
     private $data;
 
-    public function setNavigator(GraphNavigator $navigator = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function setNavigator(?GraphNavigator $navigator = null): void
     {
         $this->navigator = $navigator;
         $this->root = null;
         $this->dataStack = new \SplStack();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitNull($data, Type $type, Context $context)
     {
         return $this->data = null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitString($data, Type $type, Context $context)
     {
         return $this->data = (string) $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitBoolean($data, Type $type, Context $context)
     {
         return $this->data = (bool) $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitInteger($data, Type $type, Context $context)
     {
         return $this->data = (int) $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitDouble($data, Type $type, Context $context)
     {
         return $this->data = (float) $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitArray($data, Type $type, Context $context)
     {
         $rs = [];
@@ -68,6 +101,9 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = $rs;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $this->data = [];
@@ -87,12 +123,18 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data;
     }
 
-    public function startVisiting($data, Type $type, Context $context)
+    /**
+     * {@inheritdoc}
+     */
+    public function startVisiting($data, Type $type, Context $context): void
     {
         $this->dataStack->push($this->data);
         $this->data = null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function endVisiting($data, Type $type, Context $context)
     {
         $rs = $this->data;
@@ -105,6 +147,9 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $rs;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
         return $this->data = parent::visitCustom($handler, $data, $type, $context);

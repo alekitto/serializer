@@ -4,7 +4,10 @@ namespace Kcs\Serializer\Metadata;
 
 class VirtualPropertyMetadata extends PropertyMetadata
 {
-    public function __construct($class, $methodName)
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(string $class, string $methodName)
     {
         if (0 === strpos($methodName, 'get')) {
             $fieldName = lcfirst(substr($methodName, 3));
@@ -18,16 +21,25 @@ class VirtualPropertyMetadata extends PropertyMetadata
         $this->readOnly = true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setValue($obj, $value)
     {
         throw new \LogicException('VirtualPropertyMetadata is immutable.');
     }
 
-    public function setAccessor($type, $getter = null, $setter = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
     {
     }
 
-    public function __wakeup()
+    /**
+     * {@inheritdoc}
+     */
+    public function __wakeup(): void
     {
     }
 }

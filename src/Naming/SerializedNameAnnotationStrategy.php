@@ -11,6 +11,9 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterface
 {
+    /**
+     * @var PropertyNamingStrategyInterface
+     */
     private $delegate;
 
     public function __construct(PropertyNamingStrategyInterface $namingStrategy)
@@ -21,7 +24,7 @@ class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterfac
     /**
      * {@inheritdoc}
      */
-    public function translateName(PropertyMetadata $property)
+    public function translateName(PropertyMetadata $property): string
     {
         if (null !== $name = $property->serializedName) {
             return $name;

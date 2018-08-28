@@ -6,24 +6,33 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class DeserializationContext extends Context
 {
+    /**
+     * @var int
+     */
     private $depth = 0;
 
-    public function getDirection()
+    /**
+     * {@inheritdoc}
+     */
+    public function getDirection(): int
     {
         return Direction::DIRECTION_DESERIALIZATION;
     }
 
-    public function getDepth()
+    /**
+     * {@inheritdoc}
+     */
+    public function getDepth(): int
     {
         return $this->depth;
     }
 
-    public function increaseDepth()
+    public function increaseDepth(): void
     {
         ++$this->depth;
     }
 
-    public function decreaseDepth()
+    public function decreaseDepth(): void
     {
         if ($this->depth <= 0) {
             throw new \LogicException('Depth cannot be smaller than zero.');
@@ -32,7 +41,10 @@ class DeserializationContext extends Context
         --$this->depth;
     }
 
-    protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata): bool
     {
         if ($propertyMetadata->readOnly) {
             return false;

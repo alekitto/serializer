@@ -42,8 +42,14 @@ class Serializer implements SerializerInterface
      * @param VisitorInterface[]                      $deserializationVisitors of VisitorInterface
      * @param EventDispatcherInterface                $dispatcher
      */
-    public function __construct(MetadataFactoryInterface $factory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, array $serializationVisitors, array $deserializationVisitors, EventDispatcherInterface $dispatcher = null)
-    {
+    public function __construct(
+        MetadataFactoryInterface $factory,
+        HandlerRegistryInterface $handlerRegistry,
+        ObjectConstructorInterface $objectConstructor,
+        array $serializationVisitors,
+        array $deserializationVisitors,
+        ?EventDispatcherInterface $dispatcher = null
+    ) {
         $this->factory = $factory;
         $this->serializationVisitors = $serializationVisitors;
         $this->deserializationVisitors = $deserializationVisitors;
@@ -54,7 +60,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function serialize($data, $format, SerializationContext $context = null, Type $type = null)
+    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null)
     {
         if (null === $context) {
             $context = new SerializationContext();
@@ -70,7 +76,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function deserialize($data, Type $type, $format, DeserializationContext $context = null)
+    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null)
     {
         if (null === $context) {
             $context = new DeserializationContext();
@@ -90,11 +96,10 @@ class Serializer implements SerializerInterface
      *
      * @param mixed                $data    anything that converts to an array, typically an object or an array of objects
      * @param SerializationContext $context
-     * @param Type|null            $type
      *
      * @return array
      */
-    public function toArray($data, SerializationContext $context = null, Type $type = null)
+    public function toArray($data, SerializationContext $context = null): array
     {
         $result = $this->serialize($data, 'array', $context);
 
@@ -137,7 +142,7 @@ class Serializer implements SerializerInterface
     /**
      * @return MetadataFactoryInterface
      */
-    public function getMetadataFactory()
+    public function getMetadataFactory(): MetadataFactoryInterface
     {
         return $this->factory;
     }

@@ -8,7 +8,10 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class PropertyMetadataProcessor implements ProcessorInterface
 {
-    public static function process($annotation, MetadataInterface $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    public static function process($annotation, MetadataInterface $metadata): void
     {
         if (! $metadata instanceof PropertyMetadata) {
             throw new InvalidArgumentException(static::class.' supports PropertyMetadata only');
@@ -17,7 +20,7 @@ class PropertyMetadataProcessor implements ProcessorInterface
         static::doProcess($annotation, $metadata);
     }
 
-    protected static function doProcess($annotation, PropertyMetadata $metadata)
+    protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
         throw new \LogicException('You must implement doProcess method');
     }

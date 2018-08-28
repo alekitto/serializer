@@ -6,7 +6,10 @@ class StaticPropertyMetadata extends PropertyMetadata
 {
     private $value;
 
-    public function __construct($className, $fieldName, $fieldValue)
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(string $className, string $fieldName, $fieldValue)
     {
         $this->class = $className;
         $this->name = $fieldName;
@@ -14,25 +17,40 @@ class StaticPropertyMetadata extends PropertyMetadata
         $this->readOnly = true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getValue($obj)
     {
         return $this->value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setValue($obj, $value)
     {
         throw new \LogicException('StaticPropertyMetadata is immutable.');
     }
 
-    public function setAccessor($type, $getter = null, $setter = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
     {
     }
 
-    public function __wakeup()
+    /**
+     * {@inheritdoc}
+     */
+    public function __wakeup(): void
     {
     }
 
-    public function __sleep()
+    /**
+     * {@inheritdoc}
+     */
+    public function __sleep(): array
     {
         return array_merge(parent::__sleep(), [
             'value',

@@ -12,12 +12,18 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 {
-    protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool
     {
         return false;
     }
 
-    protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void
     {
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
         if (empty($classMetadata->discriminatorMap) && ! $classMetadata->discriminatorDisabled
@@ -31,7 +37,10 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
         }
     }
 
-    protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
         $propertyName = $propertyMetadata->name;

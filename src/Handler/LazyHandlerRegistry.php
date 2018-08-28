@@ -6,7 +6,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LazyHandlerRegistry extends HandlerRegistry
 {
+    /**
+     * @var ContainerInterface
+     */
     private $container;
+
+    /**
+     * @var SubscribingHandlerInterface[]
+     */
     private $initializedHandlers = [];
 
     public function __construct(ContainerInterface $container, array $handlers = [])
@@ -15,13 +22,21 @@ class LazyHandlerRegistry extends HandlerRegistry
         $this->container = $container;
     }
 
-    public function registerHandler($direction, $typeName, callable $handler)
+    /**
+     * {@inheritdoc}
+     */
+    public function registerHandler(int $direction, string $typeName, callable $handler): HandlerRegistryInterface
     {
         parent::registerHandler($direction, $typeName, $handler);
         unset($this->initializedHandlers[$direction][$typeName]);
+
+        return $this;
     }
 
-    public function getHandler($direction, $typeName)
+    /**
+     * {@inheritdoc}
+     */
+    public function getHandler(int $direction, string $typeName): ?callable
     {
         if (isset($this->initializedHandlers[$direction][$typeName])) {
             return $this->initializedHandlers[$direction][$typeName];

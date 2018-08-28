@@ -6,7 +6,14 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class CacheNamingStrategy implements PropertyNamingStrategyInterface
 {
+    /**
+     * @var PropertyNamingStrategyInterface
+     */
     private $delegate;
+
+    /**
+     * @var \SplObjectStorage
+     */
     private $cache;
 
     public function __construct(PropertyNamingStrategyInterface $delegate)
@@ -15,7 +22,10 @@ class CacheNamingStrategy implements PropertyNamingStrategyInterface
         $this->cache = new \SplObjectStorage();
     }
 
-    public function translateName(PropertyMetadata $property)
+    /**
+     * {@inheritdoc}
+     */
+    public function translateName(PropertyMetadata $property): string
     {
         if (isset($this->cache[$property])) {
             return $this->cache[$property];

@@ -8,15 +8,23 @@ namespace Kcs\Serializer\Annotation;
  */
 final class Discriminator
 {
-    /** @var array<string> */
+    /**
+     * @var string[]
+     */
     public $map;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $field = 'type';
 
-    /** @var bool */
+    /**
+     * @var bool
+     */
     public $disabled = false;
 
-    /** @var array<string> */
+    /**
+     * @var string[]
+     */
     public $groups;
 }

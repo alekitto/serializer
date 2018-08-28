@@ -11,19 +11,24 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 final class SerializerExtension extends Extension
 {
-    public function load(array $configs, ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
         if (method_exists($container, 'registerForAutoconfiguration')) {
             $container->registerForAutoconfiguration(SubscribingHandlerInterface::class)
-                ->addTag('kcs_serializer.handler');
+                ->addTag('kcs_serializer.handler')
+            ;
         }
 
         if (! $container->getParameter('kernel.debug') && class_exists(FilesystemCache::class)) {
             $container->register('kcs_serializer.metadata.cache', FilesystemCache::class)
-                ->addArgument('%kernel.cache_dir%/kcs_serializer');
+                ->addArgument('%kernel.cache_dir%/kcs_serializer')
+            ;
         }
     }
 }

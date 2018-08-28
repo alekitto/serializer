@@ -9,7 +9,10 @@ use Kcs\Serializer\Type\Type;
 
 class JsonSerializationTest extends BaseSerializationTest
 {
-    protected function getContent($key)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getContent(string $key): string
     {
         static $outputs = [];
 
@@ -93,7 +96,7 @@ class JsonSerializationTest extends BaseSerializationTest
         return $outputs[$key];
     }
 
-    public function getPrimitiveTypes()
+    public function getPrimitiveTypes(): iterable
     {
         return [
             [
@@ -134,7 +137,7 @@ class JsonSerializationTest extends BaseSerializationTest
     /**
      * @dataProvider getPrimitiveTypes
      */
-    public function testPrimitiveTypes($primitiveType, $data)
+    public function testPrimitiveTypes(string $primitiveType, $data)
     {
         $visitor = $this->serializationVisitors['json'];
         $functionToCall = 'visit'.ucfirst($primitiveType);
@@ -180,7 +183,10 @@ class JsonSerializationTest extends BaseSerializationTest
         $this->assertEquals('[{}]', $this->serialize([new \stdClass()]));
     }
 
-    protected function getFormat()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFormat(): string
     {
         return 'json';
     }

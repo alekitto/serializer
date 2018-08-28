@@ -32,19 +32,62 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SerializerBuilder
 {
+    /**
+     * @var HandlerRegistry
+     */
     private $handlerRegistry;
+
+    /**
+     * @var bool
+     */
     private $handlersConfigured = false;
+
+    /**
+     * @var EventDispatcherInterface|null
+     */
     private $eventDispatcher;
+
+    /**
+     * @var bool
+     */
     private $listenersConfigured = false;
+
+    /**
+     * @var ObjectConstructorInterface|null
+     */
     private $objectConstructor;
+
+    /**
+     * @var array
+     */
     private $serializationVisitors;
+
+    /**
+     * @var array
+     */
     private $deserializationVisitors;
+
+    /**
+     * @var PropertyNamingStrategyInterface
+     */
     private $propertyNamingStrategy;
+
+    /**
+     * @var null|Cache
+     */
     private $cache = null;
+
+    /**
+     * @var AnnotationReader
+     */
     private $annotationReader;
+
+    /**
+     * @var null|LoaderInterface
+     */
     private $metadataLoader = null;
 
-    public static function create()
+    public static function create(): self
     {
         return new static();
     }
@@ -56,35 +99,35 @@ class SerializerBuilder
         $this->deserializationVisitors = [];
     }
 
-    public function setAnnotationReader(Reader $reader)
+    public function setAnnotationReader(Reader $reader): self
     {
         $this->annotationReader = $reader;
 
         return $this;
     }
 
-    public function setCache(Cache $cache = null)
+    public function setCache(?Cache $cache = null): self
     {
         $this->cache = $cache;
 
         return $this;
     }
 
-    public function setMetadataLoader(LoaderInterface $metadataLoader)
+    public function setMetadataLoader(LoaderInterface $metadataLoader): self
     {
         $this->metadataLoader = $metadataLoader;
 
         return $this;
     }
 
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
     {
         $this->eventDispatcher = $eventDispatcher;
 
         return $this;
     }
 
-    public function addDefaultHandlers()
+    public function addDefaultHandlers(): self
     {
         $this->handlersConfigured = true;
         $this->handlerRegistry->registerSubscribingHandler(new DateHandler());
@@ -95,7 +138,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function configureHandlers(\Closure $closure)
+    public function configureHandlers(\Closure $closure): self
     {
         $this->handlersConfigured = true;
         $closure($this->handlerRegistry);
@@ -103,7 +146,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function addDefaultListeners()
+    public function addDefaultListeners(): self
     {
         $this->listenersConfigured = true;
 
@@ -114,7 +157,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function configureListeners(\Closure $closure)
+    public function configureListeners(\Closure $closure): self
     {
         $this->listenersConfigured = true;
         $closure($this->eventDispatcher);
@@ -122,35 +165,35 @@ class SerializerBuilder
         return $this;
     }
 
-    public function setObjectConstructor(ObjectConstructorInterface $constructor)
+    public function setObjectConstructor(ObjectConstructorInterface $constructor): self
     {
         $this->objectConstructor = $constructor;
 
         return $this;
     }
 
-    public function setPropertyNamingStrategy(PropertyNamingStrategyInterface $propertyNamingStrategy)
+    public function setPropertyNamingStrategy(PropertyNamingStrategyInterface $propertyNamingStrategy): self
     {
         $this->propertyNamingStrategy = $propertyNamingStrategy;
 
         return $this;
     }
 
-    public function setSerializationVisitor($format, VisitorInterface $visitor)
+    public function setSerializationVisitor($format, VisitorInterface $visitor): self
     {
         $this->serializationVisitors[$format] = $visitor;
 
         return $this;
     }
 
-    public function setDeserializationVisitor($format, VisitorInterface $visitor)
+    public function setDeserializationVisitor($format, VisitorInterface $visitor): self
     {
         $this->deserializationVisitors[$format] = $visitor;
 
         return $this;
     }
 
-    public function addDefaultSerializationVisitors()
+    public function addDefaultSerializationVisitors(): self
     {
         $this->initializePropertyNamingStrategy();
 
@@ -164,7 +207,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function addDefaultDeserializationVisitors()
+    public function addDefaultDeserializationVisitors(): self
     {
         $this->initializePropertyNamingStrategy();
 
@@ -178,7 +221,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function build()
+    public function build(): SerializerInterface
     {
         $metadataLoader = $this->metadataLoader;
         if (null === $metadataLoader) {
@@ -213,7 +256,7 @@ class SerializerBuilder
         );
     }
 
-    private function initializePropertyNamingStrategy()
+    private function initializePropertyNamingStrategy(): void
     {
         if (null !== $this->propertyNamingStrategy) {
             return;

@@ -6,5 +6,5 @@ use Kcs\Metadata\MetadataInterface;
 
 interface ProcessorInterface
 {
-    public static function process($annotation, MetadataInterface $metadata);
+    public static function process($annotation, MetadataInterface $metadata): void;
 }

@@ -10,7 +10,10 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MappingLoaderPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function process(ContainerBuilder $container): void
     {
         $mappingPath = 'Resources/config/serializer';
         $xml_paths = [];
@@ -42,6 +45,7 @@ class MappingLoaderPass implements CompilerPassInterface
         }
 
         $container->getDefinition('kcs_serializer.metadata.loader')
-            ->replaceArgument(0, $loaders);
+            ->replaceArgument(0, $loaders)
+        ;
     }
 }

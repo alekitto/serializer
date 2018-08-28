@@ -38,7 +38,7 @@ class SerializableConstraintViolation
     /**
      * @return string
      */
-    public function getPropertyPath()
+    public function getPropertyPath(): string
     {
         return $this->propertyPath;
     }
@@ -46,7 +46,7 @@ class SerializableConstraintViolation
     /**
      * @return string
      */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
