@@ -11,7 +11,7 @@ final class Groups
     /**
      * @Required
      *
-     * @var string[]
+     * @var array<string>
      */
     public $groups;
 }

@@ -9,7 +9,7 @@ namespace Kcs\Serializer\Annotation;
 final class Discriminator
 {
     /**
-     * @var string[]
+     * @var array<string>
      */
     public $map;
 
@@ -24,7 +24,7 @@ final class Discriminator
     public $disabled = false;
 
     /**
-     * @var string[]
+     * @var array<string>
      */
     public $groups;
 }
