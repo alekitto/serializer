@@ -16,7 +16,7 @@ class Direction
      *
      * @return int
      */
-    public static function parseDirection($dirStr)
+    public static function parseDirection(string $dirStr): int
     {
         switch (strtolower($dirStr)) {
             case 'serialization':

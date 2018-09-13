@@ -8,19 +8,22 @@ use PHPUnit\Framework\TestCase;
 
 class TypeParserTest extends TestCase
 {
+    /**
+     * @var Parser
+     */
     private $parser;
 
     /**
      * @dataProvider getTypes
      */
-    public function testParse($type, Type $expected)
+    public function testParse(string $type, Type $expected)
     {
         $this->assertEquals($expected, $this->parser->parse($type));
     }
 
-    public function getTypes()
+    public function getTypes(): iterable
     {
-        $types = [
+        return [
             ['string', Type::from('string')],
             ['array<Foo>', new Type('array', [Type::from('Foo')])],
             ['array<Foo,Bar>', new Type('array', [Type::from('Foo'), Type::from('Bar')])],
@@ -30,8 +33,6 @@ class TypeParserTest extends TestCase
             ['Foo\Bar', Type::from('Foo\Bar')],
             ['Foo<"asdf asdf">', new Type('Foo', ['asdf asdf'])],
         ];
-
-        return $types;
     }
 
     /**
@@ -74,6 +75,9 @@ class TypeParserTest extends TestCase
         $this->parser->parse('Foo<\Bar>');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->parser = new Parser();

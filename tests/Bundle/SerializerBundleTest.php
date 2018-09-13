@@ -5,10 +5,14 @@ namespace Kcs\Serializer\Tests\Bundle;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Tests\Fixtures\Kernel\AppKernel;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class SerializerBundleTest extends WebTestCase
 {
-    protected static function createKernel(array $options = [])
+    /**
+     * {@inheritdoc}
+     */
+    protected static function createKernel(array $options = []): KernelInterface
     {
         return new AppKernel('test', true);
     }

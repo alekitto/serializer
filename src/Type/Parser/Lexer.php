@@ -17,7 +17,7 @@ class Lexer extends AbstractLexer
     /**
      * {@inheritdoc}
      */
-    protected function getCatchablePatterns()
+    protected function getCatchablePatterns(): array
     {
         return [
             '[a-zA-Z_\x7f-\xff\\\][a-z0-9A-Z_\x7f-\xff\:\\\]*[a-zA-Z_\x7f-\xff][a-z0-9A-Z_\x7f-\xff]*', // PHP Class Name: http://php.net/manual/en/language.oop5.basic.php
@@ -28,7 +28,7 @@ class Lexer extends AbstractLexer
     /**
      * {@inheritdoc}
      */
-    protected function getNonCatchablePatterns()
+    protected function getNonCatchablePatterns(): array
     {
         return [
             '\s+',
@@ -39,7 +39,7 @@ class Lexer extends AbstractLexer
     /**
      * {@inheritdoc}
      */
-    protected function getType(&$value)
+    protected function getType(&$value): int
     {
         $type = self::T_NONE;
 

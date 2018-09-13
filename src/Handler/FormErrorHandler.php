@@ -13,16 +13,23 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
+    /**
+     * @var TranslatorInterface
+     */
     private $translator;
 
-    public function getSubscribingMethods()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribingMethods(): iterable
     {
         return [
             [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\Form',
                 'method' => 'serializeForm',
-            ], [
+            ],
+            [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => 'Symfony\Component\Form\FormError',
                 'method' => 'serializeFormError',
@@ -48,10 +55,15 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return $visitor->visitString($this->getErrorMessage($formError), $type, $context);
     }
 
-    private function getErrorMessage(FormError $error)
+    private function getErrorMessage(FormError $error): string
     {
         if (null !== $error->getMessagePluralization()) {
-            return $this->translator->transChoice($error->getMessageTemplate(), $error->getMessagePluralization(), $error->getMessageParameters(), 'validators');
+            return $this->translator->transChoice(
+                $error->getMessageTemplate(),
+                $error->getMessagePluralization(),
+                $error->getMessageParameters(),
+                'validators'
+            );
         }
 
         return $this->translator->trans($error->getMessageTemplate(), $error->getMessageParameters(), 'validators');

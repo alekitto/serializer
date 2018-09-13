@@ -13,15 +13,29 @@ use Kcs\Serializer\Type\Type;
 
 class XmlDeserializationVisitor extends GenericDeserializationVisitor
 {
+    /**
+     * @var bool
+     */
     private $disableExternalEntities = true;
+
+    /**
+     * @var string[]
+     */
     private $doctypeWhitelist = [];
+
+    /**
+     * @var string[]
+     */
     private $docNamespaces = [];
 
-    public function enableExternalEntities()
+    public function enableExternalEntities(): void
     {
         $this->disableExternalEntities = false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function prepare($data)
     {
         $previous = libxml_use_internal_errors(true);
@@ -50,6 +64,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $doc;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitArray($data, Type $type, Context $context)
     {
         $currentMetadata = $context->getMetadataStack()->getCurrent();
@@ -106,6 +123,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $result;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $name = $this->namingStrategy->translateName($metadata);
@@ -169,6 +189,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $context->accept($node, $metadata->type);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitBoolean($data, Type $type, Context $context)
     {
         if ($this->isNullNode($data)) {
@@ -188,6 +211,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitBoolean($data, $type, $context);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
         if ($this->isNullNode($data)) {
@@ -197,8 +223,16 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitCustom($handler, $data, $type, $context);
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    public function visitObject(
+        ClassMetadata $metadata,
+        $data,
+        Type $type,
+        Context $context,
+        ?ObjectConstructorInterface $objectConstructor = null
+    ) {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
         }
@@ -206,6 +240,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitString($data, Type $type, Context $context)
     {
         if ($this->isNullNode($data)) {
@@ -215,6 +252,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitString($data, $type, $context);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitInteger($data, Type $type, Context $context)
     {
         if ($this->isNullNode($data)) {
@@ -224,6 +264,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitInteger($data, $type, $context);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitDouble($data, Type $type, Context $context)
     {
         if ($this->isNullNode($data)) {
@@ -236,7 +279,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * @param string[] $doctypeWhitelist
      */
-    public function setDoctypeWhitelist(array $doctypeWhitelist)
+    public function setDoctypeWhitelist(array $doctypeWhitelist): void
     {
         $this->doctypeWhitelist = $doctypeWhitelist;
     }
@@ -244,7 +287,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * @return string[]
      */
-    public function getDoctypeWhitelist()
+    public function getDoctypeWhitelist(): array
     {
         return $this->doctypeWhitelist;
     }
@@ -256,7 +299,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      *
      * @return string
      */
-    private function getDomDocumentType($data)
+    private function getDomDocumentType(string $data): string
     {
         $startPos = $endPos = stripos($data, '<!doctype');
         $braces = 0;
@@ -278,7 +321,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $internalSubset;
     }
 
-    private function isNullNode(\SimpleXMLElement $node)
+    private function isNullNode(\SimpleXMLElement $node): bool
     {
         if (! array_key_exists('xsi', $this->docNamespaces)) {
             return false;

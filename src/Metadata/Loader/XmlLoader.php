@@ -44,14 +44,20 @@ class XmlLoader extends AnnotationLoader
         return parent::loadClassMetadata($classMetadata);
     }
 
-    protected function isExcluded(\ReflectionClass $class)
+    /**
+     * {@inheritdoc}
+     */
+    protected function isExcluded(\ReflectionClass $class): bool
     {
         $element = $this->getClassElement($class->name);
 
         return $element && ($exclude = $element->attributes()->exclude) && 'true' === strtolower($exclude);
     }
 
-    protected function getClassAnnotations(ClassMetadata $classMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         $element = $this->getClassElement($classMetadata->getName());
         if (! $element) {
@@ -99,7 +105,10 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    protected function getMethodAnnotations(\ReflectionMethod $method)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMethodAnnotations(\ReflectionMethod $method): array
     {
         $element = $this->getClassElement($method->getDeclaringClass()->getName());
         if (! $element) {
@@ -121,7 +130,10 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    protected function getPropertyAnnotations(\ReflectionProperty $property)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPropertyAnnotations(\ReflectionProperty $property): array
     {
         $element = $this->getClassElement($property->getDeclaringClass()->getName());
         if (! $element) {
@@ -138,7 +150,10 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
         $element = $this->getClassElement($property->getDeclaringClass()->getName());
         if (! $element) {
@@ -155,7 +170,7 @@ class XmlLoader extends AnnotationLoader
         return $pElem && null !== $pElem->attributes()->exclude;
     }
 
-    private function loadComplex(\SimpleXMLElement $element, array $excludedAttributes = ['name'], array $excludedChildren = [])
+    private function loadComplex(\SimpleXMLElement $element, array $excludedAttributes = ['name'], array $excludedChildren = []): array
     {
         $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
 
@@ -170,7 +185,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    private function getAnnotationFromElement(\SimpleXMLElement $element, $name)
+    private function getAnnotationFromElement(\SimpleXMLElement $element, string $name)
     {
         $annotations = [];
 
@@ -193,7 +208,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    private function getClassElement($class)
+    private function getClassElement(string $class)
     {
         if (! $elems = $this->document->xpath("./class[@name = '".$class."']")) {
             return false;
@@ -225,9 +240,9 @@ class XmlLoader extends AnnotationLoader
     /**
      * @param \SimpleXMLElement $elem
      *
-     * @return \Generator
+     * @return iterable
      */
-    private function loadAnnotationProperties(\SimpleXMLElement $elem)
+    private function loadAnnotationProperties(\SimpleXMLElement $elem): iterable
     {
         foreach ($elem->attributes() as $attrName => $value) {
             $value = (string) $value;

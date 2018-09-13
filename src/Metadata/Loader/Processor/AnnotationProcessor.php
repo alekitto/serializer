@@ -40,7 +40,7 @@ class AnnotationProcessor
         Annotations\OnExclude::class => OnExcludeProcessor::class,
     ];
 
-    public function process($annotation, MetadataInterface $metadata)
+    public function process($annotation, MetadataInterface $metadata): void
     {
         if (! is_object($annotation)) {
             throw new InvalidArgumentException('You must pass an annotation object as first parameter of process');

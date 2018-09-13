@@ -27,7 +27,7 @@ final class Parser
      *
      * @return Type
      */
-    public function parse($input)
+    public function parse(string $input): Type
     {
         $this->lexer->setInput($input);
         $this->lexer->moveNext();
@@ -44,7 +44,7 @@ final class Parser
      *
      * @throws SyntaxErrorException
      */
-    private function match($type)
+    private function match(int $type)
     {
         if (! $this->lexer->isNextToken($type)) {
             $this->syntaxError();
@@ -63,7 +63,7 @@ final class Parser
      *
      * @throws SyntaxErrorException
      */
-    private function parseInternal()
+    private function parseInternal(): Type
     {
         $typeName = $this->match(Lexer::T_IDENTIFIER);
         if (! $this->lexer->isNextToken(Lexer::T_OPEN_BRACKET)) {
@@ -93,12 +93,12 @@ final class Parser
      *
      * @throws SyntaxErrorException
      */
-    private function syntaxError()
+    private function syntaxError(): void
     {
         throw new SyntaxErrorException(
             $this->lexer->getInputUntilPosition(PHP_INT_MAX),
             $this->lexer->lookahead['value'] ?: 'end of string',
-            $this->lexer->lookahead['position']
+            (int) $this->lexer->lookahead['position']
         );
     }
 }

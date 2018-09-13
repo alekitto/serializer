@@ -28,6 +28,9 @@ class MessengerSerializerTest extends TestCase
      */
     private $messengerSerializer;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->serializer = SerializerBuilder::create()->build();

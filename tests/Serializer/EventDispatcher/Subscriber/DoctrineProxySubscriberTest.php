@@ -11,11 +11,24 @@ use PHPUnit\Framework\TestCase;
 
 class DoctrineProxySubscriberTest extends TestCase
 {
-    /** @var Context */
+    /**
+     * @var Context
+     */
     private $visitor;
 
-    /** @var DoctrineProxySubscriber */
+    /**
+     * @var DoctrineProxySubscriber
+     */
     private $subscriber;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->subscriber = new DoctrineProxySubscriber();
+        $this->visitor = $this->prophesize(Context::class);
+    }
 
     public function testRewritesProxyClassName()
     {
@@ -35,13 +48,7 @@ class DoctrineProxySubscriberTest extends TestCase
         $this->assertTrue($obj->__isInitialized());
     }
 
-    protected function setUp()
-    {
-        $this->subscriber = new DoctrineProxySubscriber();
-        $this->visitor = $this->prophesize(Context::class);
-    }
-
-    private function createEvent($object, Type $type)
+    private function createEvent($object, Type $type): PreSerializeEvent
     {
         return new PreSerializeEvent($this->visitor->reveal(), $object, $type);
     }

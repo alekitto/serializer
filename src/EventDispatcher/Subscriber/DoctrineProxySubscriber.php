@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DoctrineProxySubscriber implements EventSubscriberInterface
 {
-    public function onPreSerialize(PreSerializeEvent $event)
+    public function onPreSerialize(PreSerializeEvent $event): void
     {
         $object = $event->getData();
 
@@ -25,7 +25,10 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         }
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents(): iterable
     {
         return [
             Events::PRE_SERIALIZE => ['onPreSerialize', 20],

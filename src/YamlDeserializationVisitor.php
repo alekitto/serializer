@@ -6,6 +6,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class YamlDeserializationVisitor extends GenericDeserializationVisitor
 {
+    /**
+     * {@inheritdoc}
+     */
     public function prepare($str)
     {
         if (defined('Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE')) {
@@ -17,6 +20,9 @@ class YamlDeserializationVisitor extends GenericDeserializationVisitor
         return Yaml::parse($str, $flags);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getResult()
     {
         return $this->getRoot();

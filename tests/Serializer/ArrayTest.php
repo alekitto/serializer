@@ -12,6 +12,7 @@ use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\Serializer;
+use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\AuthorList;
 use Kcs\Serializer\Tests\Fixtures\Order;
@@ -21,8 +22,14 @@ use PHPUnit\Framework\TestCase;
 
 class ArrayTest extends TestCase
 {
+    /**
+     * @var SerializerInterface
+     */
     protected $serializer;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
@@ -65,7 +72,7 @@ class ArrayTest extends TestCase
         $this->assertEquals([$input], $result);
     }
 
-    public function scalarValues()
+    public function scalarValues(): iterable
     {
         return [
             [42],

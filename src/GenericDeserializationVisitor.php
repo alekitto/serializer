@@ -15,6 +15,9 @@ use Kcs\Serializer\Type\Type;
  */
 class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
+    /**
+     * {@inheritdoc}
+     */
     public function visitArray($data, Type $type, Context $context)
     {
         if (! is_array($data)) {
@@ -59,8 +62,16 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         }
     }
 
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    public function visitObject(
+        ClassMetadata $metadata,
+        $data,
+        Type $type,
+        Context $context,
+        ?ObjectConstructorInterface $objectConstructor = null
+    ) {
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
 
         /** @var PropertyMetadata $propertyMetadata */
@@ -77,6 +88,9 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $object;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $name = $this->namingStrategy->translateName($metadata);
@@ -95,6 +109,9 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $v;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getResult()
     {
         return $this->getRoot();

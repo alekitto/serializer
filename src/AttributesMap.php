@@ -4,6 +4,9 @@ namespace Kcs\Serializer;
 
 class AttributesMap implements \ArrayAccess
 {
+    /**
+     * @var array
+     */
     private $map = [];
 
     /**
@@ -14,7 +17,7 @@ class AttributesMap implements \ArrayAccess
      *
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         return isset($this->map[$key]) ? $this->map[$key] : $default;
     }
@@ -27,7 +30,7 @@ class AttributesMap implements \ArrayAccess
      *
      * @return mixed
      */
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
         return $this->map[$key] = $value;
     }
@@ -35,11 +38,11 @@ class AttributesMap implements \ArrayAccess
     /**
      * Returns TRUE if attribute is set.
      *
-     * @param $key
+     * @param string $key
      *
      * @return bool
      */
-    public function has($key): bool
+    public function has(string $key): bool
     {
         return isset($this->map[$key]);
     }
@@ -81,7 +84,7 @@ class AttributesMap implements \ArrayAccess
     /**
      * {@inheritdoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->map[$offset]);
     }

@@ -30,7 +30,7 @@ class SerializableConstraintViolationList
     /**
      * @return SerializableConstraintViolation[]
      */
-    public function getViolations()
+    public function getViolations(): array
     {
         return $this->violations;
     }

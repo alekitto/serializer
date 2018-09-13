@@ -101,7 +101,9 @@ abstract class BaseSerializationTest extends TestCase
     protected $factory;
     protected $dispatcher;
 
-    /** @var Serializer */
+    /**
+     * @var Serializer
+     */
     protected $serializer;
     protected $handlerRegistry;
     protected $serializationVisitors;
@@ -130,7 +132,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @dataProvider getTypes
      */
-    public function testNull($type)
+    public function testNull(string $type)
     {
         $this->assertEquals($this->getContent('null'), $this->serialize(null), $type);
 
@@ -139,7 +141,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function getTypes()
+    public function getTypes(): iterable
     {
         return [
             ['NULL'],
@@ -163,7 +165,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @dataProvider getBooleans
      */
-    public function testBooleans($strBoolean, $boolean)
+    public function testBooleans(string $strBoolean, bool $boolean)
     {
         $this->assertEquals($this->getContent('boolean_'.$strBoolean), $this->serialize($boolean));
 
@@ -172,15 +174,18 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function getBooleans()
+    public function getBooleans(): iterable
     {
-        return [['true', true], ['false', false]];
+        return [
+            ['true', true],
+            ['false', false],
+        ];
     }
 
     /**
      * @dataProvider getNumerics
      */
-    public function testNumerics($key, $value, $type)
+    public function testNumerics(string $key, $value, string $type)
     {
         $this->assertEquals($this->getContent($key), $this->serialize($value));
 
@@ -189,7 +194,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function getNumerics()
+    public function getNumerics(): iterable
     {
         return [
             ['integer', 1, 'integer'],
@@ -365,7 +370,7 @@ abstract class BaseSerializationTest extends TestCase
      * @dataProvider getDateTime
      * @group datetime
      */
-    public function testDateTime($key, $value, $type)
+    public function testDateTime(string $key, \DateTimeInterface $value, string $type)
     {
         $this->assertEquals($this->getContent($key), $this->serialize($value));
 
@@ -378,7 +383,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function getDateTime()
+    public function getDateTime(): iterable
     {
         return [
             ['date_time', new \DateTime('2011-08-30 00:00', new \DateTimeZone('UTC')), 'DateTime'],
@@ -389,7 +394,7 @@ abstract class BaseSerializationTest extends TestCase
      * @dataProvider getTimestamp
      * @group datetime
      */
-    public function testTimestamp($key, $value)
+    public function testTimestamp(string $key, Timestamp $value)
     {
         $this->assertEquals($this->getContent($key), $this->serialize($value));
     }
@@ -833,7 +838,7 @@ abstract class BaseSerializationTest extends TestCase
             return;
         }
 
-        $handler = function () {
+        $handler = function (): CustomDeserializationObject {
             return new CustomDeserializationObject('customly_unserialized_value');
         };
 
@@ -948,7 +953,7 @@ abstract class BaseSerializationTest extends TestCase
                 $garage,
                 $this->deserialize(
                     $this->getContent('garage'),
-                    'Kcs\Serializer\Tests\Fixtures\VehicleInterfaceGarage'
+                    VehicleInterfaceGarage::class
                 )
             );
         }
@@ -1064,25 +1069,28 @@ abstract class BaseSerializationTest extends TestCase
         $this->assertEquals($this->getContent('object_subclass_with_additional_field'), $this->serialize($list));
     }
 
-    abstract protected function getContent($key);
+    abstract protected function getContent(string $key): string;
 
-    abstract protected function getFormat();
+    abstract protected function getFormat(): string;
 
-    protected function hasDeserializer()
+    protected function hasDeserializer(): bool
     {
         return true;
     }
 
-    protected function serialize($data, Context $context = null, Type $type = null)
+    protected function serialize($data, Context $context = null, ?Type $type = null)
     {
         return $this->serializer->serialize($data, $this->getFormat(), $context, $type);
     }
 
-    protected function deserialize($content, $type, Context $context = null)
+    protected function deserialize($content, $type, ?Context $context = null)
     {
         return $this->serializer->deserialize($content, Type::from($type), $this->getFormat(), $context);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $loader = new AnnotationLoader();

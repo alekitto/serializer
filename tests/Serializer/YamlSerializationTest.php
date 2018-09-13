@@ -6,7 +6,10 @@ use Kcs\Serializer\Exception\RuntimeException;
 
 class YamlSerializationTest extends BaseSerializationTest
 {
-    protected function getContent($key)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getContent(string $key): string
     {
         if (! file_exists($file = __DIR__.'/yml/'.$key.'.yml')) {
             throw new RuntimeException(sprintf('The content with key "%s" does not exist.', $key));
@@ -15,12 +18,18 @@ class YamlSerializationTest extends BaseSerializationTest
         return file_get_contents($file);
     }
 
-    protected function getFormat()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFormat(): string
     {
         return 'yml';
     }
 
-    protected function hasDeserializer()
+    /**
+     * {@inheritdoc}
+     */
+    protected function hasDeserializer(): bool
     {
         return true;
     }

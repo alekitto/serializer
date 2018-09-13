@@ -7,6 +7,9 @@ use Kcs\Serializer\Type\Type;
 
 abstract class AbstractVisitor implements VisitorInterface
 {
+    /**
+     * @var PropertyNamingStrategyInterface
+     */
     protected $namingStrategy;
 
     public function __construct(PropertyNamingStrategyInterface $namingStrategy)
@@ -15,7 +18,7 @@ abstract class AbstractVisitor implements VisitorInterface
         $this->setNavigator(null);
     }
 
-    public function getNamingStrategy()
+    public function getNamingStrategy(): PropertyNamingStrategyInterface
     {
         return $this->namingStrategy;
     }

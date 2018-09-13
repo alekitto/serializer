@@ -8,6 +8,10 @@ namespace Kcs\Serializer\Annotation;
  */
 final class Groups
 {
-    /** @var array<string> @Required */
+    /**
+     * @Required
+     *
+     * @var array<string>
+     */
     public $groups;
 }

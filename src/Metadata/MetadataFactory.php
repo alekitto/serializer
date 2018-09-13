@@ -10,6 +10,9 @@ use Kcs\Metadata\Factory\AbstractMetadataFactory;
  */
 class MetadataFactory extends AbstractMetadataFactory
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function createMetadata(\ReflectionClass $class): ClassMetadataInterface
     {
         return new ClassMetadata($class);

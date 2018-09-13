@@ -34,11 +34,14 @@ class AnnotationLoader implements LoaderInterface
     /**
      * @param Reader $reader
      */
-    public function setReader(Reader $reader)
+    public function setReader(Reader $reader): void
     {
         $this->reader = $reader;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $classMetadata instanceof ClassMetadata) {
@@ -76,7 +79,7 @@ class AnnotationLoader implements LoaderInterface
     /**
      * @param ClassMetadata $classMetadata
      */
-    private function processClassAnnotations(ClassMetadata $classMetadata)
+    private function processClassAnnotations(ClassMetadata $classMetadata): void
     {
         $annotations = $this->getClassAnnotations($classMetadata);
         foreach ($annotations as $annotation) {
@@ -92,7 +95,7 @@ class AnnotationLoader implements LoaderInterface
         }
     }
 
-    private function processMethodAnnotations(\ReflectionMethod $method, ClassMetadata $classMetadata)
+    private function processMethodAnnotations(\ReflectionMethod $method, ClassMetadata $classMetadata): void
     {
         $class = $method->class;
 
@@ -119,7 +122,7 @@ class AnnotationLoader implements LoaderInterface
         }
     }
 
-    private function processPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    private function processPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $classMetadata): void
     {
         $class = $property->class;
 
@@ -132,7 +135,7 @@ class AnnotationLoader implements LoaderInterface
         $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
     }
 
-    private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata)
+    private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata): void
     {
         $metadata->readOnly = $metadata->readOnly || $classMetadata->readOnly;
         $accessType = $classMetadata->defaultAccessType;
@@ -153,27 +156,27 @@ class AnnotationLoader implements LoaderInterface
         $classMetadata->addAttributeMetadata($metadata);
     }
 
-    protected function isExcluded(\ReflectionClass $class)
+    protected function isExcluded(\ReflectionClass $class): bool
     {
         return null !== $this->reader->getClassAnnotation($class, Annotation\Exclude::class);
     }
 
-    protected function getClassAnnotations(ClassMetadata $classMetadata)
+    protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         return $this->reader->getClassAnnotations($classMetadata->getReflectionClass());
     }
 
-    protected function getMethodAnnotations(\ReflectionMethod $method)
+    protected function getMethodAnnotations(\ReflectionMethod $method): array
     {
         return $this->reader->getMethodAnnotations($method);
     }
 
-    protected function getPropertyAnnotations(\ReflectionProperty $property)
+    protected function getPropertyAnnotations(\ReflectionProperty $property): array
     {
         return $this->reader->getPropertyAnnotations($property);
     }
 
-    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
         if (Annotation\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
             return null === $this->reader->getPropertyAnnotation($property, Annotation\Expose::class);

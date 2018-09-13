@@ -6,7 +6,10 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class MaxDepthProcessor extends PropertyMetadataProcessor
 {
-    protected static function doProcess($annotation, PropertyMetadata $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
         $metadata->maxDepth = $annotation->depth;
     }

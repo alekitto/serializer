@@ -19,33 +19,92 @@ class ClassMetadata extends BaseClassMetadata
     const ACCESSOR_ORDER_ALPHABETICAL = 'alphabetical';
     const ACCESSOR_ORDER_CUSTOM = 'custom';
 
+    /**
+     * @var string
+     */
     public $exclusionPolicy = ExclusionPolicy::NONE;
+
+    /**
+     * @var string
+     */
     public $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
+
+    /**
+     * @var bool
+     */
     public $readOnly = false;
 
-    /** @var MethodMetadata[] */
+    /**
+     * @var MethodMetadata[]
+     */
     public $preSerializeMethods = [];
 
-    /** @var MethodMetadata[] */
+    /**
+     * @var MethodMetadata[]
+     */
     public $postSerializeMethods = [];
 
-    /** @var MethodMetadata[] */
+    /**
+     * @var MethodMetadata[]
+     */
     public $postDeserializeMethods = [];
 
+    /**
+     * @var string
+     */
     public $xmlRootName;
+
+    /**
+     * @var string
+     */
     public $xmlRootNamespace;
+
+    /**
+     * @var string[]
+     */
     public $xmlNamespaces = [];
+
+    /**
+     * @var string
+     */
     public $accessorOrder;
+
+    /**
+     * @var string
+     */
     public $customOrder;
 
+    /**
+     * @var bool
+     */
     public $discriminatorDisabled = false;
+
+    /**
+     * @var string
+     */
     public $discriminatorBaseClass;
+
+    /**
+     * @var string
+     */
     public $discriminatorFieldName;
+
+    /**
+     * @var string
+     */
     public $discriminatorValue;
+
+    /**
+     * @var string[]
+     */
     public $discriminatorMap = [];
+
+    /**
+     * @var string[]
+     */
     public $discriminatorGroups = [];
 
-    public function setDiscriminator($fieldName, array $map, array $groups)
+    public function setDiscriminator(string $fieldName, array $map, array $groups)
     {
         if (empty($fieldName)) {
             throw new \InvalidArgumentException('The $fieldName cannot be empty.');
@@ -87,23 +146,26 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addAttributeMetadata(MetadataInterface $metadata): void
     {
         parent::addAttributeMetadata($metadata);
         $this->sortProperties();
     }
 
-    public function addPreSerializeMethod(MethodMetadata $method)
+    public function addPreSerializeMethod(MethodMetadata $method): void
     {
         $this->preSerializeMethods[] = $method;
     }
 
-    public function addPostSerializeMethod(MethodMetadata $method)
+    public function addPostSerializeMethod(MethodMetadata $method): void
     {
         $this->postSerializeMethods[] = $method;
     }
 
-    public function addPostDeserializeMethod(MethodMetadata $method)
+    public function addPostDeserializeMethod(MethodMetadata $method): void
     {
         $this->postDeserializeMethods[] = $method;
     }
@@ -144,29 +206,21 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
-    public function registerNamespace($uri, $prefix = null)
+    public function registerNamespace(string $uri, ?string $prefix = null)
     {
-        if (! is_string($uri)) {
-            throw new InvalidArgumentException(sprintf('$uri is expected to be a strings, but got value %s.', json_encode($uri)));
-        }
-
-        if (null !== $prefix) {
-            if (! is_string($prefix)) {
-                throw new InvalidArgumentException(sprintf('$prefix is expected to be a strings, but got value %s.', json_encode($prefix)));
-            }
-        } else {
+        if (null === $prefix) {
             $prefix = '';
         }
 
         $this->xmlNamespaces[$prefix] = $uri;
     }
 
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->sortProperties();
     }
 
-    public function getSubtype($data)
+    public function getSubtype($data): string
     {
         if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
             $typeValue = (string) $data[$this->discriminatorFieldName];
@@ -189,7 +243,7 @@ class ClassMetadata extends BaseClassMetadata
         return $this->discriminatorMap[$typeValue];
     }
 
-    private function sortProperties()
+    private function sortProperties(): void
     {
         switch ($this->accessorOrder) {
             case self::ACCESSOR_ORDER_ALPHABETICAL:
@@ -199,7 +253,7 @@ class ClassMetadata extends BaseClassMetadata
             case self::ACCESSOR_ORDER_CUSTOM:
                 $order = $this->customOrder;
                 $sorting = array_flip(array_keys($this->attributesMetadata));
-                uksort($this->attributesMetadata, function ($a, $b) use ($order, $sorting) {
+                uksort($this->attributesMetadata, function ($a, $b) use ($order, $sorting): int {
                     $existsA = isset($order[$a]);
                     $existsB = isset($order[$b]);
 
@@ -221,7 +275,7 @@ class ClassMetadata extends BaseClassMetadata
         }
     }
 
-    private function mergeDiscriminatorMap(ClassMetadata $object)
+    private function mergeDiscriminatorMap(self $object): void
     {
         if (empty($object->discriminatorMap) || $this->getReflectionClass()->isAbstract()) {
             return;

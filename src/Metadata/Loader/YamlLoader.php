@@ -18,14 +18,17 @@ class YamlLoader extends AnnotationLoader
      */
     private $config;
 
-    public function __construct($filePath)
+    public function __construct(string $filePath)
     {
         parent::__construct();
 
         $this->config = (array) Yaml::parse($this->loadFile($filePath));
     }
 
-    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
         $config = $this->getClassConfig($classMetadata->getName());
         if (Annotations\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
@@ -39,6 +42,9 @@ class YamlLoader extends AnnotationLoader
         return isset($config['properties'][$property->name]['exclude']) && $config['properties'][$property->name]['exclude'];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $this->hasClassConfig($classMetadata->getName())) {
@@ -48,14 +54,20 @@ class YamlLoader extends AnnotationLoader
         return parent::loadClassMetadata($classMetadata);
     }
 
-    protected function isExcluded(\ReflectionClass $class)
+    /**
+     * {@inheritdoc}
+     */
+    protected function isExcluded(\ReflectionClass $class): bool
     {
         $config = $this->getClassConfig($class->name);
 
         return isset($config['exclude']) ? (bool) $config['exclude'] : false;
     }
 
-    protected function getClassAnnotations(ClassMetadata $classMetadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         $config = $this->getClassConfig($classMetadata->getName());
 
@@ -89,7 +101,10 @@ class YamlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    protected function getMethodAnnotations(\ReflectionMethod $method)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMethodAnnotations(\ReflectionMethod $method): array
     {
         $annotations = [];
         $methodName = $method->name;
@@ -115,7 +130,10 @@ class YamlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    protected function getPropertyAnnotations(\ReflectionProperty $property)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPropertyAnnotations(\ReflectionProperty $property): array
     {
         $config = $this->getClassConfig($property->class);
         $propertyName = $property->name;
@@ -127,12 +145,15 @@ class YamlLoader extends AnnotationLoader
         return $this->loadProperty($config['properties'][$propertyName]);
     }
 
-    private static function isAssocArray(array $value)
+    /**
+     * {@inheritdoc}
+     */
+    private static function isAssocArray(array $value): bool
     {
         return array_keys($value) !== array_keys(array_values($value));
     }
 
-    private function loadProperty(array $config)
+    private function loadProperty(array $config): array
     {
         $annotations = [];
 
@@ -143,12 +164,12 @@ class YamlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    private function hasClassConfig($class)
+    private function hasClassConfig($class): bool
     {
         return isset($this->config[$class]);
     }
 
-    private function getClassConfig($class)
+    private function getClassConfig($class): array
     {
         $config = isset($this->config[$class]) ? $this->config[$class] : [];
 
@@ -160,7 +181,7 @@ class YamlLoader extends AnnotationLoader
         ], $config);
     }
 
-    private function createAnnotationsForArray($value, $key)
+    private function createAnnotationsForArray($value, string $key): array
     {
         $annotations = [];
 

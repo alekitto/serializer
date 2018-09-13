@@ -27,13 +27,32 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class GraphNavigator
 {
+    /**
+     * @var null|EventDispatcherInterface
+     */
     private $dispatcher;
+
+    /**
+     * @var MetadataFactoryInterface
+     */
     private $metadataFactory;
+
+    /**
+     * @var HandlerRegistryInterface
+     */
     private $handlerRegistry;
+
+    /**
+     * @var ObjectConstructorInterface
+     */
     private $objectConstructor;
 
-    public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, EventDispatcherInterface $dispatcher = null)
-    {
+    public function __construct(
+        MetadataFactoryInterface $metadataFactory,
+        HandlerRegistryInterface $handlerRegistry,
+        ObjectConstructorInterface $objectConstructor,
+        ?EventDispatcherInterface $dispatcher = null
+    ) {
         $this->dispatcher = $dispatcher;
         $this->metadataFactory = $metadataFactory;
         $this->handlerRegistry = $handlerRegistry;
@@ -44,12 +63,12 @@ class GraphNavigator
      * Called for each node of the graph that is being traversed.
      *
      * @param mixed                                               $data    the data depends on the direction, and type of visitor
-     * @param Type                                                $type    array has the format ["name" => string, "params" => array]
+     * @param Type|null                                           $type    array has the format ["name" => string, "params" => array]
      * @param SerializationContext|DeserializationContext|Context $context
      *
      * @return mixed the return value depends on the direction, and type of visitor
      */
-    public function accept($data, Type $type = null, Context $context)
+    public function accept($data, ?Type $type = null, Context $context)
     {
         // If the data is null, we have to force the type to null regardless of the input in order to
         // guarantee correct handling of null values, and not have any internal auto-casting behavior.
@@ -70,7 +89,7 @@ class GraphNavigator
         return $this->deserialize($data, $type, $context);
     }
 
-    private function guessType($data)
+    private function guessType($data): Type
     {
         return new Type(is_object($data) ? get_class($data) : gettype($data));
     }
@@ -221,7 +240,7 @@ class GraphNavigator
      *
      * @return null|ClassMetadata
      */
-    private function getMetadataForType(Type $type)
+    private function getMetadataForType(Type $type): ?ClassMetadata
     {
         if ($metadata = $type->getMetadata()) {
             return $metadata;
@@ -237,7 +256,7 @@ class GraphNavigator
         return $metadata;
     }
 
-    private function visitArray(VisitorInterface $visitor, $data, Type $type, $context)
+    private function visitArray(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
         if ($context instanceof SerializationContext && $type->hasParam(0) && ! $type->hasParam(1)) {
             $data = array_values($data);

@@ -10,7 +10,10 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class SerializerBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container): void
     {
         $container
             ->addCompilerPass(new RegisterHandlersPass())

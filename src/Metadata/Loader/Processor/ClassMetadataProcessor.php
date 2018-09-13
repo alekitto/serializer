@@ -8,7 +8,10 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 
 class ClassMetadataProcessor implements ProcessorInterface
 {
-    public static function process($annotation, MetadataInterface $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    public static function process($annotation, MetadataInterface $metadata): void
     {
         if (! $metadata instanceof ClassMetadata) {
             throw new InvalidArgumentException(static::class.' supports ClassMetadata only');
@@ -17,7 +20,7 @@ class ClassMetadataProcessor implements ProcessorInterface
         static::doProcess($annotation, $metadata);
     }
 
-    protected static function doProcess($annotation, ClassMetadata $metadata)
+    protected static function doProcess($annotation, ClassMetadata $metadata): void
     {
         throw new \LogicException('You must implement doProcess method');
     }

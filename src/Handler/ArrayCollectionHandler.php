@@ -14,7 +14,10 @@ use Kcs\Serializer\VisitorInterface;
 
 class ArrayCollectionHandler implements SubscribingHandlerInterface
 {
-    public function getSubscribingMethods()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribingMethods(): iterable
     {
         $methods = [];
         $collectionTypes = [
@@ -47,7 +50,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         return $visitor->visitArray($collection->toArray(), $type, $context);
     }
 
-    public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context)
+    public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
     {
         return new ArrayCollection($visitor->visitArray($data, $type, $context));
     }

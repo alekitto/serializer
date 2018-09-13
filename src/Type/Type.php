@@ -32,7 +32,7 @@ class Type
      * @param string $name
      * @param array  $params
      */
-    public function __construct($name, array $params = [])
+    public function __construct(string $name, array $params = [])
     {
         $this->name = $name;
         $this->params = $params;
@@ -45,7 +45,7 @@ class Type
      *
      * @return Type
      */
-    public static function parse($type): self
+    public static function parse(string $type): self
     {
         static $parser = null;
         if (null === $parser) {
@@ -141,11 +141,11 @@ class Type
     /**
      * Check if this type represents $class.
      *
-     * @param $class
+     * @param string $class
      *
      * @return bool
      */
-    public function is($class): bool
+    public function is(string $class): bool
     {
         return $this->name === $class;
     }
@@ -153,7 +153,7 @@ class Type
     /**
      * Returns if this type has param with index $index.
      *
-     * @param $index
+     * @param string|int $index
      *
      * @return bool
      */
@@ -165,7 +165,7 @@ class Type
     /**
      * Return the param $index.
      *
-     * @param $index
+     * @param string|int $index
      *
      * @return mixed
      */

@@ -53,7 +53,7 @@ class SerializableForm
     /**
      * @return FormError[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
@@ -61,7 +61,7 @@ class SerializableForm
     /**
      * @return static[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->children;
     }
@@ -69,7 +69,7 @@ class SerializableForm
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

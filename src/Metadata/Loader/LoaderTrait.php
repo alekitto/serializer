@@ -6,7 +6,7 @@ use Doctrine\Common\Inflector\Inflector;
 
 trait LoaderTrait
 {
-    private function createAnnotationObject($name)
+    private function createAnnotationObject(string $name)
     {
         $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
         $annotation = new $annotationClass();
@@ -14,13 +14,11 @@ trait LoaderTrait
         return $annotation;
     }
 
-    private function getDefaultPropertyName($annotation)
+    private function getDefaultPropertyName($annotation): ?string
     {
         $reflectionAnnotation = new \ReflectionClass($annotation);
         $properties = $reflectionAnnotation->getProperties();
 
-        if (isset($properties[0])) {
-            return $properties[0]->name;
-        }
+        return isset($properties[0]) ? $properties[0]->name : null;
     }
 }

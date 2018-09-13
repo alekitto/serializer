@@ -13,6 +13,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class YamlSerializationVisitor extends GenericSerializationVisitor
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getResult()
     {
         $result = Yaml::dump($this->getRoot(), PHP_INT_MAX);

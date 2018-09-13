@@ -9,7 +9,10 @@ use Kcs\Serializer\VisitorInterface;
 
 class PropelCollectionHandler implements SubscribingHandlerInterface
 {
-    public function getSubscribingMethods()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribingMethods(): iterable
     {
         $methods = [];
 
@@ -43,7 +46,7 @@ class PropelCollectionHandler implements SubscribingHandlerInterface
         return $visitor->visitArray($collection->getData(), $type, $context);
     }
 
-    public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context)
+    public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): \PropelCollection
     {
         $collection = new \PropelCollection();
         $collection->setData($visitor->visitArray($data, $type, $context));

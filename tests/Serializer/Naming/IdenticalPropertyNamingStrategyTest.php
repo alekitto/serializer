@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class IdenticalPropertyNamingStrategyTest extends TestCase
 {
-    public function providePropertyNames()
+    public function providePropertyNames(): iterable
     {
         return [
             ['createdAt'],
@@ -20,7 +20,7 @@ class IdenticalPropertyNamingStrategyTest extends TestCase
     /**
      * @dataProvider providePropertyNames
      */
-    public function testTranslateName($propertyName)
+    public function testTranslateName(string $propertyName)
     {
         $mockProperty = $this->prophesize(PropertyMetadata::class);
         $mockProperty->name = $propertyName;

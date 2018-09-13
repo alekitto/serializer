@@ -7,11 +7,16 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use PhpCollection\Map;
+use PhpCollection\MapInterface;
 use PhpCollection\Sequence;
+use PhpCollection\SequenceInterface;
 
 class PhpCollectionHandler implements SubscribingHandlerInterface
 {
-    public function getSubscribingMethods()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribingMethods(): iterable
     {
         $methods = [];
         $collectionTypes = [
@@ -41,7 +46,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
         return $visitor->visitArray(iterator_to_array($map), $type, $context);
     }
 
-    public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context)
+    public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context): MapInterface
     {
         return new Map($visitor->visitArray($data, $type, $context));
     }
@@ -51,7 +56,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
         return $visitor->visitArray($sequence->all(), $type, $context);
     }
 
-    public function deserializeSequence(VisitorInterface $visitor, $data, Type $type, Context $context)
+    public function deserializeSequence(VisitorInterface $visitor, $data, Type $type, Context $context): SequenceInterface
     {
         return new Sequence($visitor->visitArray($data, $type, $context));
     }

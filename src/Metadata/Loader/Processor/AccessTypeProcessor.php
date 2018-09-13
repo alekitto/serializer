@@ -7,7 +7,10 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 
 class AccessTypeProcessor implements ProcessorInterface
 {
-    public static function process($annotation, MetadataInterface $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    public static function process($annotation, MetadataInterface $metadata): void
     {
         if ($metadata instanceof ClassMetadata) {
             $metadata->defaultAccessType = $annotation->type;

@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Serializer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Direction;
@@ -11,6 +12,7 @@ use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\HandlerRegistry;
+use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
@@ -21,13 +23,33 @@ use Kcs\Serializer\VisitorInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GraphNavigatorTest extends TestCase
 {
+    /**
+     * @var MetadataFactoryInterface
+     */
     private $metadataFactory;
+
+    /**
+     * @var HandlerRegistryInterface
+     */
     private $handlerRegistry;
+
+    /**
+     * @var ObjectConstructorInterface
+     */
     private $objectConstructor;
+
+    /**
+     * @var EventDispatcherInterface
+     */
     private $dispatcher;
+
+    /**
+     * @var GraphNavigator
+     */
     private $navigator;
 
     /**
@@ -55,19 +77,23 @@ class GraphNavigatorTest extends TestCase
         $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
         $visitor->visitObject(Argument::cetera())->willReturn();
 
-        $visitor->startVisiting(Argument::cetera())->willReturn();
+        $visitor->startVisiting(Argument::cetera())->shouldBeCalled();
         $visitor->endVisiting(Argument::cetera())->willReturn();
 
         $context->isVisiting(Argument::any())->willReturn(false);
-        $context->startVisiting(Argument::any())->willReturn();
-        $context->stopVisiting(Argument::any())->willReturn();
-        $context->getExclusionStrategy()->willReturn($this->prophesize(ExclusionStrategyInterface::class));
+        $context->addMethodProphecy($context->startVisiting(Argument::any()));
+        $context->addMethodProphecy($context->stopVisiting(Argument::any()));
+
+        $exclusionStrategy = $this->prophesize(ExclusionStrategyInterface::class);
+        $exclusionStrategy->shouldSkipClass($metadata, $context)->willReturn(false);
+        $context->getExclusionStrategy()->willReturn($exclusionStrategy);
 
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
         $this->navigator->accept($object, null, $context->reveal());
 
         $visitor->visitObject($metadata, Argument::any(), Argument::type(Type::class), $context, Argument::type(ObjectConstructorInterface::class))
-            ->shouldHaveBeenCalled();
+            ->shouldHaveBeenCalled()
+        ;
     }
 
     public function testNavigatorChangeTypeOnSerialization()
@@ -88,12 +114,12 @@ class GraphNavigatorTest extends TestCase
         $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
         $visitor->visitCustom(Argument::cetera())->willReturn();
 
-        $visitor->startVisiting(Argument::cetera())->willReturn();
+        $visitor->startVisiting(Argument::cetera())->shouldBeCalled();
         $visitor->endVisiting(Argument::cetera())->willReturn();
 
         $context->isVisiting(Argument::any())->willReturn(false);
-        $context->startVisiting(Argument::any())->willReturn();
-        $context->stopVisiting(Argument::any())->willReturn();
+        $context->startVisiting(Argument::any())->shouldBeCalled();
+        $context->stopVisiting(Argument::any())->shouldBeCalled();
 
         $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
         $this->navigator->accept($object, null, $context->reveal());
@@ -102,6 +128,9 @@ class GraphNavigatorTest extends TestCase
             ->shouldHaveBeenCalled();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->dispatcher = new EventDispatcher();
@@ -117,12 +146,18 @@ class GraphNavigatorTest extends TestCase
 
 class SerializableClass
 {
+    /**
+     * @var string
+     */
     public $foo = 'bar';
 }
 
 class TestSubscribingHandler implements SubscribingHandlerInterface
 {
-    public function getSubscribingMethods()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribingMethods(): iterable
     {
         return [[
             'type' => \JsonSerializable::class,
@@ -131,7 +166,7 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
         ]];
     }
 
-    public function serialize()
+    public function serialize(): string
     {
     }
 }

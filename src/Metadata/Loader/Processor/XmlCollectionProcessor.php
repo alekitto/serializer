@@ -7,7 +7,10 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class XmlCollectionProcessor extends PropertyMetadataProcessor
 {
-    protected static function doProcess($annotation, PropertyMetadata $metadata)
+    /**
+     * {@inheritdoc}
+     */
+    protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
         $metadata->xmlCollection = true;
         $metadata->xmlCollectionInline = $annotation->inline;

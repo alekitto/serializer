@@ -4,7 +4,10 @@ namespace Kcs\Serializer\Metadata;
 
 class AdditionalPropertyMetadata extends PropertyMetadata
 {
-    public function __construct($class, $name)
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(string $class, string $name)
     {
         $this->class = $class;
         $this->name = $name;
@@ -13,20 +16,32 @@ class AdditionalPropertyMetadata extends PropertyMetadata
         $this->setType($class.'::'.$name);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getValue($obj)
     {
         return $obj;
     }
 
-    public function setValue($obj, $value)
+    /**
+     * {@inheritdoc}
+     */
+    public function setValue($obj, $value): void
     {
         throw new \LogicException('AdditionalPropertyMetadata is immutable.');
     }
 
-    public function setAccessor($type, $getter = null, $setter = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
     {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function __wakeup()
     {
     }

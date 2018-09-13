@@ -6,7 +6,10 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class IdenticalPropertyNamingStrategy implements PropertyNamingStrategyInterface
 {
-    public function translateName(PropertyMetadata $property)
+    /**
+     * {@inheritdoc}
+     */
+    public function translateName(PropertyMetadata $property): string
     {
         return $property->name;
     }

@@ -11,11 +11,25 @@ use Kcs\Serializer\XmlSerializationVisitor;
 
 class DateHandler implements SubscribingHandlerInterface
 {
+    /**
+     * @var string
+     */
     private $defaultFormat;
+
+    /**
+     * @var \DateTimeZone
+     */
     private $defaultTimezone;
+
+    /**
+     * @var bool
+     */
     private $xmlCData;
 
-    public function getSubscribingMethods()
+    /**
+     * {@inheritdoc}
+     */
+    public function getSubscribingMethods(): iterable
     {
         yield [
             'type' => \DateTime::class,
@@ -45,8 +59,11 @@ class DateHandler implements SubscribingHandlerInterface
         ];
     }
 
-    public function __construct($defaultFormat = \DateTime::ISO8601, $defaultTimezone = 'UTC', $xmlCData = true)
-    {
+    public function __construct(
+        string $defaultFormat = \DateTime::ISO8601,
+        string $defaultTimezone = 'UTC',
+        bool $xmlCData = true
+    ) {
         $this->defaultFormat = $defaultFormat;
         $this->defaultTimezone = new \DateTimeZone($defaultTimezone);
         $this->xmlCData = $xmlCData;
@@ -67,17 +84,17 @@ class DateHandler implements SubscribingHandlerInterface
         return $this->serialize($visitor, $this->formatInterval($date), $type, $context);
     }
 
-    public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type)
+    public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type): ?\DateTimeInterface
     {
         return $this->deserializeDateTimeInterface(\DateTime::class, $data, $type);
     }
 
-    public function deserializeDateTimeImmutable(VisitorInterface $visitor, $data, Type $type)
+    public function deserializeDateTimeImmutable(VisitorInterface $visitor, $data, Type $type): ?\DateTimeInterface
     {
         return $this->deserializeDateTimeInterface(\DateTimeImmutable::class, $data, $type);
     }
 
-    private function deserializeDateTimeInterface(string $class, $data, Type $type)
+    private function deserializeDateTimeInterface(string $class, $data, Type $type): ?\DateTimeInterface
     {
         if (null === $data) {
             return null;
@@ -104,11 +121,11 @@ class DateHandler implements SubscribingHandlerInterface
     }
 
     /**
-     * @return string
-     *
      * @param Type $type
+     *
+     * @return string
      */
-    private function getFormat(Type $type)
+    private function getFormat(Type $type): string
     {
         return $type->hasParam(0) ? $type->getParam(0) : $this->defaultFormat;
     }
@@ -118,7 +135,7 @@ class DateHandler implements SubscribingHandlerInterface
      *
      * @return string
      */
-    public function formatInterval(\DateInterval $dateInterval)
+    public function formatInterval(\DateInterval $dateInterval): string
     {
         $format = 'P';
 

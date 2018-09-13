@@ -10,9 +10,12 @@ use Kcs\Serializer\Exception\RuntimeException;
  */
 final class SerializedName
 {
+    /**
+     * @var string
+     */
     public $name;
 
-    public function __construct(array $values = null)
+    public function __construct(?array $values = null)
     {
         if (empty($values)) {
             return;
