@@ -60,7 +60,8 @@ class GraphNavigatorTest extends TestCase
     {
         $context = $this->prophesize(SerializationContext::class);
         $context->getVisitor()->willReturn($this->prophesize(VisitorInterface::class));
-        $context->getDirection()->willReturn(Direction::DIRECTION_SERIALIZATION);
+        $context->direction = Direction::DIRECTION_SERIALIZATION;
+        $context->guessType(STDIN)->willReturn(new Type('resource'));
 
         $this->navigator->accept(STDIN, null, $context->reveal());
     }
@@ -73,9 +74,10 @@ class GraphNavigatorTest extends TestCase
         $object = new SerializableClass();
         $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
 
-        $context->getDirection()->willReturn(Direction::DIRECTION_SERIALIZATION);
+        $context->direction = Direction::DIRECTION_SERIALIZATION;
         $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
         $visitor->visitObject(Argument::cetera())->willReturn();
+        $context->guessType($object)->willReturn(new Type(SerializableClass::class));
 
         $visitor->startVisiting(Argument::cetera())->shouldBeCalled();
         $visitor->endVisiting(Argument::cetera())->willReturn();
@@ -109,7 +111,8 @@ class GraphNavigatorTest extends TestCase
 
         $context = $this->prophesize(SerializationContext::class);
         $context->getMetadataStack()->willReturn($this->prophesize(MetadataStack::class));
-        $context->getDirection()->willReturn(Direction::DIRECTION_SERIALIZATION);
+        $context->direction = Direction::DIRECTION_SERIALIZATION;
+        $context->guessType($object)->willReturn(new Type(SerializableClass::class));
 
         $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
         $visitor->visitCustom(Argument::cetera())->willReturn();

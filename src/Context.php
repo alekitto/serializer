@@ -13,6 +13,9 @@ use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 
+/**
+ * @property int $direction
+ */
 abstract class Context
 {
     /**
@@ -218,9 +221,13 @@ abstract class Context
     abstract public function getDepth(): int;
 
     /**
-     * @return int
+     * Guesses the serialization type for the given data.
+     *
+     * @param mixed $data
+     *
+     * @return Type
      */
-    abstract public function getDirection(): int;
+    abstract public function guessType($data): Type;
 
     protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata): bool
     {

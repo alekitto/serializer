@@ -27,6 +27,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class GraphNavigator
 {
+    private const BUILTIN_TYPES = [
+        'NULL' => true,
+        'string' => true,
+        'integer' => true,
+        'int' => true,
+        'boolean' => true,
+        'bool' => true,
+        'double' => true,
+        'float' => true,
+        'array' => true,
+        'resource' => true,
+    ];
+
     /**
      * @var null|EventDispatcherInterface
      */
@@ -70,16 +83,8 @@ class GraphNavigator
      */
     public function accept($data, ?Type $type = null, Context $context)
     {
-        // If the data is null, we have to force the type to null regardless of the input in order to
-        // guarantee correct handling of null values, and not have any internal auto-casting behavior.
-        if ($context instanceof SerializationContext && null === $data) {
-            $type = Type::null();
-        } elseif (null === $type) {
-            if ($context instanceof DeserializationContext) {
-                throw new RuntimeException('The type must be given for all properties when deserializing.');
-            }
-
-            $type = $this->guessType($data);
+        if (null === $type) {
+            $type = $context->guessType($data);
         }
 
         if ($context instanceof SerializationContext) {
@@ -89,20 +94,14 @@ class GraphNavigator
         return $this->deserialize($data, $type, $context);
     }
 
-    private function guessType($data): Type
-    {
-        return new Type(is_object($data) ? get_class($data) : gettype($data));
-    }
-
     private function serialize($data, Type $type, SerializationContext $context)
     {
-        $inVisitingStack =
-            is_object($data) && null !== $data &&
-            ! $context->getMetadataStack()->getCurrent() instanceof AdditionalPropertyMetadata
-        ;
+        if (null === $data) {
+            $type = Type::null();
+        }
 
-        if ($inVisitingStack) {
-            if ($context->isVisiting($data)) {
+        if (($inVisitingStack = is_object($data))) {
+            if ($context->isVisiting($data) && ! $context->getMetadataStack()->getCurrent() instanceof AdditionalPropertyMetadata) {
                 return null;
             }
 
@@ -111,7 +110,7 @@ class GraphNavigator
 
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
-        if (is_subclass_of($data, $type->getName(), false)) {
+        if (is_object($data) && is_subclass_of($data, $type->getName(), false)) {
             $type = new Type(get_class($data), $type->getParams());
         }
 
@@ -120,14 +119,14 @@ class GraphNavigator
             $data = $event->getData();
         }
 
-        $metadata = $this->getMetadataForType($type);
-        if (null !== $metadata) {
+        if (null !== ($metadata = $this->getMetadataForType($type))) {
             foreach ($metadata->preSerializeMethods as $method) {
                 $method->getReflection()->invoke($data);
             }
         }
 
-        $context->getVisitor()->startVisiting($data, $type, $context);
+        $visitor = $context->getVisitor();
+        $visitor->startVisiting($data, $type, $context);
         $this->callVisitor($data, $type, $context, $metadata);
 
         if (null !== $metadata) {
@@ -140,8 +139,7 @@ class GraphNavigator
             $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
         }
 
-        $rs = $context->getVisitor()->endVisiting($data, $type, $context);
-
+        $rs = $visitor->endVisiting($data, $type, $context);
         if ($inVisitingStack) {
             $context->stopVisiting($data);
         }
@@ -189,7 +187,7 @@ class GraphNavigator
         $visitor = $context->getVisitor();
 
         // First, try whether a custom handler exists for the given type
-        if (null !== $handler = $this->handlerRegistry->getHandler($context->getDirection(), $type->getName())) {
+        if (null !== $handler = $this->handlerRegistry->getHandler($context->direction, $type->getName())) {
             return $visitor->visitCustom($handler, $data, $type, $context);
         }
 
@@ -246,11 +244,12 @@ class GraphNavigator
             return $metadata;
         }
 
-        if (! class_exists($type->getName()) && ! interface_exists($type->getName())) {
+        $name = $type->getName();
+        if (isset(self::BUILTIN_TYPES[$name]) || (! class_exists($name) && ! interface_exists($name))) {
             return null;
         }
 
-        $metadata = $this->metadataFactory->getMetadataFor($type->getName());
+        $metadata = $this->metadataFactory->getMetadataFor($name);
         $type->setMetadata($metadata);
 
         return $metadata;

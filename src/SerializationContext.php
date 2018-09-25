@@ -3,9 +3,15 @@
 namespace Kcs\Serializer;
 
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
+use Kcs\Serializer\Type\Type;
 
 class SerializationContext extends Context
 {
+    /**
+     * @var int
+     */
+    public $direction = Direction::DIRECTION_SERIALIZATION;
+
     /**
      * @var \SplObjectStorage
      */
@@ -40,16 +46,20 @@ class SerializationContext extends Context
     /**
      * {@inheritdoc}
      */
-    public function getDirection(): int
+    public function getDepth(): int
     {
-        return Direction::DIRECTION_SERIALIZATION;
+        return $this->visitingSet->count();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDepth(): int
+    public function guessType($data): Type
     {
-        return $this->visitingSet->count();
+        if (null === $data) {
+            return Type::null();
+        }
+
+        return new Type(is_object($data) ? get_class($data) : gettype($data));
     }
 }

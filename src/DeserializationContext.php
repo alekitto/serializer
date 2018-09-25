@@ -2,22 +2,21 @@
 
 namespace Kcs\Serializer;
 
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Type\Type;
 
 class DeserializationContext extends Context
 {
     /**
      * @var int
      */
-    private $depth = 0;
+    public $direction = Direction::DIRECTION_DESERIALIZATION;
 
     /**
-     * {@inheritdoc}
+     * @var int
      */
-    public function getDirection(): int
-    {
-        return Direction::DIRECTION_DESERIALIZATION;
-    }
+    private $depth = 0;
 
     /**
      * {@inheritdoc}
@@ -51,5 +50,13 @@ class DeserializationContext extends Context
         }
 
         return parent::filterPropertyMetadata($propertyMetadata);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function guessType($data): Type
+    {
+        throw new RuntimeException('The type must be given for all properties when deserializing.');
     }
 }

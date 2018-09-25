@@ -107,6 +107,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
     {
         $this->data = [];
+        $metadataStack = $context->getMetadataStack();
 
         /** @var PropertyMetadata $propertyMetadata */
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
@@ -115,9 +116,9 @@ class GenericSerializationVisitor extends AbstractVisitor
                 continue;
             }
 
-            $context->getMetadataStack()->push($propertyMetadata);
+            $metadataStack->push($propertyMetadata);
             $this->visitProperty($propertyMetadata, $excluded ? null : $data, $context);
-            $context->getMetadataStack()->pop();
+            $metadataStack->pop();
         }
 
         return $this->data;
