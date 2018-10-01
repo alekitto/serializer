@@ -230,7 +230,7 @@ class PropertyMetadata extends BasePropertyMetadata
             $reflector = $this->getReflection();
             if ($reflector->isPublic()) {
                 $name = $this->name;
-                $this->getter = function () use ($name): string {
+                $this->getter = function () use ($name) {
                     return $this->$name;
                 };
 
