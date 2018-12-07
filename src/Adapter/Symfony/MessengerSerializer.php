@@ -93,7 +93,6 @@ namespace Kcs\Serializer\Adapter\Symfony {
         public function encode(Envelope $envelope): array
         {
             $context = $this->context;
-            $itemKey = \class_exists(SerializerConfiguration::class) ? SerializerConfiguration::class : SerializerStamp::class;
 
             if (\method_exists($envelope, 'get')) {
                 /** @var SerializerConfiguration|null $serializerConfig */

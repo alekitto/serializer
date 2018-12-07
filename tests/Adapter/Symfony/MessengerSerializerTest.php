@@ -126,7 +126,14 @@ class MessengerSerializerTest extends TestCase
         if (\class_exists(SerializerConfiguration::class)) {
             $this->assertEquals('a:2:{s:75:"Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration";C:75:"Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration":59:{a:1:{s:7:"context";a:1:{s:6:"groups";a:1:{i:0;s:3:"foo";}}}}s:76:"Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration";C:76:"Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration":82:{a:2:{s:6:"groups";a:2:{i:0;s:3:"foo";i:1;s:3:"bar";}s:17:"is_group_sequence";b:0;}}}', $encoded['headers']['X-Message-Envelope-Items']);
         } else {
-            $this->assertEquals('a:2:{s:49:"Symfony\Component\Messenger\Stamp\SerializerStamp";a:1:{i:0;O:49:"Symfony\Component\Messenger\Stamp\SerializerStamp":1:{s:58:"Symfony\Component\Messenger\Stamp\SerializerStampcontext";a:1:{s:6:"groups";a:1:{i:0;s:3:"foo";}}}}s:49:"Symfony\Component\Messenger\Stamp\ValidationStamp";a:1:{i:0;O:49:"Symfony\Component\Messenger\Stamp\ValidationStamp":1:{s:57:"Symfony\Component\Messenger\Stamp\ValidationStampgroups";a:2:{i:0;s:3:"foo";i:1;s:3:"bar";}}}}', $encoded['headers']['X-Message-Envelope-Items']);
+            $this->assertEquals(serialize([
+                SerializerStamp::class => [
+                    new SerializerStamp(['groups' => ['foo']]),
+                ],
+                ValidationStamp::class => [
+                    new ValidationStamp(['foo', 'bar']),
+                ],
+            ]), $encoded['headers']['X-Message-Envelope-Items']);
         }
     }
 }
