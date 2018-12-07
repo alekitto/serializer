@@ -9,12 +9,13 @@ use Kcs\Serializer\Util\SerializableForm;
 use Kcs\Serializer\VisitorInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
     /**
-     * @var TranslatorInterface
+     * @var LegacyTranslatorInterface|TranslatorInterface
      */
     private $translator;
 
@@ -26,18 +27,18 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return [
             [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
-                'type' => 'Symfony\Component\Form\Form',
+                'type' => Form::class,
                 'method' => 'serializeForm',
             ],
             [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
-                'type' => 'Symfony\Component\Form\FormError',
+                'type' => FormError::class,
                 'method' => 'serializeFormError',
             ],
         ];
     }
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator = null)
     {
         $this->translator = $translator;
     }
@@ -57,7 +58,19 @@ class FormErrorHandler implements SubscribingHandlerInterface
 
     private function getErrorMessage(FormError $error): string
     {
+        if (null === $this->translator) {
+            return $error->getMessage();
+        }
+
         if (null !== $error->getMessagePluralization()) {
+            if ($this->translator instanceof TranslatorInterface) {
+                return $this->translator->trans(
+                    $error->getMessageTemplate(),
+                    ['%count%' => $error->getMessagePluralization()] + $error->getMessageParameters(),
+                    'validators'
+                );
+            }
+
             return $this->translator->transChoice(
                 $error->getMessageTemplate(),
                 $error->getMessagePluralization(),
