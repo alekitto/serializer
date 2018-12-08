@@ -38,8 +38,21 @@ class FormErrorHandler implements SubscribingHandlerInterface
         ];
     }
 
-    public function __construct(TranslatorInterface $translator = null)
+    public function __construct($translator = null)
     {
+        if (
+            null !== $translator &&
+            ! $translator instanceof LegacyTranslatorInterface && ! $translator instanceof TranslatorInterface
+        ) {
+            throw new \TypeError(sprintf(
+                'Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed',
+                __CLASS__,
+                LegacyTranslatorInterface::class,
+                TranslatorInterface::class,
+                is_object($translator) ? get_class($translator) : gettype($translator)
+            ));
+        }
+
         $this->translator = $translator;
     }
 
