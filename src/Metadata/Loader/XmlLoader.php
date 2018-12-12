@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Inflector\Inflector;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoaderTrait;
 use Kcs\Serializer\Annotation as Annotations;

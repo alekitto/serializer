@@ -160,7 +160,7 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getSubscribingMethods(): iterable
+    public static function getSubscribingMethods(): iterable
     {
         return [[
             'type' => \JsonSerializable::class,

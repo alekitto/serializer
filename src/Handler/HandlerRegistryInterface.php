@@ -23,7 +23,7 @@ interface HandlerRegistryInterface
      *
      * @return $this
      */
-    public function registerHandler(int $direction, string $typeName, callable $handler): self;
+    public function registerHandler(int $direction, string $typeName, $handler): self;
 
     /**
      * @param int    $direction one of the GraphNavigator::DIRECTION_??? constants

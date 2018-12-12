@@ -27,7 +27,9 @@ class HandlerRegistry implements HandlerRegistryInterface
                 return 'serialize'.$type;
 
             default:
-                throw new LogicException(sprintf('The direction %s does not exist; see GraphNavigator::DIRECTION_??? constants.', json_encode($direction)));
+                throw new LogicException(sprintf(
+                    'The direction %u does not exist; see GraphNavigator constants.', $direction
+                ));
         }
     }
 
@@ -52,7 +54,7 @@ class HandlerRegistry implements HandlerRegistryInterface
             }
 
             foreach ($directions as $direction) {
-                $method = isset($methodData['method']) ? $methodData['method'] : self::getDefaultMethod($direction, $methodData['type']);
+                $method = $methodData['method'] ?? self::getDefaultMethod($direction, $methodData['type']);
                 $this->registerHandler($direction, $methodData['type'], [$handler, $method]);
             }
         }
@@ -63,12 +65,8 @@ class HandlerRegistry implements HandlerRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function registerHandler(int $direction, string $typeName, callable $handler): HandlerRegistryInterface
+    public function registerHandler(int $direction, string $typeName, $handler): HandlerRegistryInterface
     {
-        if (is_string($direction)) {
-            $direction = Direction::parseDirection($direction);
-        }
-
         $this->handlers[$direction][$typeName] = $handler;
 
         return $this;
@@ -83,6 +81,11 @@ class HandlerRegistry implements HandlerRegistryInterface
             return null;
         }
 
-        return $this->handlers[$direction][$typeName];
+        $v = &$this->handlers[$direction][$typeName];
+        if (\is_array($v) && isset($v[0]) && $v[0] instanceof \Closure) {
+            $v[0] = $v[0]();
+        }
+
+        return $v;
     }
 }

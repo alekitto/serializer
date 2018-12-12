@@ -13,7 +13,7 @@
     bootstrap                   = "tests/bootstrap.php"
 >
     <php>
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak_vendor" />
     </php>
 
     <testsuites>

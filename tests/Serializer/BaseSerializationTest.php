@@ -95,6 +95,7 @@ use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseSerializationTest extends TestCase
 {
@@ -1100,7 +1101,10 @@ abstract class BaseSerializationTest extends TestCase
         $this->handlerRegistry = new HandlerRegistry();
         $this->handlerRegistry->registerSubscribingHandler(new ConstraintViolationHandler());
         $this->handlerRegistry->registerSubscribingHandler(new DateHandler());
-        $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler(new IdentityTranslator(new MessageSelector())));
+
+        $translator = is_subclass_of(IdentityTranslator::class, TranslatorInterface::class, true) ?
+            new IdentityTranslator() : new IdentityTranslator(new MessageSelector());
+        $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler($translator));
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',

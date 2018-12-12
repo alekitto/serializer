@@ -47,40 +47,31 @@
             <argument type="service" id="kcs_serializer.metadata.cache" on-invalid="null" />
         </service>
 
-        <service class="Kcs\Serializer\Handler\DateHandler" id="kcs_serializer.handler.date" />
-        <service class="Kcs\Serializer\Handler\ConstraintViolationHandler" id="kcs_serializer.handler.constraint_violation" />
-        <service class="Kcs\Serializer\Handler\PhpCollectionHandler" id="kcs_serializer.handler.php_collection" />
-        <service class="Kcs\Serializer\Handler\ArrayCollectionHandler" id="kcs_serializer.handler.array_collection" />
-        <service class="Kcs\Serializer\Handler\PropelCollectionHandler" id="kcs_serializer.handler.propel_collection" />
-        <service class="Kcs\Serializer\Handler\UuidInterfaceHandler" id="kcs_serializer.handler.uuid" />
+        <service class="Kcs\Serializer\Handler\DateHandler" id="kcs_serializer.handler.date">
+            <tag name="kcs_serializer.handler" />
+        </service>
+        <service class="Kcs\Serializer\Handler\ConstraintViolationHandler" id="kcs_serializer.handler.constraint_violation">
+            <tag name="kcs_serializer.handler" />
+        </service>
+        <service class="Kcs\Serializer\Handler\PhpCollectionHandler" id="kcs_serializer.handler.php_collection">
+            <tag name="kcs_serializer.handler" />
+        </service>
+        <service class="Kcs\Serializer\Handler\ArrayCollectionHandler" id="kcs_serializer.handler.array_collection">
+            <tag name="kcs_serializer.handler" />
+        </service>
+        <service class="Kcs\Serializer\Handler\PropelCollectionHandler" id="kcs_serializer.handler.propel_collection">
+            <tag name="kcs_serializer.handler" />
+        </service>
+        <service class="Kcs\Serializer\Handler\UuidInterfaceHandler" id="kcs_serializer.handler.uuid">
+            <tag name="kcs_serializer.handler" />
+        </service>
         <service class="Kcs\Serializer\Handler\FormErrorHandler" id="kcs_serializer.handler.form_error">
+            <tag name="kcs_serializer.handler" />
             <argument type="service" id="translator" on-invalid="null" />
         </service>
 
-        <service class="Kcs\Serializer\Handler\LazyHandlerRegistry" id="kcs_serializer.handler_registry">
-            <argument type="service" id="service_container" />
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.date" />
-            </call>
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.constraint_violation" />
-            </call>
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.php_collection" />
-            </call>
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.array_collection" />
-            </call>
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.propel_collection" />
-            </call>
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.form_error" />
-            </call>
-            <call method="registerSubscribingHandler">
-                <argument type="service" id="kcs_serializer.handler.uuid" />
-            </call>
-        </service>
+        <service class="Kcs\Serializer\Handler\HandlerRegistry" id="kcs_serializer.handler_registry" />
+        <service alias="kcs_serializer.handler_registry" id="Kcs\Serializer\Handler\HandlerRegistryInterface" public="true" />
 
         <service class="Kcs\Serializer\Naming\CacheNamingStrategy" id="kcs_serializer.naming.cache_strategy">
             <argument type="service" id="kcs_serializer.naming.serialized_name_annotation_strategy" />

@@ -16,7 +16,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getSubscribingMethods(): iterable
+    public static function getSubscribingMethods(): iterable
     {
         $methods = [];
         $collectionTypes = [
