@@ -2,6 +2,7 @@
 
 namespace Kcs\Serializer\Handler;
 
+use Cake\Chronos\Chronos;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\RuntimeException;
@@ -57,10 +58,22 @@ class DateHandler implements SubscribingHandlerInterface
             'direction' => Direction::DIRECTION_SERIALIZATION,
             'method' => 'serializeDateInterval',
         ];
+
+        yield [
+            'type' => Chronos::class,
+            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'method' => 'serializeDateTime',
+        ];
+
+        yield [
+            'type' => Chronos::class,
+            'direction' => Direction::DIRECTION_DESERIALIZATION,
+            'method' => 'deserializeChronos',
+        ];
     }
 
     public function __construct(
-        string $defaultFormat = \DateTime::ISO8601,
+        string $defaultFormat = \DateTime::ATOM,
         string $defaultTimezone = 'UTC',
         bool $xmlCData = true
     ) {
@@ -94,40 +107,13 @@ class DateHandler implements SubscribingHandlerInterface
         return $this->deserializeDateTimeInterface(\DateTimeImmutable::class, $data, $type);
     }
 
-    private function deserializeDateTimeInterface(string $class, $data, Type $type): ?\DateTimeInterface
+    public function deserializeChronos(VisitorInterface $visitor, $date, Type $type): ?Chronos
     {
-        if (null === $data) {
+        if (null === ($date = $this->deserializeDateTimeImmutable($visitor, $date, $type))) {
             return null;
         }
 
-        $timezone = $type->hasParam(1) ? new \DateTimeZone($type->getParam(1)) : $this->defaultTimezone;
-        $format = $this->getFormat($type);
-        $datetime = $class::createFromFormat($format, (string) $data, $timezone);
-
-        if (false === $datetime) {
-            throw new RuntimeException(sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
-        }
-
-        return $datetime;
-    }
-
-    private function serialize(VisitorInterface $visitor, $data, Type $type, Context $context)
-    {
-        if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
-            return $visitor->visitSimpleString($data);
-        }
-
-        return $visitor->visitString($data, $type, $context);
-    }
-
-    /**
-     * @param Type $type
-     *
-     * @return string
-     */
-    private function getFormat(Type $type): string
-    {
-        return $type->hasParam(0) ? $type->getParam(0) : $this->defaultFormat;
+        return Chronos::instance($date);
     }
 
     /**
@@ -168,5 +154,41 @@ class DateHandler implements SubscribingHandlerInterface
         }
 
         return $format;
+    }
+
+    private function deserializeDateTimeInterface(string $class, $data, Type $type): ?\DateTimeInterface
+    {
+        if (null === $data) {
+            return null;
+        }
+
+        $timezone = $type->hasParam(1) ? new \DateTimeZone($type->getParam(1)) : $this->defaultTimezone;
+        $format = $this->getFormat($type);
+        $datetime = $class::createFromFormat($format, (string) $data, $timezone);
+
+        if (false === $datetime) {
+            throw new RuntimeException(sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
+        }
+
+        return $datetime;
+    }
+
+    private function serialize(VisitorInterface $visitor, $data, Type $type, Context $context)
+    {
+        if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
+            return $visitor->visitSimpleString($data);
+        }
+
+        return $visitor->visitString($data, $type, $context);
+    }
+
+    /**
+     * @param Type $type
+     *
+     * @return string
+     */
+    private function getFormat(Type $type): string
+    {
+        return $type->hasParam(0) ? $type->getParam(0) : $this->defaultFormat;
     }
 }

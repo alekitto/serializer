@@ -211,7 +211,7 @@ class XmlSerializationTest extends BaseSerializationTest
         $xml->registerXPathNamespace('ns2', 'http://schemas.google.com/g/2005');
         $xml->registerXPathNamespace('ns3', 'http://www.w3.org/2005/Atom');
 
-        $this->assertEquals('2011-07-30T00:00:00+0000', $this->xpathFirstToString($xml, './@created_at'));
+        $this->assertEquals('2011-07-30T00:00:00+00:00', $this->xpathFirstToString($xml, './@created_at'));
         $this->assertEquals('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->xpathFirstToString($xml, './@ns2:etag'));
         $this->assertEquals('en', $this->xpathFirstToString($xml, './@ns1:language'));
         $this->assertEquals('This is a nice title.', $this->xpathFirstToString($xml, './ns1:title'));
