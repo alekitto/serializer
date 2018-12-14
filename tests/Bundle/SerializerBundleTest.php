@@ -23,7 +23,7 @@ class SerializerBundleTest extends WebTestCase
         $registry = $client->getContainer()->get('handler_registry');
 
         $handler = $registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'TestObject');
-        $this->assertEquals([$client->getContainer()->get('test_handler'), 'serialize'], $handler);
+        self::assertEquals([$client->getContainer()->get('test_handler'), 'serialize'], $handler);
     }
 
     public function testDefaultHandlersAreRegistered()
@@ -31,13 +31,13 @@ class SerializerBundleTest extends WebTestCase
         $client = $this->createClient();
         $registry = $client->getContainer()->get('handler_registry');
 
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'ArrayCollection'));
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Validator\ConstraintViolation'));
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, \DateTime::class));
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Form\Form'));
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PhpCollection\Sequence'));
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PropelCollection'));
-        $this->assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Ramsey\Uuid\UuidInterface'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'ArrayCollection'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Validator\ConstraintViolation'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, \DateTime::class));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Form\Form'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PhpCollection\Sequence'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PropelCollection'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Ramsey\Uuid\UuidInterface'));
     }
 
     public function testFunctional()
@@ -46,7 +46,7 @@ class SerializerBundleTest extends WebTestCase
 
         $client->request('GET', '/json');
         $response = $client->getResponse();
-        $this->assertJsonStringEqualsJsonString(json_encode([
+        self::assertJsonStringEqualsJsonString(\json_encode([
             'comments' => [
                 'Foo' => [
                     'comments' => [
@@ -60,7 +60,7 @@ class SerializerBundleTest extends WebTestCase
 
         $client->request('GET', '/xml');
         $response = $client->getResponse();
-        $this->assertXmlStringEqualsXmlString(<<<EOF
+        self::assertXmlStringEqualsXmlString(<<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <post>
   <comments count="2" author-name="Foo">
@@ -84,7 +84,7 @@ EOF
 
         $client->request('GET', '/yaml');
         $response = $client->getResponse();
-        $this->assertEquals(<<<EOF
+        self::assertEquals(<<<EOF
 comments:
     Foo:
         comments:

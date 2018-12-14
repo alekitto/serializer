@@ -7,12 +7,12 @@ $output = new \Symfony\Component\Console\Output\ConsoleOutput();
 function benchmark(\Closure $f, $format)
 {
     $times = 20;
-    $time = microtime(true);
+    $time = \microtime(true);
     for ($i = 0; $i < $times; ++$i) {
         $f($format);
     }
 
-    return (microtime(true) - $time) / $times;
+    return (\microtime(true) - $time) / $times;
 }
 
 function createCollection()

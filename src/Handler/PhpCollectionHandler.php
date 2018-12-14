@@ -43,7 +43,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context)
     {
-        return $visitor->visitArray(iterator_to_array($map), $type, $context);
+        return $visitor->visitArray(\iterator_to_array($map), $type, $context);
     }
 
     public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context): MapInterface

@@ -2,8 +2,9 @@
 
 namespace Symfony\Component\Messenger\Transport\Serialization;
 
-if (! interface_exists(SerializerInterface::class)) {
-    interface SerializerInterface extends DecoderInterface, EncoderInterface {
+if (! \interface_exists(SerializerInterface::class)) {
+    interface SerializerInterface extends DecoderInterface, EncoderInterface
+    {
     }
 }
 
@@ -13,8 +14,8 @@ use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\SerializerStamp;
-use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as MessengerSerializerInterface;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as MessengerSerializerInterface;
 
 class MessengerSerializer implements MessengerSerializerInterface
 {
@@ -78,7 +79,7 @@ class MessengerSerializer implements MessengerSerializerInterface
             return new Envelope($message, $envelopeItems);
         }
 
-        return new Envelope($message, ...iterator_to_array((function () use ($envelopeItems): \Generator {
+        return new Envelope($message, ...\iterator_to_array((function () use ($envelopeItems): \Generator {
             foreach ($envelopeItems as $items) {
                 yield from $items;
             }

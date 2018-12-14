@@ -57,7 +57,7 @@ class ArrayTest extends TestCase
 
         $result = $this->serializer->toArray($order);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     /**
@@ -69,7 +69,7 @@ class ArrayTest extends TestCase
     {
         $result = $this->serializer->toArray($input);
 
-        $this->assertEquals([$input], $result);
+        self::assertEquals([$input], $result);
     }
 
     public function scalarValues(): iterable
@@ -93,14 +93,14 @@ class ArrayTest extends TestCase
         $expected = new Order(new Price(2.5));
         $result = $this->serializer->fromArray($data, Type::from(Order::class));
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
     public function testToArrayReturnsArrayObjectAsArray()
     {
         $result = $this->serializer->toArray(new Author(null));
 
-        $this->assertSame([], $result);
+        self::assertSame([], $result);
     }
 
     public function testToArrayConversNestedArrayObjects()
@@ -109,6 +109,6 @@ class ArrayTest extends TestCase
         $list->add(new Author(null));
 
         $result = $this->serializer->toArray($list);
-        $this->assertSame(['authors' => [[]]], $result);
+        self::assertSame(['authors' => [[]]], $result);
     }
 }

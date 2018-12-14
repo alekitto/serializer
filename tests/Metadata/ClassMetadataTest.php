@@ -28,10 +28,10 @@ class ClassMetadataTest extends TestCase
         $metadata = new ClassMetadata(new \ReflectionClass(PropertyMetadataOrder::class));
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'b'));
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'a'));
-        $this->assertEquals(['b', 'a'], array_keys($metadata->getAttributesMetadata()));
+        self::assertEquals(['b', 'a'], \array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, $order);
-        $this->assertEquals($expected, array_keys($metadata->getAttributesMetadata()));
+        self::assertEquals($expected, \array_keys($metadata->getAttributesMetadata()));
     }
 
     public function testSetAccessorOrderAlphabetical()
@@ -40,10 +40,10 @@ class ClassMetadataTest extends TestCase
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'b'));
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'a'));
 
-        $this->assertEquals(['b', 'a'], array_keys($metadata->getAttributesMetadata()));
+        self::assertEquals(['b', 'a'], \array_keys($metadata->getAttributesMetadata()));
 
         $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL);
-        $this->assertEquals(['a', 'b'], array_keys($metadata->getAttributesMetadata()));
+        self::assertEquals(['a', 'b'], \array_keys($metadata->getAttributesMetadata()));
     }
 
     /**
@@ -53,14 +53,14 @@ class ClassMetadataTest extends TestCase
     {
         $object = new PropertyMetadataPublicMethod();
 
-        $metadata = new PropertyMetadata(get_class($object), $property);
+        $metadata = new PropertyMetadata(\get_class($object), $property);
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getterInit, $setterInit);
 
         $metadata->setValue($object, 'x');
-        $this->assertEquals(sprintf('%1$s:%1$s:x', strtoupper($property)), $metadata->getValue($object, new SerializationContext()));
+        self::assertEquals(\sprintf('%1$s:%1$s:x', \strtoupper($property)), $metadata->getValue($object, new SerializationContext()));
 
-        $this->assertEquals($getterName, $metadata->getter);
-        $this->assertEquals($setterName, $metadata->setter);
+        self::assertEquals($getterName, $metadata->getter);
+        self::assertEquals($setterName, $metadata->setter);
     }
 
     /**
@@ -71,7 +71,7 @@ class ClassMetadataTest extends TestCase
     {
         $object = new PropertyMetadataPublicMethod();
 
-        $metadata = new PropertyMetadata(get_class($object), 'e');
+        $metadata = new PropertyMetadata(\get_class($object), 'e');
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getter, $setter);
 
         if (null === $getter) {
@@ -88,13 +88,13 @@ class ClassMetadataTest extends TestCase
         $object = new PropertyMetadataPublicMethod();
         $object->f = 'FOOBAR';
 
-        $metadata = new PropertyMetadata(get_class($object), 'f');
+        $metadata = new PropertyMetadata(\get_class($object), 'f');
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD);
 
-        $this->assertEquals('FOOBAR', $metadata->getValue($object));
+        self::assertEquals('FOOBAR', $metadata->getValue($object));
 
         $metadata->setValue($object, 'BARBAR');
-        $this->assertEquals('BARBAR', $object->f);
+        self::assertEquals('BARBAR', $object->f);
     }
 
     public function providerPublicMethodData()

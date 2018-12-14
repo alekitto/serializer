@@ -28,7 +28,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
 
         $this->nestedGroups = (function () use (&$groups): bool {
             foreach ($groups as $group) {
-                if (is_array($group)) {
+                if (\is_array($group)) {
                     return true;
                 }
             }
@@ -39,7 +39,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
         if ($this->nestedGroups) {
             $this->groups = $groups;
         } else {
-            $this->groups = array_combine($groups, array_fill(0, count($groups), true));
+            $this->groups = \array_combine($groups, \array_fill(0, \count($groups), true));
         }
     }
 
@@ -60,17 +60,17 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             $groups = $this->getGroupsFor($navigatorContext);
 
             if (empty($property->groups) && empty($property->exclusionGroups)) {
-                return ! in_array(self::DEFAULT_GROUP, $groups);
+                return ! \in_array(self::DEFAULT_GROUP, $groups);
             }
 
             foreach ($property->exclusionGroups as $group) {
-                if (in_array($group, $groups)) {
+                if (\in_array($group, $groups)) {
                     return true;
                 }
             }
 
             foreach ($property->groups as $group) {
-                if (in_array($group, $groups)) {
+                if (\in_array($group, $groups)) {
                     return false;
                 }
             }
@@ -99,7 +99,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     {
         $groups = $this->groups;
         foreach ($navigatorContext->getMetadataStack()->getPath() as $index => $path) {
-            if (! array_key_exists($path, $groups)) {
+            if (! \array_key_exists($path, $groups)) {
                 if ($index > 0) {
                     return [self::DEFAULT_GROUP];
                 }

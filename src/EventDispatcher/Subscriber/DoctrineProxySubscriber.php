@@ -20,8 +20,8 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         $object->__load();
         $type = $event->getType();
 
-        if ($type->is(get_class($object))) {
-            $type->setName(get_parent_class($object));
+        if ($type->is(\get_class($object))) {
+            $type->setName(\get_parent_class($object));
         }
     }
 

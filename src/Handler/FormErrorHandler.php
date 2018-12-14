@@ -9,8 +9,8 @@ use Kcs\Serializer\Util\SerializableForm;
 use Kcs\Serializer\VisitorInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
@@ -44,12 +44,12 @@ class FormErrorHandler implements SubscribingHandlerInterface
             null !== $translator &&
             ! $translator instanceof LegacyTranslatorInterface && ! $translator instanceof TranslatorInterface
         ) {
-            throw new \TypeError(sprintf(
+            throw new \TypeError(\sprintf(
                 'Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed',
                 __CLASS__,
                 LegacyTranslatorInterface::class,
                 TranslatorInterface::class,
-                is_object($translator) ? get_class($translator) : gettype($translator)
+                \is_object($translator) ? \get_class($translator) : \gettype($translator)
             ));
         }
 

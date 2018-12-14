@@ -91,7 +91,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         foreach ($data as $k => $v) {
             $v = $this->navigator->accept($v, $elementType, $context);
 
-            if (null === $v && (! is_string($k) || ! $context->shouldSerializeNull())) {
+            if (null === $v && (! \is_string($k) || ! $context->shouldSerializeNull())) {
                 continue;
             }
 
@@ -187,8 +187,8 @@ class GenericSerializationVisitor extends AbstractVisitor
         $k = $this->namingStrategy->translateName($metadata);
 
         if ($metadata->inline) {
-            if (is_array($v)) {
-                $this->data = array_merge($this->data, $v);
+            if (\is_array($v)) {
+                $this->data = \array_merge($this->data, $v);
             }
         } else {
             $this->data[$k] = $v;
@@ -205,7 +205,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     protected function addData($key, $value)
     {
         if (isset($this->data[$key])) {
-            throw new InvalidArgumentException(sprintf('There is already data for "%s".', $key));
+            throw new InvalidArgumentException(\sprintf('There is already data for "%s".', $key));
         }
 
         $this->data[$key] = $value;

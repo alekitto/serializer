@@ -12,23 +12,23 @@ class GroupsProcessor extends PropertyMetadataProcessor
      */
     protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
-        if (is_string($annotation->groups)) {
-            $annotation->groups = explode(',', $annotation->groups);
+        if (\is_string($annotation->groups)) {
+            $annotation->groups = \explode(',', $annotation->groups);
         }
 
         $groups = $excludeGroups = [];
-        $annotation->groups = array_map('trim', (array) $annotation->groups);
+        $annotation->groups = \array_map('trim', (array) $annotation->groups);
         foreach ($annotation->groups as $group) {
-            if (false !== strpos($group, ',')) {
-                throw new InvalidArgumentException(sprintf(
+            if (false !== \strpos($group, ',')) {
+                throw new InvalidArgumentException(\sprintf(
                     'Invalid group name "%s" on "%s", did you mean to create multiple groups?',
-                    implode(', ', $annotation->groups),
+                    \implode(', ', $annotation->groups),
                     $metadata->class.'->'.$metadata->name
                 ));
             }
 
             if ('!' === $group[0]) {
-                $excludeGroups[] = substr($group, 1);
+                $excludeGroups[] = \substr($group, 1);
             } else {
                 $groups[] = $group;
             }

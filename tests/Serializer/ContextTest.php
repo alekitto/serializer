@@ -38,11 +38,11 @@ class ContextTest extends TestCase
         );
 
         $context->startVisiting($objects[0]);
-        $this->assertEquals(1, $context->getDepth());
+        self::assertEquals(1, $context->getDepth());
         $context->startVisiting($objects[1]);
-        $this->assertEquals(2, $context->getDepth());
+        self::assertEquals(2, $context->getDepth());
         $context->startVisiting($objects[2]);
-        $this->assertEquals(3, $context->getDepth());
+        self::assertEquals(3, $context->getDepth());
     }
 
     public function testSerializationMetadataStack()
@@ -78,19 +78,19 @@ class ContextTest extends TestCase
     public function testSerializeNullOption()
     {
         $context = SerializationContext::create();
-        $this->assertFalse($context->shouldSerializeNull());
+        self::assertFalse($context->shouldSerializeNull());
 
         $context->setSerializeNull(false);
-        $this->assertFalse($context->shouldSerializeNull());
+        self::assertFalse($context->shouldSerializeNull());
 
         $context->setSerializeNull(true);
-        $this->assertTrue($context->shouldSerializeNull());
+        self::assertTrue($context->shouldSerializeNull());
 
         $context->setSerializeNull('foo');
-        $this->assertTrue($context->shouldSerializeNull());
+        self::assertTrue($context->shouldSerializeNull());
 
         $context->setSerializeNull('0');
-        $this->assertFalse($context->shouldSerializeNull());
+        self::assertFalse($context->shouldSerializeNull());
     }
 
     public function testContextShouldBeCloneable()
@@ -101,7 +101,7 @@ class ContextTest extends TestCase
         $ctx2 = clone $context;
         $ctx2->setGroups(['bar', 'foobar']);
 
-        $this->assertEquals(['foobar'], $context->attributes->get('groups'));
-        $this->assertEquals(['bar', 'foobar'], $ctx2->attributes->get('groups'));
+        self::assertEquals(['foobar'], $context->attributes->get('groups'));
+        self::assertEquals(['bar', 'foobar'], $ctx2->attributes->get('groups'));
     }
 }

@@ -100,7 +100,7 @@ class GraphNavigator
             $type = Type::null();
         }
 
-        if (($inVisitingStack = is_object($data))) {
+        if ($inVisitingStack = \is_object($data)) {
             if ($context->isVisiting($data) && ! $context->getMetadataStack()->getCurrent() instanceof AdditionalPropertyMetadata) {
                 return null;
             }
@@ -110,11 +110,11 @@ class GraphNavigator
 
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
-        if (is_object($data) && is_subclass_of($data, $type->getName(), false)) {
-            $type = new Type(get_class($data), $type->getParams());
+        if (\is_object($data) && \is_subclass_of($data, $type->getName(), false)) {
+            $type = new Type(\get_class($data), $type->getParams());
         }
 
-        if (null !== $this->dispatcher && ! is_scalar($data)) {
+        if (null !== $this->dispatcher && ! \is_scalar($data)) {
             $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
             $data = $event->getData();
         }
@@ -135,7 +135,7 @@ class GraphNavigator
             }
         }
 
-        if (null !== $this->dispatcher && ! is_scalar($data)) {
+        if (null !== $this->dispatcher && ! \is_scalar($data)) {
             $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
         }
 
@@ -151,7 +151,7 @@ class GraphNavigator
     {
         $context->increaseDepth();
 
-        if (null !== $this->dispatcher && ! is_scalar($data)) {
+        if (null !== $this->dispatcher && ! \is_scalar($data)) {
             $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
             $data = $event->getData();
         }
@@ -172,7 +172,7 @@ class GraphNavigator
             }
         }
 
-        if (null !== $this->dispatcher && ! is_scalar($data)) {
+        if (null !== $this->dispatcher && ! \is_scalar($data)) {
             $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
         }
 
@@ -245,7 +245,7 @@ class GraphNavigator
         }
 
         $name = $type->getName();
-        if (isset(self::BUILTIN_TYPES[$name]) || (! class_exists($name) && ! interface_exists($name))) {
+        if (isset(self::BUILTIN_TYPES[$name]) || (! \class_exists($name) && ! \interface_exists($name))) {
             return null;
         }
 
@@ -258,7 +258,7 @@ class GraphNavigator
     private function visitArray(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
         if ($context instanceof SerializationContext && $type->hasParam(0) && ! $type->hasParam(1)) {
-            $data = array_values($data);
+            $data = \array_values($data);
         }
 
         return $visitor->visitArray($data, $type, $context);

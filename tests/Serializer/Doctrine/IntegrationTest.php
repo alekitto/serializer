@@ -52,11 +52,11 @@ class IntegrationTest extends TestCase
         $em->flush();
         $em->clear();
 
-        $reloadedClass = $em->find(get_class($class), $class->getId());
-        $this->assertNotSame($class, $reloadedClass);
+        $reloadedClass = $em->find(\get_class($class), $class->getId());
+        self::assertNotSame($class, $reloadedClass);
 
         $json = $this->serializer->serialize($reloadedClass, 'json');
-        $this->assertEquals('{"id":1,"teacher":{"id":1,"type":"teacher"},"students":[{"id":2,"type":"student"},{"id":3,"type":"student"}]}', $json);
+        self::assertEquals('{"id":1,"teacher":{"id":1,"type":"teacher"},"students":[{"id":2,"type":"student"},{"id":3,"type":"student"}]}', $json);
     }
 
     /**
@@ -77,7 +77,7 @@ class IntegrationTest extends TestCase
                         return $entityManager;
 
                     default:
-                        throw new \RuntimeException(sprintf('Unknown service id "%s".', $id));
+                        throw new \RuntimeException(\sprintf('Unknown service id "%s".', $id));
                 }
             }
         );
@@ -120,7 +120,7 @@ class IntegrationTest extends TestCase
         ]));
         $cfg->setAutoGenerateProxyClasses(true);
         $cfg->setProxyNamespace('Kcs\Serializer\DoctrineProxy');
-        $cfg->setProxyDir(sys_get_temp_dir().'/serializer-test-proxies');
+        $cfg->setProxyDir(\sys_get_temp_dir().'/serializer-test-proxies');
 
         $em = EntityManager::create($con, $cfg);
 
@@ -150,16 +150,16 @@ class SimpleManagerRegistry extends AbstractManagerRegistry
         string $proxyInterface = Proxy::class
     ) {
         if (null === $defaultConnection) {
-            $defaultConnection = key($connections);
+            $defaultConnection = \key($connections);
         }
 
         if (null === $defaultManager) {
-            $defaultManager = key($managers);
+            $defaultManager = \key($managers);
         }
 
         parent::__construct($name, $connections, $managers, $defaultConnection, $defaultManager, $proxyInterface);
 
-        if (! is_callable($serviceCreator)) {
+        if (! \is_callable($serviceCreator)) {
             throw new \InvalidArgumentException('$serviceCreator must be a valid callable.');
         }
 
@@ -172,7 +172,7 @@ class SimpleManagerRegistry extends AbstractManagerRegistry
             return $this->services[$name];
         }
 
-        return $this->services[$name] = call_user_func($this->serviceCreator, $name);
+        return $this->services[$name] = \call_user_func($this->serviceCreator, $name);
     }
 
     public function resetService($name)
@@ -182,7 +182,7 @@ class SimpleManagerRegistry extends AbstractManagerRegistry
 
     public function getAliasNamespace($alias): string
     {
-        foreach (array_keys($this->getManagers()) as $name) {
+        foreach (\array_keys($this->getManagers()) as $name) {
             $manager = $this->getManager($name);
 
             if ($manager instanceof EntityManager) {
@@ -192,10 +192,10 @@ class SimpleManagerRegistry extends AbstractManagerRegistry
                     // Probably mapped by another entity manager, or invalid, just ignore this here.
                 }
             } else {
-                throw new \LogicException(sprintf('Unsupported manager type "%s".', get_class($manager)));
+                throw new \LogicException(\sprintf('Unsupported manager type "%s".', \get_class($manager)));
             }
         }
 
-        throw new \RuntimeException(sprintf('The namespace alias "%s" is not known to any manager.', $alias));
+        throw new \RuntimeException(\sprintf('The namespace alias "%s" is not known to any manager.', $alias));
     }
 }

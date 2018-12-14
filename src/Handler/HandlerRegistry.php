@@ -15,8 +15,8 @@ class HandlerRegistry implements HandlerRegistryInterface
 
     public static function getDefaultMethod(int $direction, string $type): string
     {
-        if (false !== $pos = strrpos($type, '\\')) {
-            $type = substr($type, $pos + 1);
+        if (false !== $pos = \strrpos($type, '\\')) {
+            $type = \substr($type, $pos + 1);
         }
 
         switch ($direction) {
@@ -27,7 +27,7 @@ class HandlerRegistry implements HandlerRegistryInterface
                 return 'serialize'.$type;
 
             default:
-                throw new LogicException(sprintf(
+                throw new LogicException(\sprintf(
                     'The direction %u does not exist; see GraphNavigator constants.', $direction
                 ));
         }
@@ -45,7 +45,7 @@ class HandlerRegistry implements HandlerRegistryInterface
     {
         foreach ($handler->getSubscribingMethods() as $methodData) {
             if (! isset($methodData['type'])) {
-                throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', get_class($handler)));
+                throw new RuntimeException(\sprintf('For each subscribing method a "type" attribute must be given for %s.', \get_class($handler)));
             }
 
             $directions = [Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION];

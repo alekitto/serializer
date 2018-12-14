@@ -39,7 +39,8 @@ class MessengerSerializerTest extends TestCase
         $this->messengerSerializer = new MessengerSerializer($this->serializer);
     }
 
-    private function wrap($message) {
+    private function wrap($message)
+    {
         if (\function_exists(Envelope::class.'::wrap')) {
             return Envelope::wrap($message);
         }
@@ -51,7 +52,7 @@ class MessengerSerializerTest extends TestCase
     {
         $envelope = $this->wrap(new DummyMessage('Hello'));
 
-        $this->assertEquals($envelope, $this->messengerSerializer->decode($this->messengerSerializer->encode($envelope)));
+        self::assertEquals($envelope, $this->messengerSerializer->decode($this->messengerSerializer->encode($envelope)));
     }
 
     public function testEncodedWithConfigurationIsDecodable(): void
@@ -69,18 +70,18 @@ class MessengerSerializerTest extends TestCase
             ;
         }
 
-        $this->assertEquals($envelope, $this->messengerSerializer->decode($this->messengerSerializer->encode($envelope)));
+        self::assertEquals($envelope, $this->messengerSerializer->decode($this->messengerSerializer->encode($envelope)));
     }
 
     public function testEncodedIsHavingTheBodyAndTypeHeader(): void
     {
         $encoded = $this->messengerSerializer->encode($this->wrap(new DummyMessage('Hello')));
 
-        $this->assertArrayHasKey('body', $encoded);
-        $this->assertArrayHasKey('headers', $encoded);
-        $this->assertArrayHasKey('type', $encoded['headers']);
-        $this->assertArrayNotHasKey('X-Message-Envelope-Items', $encoded['headers']);
-        $this->assertEquals(DummyMessage::class, $encoded['headers']['type']);
+        self::assertArrayHasKey('body', $encoded);
+        self::assertArrayHasKey('headers', $encoded);
+        self::assertArrayHasKey('type', $encoded['headers']);
+        self::assertArrayNotHasKey('X-Message-Envelope-Items', $encoded['headers']);
+        self::assertEquals(DummyMessage::class, $encoded['headers']['type']);
     }
 
     public function testUsesTheCustomFormatAndContext(): void
@@ -96,8 +97,8 @@ class MessengerSerializerTest extends TestCase
         $encoded = $encoder->encode($this->wrap($message));
         $decoded = $encoder->decode($encoded);
 
-        $this->assertSame('Yay', $encoded['body']);
-        $this->assertSame($message, $decoded->getMessage());
+        self::assertSame('Yay', $encoded['body']);
+        self::assertSame($message, $decoded->getMessage());
     }
 
     public function testEncodedWithSerializationConfiguration(): void
@@ -117,16 +118,16 @@ class MessengerSerializerTest extends TestCase
 
         $encoded = $this->messengerSerializer->encode($envelope);
 
-        $this->assertArrayHasKey('body', $encoded);
-        $this->assertArrayHasKey('headers', $encoded);
-        $this->assertArrayHasKey('type', $encoded['headers']);
-        $this->assertEquals(DummyMessage::class, $encoded['headers']['type']);
-        $this->assertArrayHasKey('X-Message-Envelope-Items', $encoded['headers']);
+        self::assertArrayHasKey('body', $encoded);
+        self::assertArrayHasKey('headers', $encoded);
+        self::assertArrayHasKey('type', $encoded['headers']);
+        self::assertEquals(DummyMessage::class, $encoded['headers']['type']);
+        self::assertArrayHasKey('X-Message-Envelope-Items', $encoded['headers']);
 
         if (\class_exists(SerializerConfiguration::class)) {
-            $this->assertEquals('a:2:{s:75:"Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration";C:75:"Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration":59:{a:1:{s:7:"context";a:1:{s:6:"groups";a:1:{i:0;s:3:"foo";}}}}s:76:"Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration";C:76:"Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration":82:{a:2:{s:6:"groups";a:2:{i:0;s:3:"foo";i:1;s:3:"bar";}s:17:"is_group_sequence";b:0;}}}', $encoded['headers']['X-Message-Envelope-Items']);
+            self::assertEquals('a:2:{s:75:"Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration";C:75:"Symfony\Component\Messenger\Transport\Serialization\SerializerConfiguration":59:{a:1:{s:7:"context";a:1:{s:6:"groups";a:1:{i:0;s:3:"foo";}}}}s:76:"Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration";C:76:"Symfony\Component\Messenger\Middleware\Configuration\ValidationConfiguration":82:{a:2:{s:6:"groups";a:2:{i:0;s:3:"foo";i:1;s:3:"bar";}s:17:"is_group_sequence";b:0;}}}', $encoded['headers']['X-Message-Envelope-Items']);
         } else {
-            $this->assertEquals(serialize([
+            self::assertEquals(\serialize([
                 SerializerStamp::class => [
                     new SerializerStamp(['groups' => ['foo']]),
                 ],

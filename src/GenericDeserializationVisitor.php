@@ -20,8 +20,8 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
      */
     public function visitArray($data, Type $type, Context $context)
     {
-        if (! is_array($data)) {
-            throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), json_encode($data)));
+        if (! \is_array($data)) {
+            throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \json_encode($data)));
         }
 
         // If no further parameters were given, keys/values are just passed as is.
@@ -58,7 +58,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 return $result;
 
             default:
-                throw new RuntimeException(sprintf('Array type cannot have more than 2 parameters, but got %s.', json_encode($type->getParams())));
+                throw new RuntimeException(\sprintf('Array type cannot have more than 2 parameters, but got %s.', \json_encode($type->getParams())));
         }
     }
 
@@ -95,12 +95,12 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     {
         $name = $this->namingStrategy->translateName($metadata);
 
-        if (null === $data || ! array_key_exists($name, $data)) {
+        if (null === $data || ! \array_key_exists($name, $data)) {
             return null;
         }
 
         if (null === $metadata->type) {
-            throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
+            throw new RuntimeException(\sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
         $v = null !== $data[$name] ? $context->accept($data[$name], $metadata->type) : null;

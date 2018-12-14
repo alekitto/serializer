@@ -38,25 +38,25 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function prepare($data)
     {
-        $previous = libxml_use_internal_errors(true);
-        $previousEntityLoaderState = libxml_disable_entity_loader($this->disableExternalEntities);
+        $previous = \libxml_use_internal_errors(true);
+        $previousEntityLoaderState = \libxml_disable_entity_loader($this->disableExternalEntities);
 
-        if (false !== stripos($data, '<!doctype')) {
+        if (false !== \stripos($data, '<!doctype')) {
             $doctype = $this->getDomDocumentType($data);
-            if (! in_array($doctype, $this->doctypeWhitelist, true)) {
-                throw new InvalidArgumentException(sprintf(
+            if (! \in_array($doctype, $this->doctypeWhitelist, true)) {
+                throw new InvalidArgumentException(\sprintf(
                     'The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.',
                     $doctype
                 ));
             }
         }
 
-        $doc = simplexml_load_string($data);
-        libxml_use_internal_errors($previous);
-        libxml_disable_entity_loader($previousEntityLoaderState);
+        $doc = \simplexml_load_string($data);
+        \libxml_use_internal_errors($previous);
+        \libxml_disable_entity_loader($previousEntityLoaderState);
 
         if (false === $doc) {
-            throw new XmlErrorException(libxml_get_last_error());
+            throw new XmlErrorException(\libxml_get_last_error());
         }
 
         $this->docNamespaces = $doc->getDocNamespaces(true);
@@ -78,7 +78,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $nodes = null !== $namespace ? $data->children($namespace)->$entryName : $data->$entryName;
         switch ($type->countParams()) {
             case 0:
-                throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
+                throw new RuntimeException(\sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
             case 1:
                 foreach ($nodes as $v) {
                     if ($this->isNullNode($v)) {
@@ -100,7 +100,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 foreach ($nodes as $v) {
                     $attrs = $v->attributes();
                     if (! isset($attrs[$currentMetadata->xmlKeyAttribute])) {
-                        throw new RuntimeException(sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
+                        throw new RuntimeException(\sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
                     }
 
                     $k = $context->accept($attrs[$currentMetadata->xmlKeyAttribute], $keyType);
@@ -115,7 +115,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 break;
 
             default:
-                throw new LogicException(sprintf('The array type does not support more than 2 parameters, but got %s.', json_encode($type['params'])));
+                throw new LogicException(\sprintf('The array type does not support more than 2 parameters, but got %s.', \json_encode($type['params'])));
         }
 
         $this->setData($result);
@@ -131,7 +131,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $name = $this->namingStrategy->translateName($metadata);
 
         if (null === $metadata->type) {
-            throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
+            throw new RuntimeException(\sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
         if ($metadata->xmlAttribute) {
@@ -164,7 +164,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         } else {
             $namespaces = $data->getDocNamespaces();
             if (isset($namespaces[''])) {
-                $prefix = uniqid('ns-');
+                $prefix = \uniqid('ns-');
                 $data->registerXPathNamespace($prefix, $namespaces['']);
 
                 $nodes = $data->xpath('./'.$prefix.':'.$name);
@@ -172,7 +172,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                     return null;
                 }
 
-                $node = reset($nodes);
+                $node = \reset($nodes);
             } else {
                 if (! isset($data->$name)) {
                     return null;
@@ -205,7 +205,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         } elseif ('false' === $data || '0' === $data) {
             $data = false;
         } else {
-            throw new RuntimeException(sprintf('Could not convert data to boolean. Expected "true", "false", "1" or "0", but got %s.', json_encode($data)));
+            throw new RuntimeException(\sprintf('Could not convert data to boolean. Expected "true", "false", "1" or "0", but got %s.', \json_encode($data)));
         }
 
         return parent::visitBoolean($data, $type, $context);
@@ -301,7 +301,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      */
     private function getDomDocumentType(string $data): string
     {
-        $startPos = $endPos = stripos($data, '<!doctype');
+        $startPos = $endPos = \stripos($data, '<!doctype');
         $braces = 0;
         do {
             $char = $data[$endPos++];
@@ -313,20 +313,20 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             }
         } while ($braces > 0);
 
-        $internalSubset = substr($data, $startPos, $endPos - $startPos);
-        $internalSubset = str_replace(["\n", "\r"], '', $internalSubset);
-        $internalSubset = preg_replace('/\s{2,}/', ' ', $internalSubset);
-        $internalSubset = str_replace(['[ <!', '> ]>'], ['[<!', '>]>'], $internalSubset);
+        $internalSubset = \substr($data, $startPos, $endPos - $startPos);
+        $internalSubset = \str_replace(["\n", "\r"], '', $internalSubset);
+        $internalSubset = \preg_replace('/\s{2,}/', ' ', $internalSubset);
+        $internalSubset = \str_replace(['[ <!', '> ]>'], ['[<!', '>]>'], $internalSubset);
 
         return $internalSubset;
     }
 
     private function isNullNode(\SimpleXMLElement $node): bool
     {
-        if (! array_key_exists('xsi', $this->docNamespaces)) {
+        if (! \array_key_exists('xsi', $this->docNamespaces)) {
             return false;
         }
 
-        return ($nilNodes = $node->xpath('./@xsi:nil')) && 'true' === (string) reset($nilNodes);
+        return ($nilNodes = $node->xpath('./@xsi:nil')) && 'true' === (string) \reset($nilNodes);
     }
 }

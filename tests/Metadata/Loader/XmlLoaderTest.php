@@ -17,11 +17,11 @@ class XmlLoaderTest extends BaseLoaderTest
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
         $this->getLoader('exclude_all')->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('title', $m->getAttributesMetadata());
+        self::assertArrayHasKey('title', $m->getAttributesMetadata());
 
         $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
-            $this->assertArrayNotHasKey($key, $m->getAttributesMetadata());
+            self::assertArrayNotHasKey($key, $m->getAttributesMetadata());
         }
     }
 
@@ -30,11 +30,11 @@ class XmlLoaderTest extends BaseLoaderTest
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
         $this->getLoader('exclude_none')->loadClassMetadata($m);
 
-        $this->assertArrayNotHasKey('title', $m->getAttributesMetadata());
+        self::assertArrayNotHasKey('title', $m->getAttributesMetadata());
 
         $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
-            $this->assertArrayHasKey($key, $m->getAttributesMetadata());
+            self::assertArrayHasKey($key, $m->getAttributesMetadata());
         }
     }
 
@@ -45,7 +45,7 @@ class XmlLoaderTest extends BaseLoaderTest
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
-        $this->assertEquals($p, $m->getAttributeMetadata('title'));
+        self::assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
     public function testAccessorAttributes()
@@ -58,14 +58,14 @@ class XmlLoaderTest extends BaseLoaderTest
         $p->getter = 'getTrimmedName';
         $p->setter = 'setCapitalizedName';
 
-        $this->assertEquals($p, $m->getAttributeMetadata('name'));
+        self::assertEquals($p, $m->getAttributeMetadata('name'));
     }
 
     protected function getLoader()
     {
         $append = '/base';
-        if (1 == func_num_args()) {
-            $append = '/'.func_get_arg(0);
+        if (1 == \func_num_args()) {
+            $append = '/'.\func_get_arg(0);
         }
 
         $locator = new IteratorFileLocator();

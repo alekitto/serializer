@@ -52,7 +52,7 @@ class StaticPropertyMetadata extends PropertyMetadata
      */
     public function __sleep(): array
     {
-        return array_merge(parent::__sleep(), [
+        return \array_merge(parent::__sleep(), [
             'value',
         ]);
     }

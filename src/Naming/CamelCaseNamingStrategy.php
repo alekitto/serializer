@@ -32,12 +32,12 @@ class CamelCaseNamingStrategy implements PropertyNamingStrategyInterface
      */
     public function translateName(PropertyMetadata $property): string
     {
-        $name = preg_replace('/[A-Z]/', $this->separator.'\\0', $property->name);
+        $name = \preg_replace('/[A-Z]/', $this->separator.'\\0', $property->name);
 
         if ($this->lowerCase) {
-            return strtolower($name);
+            return \strtolower($name);
         }
 
-        return ucfirst($name);
+        return \ucfirst($name);
     }
 }

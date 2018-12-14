@@ -21,5 +21,7 @@ return PhpCsFixer\Config::create()
         'no_unused_imports' => true,
         'not_operator_with_successor_space' => true,
         'ordered_imports' => true,
+        'php_unit_test_case_static_method_calls' => ['call_type' => 'self'],
+        'native_function_invocation' => true,
     ])
 ;

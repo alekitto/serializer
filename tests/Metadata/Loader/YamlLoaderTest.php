@@ -15,7 +15,7 @@ class YamlLoaderTest extends BaseLoaderTest
     {
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Person'));
         $this->getLoaderForSubDir('accessor_inferred')->loadClassMetadata($m);
-        $this->assertEquals(['age', 'name'], array_keys($m->getAttributesMetadata()));
+        self::assertEquals(['age', 'name'], \array_keys($m->getAttributesMetadata()));
     }
 
     public function testShortExposeSyntax()
@@ -23,8 +23,8 @@ class YamlLoaderTest extends BaseLoaderTest
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Person'));
         $this->getLoaderForSubDir('short_expose')->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('name', $m->getAttributesMetadata());
-        $this->assertArrayNotHasKey('age', $m->getAttributesMetadata());
+        self::assertArrayHasKey('name', $m->getAttributesMetadata());
+        self::assertArrayNotHasKey('age', $m->getAttributesMetadata());
     }
 
     public function testBlogPost()
@@ -32,11 +32,11 @@ class YamlLoaderTest extends BaseLoaderTest
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
         $this->getLoaderForSubDir('exclude_all')->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('title', $m->getAttributesMetadata());
+        self::assertArrayHasKey('title', $m->getAttributesMetadata());
 
         $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
-            $this->assertArrayNotHasKey($key, $m->getAttributesMetadata());
+            self::assertArrayNotHasKey($key, $m->getAttributesMetadata());
         }
     }
 
@@ -45,11 +45,11 @@ class YamlLoaderTest extends BaseLoaderTest
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
         $this->getLoaderForSubDir('exclude_none')->loadClassMetadata($m);
 
-        $this->assertArrayNotHasKey('title', $m->getAttributesMetadata());
+        self::assertArrayNotHasKey('title', $m->getAttributesMetadata());
 
         $excluded = ['createdAt', 'published', 'comments', 'author'];
         foreach ($excluded as $key) {
-            $this->assertArrayHasKey($key, $m->getAttributesMetadata());
+            self::assertArrayHasKey($key, $m->getAttributesMetadata());
         }
     }
 
@@ -60,7 +60,7 @@ class YamlLoaderTest extends BaseLoaderTest
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
-        $this->assertEquals($p, $m->getAttributeMetadata('title'));
+        self::assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
     public function testBlogPostAccessor()
@@ -68,12 +68,12 @@ class YamlLoaderTest extends BaseLoaderTest
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
         $this->getLoaderForSubDir('accessor')->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('title', $m->getAttributesMetadata());
+        self::assertArrayHasKey('title', $m->getAttributesMetadata());
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->getter = 'getOtherTitle';
         $p->setter = 'setOtherTitle';
-        $this->assertEquals($p, $m->getAttributeMetadata('title'));
+        self::assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
     private function getLoaderForSubDir($subDir = 'base')

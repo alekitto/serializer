@@ -32,24 +32,24 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
-        $this->assertEquals('blog-post', $m->xmlRootName);
-        $this->assertCount(4, $m->xmlNamespaces);
-        $this->assertArrayHasKey('', $m->xmlNamespaces);
-        $this->assertEquals('http://example.com/namespace', $m->xmlNamespaces['']);
-        $this->assertArrayHasKey('gd', $m->xmlNamespaces);
-        $this->assertEquals('http://schemas.google.com/g/2005', $m->xmlNamespaces['gd']);
-        $this->assertArrayHasKey('atom', $m->xmlNamespaces);
-        $this->assertEquals('http://www.w3.org/2005/Atom', $m->xmlNamespaces['atom']);
-        $this->assertArrayHasKey('dc', $m->xmlNamespaces);
-        $this->assertEquals('http://purl.org/dc/elements/1.1/', $m->xmlNamespaces['dc']);
+        self::assertNotNull($m);
+        self::assertEquals('blog-post', $m->xmlRootName);
+        self::assertCount(4, $m->xmlNamespaces);
+        self::assertArrayHasKey('', $m->xmlNamespaces);
+        self::assertEquals('http://example.com/namespace', $m->xmlNamespaces['']);
+        self::assertArrayHasKey('gd', $m->xmlNamespaces);
+        self::assertEquals('http://schemas.google.com/g/2005', $m->xmlNamespaces['gd']);
+        self::assertArrayHasKey('atom', $m->xmlNamespaces);
+        self::assertEquals('http://www.w3.org/2005/Atom', $m->xmlNamespaces['atom']);
+        self::assertArrayHasKey('dc', $m->xmlNamespaces);
+        self::assertEquals('http://purl.org/dc/elements/1.1/', $m->xmlNamespaces['dc']);
 
         $p = new PropertyMetadata($m->getName(), 'id');
         $p->type = Type::from('string');
         $p->groups = ['comments', 'post'];
         $p->xmlElementCData = false;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('id'));
+        self::assertEquals($p, $m->getAttributeMetadata('id'));
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
@@ -57,13 +57,13 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         $p->onExclude = PropertyMetadata::ON_EXCLUDE_SKIP;
-        $this->assertEquals($p, $m->getAttributeMetadata('title'));
+        self::assertEquals($p, $m->getAttributeMetadata('title'));
 
         $p = new PropertyMetadata($m->getName(), 'createdAt');
         $p->type = Type::from('DateTime');
         $p->xmlAttribute = true;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('createdAt'));
+        self::assertEquals($p, $m->getAttributeMetadata('createdAt'));
 
         $p = new PropertyMetadata($m->getName(), 'published');
         $p->type = Type::from('boolean');
@@ -71,7 +71,7 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlAttribute = true;
         $p->groups = ['post'];
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('published'));
+        self::assertEquals($p, $m->getAttributeMetadata('published'));
 
         $p = new PropertyMetadata($m->getName(), 'etag');
         $p->type = Type::from('string');
@@ -79,7 +79,7 @@ abstract class BaseLoaderTest extends TestCase
         $p->groups = ['post'];
         $p->xmlNamespace = 'http://schemas.google.com/g/2005';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('etag'));
+        self::assertEquals($p, $m->getAttributeMetadata('etag'));
 
         $p = new PropertyMetadata($m->getName(), 'comments');
         $p->type = new Type('ArrayCollection', [Type::from(Comment::class)]);
@@ -88,24 +88,24 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlEntryName = 'comment';
         $p->groups = ['comments'];
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('comments'));
+        self::assertEquals($p, $m->getAttributeMetadata('comments'));
 
         $p = new PropertyMetadata($m->getName(), 'author');
         $p->type = Type::from(Author::class);
         $p->groups = ['post'];
         $p->xmlNamespace = 'http://www.w3.org/2005/Atom';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('author'));
+        self::assertEquals($p, $m->getAttributeMetadata('author'));
 
         $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Price'));
         $this->getLoader()->loadClassMetadata($m);
-        $this->assertNotNull($m);
+        self::assertNotNull($m);
 
         $p = new PropertyMetadata($m->getName(), 'price');
         $p->type = Type::from('double');
         $p->xmlValue = true;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('price'));
+        self::assertEquals($p, $m->getAttributeMetadata('price'));
     }
 
     public function testStaticFields()
@@ -113,16 +113,16 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithStaticFields::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('existField', $m->getAttributesMetadata());
-        $this->assertArrayHasKey('additional_1', $m->getAttributesMetadata());
-        $this->assertArrayHasKey('additional_2', $m->getAttributesMetadata());
+        self::assertArrayHasKey('existField', $m->getAttributesMetadata());
+        self::assertArrayHasKey('additional_1', $m->getAttributesMetadata());
+        self::assertArrayHasKey('additional_2', $m->getAttributesMetadata());
 
         $p = new StaticPropertyMetadata($m->getName(), 'additional_1', '12');
         $p->type = Type::parse('integer');
-        $this->assertEquals($p, $m->getAttributeMetadata('additional_1'));
+        self::assertEquals($p, $m->getAttributeMetadata('additional_1'));
 
         $p = new StaticPropertyMetadata($m->getName(), 'additional_2', 'foobar');
-        $this->assertEquals($p, $m->getAttributeMetadata('additional_2'));
+        self::assertEquals($p, $m->getAttributeMetadata('additional_2'));
     }
 
     public function testVirtualProperty()
@@ -130,17 +130,17 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithVirtualProperties::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('existField', $m->getAttributesMetadata());
-        $this->assertArrayHasKey('virtualValue', $m->getAttributesMetadata());
-        $this->assertArrayHasKey('virtualSerializedValue', $m->getAttributesMetadata());
-        $this->assertArrayHasKey('typedVirtualProperty', $m->getAttributesMetadata());
+        self::assertArrayHasKey('existField', $m->getAttributesMetadata());
+        self::assertArrayHasKey('virtualValue', $m->getAttributesMetadata());
+        self::assertArrayHasKey('virtualSerializedValue', $m->getAttributesMetadata());
+        self::assertArrayHasKey('typedVirtualProperty', $m->getAttributesMetadata());
 
-        $this->assertEquals($m->getAttributeMetadata('virtualSerializedValue')->serializedName, 'test', 'Serialized name is missing');
+        self::assertEquals($m->getAttributeMetadata('virtualSerializedValue')->serializedName, 'test', 'Serialized name is missing');
 
         $p = new VirtualPropertyMetadata($m->getName(), 'virtualValue');
         $p->getter = 'getVirtualValue';
 
-        $this->assertEquals($p, $m->getAttributeMetadata('virtualValue'));
+        self::assertEquals($p, $m->getAttributeMetadata('virtualValue'));
     }
 
     public function testXmlKeyValuePairs()
@@ -148,8 +148,8 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithXmlKeyValuePairs::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('array', $m->getAttributesMetadata());
-        $this->assertTrue($m->getAttributeMetadata('array')->xmlKeyValuePairs);
+        self::assertArrayHasKey('array', $m->getAttributesMetadata());
+        self::assertTrue($m->getAttributeMetadata('array')->xmlKeyValuePairs);
     }
 
     public function testVirtualPropertyWithExcludeAll()
@@ -158,12 +158,12 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass($a));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertArrayHasKey('virtualValue', $m->getAttributesMetadata());
+        self::assertArrayHasKey('virtualValue', $m->getAttributesMetadata());
 
         $p = new VirtualPropertyMetadata($m->getName(), 'virtualValue');
         $p->getter = 'getVirtualValue';
 
-        $this->assertEquals($p, $m->getAttributeMetadata('virtualValue'));
+        self::assertEquals($p, $m->getAttributeMetadata('virtualValue'));
     }
 
     public function testReadOnlyDefinedBeforeGetterAndSetter()
@@ -171,7 +171,7 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(AuthorReadOnly::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
+        self::assertNotNull($m);
     }
 
     public function testLoadDiscriminator()
@@ -180,17 +180,17 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(Vehicle::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
-        $this->assertEquals('type', $m->discriminatorFieldName);
-        $this->assertEquals($m->getName(), $m->discriminatorBaseClass);
-        $this->assertEquals(
+        self::assertNotNull($m);
+        self::assertEquals('type', $m->discriminatorFieldName);
+        self::assertEquals($m->getName(), $m->discriminatorBaseClass);
+        self::assertEquals(
             [
                 'car' => 'Kcs\Serializer\Tests\Fixtures\Discriminator\Car',
                 'moped' => 'Kcs\Serializer\Tests\Fixtures\Discriminator\Moped',
             ],
             $m->discriminatorMap
         );
-        $this->assertEquals(['Default', 'discriminator_group'], $m->discriminatorGroups);
+        self::assertEquals(['Default', 'discriminator_group'], $m->discriminatorGroups);
     }
 
     public function testLoadDiscriminatorSubClass()
@@ -199,12 +199,12 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(Car::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
-        $this->assertNull($m->discriminatorValue);
-        $this->assertNull($m->discriminatorBaseClass);
-        $this->assertNull($m->discriminatorFieldName);
-        $this->assertEquals([], $m->discriminatorMap);
-        $this->assertEquals([], $m->discriminatorGroups);
+        self::assertNotNull($m);
+        self::assertNull($m->discriminatorValue);
+        self::assertNull($m->discriminatorBaseClass);
+        self::assertNull($m->discriminatorFieldName);
+        self::assertEquals([], $m->discriminatorMap);
+        self::assertEquals([], $m->discriminatorGroups);
     }
 
     public function testLoadXmlObjectWithNamespacesMetadata()
@@ -212,49 +212,49 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithXmlNamespaces::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
-        $this->assertEquals('test-object', $m->xmlRootName);
-        $this->assertEquals('http://example.com/namespace', $m->xmlRootNamespace);
-        $this->assertCount(3, $m->xmlNamespaces);
-        $this->assertArrayHasKey('', $m->xmlNamespaces);
-        $this->assertEquals('http://example.com/namespace', $m->xmlNamespaces['']);
-        $this->assertArrayHasKey('gd', $m->xmlNamespaces);
-        $this->assertEquals('http://schemas.google.com/g/2005', $m->xmlNamespaces['gd']);
-        $this->assertArrayHasKey('atom', $m->xmlNamespaces);
-        $this->assertEquals('http://www.w3.org/2005/Atom', $m->xmlNamespaces['atom']);
+        self::assertNotNull($m);
+        self::assertEquals('test-object', $m->xmlRootName);
+        self::assertEquals('http://example.com/namespace', $m->xmlRootNamespace);
+        self::assertCount(3, $m->xmlNamespaces);
+        self::assertArrayHasKey('', $m->xmlNamespaces);
+        self::assertEquals('http://example.com/namespace', $m->xmlNamespaces['']);
+        self::assertArrayHasKey('gd', $m->xmlNamespaces);
+        self::assertEquals('http://schemas.google.com/g/2005', $m->xmlNamespaces['gd']);
+        self::assertArrayHasKey('atom', $m->xmlNamespaces);
+        self::assertEquals('http://www.w3.org/2005/Atom', $m->xmlNamespaces['atom']);
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('title'));
+        self::assertEquals($p, $m->getAttributeMetadata('title'));
 
         $p = new PropertyMetadata($m->getName(), 'createdAt');
         $p->type = Type::from('DateTime');
         $p->xmlAttribute = true;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('createdAt'));
+        self::assertEquals($p, $m->getAttributeMetadata('createdAt'));
 
         $p = new PropertyMetadata($m->getName(), 'etag');
         $p->type = Type::from('string');
         $p->xmlAttribute = true;
         $p->xmlNamespace = 'http://schemas.google.com/g/2005';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('etag'));
+        self::assertEquals($p, $m->getAttributeMetadata('etag'));
 
         $p = new PropertyMetadata($m->getName(), 'author');
         $p->type = Type::from('string');
         $p->xmlAttribute = false;
         $p->xmlNamespace = 'http://www.w3.org/2005/Atom';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('author'));
+        self::assertEquals($p, $m->getAttributeMetadata('author'));
 
         $p = new PropertyMetadata($m->getName(), 'language');
         $p->type = Type::from('string');
         $p->xmlAttribute = true;
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('language'));
+        self::assertEquals($p, $m->getAttributeMetadata('language'));
     }
 
     public function testMaxDepth()
@@ -262,7 +262,7 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(Node::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertEquals(2, $m->getAttributeMetadata('children')->maxDepth);
+        self::assertEquals(2, $m->getAttributeMetadata('children')->maxDepth);
     }
 
     public function testPersonCData()
@@ -270,8 +270,8 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(Person::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
-        $this->assertFalse($m->getAttributeMetadata('name')->xmlElementCData);
+        self::assertNotNull($m);
+        self::assertFalse($m->getAttributeMetadata('name')->xmlElementCData);
     }
 
     public function testXmlNamespaceInheritanceMetadata()
@@ -279,95 +279,95 @@ abstract class BaseLoaderTest extends TestCase
         $m = new ClassMetadata(new \ReflectionClass(SimpleClassObject::class));
         $this->getLoader()->loadClassMetadata($m);
 
-        $this->assertNotNull($m);
-        $this->assertCount(3, $m->xmlNamespaces);
-        $this->assertArrayHasKey('old_foo', $m->xmlNamespaces);
-        $this->assertEquals('http://old.foo.example.org', $m->xmlNamespaces['old_foo']);
-        $this->assertArrayHasKey('foo', $m->xmlNamespaces);
-        $this->assertEquals('http://foo.example.org', $m->xmlNamespaces['foo']);
-        $this->assertArrayHasKey('new_foo', $m->xmlNamespaces);
-        $this->assertEquals('http://new.foo.example.org', $m->xmlNamespaces['new_foo']);
-        $this->assertCount(3, $m->getAttributesMetadata());
+        self::assertNotNull($m);
+        self::assertCount(3, $m->xmlNamespaces);
+        self::assertArrayHasKey('old_foo', $m->xmlNamespaces);
+        self::assertEquals('http://old.foo.example.org', $m->xmlNamespaces['old_foo']);
+        self::assertArrayHasKey('foo', $m->xmlNamespaces);
+        self::assertEquals('http://foo.example.org', $m->xmlNamespaces['foo']);
+        self::assertArrayHasKey('new_foo', $m->xmlNamespaces);
+        self::assertEquals('http://new.foo.example.org', $m->xmlNamespaces['new_foo']);
+        self::assertCount(3, $m->getAttributesMetadata());
 
         $p = new PropertyMetadata($m->getName(), 'foo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://old.foo.example.org';
         $p->xmlAttribute = true;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('foo'));
+        self::assertEquals($p, $m->getAttributeMetadata('foo'));
 
         $p = new PropertyMetadata($m->getName(), 'bar');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('bar'));
+        self::assertEquals($p, $m->getAttributeMetadata('bar'));
 
         $p = new PropertyMetadata($m->getName(), 'moo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://new.foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $m->getAttributeMetadata('moo'));
+        self::assertEquals($p, $m->getAttributeMetadata('moo'));
 
         $subm = new ClassMetadata(new \ReflectionClass(SimpleSubClassObject::class));
         $this->getLoader()->loadClassMetadata($subm);
 
-        $this->assertNotNull($subm);
-        $this->assertCount(2, $subm->xmlNamespaces);
-        $this->assertArrayHasKey('old_foo', $subm->xmlNamespaces);
-        $this->assertEquals('http://foo.example.org', $subm->xmlNamespaces['old_foo']);
-        $this->assertArrayHasKey('foo', $subm->xmlNamespaces);
-        $this->assertEquals('http://better.foo.example.org', $subm->xmlNamespaces['foo']);
-        $this->assertCount(3, $subm->getAttributesMetadata());
+        self::assertNotNull($subm);
+        self::assertCount(2, $subm->xmlNamespaces);
+        self::assertArrayHasKey('old_foo', $subm->xmlNamespaces);
+        self::assertEquals('http://foo.example.org', $subm->xmlNamespaces['old_foo']);
+        self::assertArrayHasKey('foo', $subm->xmlNamespaces);
+        self::assertEquals('http://better.foo.example.org', $subm->xmlNamespaces['foo']);
+        self::assertCount(3, $subm->getAttributesMetadata());
 
         $p = new PropertyMetadata($subm->getName(), 'moo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://better.foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('moo'));
+        self::assertEquals($p, $subm->getAttributeMetadata('moo'));
 
         $p = new PropertyMetadata($subm->getName(), 'baz');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('baz'));
+        self::assertEquals($p, $subm->getAttributeMetadata('baz'));
 
         $p = new PropertyMetadata($subm->getName(), 'qux');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://new.foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('qux'));
+        self::assertEquals($p, $subm->getAttributeMetadata('qux'));
 
         $subm->merge($m);
-        $this->assertNotNull($subm);
-        $this->assertCount(3, $subm->xmlNamespaces);
-        $this->assertArrayHasKey('old_foo', $subm->xmlNamespaces);
-        $this->assertEquals('http://foo.example.org', $subm->xmlNamespaces['old_foo']);
-        $this->assertArrayHasKey('foo', $subm->xmlNamespaces);
-        $this->assertEquals('http://better.foo.example.org', $subm->xmlNamespaces['foo']);
-        $this->assertArrayHasKey('new_foo', $subm->xmlNamespaces);
-        $this->assertEquals('http://new.foo.example.org', $subm->xmlNamespaces['new_foo']);
-        $this->assertCount(5, $subm->getAttributesMetadata());
+        self::assertNotNull($subm);
+        self::assertCount(3, $subm->xmlNamespaces);
+        self::assertArrayHasKey('old_foo', $subm->xmlNamespaces);
+        self::assertEquals('http://foo.example.org', $subm->xmlNamespaces['old_foo']);
+        self::assertArrayHasKey('foo', $subm->xmlNamespaces);
+        self::assertEquals('http://better.foo.example.org', $subm->xmlNamespaces['foo']);
+        self::assertArrayHasKey('new_foo', $subm->xmlNamespaces);
+        self::assertEquals('http://new.foo.example.org', $subm->xmlNamespaces['new_foo']);
+        self::assertCount(5, $subm->getAttributesMetadata());
 
         $p = new PropertyMetadata($subm->getName(), 'moo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://better.foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('moo'));
+        self::assertEquals($p, $subm->getAttributeMetadata('moo'));
 
         $p = new PropertyMetadata($subm->getName(), 'baz');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('baz'));
+        self::assertEquals($p, $subm->getAttributeMetadata('baz'));
 
         $p = new PropertyMetadata($subm->getName(), 'qux');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://new.foo.example.org';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('qux'));
+        self::assertEquals($p, $subm->getAttributeMetadata('qux'));
 
-        if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped('This test executes partially in HHVM due to wrong class reported in PropertyMetadata');
+        if (\defined('HHVM_VERSION')) {
+            self::markTestSkipped('This test executes partially in HHVM due to wrong class reported in PropertyMetadata');
 
             return;
         }
@@ -378,14 +378,14 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlAttribute = true;
         $p->class = 'Kcs\Serializer\Tests\Fixtures\SimpleClassObject';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('foo'));
+        self::assertEquals($p, $subm->getAttributeMetadata('foo'));
 
         $p = new PropertyMetadata($subm->getName(), 'bar');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
         $p->class = 'Kcs\Serializer\Tests\Fixtures\SimpleClassObject';
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $this->assertEquals($p, $subm->getAttributeMetadata('bar'));
+        self::assertEquals($p, $subm->getAttributeMetadata('bar'));
     }
 
     /**

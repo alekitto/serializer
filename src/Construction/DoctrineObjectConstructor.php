@@ -101,7 +101,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
             return null;
         }
 
-        if (! is_array($data)) {
+        if (! \is_array($data)) {
             // Single identifier, load
             return $objectManager->find($metadata->getName(), $data);
         }
@@ -111,14 +111,14 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         $identifierList = [];
 
         foreach ($classMetadata->getIdentifierFieldNames() as $name) {
-            if (! array_key_exists($name, $data)) {
+            if (! \array_key_exists($name, $data)) {
                 continue;
             }
 
             $identifierList[$name] = $data[$name];
         }
 
-        if (0 === count($identifierList)) {
+        if (0 === \count($identifierList)) {
             return null;
         }
 

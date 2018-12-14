@@ -39,7 +39,7 @@ class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function count()
     {
-        return count($this->authors);
+        return \count($this->authors);
     }
 
     /**

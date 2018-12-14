@@ -11,9 +11,9 @@ class JsonDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function prepare($str)
     {
-        $decoded = json_decode($str, true);
+        $decoded = \json_decode($str, true);
 
-        switch (json_last_error()) {
+        switch (\json_last_error()) {
             case JSON_ERROR_NONE:
                 return $decoded;
 

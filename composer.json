@@ -40,6 +40,7 @@
         "doctrine/doctrine-cache-bundle": "^1.0",
         "doctrine/orm": "~2.3",
         "doctrine/phpcr-odm": "~1.0",
+        "friendsofphp/php-cs-fixer": "^2.13",
         "jackalope/jackalope-doctrine-dbal": "^1.0",
         "phpcollection/phpcollection": "^0.4.0",
         "phpdocumentor/reflection-docblock": "^3.0",

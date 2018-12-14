@@ -53,7 +53,7 @@ class DeserializationContext extends Context
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function guessType($data): Type
     {

@@ -103,11 +103,11 @@ class Serializer implements SerializerInterface
     {
         $result = $this->serialize($data, 'array', $context);
 
-        if (! is_array($result)) {
-            throw new RuntimeException(sprintf(
+        if (! \is_array($result)) {
+            throw new RuntimeException(\sprintf(
                 'The input data of type "%s" did not convert to an array, but got a result of type "%s".',
-                is_object($data) ? get_class($data) : gettype($data),
-                is_object($result) ? get_class($result) : gettype($result)
+                \is_object($data) ? \get_class($data) : \gettype($data),
+                \is_object($result) ? \get_class($result) : \gettype($result)
             ));
         }
 

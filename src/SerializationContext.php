@@ -60,6 +60,6 @@ class SerializationContext extends Context
             return Type::null();
         }
 
-        return new Type(is_object($data) ? get_class($data) : gettype($data));
+        return new Type(\is_object($data) ? \get_class($data) : \gettype($data));
     }
 }

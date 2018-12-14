@@ -174,7 +174,7 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->getter instanceof \Closure) {
-            return call_user_func($this->getter->bindTo($obj));
+            return \call_user_func($this->getter->bindTo($obj));
         }
 
         return $obj->{$this->getter}();
@@ -198,7 +198,7 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->setter instanceof \Closure) {
-            return call_user_func($this->setter->bindTo($obj), $value);
+            return \call_user_func($this->setter->bindTo($obj), $value);
         }
 
         $obj->{$this->setter}($value);
@@ -212,9 +212,9 @@ class PropertyMetadata extends BasePropertyMetadata
     protected function initializeGetterAccessor(): void
     {
         $methods = [
-            'get'.ucfirst($this->name),
-            'is'.ucfirst($this->name),
-            'has'.ucfirst($this->name),
+            'get'.\ucfirst($this->name),
+            'is'.\ucfirst($this->name),
+            'has'.\ucfirst($this->name),
             $this->name,
         ];
 
@@ -240,9 +240,9 @@ class PropertyMetadata extends BasePropertyMetadata
             // Property does not exist.
         }
 
-        throw new RuntimeException(sprintf(
+        throw new RuntimeException(\sprintf(
             'There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.',
-            implode('" or "', $methods),
+            \implode('" or "', $methods),
             $this->class,
             $this->name
         ));
@@ -250,7 +250,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
     protected function initializeSetterAccessor(): void
     {
-        if ($this->checkMethod($setter = 'set'.ucfirst($this->name))) {
+        if ($this->checkMethod($setter = 'set'.\ucfirst($this->name))) {
             $this->setter = $setter;
 
             return;
@@ -270,7 +270,7 @@ class PropertyMetadata extends BasePropertyMetadata
             // Property does not exist.
         }
 
-        throw new RuntimeException(sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set'.ucfirst($this->name), $this->class, $this->name));
+        throw new RuntimeException(\sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set'.\ucfirst($this->name), $this->class, $this->name));
     }
 
     private function checkMethod(string $name): bool

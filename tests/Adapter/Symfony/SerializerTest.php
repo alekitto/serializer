@@ -42,7 +42,7 @@ class SerializerTest extends TestCase
             ->willReturn('{}')
         ;
 
-        $this->assertEquals('{}', $this->adapter->serialize($obj, 'json'));
+        self::assertEquals('{}', $this->adapter->serialize($obj, 'json'));
     }
 
     public function testSerializeShouldForwardSerializationGroups()
@@ -77,7 +77,7 @@ class SerializerTest extends TestCase
             ->willReturn($obj)
         ;
 
-        $this->assertEquals($obj, $this->adapter->deserialize('{}', \stdClass::class, 'json'));
+        self::assertEquals($obj, $this->adapter->deserialize('{}', \stdClass::class, 'json'));
     }
 
     public function testDeserializeShouldForwardDeserializationGroups()
@@ -99,7 +99,7 @@ class SerializerTest extends TestCase
             ->willReturn($obj)
         ;
 
-        $this->assertEquals($obj, $this->adapter->deserialize(
+        self::assertEquals($obj, $this->adapter->deserialize(
             '{}',
             \stdClass::class,
             'json',
@@ -126,7 +126,7 @@ class SerializerTest extends TestCase
             ->willReturn($obj)
         ;
 
-        $this->assertEquals($obj, $this->adapter->deserialize(
+        self::assertEquals($obj, $this->adapter->deserialize(
             '{}',
             GetSetObject::class,
             'json',

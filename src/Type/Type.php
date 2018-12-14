@@ -68,12 +68,12 @@ class Type
             return $object;
         }
 
-        if (is_object($object)) {
-            $object = get_class($object);
+        if (\is_object($object)) {
+            $object = \get_class($object);
         }
 
-        if (! is_string($object)) {
-            throw new InvalidArgumentException('Cannot create a type from '.gettype($object));
+        if (! \is_string($object)) {
+            throw new InvalidArgumentException('Cannot create a type from '.\gettype($object));
         }
 
         return new self($object);
@@ -135,7 +135,7 @@ class Type
 
     public function countParams(): int
     {
-        return count($this->params);
+        return \count($this->params);
     }
 
     /**

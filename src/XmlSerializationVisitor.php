@@ -135,8 +135,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
             if (null === $currentNode) {
                 continue;
-            } elseif (is_array($currentNode)) {
-                $nodes = array_merge($nodes, $currentNode);
+            } elseif (\is_array($currentNode)) {
+                $nodes = \array_merge($nodes, $currentNode);
             } else {
                 $nodes[] = $currentNode;
             }
@@ -192,14 +192,14 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         $context->accept($v, $metadata->type);
 
-        if (is_object($v) && null !== $v &&
+        if (\is_object($v) && null !== $v &&
             ! $metadata instanceof AdditionalPropertyMetadata &&
             $context->isVisiting($v)) {
             return $this->currentNodes = null;
         }
 
         if ($metadata->xmlCollectionInline || $metadata->inline) {
-            $children = iterator_to_array($this->currentNodes->childNodes);
+            $children = \iterator_to_array($this->currentNodes->childNodes);
             foreach ($children as $childNode) {
                 $this->currentNodes->removeChild($childNode);
             }
@@ -279,7 +279,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             $this->currentNodes = $rootNode;
         }
 
-        if (! is_array($nodes) && ! $nodes instanceof \DOMNodeList) {
+        if (! \is_array($nodes) && ! $nodes instanceof \DOMNodeList) {
             $this->currentNodes->appendChild($nodes);
 
             return;
@@ -356,7 +356,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     private function isElementNameValid($name): bool
     {
-        return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
+        return $name && \preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
     /**
@@ -370,7 +370,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             if ($property->xmlValue && ! $hasXmlValue) {
                 $hasXmlValue = true;
             } elseif ($property->xmlValue) {
-                throw new RuntimeException(sprintf(
+                throw new RuntimeException(\sprintf(
                     'Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s',
                     $metadata->getName()
                 ));
@@ -380,7 +380,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         if ($hasXmlValue) {
             foreach ($properties as $property) {
                 if (! $property->xmlValue && ! $property->xmlAttribute) {
-                    throw new RuntimeException(sprintf(
+                    throw new RuntimeException(\sprintf(
                         'If you make use of @XmlValue, all other properties in the class must have the @XmlAttribute annotation. Invalid usage detected in class %s.',
                         $metadata->getName()
                     ));
@@ -420,11 +420,11 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function lookupPrefix(string $namespace): string
     {
-        if (false !== ($prefix = array_search($namespace, $this->xmlNamespaces))) {
+        if (false !== ($prefix = \array_search($namespace, $this->xmlNamespaces))) {
             return $prefix;
         }
 
-        $prefix = 'ns-'.substr(sha1($namespace), 0, 8);
+        $prefix = 'ns-'.\substr(\sha1($namespace), 0, 8);
         $this->xmlNamespaces[$prefix] = $namespace;
 
         return $prefix;

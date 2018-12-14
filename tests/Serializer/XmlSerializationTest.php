@@ -38,7 +38,7 @@ class XmlSerializationTest extends BaseSerializationTest
     public function testXMLBooleans(string $xmlBoolean, bool $boolean)
     {
         if ($this->hasDeserializer()) {
-            $this->assertSame($boolean, $this->deserialize('<result>'.$xmlBoolean.'</result>', 'boolean'));
+            self::assertSame($boolean, $this->deserialize('<result>'.$xmlBoolean.'</result>', 'boolean'));
         }
     }
 
@@ -61,7 +61,7 @@ class XmlSerializationTest extends BaseSerializationTest
         $personCollection->person = $person;
         $personCollection->location = 'The Netherlands';
 
-        $this->assertEquals($this->getContent('person_location'), $this->serialize($personCollection));
+        self::assertEquals($this->getContent('person_location'), $this->serialize($personCollection));
     }
 
     public function testPropertyIsCollectionOfObjectsWithAttributeAndValue()
@@ -73,7 +73,7 @@ class XmlSerializationTest extends BaseSerializationTest
         $personCollection->persons->add($person);
         $personCollection->location = 'The Netherlands';
 
-        $this->assertEquals($this->getContent('person_collection'), $this->serialize($personCollection));
+        self::assertEquals($this->getContent('person_collection'), $this->serialize($personCollection));
     }
 
     /**
@@ -84,7 +84,7 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $this->deserialize('<?xml version="1.0"?>
             <!DOCTYPE author [
-                <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">
+                <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.\basename(__FILE__).'">
             ]>
             <result>
                 &foo;
@@ -104,7 +104,7 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $this->deserializationVisitors['xml']->setDoctypeWhitelist([
             '<!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">',
-            '<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">]>', ]);
+            '<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.\basename(__FILE__).'">]>', ]);
 
         $this->serializer->deserialize('<?xml version="1.0"?>
             <!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">
@@ -112,17 +112,17 @@ class XmlSerializationTest extends BaseSerializationTest
 
         $this->serializer->deserialize('<?xml version="1.0"?>
             <!DOCTYPE author [
-                <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.basename(__FILE__).'">
+                <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.\basename(__FILE__).'">
             ]>
             <foo></foo>', Type::from('stdClass'), 'xml');
 
         // Exception has not thrown
-        $this->assertTrue(true);
+        self::assertTrue(true);
     }
 
     public function testVirtualAttributes()
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->getContent('virtual_attributes'),
             $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['attributes']))
         );
@@ -130,7 +130,7 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function testVirtualValues()
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->getContent('virtual_values'),
             $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['values']))
         );
@@ -138,7 +138,7 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function testVirtualXmlList()
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->getContent('virtual_properties_list'),
             $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['list']))
         );
@@ -146,7 +146,7 @@ class XmlSerializationTest extends BaseSerializationTest
 
     public function testVirtualXmlMap()
     {
-        $this->assertEquals(
+        self::assertEquals(
             $this->getContent('virtual_properties_map'),
             $this->serialize(new ObjectWithVirtualXmlProperties(), SerializationContext::create()->setGroups(['map']))
         );
@@ -170,19 +170,19 @@ class XmlSerializationTest extends BaseSerializationTest
         $object->phonesAlternativeD = ['999', 'AAA'];
         $object->addressesAlternativeD = ['A' => 'Street 9', 'B' => 'Street A'];
 
-        $this->assertEquals(
+        self::assertEquals(
             $this->getContent('object_with_namespaces_and_list'),
             $this->serialize($object, SerializationContext::create())
         );
-        $this->assertEquals(
+        self::assertEquals(
             $object,
-            $this->deserialize($this->getContent('object_with_namespaces_and_list'), get_class($object))
+            $this->deserialize($this->getContent('object_with_namespaces_and_list'), \get_class($object))
         );
     }
 
     public function testArrayKeyValues()
     {
-        $this->assertEquals($this->getContent('array_key_values'), $this->serializer->serialize(new ObjectWithXmlKeyValuePairs(), 'xml'));
+        self::assertEquals($this->getContent('array_key_values'), $this->serializer->serialize(new ObjectWithXmlKeyValuePairs(), 'xml'));
     }
 
     /**
@@ -197,38 +197,38 @@ class XmlSerializationTest extends BaseSerializationTest
 
         $serializer = new Serializer($this->factory, $handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors);
 
-        $this->assertEquals($this->getContent($key.'_no_cdata'), $serializer->serialize($value, $this->getFormat()));
+        self::assertEquals($this->getContent($key.'_no_cdata'), $serializer->serialize($value, $this->getFormat()));
     }
 
     public function testObjectWithXmlNamespaces()
     {
         $object = new ObjectWithXmlNamespaces('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
 
-        $this->assertEquals($this->getContent('object_with_xml_namespaces'), $this->serialize($object));
+        self::assertEquals($this->getContent('object_with_xml_namespaces'), $this->serialize($object));
 
-        $xml = simplexml_load_string($this->serialize($object));
+        $xml = \simplexml_load_string($this->serialize($object));
         $xml->registerXPathNamespace('ns1', 'http://purl.org/dc/elements/1.1/');
         $xml->registerXPathNamespace('ns2', 'http://schemas.google.com/g/2005');
         $xml->registerXPathNamespace('ns3', 'http://www.w3.org/2005/Atom');
 
-        $this->assertEquals('2011-07-30T00:00:00+00:00', $this->xpathFirstToString($xml, './@created_at'));
-        $this->assertEquals('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->xpathFirstToString($xml, './@ns2:etag'));
-        $this->assertEquals('en', $this->xpathFirstToString($xml, './@ns1:language'));
-        $this->assertEquals('This is a nice title.', $this->xpathFirstToString($xml, './ns1:title'));
-        $this->assertEquals('Foo Bar', $this->xpathFirstToString($xml, './ns3:author'));
+        self::assertEquals('2011-07-30T00:00:00+00:00', $this->xpathFirstToString($xml, './@created_at'));
+        self::assertEquals('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->xpathFirstToString($xml, './@ns2:etag'));
+        self::assertEquals('en', $this->xpathFirstToString($xml, './@ns1:language'));
+        self::assertEquals('This is a nice title.', $this->xpathFirstToString($xml, './ns1:title'));
+        self::assertEquals('Foo Bar', $this->xpathFirstToString($xml, './ns3:author'));
 
-        $deserialized = $this->deserialize($this->getContent('object_with_xml_namespacesalias'), get_class($object));
-        $this->assertEquals('2011-07-30T00:00:00+0000', $this->getField($deserialized, 'createdAt')->format(\DateTime::ISO8601));
-        $this->assertAttributeEquals('This is a nice title.', 'title', $deserialized);
-        $this->assertAttributeSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', 'etag', $deserialized);
-        $this->assertAttributeSame('en', 'language', $deserialized);
-        $this->assertAttributeEquals('Foo Bar', 'author', $deserialized);
+        $deserialized = $this->deserialize($this->getContent('object_with_xml_namespacesalias'), \get_class($object));
+        self::assertEquals('2011-07-30T00:00:00+0000', $this->getField($deserialized, 'createdAt')->format(\DateTime::ISO8601));
+        self::assertAttributeEquals('This is a nice title.', 'title', $deserialized);
+        self::assertAttributeSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', 'etag', $deserialized);
+        self::assertAttributeSame('en', 'language', $deserialized);
+        self::assertAttributeEquals('Foo Bar', 'author', $deserialized);
     }
 
     public function testObjectWithXmlRootNamespace()
     {
         $object = new ObjectWithXmlRootNamespace('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
-        $this->assertEquals($this->getContent('object_with_xml_root_namespace'), $this->serialize($object));
+        self::assertEquals($this->getContent('object_with_xml_root_namespace'), $this->serialize($object));
     }
 
     public function testXmlNamespacesInheritance()
@@ -238,7 +238,7 @@ class XmlSerializationTest extends BaseSerializationTest
         $object->bar = 'bar';
         $object->moo = 'moo';
 
-        $this->assertEquals($this->getContent('simple_class_object'), $this->serialize($object));
+        self::assertEquals($this->getContent('simple_class_object'), $this->serialize($object));
 
         $childObject = new SimpleSubClassObject();
         $childObject->foo = 'foo';
@@ -247,14 +247,14 @@ class XmlSerializationTest extends BaseSerializationTest
         $childObject->baz = 'baz';
         $childObject->qux = 'qux';
 
-        $this->assertEquals($this->getContent('simple_subclass_object'), $this->serialize($childObject));
+        self::assertEquals($this->getContent('simple_subclass_object'), $this->serialize($childObject));
     }
 
     private function xpathFirstToString(\SimpleXMLElement $xml, string $xpath): string
     {
         $nodes = $xml->xpath($xpath);
 
-        return (string) reset($nodes);
+        return (string) \reset($nodes);
     }
 
     /**
@@ -262,11 +262,11 @@ class XmlSerializationTest extends BaseSerializationTest
      */
     protected function getContent(string $key): string
     {
-        if (! file_exists($file = __DIR__.'/xml/'.$key.'.xml')) {
-            throw new InvalidArgumentException(sprintf('The key "%s" is not supported.', $key));
+        if (! \file_exists($file = __DIR__.'/xml/'.$key.'.xml')) {
+            throw new InvalidArgumentException(\sprintf('The key "%s" is not supported.', $key));
         }
 
-        return file_get_contents($file);
+        return \file_get_contents($file);
     }
 
     /**

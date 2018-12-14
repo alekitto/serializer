@@ -28,7 +28,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         $first->shouldSkipClass($metadata, $context)->willReturn(true);
         $last->shouldSkipClass(Argument::cetera())->shouldNotBeCalled();
 
-        $this->assertTrue($strat->shouldSkipClass($metadata, $context));
+        self::assertTrue($strat->shouldSkipClass($metadata, $context));
     }
 
     public function testShouldSkipClassDisjunctBehavior()
@@ -47,7 +47,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         $first->shouldSkipClass($metadata, $context)->willReturn(false);
         $last->shouldSkipClass($metadata, $context)->willReturn(true);
 
-        $this->assertTrue($strat->shouldSkipClass($metadata, $context));
+        self::assertTrue($strat->shouldSkipClass($metadata, $context));
     }
 
     public function testShouldSkipClassReturnsFalseIfNoPredicateMatched()
@@ -66,7 +66,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         $first->shouldSkipClass($metadata, $context)->willReturn(false);
         $last->shouldSkipClass($metadata, $context)->willReturn(false);
 
-        $this->assertFalse($strat->shouldSkipClass($metadata, $context));
+        self::assertFalse($strat->shouldSkipClass($metadata, $context));
     }
 
     public function testShouldSkipPropertyShortCircuiting()
@@ -85,7 +85,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         $first->shouldSkipProperty($metadata, $context)->willReturn(true);
         $last->shouldSkipProperty(Argument::cetera())->shouldNotBeCalled();
 
-        $this->assertTrue($strat->shouldSkipProperty($metadata, $context));
+        self::assertTrue($strat->shouldSkipProperty($metadata, $context));
     }
 
     public function testShouldSkipPropertyDisjunct()
@@ -104,7 +104,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         $first->shouldSkipProperty($metadata, $context)->willReturn(false);
         $last->shouldSkipProperty($metadata, $context)->willReturn(true);
 
-        $this->assertTrue($strat->shouldSkipProperty($metadata, $context));
+        self::assertTrue($strat->shouldSkipProperty($metadata, $context));
     }
 
     public function testShouldSkipPropertyReturnsFalseIfNoPredicateMatches()
@@ -123,6 +123,6 @@ class DisjunctExclusionStrategyTest extends TestCase
         $first->shouldSkipProperty($metadata, $context)->willReturn(false);
         $last->shouldSkipProperty($metadata, $context)->willReturn(false);
 
-        $this->assertFalse($strat->shouldSkipProperty($metadata, $context));
+        self::assertFalse($strat->shouldSkipProperty($metadata, $context));
     }
 }

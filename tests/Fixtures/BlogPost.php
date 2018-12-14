@@ -112,7 +112,7 @@ class BlogPost
         $this->metadata = new Map();
         $this->metadata->set('foo', 'bar');
         $this->createdAt = $createdAt;
-        $this->etag = sha1($this->createdAt->format(\DateTime::ISO8601));
+        $this->etag = \sha1($this->createdAt->format(\DateTime::ISO8601));
     }
 
     public function setPublished()

@@ -9,8 +9,8 @@ class VirtualPropertyMetadata extends PropertyMetadata
      */
     public function __construct(string $class, string $methodName)
     {
-        if (0 === strpos($methodName, 'get')) {
-            $fieldName = lcfirst(substr($methodName, 3));
+        if (0 === \strpos($methodName, 'get')) {
+            $fieldName = \lcfirst(\substr($methodName, 3));
         } else {
             $fieldName = $methodName;
         }

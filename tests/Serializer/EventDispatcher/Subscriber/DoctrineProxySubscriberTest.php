@@ -35,8 +35,8 @@ class DoctrineProxySubscriberTest extends TestCase
         $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), Type::from($obj));
         $this->subscriber->onPreSerialize($event);
 
-        $this->assertEquals(Type::from(get_parent_class($obj)), $event->getType());
-        $this->assertTrue($obj->__isInitialized());
+        self::assertEquals(Type::from(\get_parent_class($obj)), $event->getType());
+        self::assertTrue($obj->__isInitialized());
     }
 
     public function testDoesNotRewriteCustomType()
@@ -44,8 +44,8 @@ class DoctrineProxySubscriberTest extends TestCase
         $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), Type::from('FakedName'));
         $this->subscriber->onPreSerialize($event);
 
-        $this->assertEquals(Type::from('FakedName'), $event->getType());
-        $this->assertTrue($obj->__isInitialized());
+        self::assertEquals(Type::from('FakedName'), $event->getType());
+        self::assertTrue($obj->__isInitialized());
     }
 
     private function createEvent($object, Type $type): PreSerializeEvent

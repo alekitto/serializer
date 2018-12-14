@@ -56,7 +56,7 @@ class ObjectWithLifecycleCallbacks
      */
     public function afterDeserialization()
     {
-        list($this->firstname, $this->lastname) = explode(' ', $this->name);
+        list($this->firstname, $this->lastname) = \explode(' ', $this->name);
         $this->name = null;
     }
 }

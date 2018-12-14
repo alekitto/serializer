@@ -151,7 +151,7 @@ abstract class Context
     {
         if (empty($groups)) {
             $groups = null;
-        } elseif (! is_array($groups)) {
+        } elseif (! \is_array($groups)) {
             $groups = (array) $groups;
         }
 
@@ -215,7 +215,7 @@ abstract class Context
         /** @var PropertyMetadata[] $properties */
         $properties = $metadata->getAttributesMetadata();
 
-        return array_filter($properties, [$this, 'filterPropertyMetadata']);
+        return \array_filter($properties, [$this, 'filterPropertyMetadata']);
     }
 
     abstract public function getDepth(): int;

@@ -42,12 +42,12 @@ class AnnotationProcessor
 
     public function process($annotation, MetadataInterface $metadata): void
     {
-        if (! is_object($annotation)) {
+        if (! \is_object($annotation)) {
             throw new InvalidArgumentException('You must pass an annotation object as first parameter of process');
         }
 
-        $class = get_class($annotation);
-        if (! array_key_exists($class, static::$processor)) {
+        $class = \get_class($annotation);
+        if (! \array_key_exists($class, static::$processor)) {
             return;
         }
 

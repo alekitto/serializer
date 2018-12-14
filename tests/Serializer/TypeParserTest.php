@@ -18,7 +18,7 @@ class TypeParserTest extends TestCase
      */
     public function testParse(string $type, Type $expected)
     {
-        $this->assertEquals($expected, $this->parser->parse($type));
+        self::assertEquals($expected, $this->parser->parse($type));
     }
 
     public function getTypes(): iterable

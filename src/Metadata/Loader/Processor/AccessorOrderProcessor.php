@@ -11,10 +11,10 @@ class AccessorOrderProcessor extends ClassMetadataProcessor
      */
     protected static function doProcess($annotation, ClassMetadata $metadata): void
     {
-        if (is_string($annotation->custom)) {
-            $annotation->custom = explode(',', $annotation->custom);
+        if (\is_string($annotation->custom)) {
+            $annotation->custom = \explode(',', $annotation->custom);
         }
 
-        $metadata->setAccessorOrder($annotation->order, array_map('trim', (array) $annotation->custom));
+        $metadata->setAccessorOrder($annotation->order, \array_map('trim', (array) $annotation->custom));
     }
 }

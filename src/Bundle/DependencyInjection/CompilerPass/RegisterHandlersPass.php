@@ -36,7 +36,7 @@ class RegisterHandlersPass implements CompilerPassInterface
             $method = $reflClass->getMethod('getSubscribingMethods');
 
             if (! $method->isStatic()) {
-                trigger_error('Implementing getSubscribingMethods as non-static method is deprecated', E_USER_DEPRECATED);
+                \trigger_error('Implementing getSubscribingMethods as non-static method is deprecated', E_USER_DEPRECATED);
                 $registryDef->addMethodCall('registerSubscribingHandler', [new Reference($serviceId)]);
 
                 continue;
@@ -44,7 +44,7 @@ class RegisterHandlersPass implements CompilerPassInterface
 
             foreach ($method->invoke(null) as $methodData) {
                 if (! isset($methodData['type'])) {
-                    throw new \RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', $class));
+                    throw new \RuntimeException(\sprintf('For each subscribing method a "type" attribute must be given for %s.', $class));
                 }
 
                 $directions = [Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION];
@@ -54,7 +54,7 @@ class RegisterHandlersPass implements CompilerPassInterface
 
                 foreach ($directions as $direction) {
                     $method = $methodData['method'] ?? HandlerRegistry::getDefaultMethod($direction, $methodData['type']);
-                    $handlers[$direction][$methodData['type']] = [ new ServiceClosureArgument(new Reference($serviceId)), $method ];
+                    $handlers[$direction][$methodData['type']] = [new ServiceClosureArgument(new Reference($serviceId)), $method];
                 }
             }
         }

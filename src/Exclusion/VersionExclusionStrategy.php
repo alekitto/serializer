@@ -31,11 +31,11 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
      */
     public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext): bool
     {
-        if ((null !== $version = $property->sinceVersion) && version_compare($this->version, $version, '<')) {
+        if ((null !== $version = $property->sinceVersion) && \version_compare($this->version, $version, '<')) {
             return true;
         }
 
-        if ((null !== $version = $property->untilVersion) && version_compare($this->version, $version, '>')) {
+        if ((null !== $version = $property->untilVersion) && \version_compare($this->version, $version, '>')) {
             return true;
         }
 

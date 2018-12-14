@@ -24,12 +24,12 @@ class XmlLoader extends AnnotationLoader
         parent::__construct();
         $file_content = $this->loadFile($filePath);
 
-        $previous = libxml_use_internal_errors(true);
-        $elem = simplexml_load_string($file_content);
-        libxml_use_internal_errors($previous);
+        $previous = \libxml_use_internal_errors(true);
+        $elem = \simplexml_load_string($file_content);
+        \libxml_use_internal_errors($previous);
 
         if (false === $elem) {
-            throw new XmlErrorException(libxml_get_last_error());
+            throw new XmlErrorException(\libxml_get_last_error());
         }
 
         $this->document = $elem;
@@ -51,7 +51,7 @@ class XmlLoader extends AnnotationLoader
     {
         $element = $this->getClassElement($class->name);
 
-        return $element && ($exclude = $element->attributes()->exclude) && 'true' === strtolower($exclude);
+        return $element && ($exclude = $element->attributes()->exclude) && 'true' === \strtolower($exclude);
     }
 
     /**
@@ -120,12 +120,12 @@ class XmlLoader extends AnnotationLoader
 
         if ($pElems = $element->xpath("./virtual-property[@method = '".$methodName."']")) {
             $annotations[] = new Annotations\VirtualProperty();
-            $annotations = array_merge($annotations, $this->loadComplex(reset($pElems), ['method']));
+            $annotations = \array_merge($annotations, $this->loadComplex(\reset($pElems), ['method']));
         }
 
-        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "pre-serialize[@method = '".$methodName."']"));
-        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "post-serialize[@method = '".$methodName."']"));
-        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "post-deserialize[@method = '".$methodName."']"));
+        $annotations = \array_merge($annotations, $this->getAnnotationFromElement($element, "pre-serialize[@method = '".$methodName."']"));
+        $annotations = \array_merge($annotations, $this->getAnnotationFromElement($element, "post-serialize[@method = '".$methodName."']"));
+        $annotations = \array_merge($annotations, $this->getAnnotationFromElement($element, "post-deserialize[@method = '".$methodName."']"));
 
         return $annotations;
     }
@@ -144,7 +144,7 @@ class XmlLoader extends AnnotationLoader
         $propertyName = $property->name;
 
         if ($pElems = $element->xpath("./property[@name = '".$propertyName."']")) {
-            $annotations = $this->loadComplex(reset($pElems));
+            $annotations = $this->loadComplex(\reset($pElems));
         }
 
         return $annotations;
@@ -161,7 +161,7 @@ class XmlLoader extends AnnotationLoader
         }
 
         $pElems = $element->xpath("./property[@name = '".$property->name."']");
-        $pElem = reset($pElems);
+        $pElem = \reset($pElems);
 
         if (Annotations\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
             return ! $pElem || null === $pElem->attributes()->expose;
@@ -175,11 +175,11 @@ class XmlLoader extends AnnotationLoader
         $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
 
         foreach ($element->children() as $name => $child) {
-            if (in_array($name, $excludedChildren)) {
+            if (\in_array($name, $excludedChildren)) {
                 continue;
             }
 
-            $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, $name));
+            $annotations = \array_merge($annotations, $this->getAnnotationFromElement($element, $name));
         }
 
         return $annotations;
@@ -214,7 +214,7 @@ class XmlLoader extends AnnotationLoader
             return false;
         }
 
-        return reset($elems);
+        return \reset($elems);
     }
 
     private function getAnnotationsFromAttributes(\SimpleXMLElement $element, array $excludeAttributes = [])
@@ -222,7 +222,7 @@ class XmlLoader extends AnnotationLoader
         $annotations = [];
 
         foreach ($this->loadAnnotationProperties($element) as $attrName => $value) {
-            if (in_array($attrName, $excludeAttributes)) {
+            if (\in_array($attrName, $excludeAttributes)) {
                 continue;
             }
 

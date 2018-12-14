@@ -167,7 +167,7 @@ class DateHandler implements SubscribingHandlerInterface
         $datetime = $class::createFromFormat($format, (string) $data, $timezone);
 
         if (false === $datetime) {
-            throw new RuntimeException(sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
+            throw new RuntimeException(\sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
         }
 
         return $datetime;

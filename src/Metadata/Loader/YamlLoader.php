@@ -32,7 +32,7 @@ class YamlLoader extends AnnotationLoader
     {
         $config = $this->getClassConfig($classMetadata->getName());
         if (Annotations\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
-            if (array_key_exists($property->name, $config['properties']) && null === $config['properties'][$property->name]) {
+            if (\array_key_exists($property->name, $config['properties']) && null === $config['properties'][$property->name]) {
                 return false;
             }
 
@@ -75,7 +75,7 @@ class YamlLoader extends AnnotationLoader
         foreach ($config as $key => $value) {
             if ('static_fields' === $key) {
                 foreach ($value as $property => $item) {
-                    if (! is_array($item)) {
+                    if (! \is_array($item)) {
                         $item = ['value' => $item];
                     }
 
@@ -91,11 +91,11 @@ class YamlLoader extends AnnotationLoader
                 continue;
             }
 
-            if (in_array($key, ['properties', 'virtual_properties'])) {
+            if (\in_array($key, ['properties', 'virtual_properties'])) {
                 continue;
             }
 
-            $annotations = array_merge($annotations, $this->createAnnotationsForArray($value, $key));
+            $annotations = \array_merge($annotations, $this->createAnnotationsForArray($value, $key));
         }
 
         return $annotations;
@@ -110,20 +110,20 @@ class YamlLoader extends AnnotationLoader
         $methodName = $method->name;
         $config = $this->getClassConfig($method->class);
 
-        if (array_key_exists($methodName, $config['virtual_properties'])) {
+        if (\array_key_exists($methodName, $config['virtual_properties'])) {
             $annotations[] = new Annotations\VirtualProperty();
 
             $methodConfig = $config['virtual_properties'][$methodName] ?: [];
-            $annotations = array_merge($annotations, $this->loadProperty($methodConfig));
+            $annotations = \array_merge($annotations, $this->loadProperty($methodConfig));
         }
 
-        if (array_search($methodName, $config['pre_serialize'])) {
+        if (\array_search($methodName, $config['pre_serialize'])) {
             $annotations[] = new Annotations\PreSerialize();
         }
-        if (array_search($methodName, $config['post_serialize'])) {
+        if (\array_search($methodName, $config['post_serialize'])) {
             $annotations[] = new Annotations\PostSerialize();
         }
-        if (array_search($methodName, $config['post_deserialize'])) {
+        if (\array_search($methodName, $config['post_deserialize'])) {
             $annotations[] = new Annotations\PostDeserialize();
         }
 
@@ -150,7 +150,7 @@ class YamlLoader extends AnnotationLoader
      */
     private static function isAssocArray(array $value): bool
     {
-        return array_keys($value) !== array_keys(array_values($value));
+        return \array_keys($value) !== \array_keys(\array_values($value));
     }
 
     private function loadProperty(array $config): array
@@ -158,7 +158,7 @@ class YamlLoader extends AnnotationLoader
         $annotations = [];
 
         foreach ($config as $key => $value) {
-            $annotations = array_merge($annotations, $this->createAnnotationsForArray($value, $key));
+            $annotations = \array_merge($annotations, $this->createAnnotationsForArray($value, $key));
         }
 
         return $annotations;
@@ -173,7 +173,7 @@ class YamlLoader extends AnnotationLoader
     {
         $config = isset($this->config[$class]) ? $this->config[$class] : [];
 
-        return array_merge([
+        return \array_merge([
             'virtual_properties' => [],
             'pre_serialize' => [],
             'post_serialize' => [],
@@ -185,7 +185,7 @@ class YamlLoader extends AnnotationLoader
     {
         $annotations = [];
 
-        if (! is_array($value)) {
+        if (! \is_array($value)) {
             $annotation = $this->createAnnotationObject($key);
             if ($property = $this->getDefaultPropertyName($annotation)) {
                 $annotation->{$property} = $value;
@@ -206,7 +206,7 @@ class YamlLoader extends AnnotationLoader
             $annotations[] = $annotation;
         } else {
             foreach ($value as $annotValue) {
-                $annotations = array_merge($annotations, $this->createAnnotationsForArray($annotValue, $key));
+                $annotations = \array_merge($annotations, $this->createAnnotationsForArray($annotValue, $key));
             }
         }
 

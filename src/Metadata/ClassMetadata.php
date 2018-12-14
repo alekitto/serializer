@@ -131,18 +131,18 @@ class ClassMetadata extends BaseClassMetadata
      */
     public function setAccessorOrder($order, array $customOrder = [])
     {
-        if (! in_array($order, [self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM], true)) {
-            throw new InvalidArgumentException(sprintf('The accessor order "%s" is invalid.', $order));
+        if (! \in_array($order, [self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM], true)) {
+            throw new InvalidArgumentException(\sprintf('The accessor order "%s" is invalid.', $order));
         }
 
         foreach ($customOrder as $name) {
-            if (! is_string($name)) {
-                throw new InvalidArgumentException(sprintf('$customOrder is expected to be a list of strings, but got element of value %s.', json_encode($name)));
+            if (! \is_string($name)) {
+                throw new InvalidArgumentException(\sprintf('$customOrder is expected to be a list of strings, but got element of value %s.', \json_encode($name)));
             }
         }
 
         $this->accessorOrder = $order;
-        $this->customOrder = array_flip($customOrder);
+        $this->customOrder = \array_flip($customOrder);
         $this->sortProperties();
     }
 
@@ -178,12 +178,12 @@ class ClassMetadata extends BaseClassMetadata
 
         parent::merge($object);
 
-        $this->preSerializeMethods = array_merge($object->preSerializeMethods, $this->preSerializeMethods);
-        $this->postSerializeMethods = array_merge($object->postSerializeMethods, $this->postSerializeMethods);
-        $this->postDeserializeMethods = array_merge($object->postDeserializeMethods, $this->postDeserializeMethods);
+        $this->preSerializeMethods = \array_merge($object->preSerializeMethods, $this->preSerializeMethods);
+        $this->postSerializeMethods = \array_merge($object->postSerializeMethods, $this->postSerializeMethods);
+        $this->postDeserializeMethods = \array_merge($object->postDeserializeMethods, $this->postDeserializeMethods);
         $this->xmlRootName = $this->xmlRootName ?: $object->xmlRootName;
         $this->xmlRootNamespace = $this->xmlRootNamespace ?: $object->xmlRootNamespace;
-        $this->xmlNamespaces = array_merge($object->xmlNamespaces, $this->xmlNamespaces);
+        $this->xmlNamespaces = \array_merge($object->xmlNamespaces, $this->xmlNamespaces);
 
         // Handler methods are not inherited
 
@@ -194,7 +194,7 @@ class ClassMetadata extends BaseClassMetadata
 
         if ($this->discriminatorFieldName && $object->discriminatorFieldName &&
             $this->discriminatorFieldName !== $object->discriminatorFieldName) {
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.',
                 $this->getName(),
                 $object->discriminatorBaseClass,
@@ -222,7 +222,7 @@ class ClassMetadata extends BaseClassMetadata
 
     public function getSubtype($data): string
     {
-        if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
+        if (\is_array($data) && isset($data[$this->discriminatorFieldName])) {
             $typeValue = (string) $data[$this->discriminatorFieldName];
         } elseif (isset($data->{$this->discriminatorFieldName})) {
             $typeValue = (string) $data->{$this->discriminatorFieldName};
@@ -236,7 +236,7 @@ class ClassMetadata extends BaseClassMetadata
         if (! isset($this->discriminatorMap[$typeValue])) {
             throw new \LogicException(
                 "The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: ".
-                implode(', ', array_keys($this->discriminatorMap))
+                \implode(', ', \array_keys($this->discriminatorMap))
             );
         }
 
@@ -247,13 +247,13 @@ class ClassMetadata extends BaseClassMetadata
     {
         switch ($this->accessorOrder) {
             case self::ACCESSOR_ORDER_ALPHABETICAL:
-                ksort($this->attributesMetadata);
+                \ksort($this->attributesMetadata);
                 break;
 
             case self::ACCESSOR_ORDER_CUSTOM:
                 $order = $this->customOrder;
-                $sorting = array_flip(array_keys($this->attributesMetadata));
-                uksort($this->attributesMetadata, function ($a, $b) use ($order, $sorting): int {
+                $sorting = \array_flip(\array_keys($this->attributesMetadata));
+                \uksort($this->attributesMetadata, function ($a, $b) use ($order, $sorting): int {
                     $existsA = isset($order[$a]);
                     $existsB = isset($order[$b]);
 
@@ -281,7 +281,7 @@ class ClassMetadata extends BaseClassMetadata
             return;
         }
 
-        if (false === $typeValue = array_search($this->getName(), $object->discriminatorMap, true)) {
+        if (false === $typeValue = \array_search($this->getName(), $object->discriminatorMap, true)) {
             throw new \LogicException(
                 'The sub-class "'.$this->getName().
                 '" is not listed in the discriminator of the base class "'.$this->discriminatorBaseClass

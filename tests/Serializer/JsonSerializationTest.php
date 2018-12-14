@@ -90,7 +90,7 @@ class JsonSerializationTest extends BaseSerializationTest
         }
 
         if (! isset($outputs[$key])) {
-            throw new RuntimeException(sprintf('The key "%s" is not supported.', $key));
+            throw new RuntimeException(\sprintf('The key "%s" is not supported.', $key));
         }
 
         return $outputs[$key];
@@ -140,12 +140,12 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testPrimitiveTypes(string $primitiveType, $data)
     {
         $visitor = $this->serializationVisitors['json'];
-        $functionToCall = 'visit'.ucfirst($primitiveType);
+        $functionToCall = 'visit'.\ucfirst($primitiveType);
         $result = $visitor->$functionToCall($data, Type::null(), $this->prophesize(Context::class)->reveal());
         if ('double' == $primitiveType) {
             $primitiveType = 'float';
         }
-        $this->assertInternalType($primitiveType, $result);
+        self::assertInternalType($primitiveType, $result);
     }
 
     /**
@@ -153,7 +153,7 @@ class JsonSerializationTest extends BaseSerializationTest
      */
     public function testSerializeEmptyObject()
     {
-        $this->assertEquals('{}', $this->serialize(new Author(null)));
+        self::assertEquals('{}', $this->serialize(new Author(null)));
     }
 
     /**
@@ -163,8 +163,8 @@ class JsonSerializationTest extends BaseSerializationTest
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff()
     {
-        ini_set('display_errors', '1');
-        $this->serialize(['foo' => 'bar', 'bar' => pack('H*', 'c32e')]);
+        \ini_set('display_errors', '1');
+        $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
     }
 
     /**
@@ -174,13 +174,13 @@ class JsonSerializationTest extends BaseSerializationTest
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn()
     {
-        ini_set('display_errors', '0');
-        $this->serialize(['foo' => 'bar', 'bar' => pack('H*', 'c32e')]);
+        \ini_set('display_errors', '0');
+        $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
     }
 
     public function testSerializeArrayWithEmptyObject()
     {
-        $this->assertEquals('[{}]', $this->serialize([new \stdClass()]));
+        self::assertEquals('[{}]', $this->serialize([new \stdClass()]));
     }
 
     /**

@@ -72,7 +72,7 @@ class GraphNavigatorTest extends TestCase
         $context->getMetadataStack()->willReturn($this->prophesize(MetadataStack::class));
 
         $object = new SerializableClass();
-        $metadata = $this->metadataFactory->getMetadataFor(get_class($object));
+        $metadata = $this->metadataFactory->getMetadataFor(\get_class($object));
 
         $context->direction = Direction::DIRECTION_SERIALIZATION;
         $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));

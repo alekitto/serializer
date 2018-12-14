@@ -18,30 +18,30 @@ class SerializerBuilderTest extends TestCase
     {
         $serializer = $this->builder->build();
 
-        $this->assertEquals('"foo"', $serializer->serialize('foo', 'json'));
-        $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?>
+        self::assertEquals('"foo"', $serializer->serialize('foo', 'json'));
+        self::assertEquals('<?xml version="1.0" encoding="UTF-8"?>
 <result><![CDATA[foo]]></result>
 ', $serializer->serialize('foo', 'xml'));
-        $this->assertEquals('foo
+        self::assertEquals('foo
 ', $serializer->serialize('foo', 'yml'));
 
-        $this->assertEquals('foo', $serializer->deserialize('"foo"', Type::from('string'), 'json'));
-        $this->assertEquals('foo', $serializer->deserialize('<?xml version="1.0" encoding="UTF-8"?><result><![CDATA[foo]]></result>', Type::from('string'), 'xml'));
+        self::assertEquals('foo', $serializer->deserialize('"foo"', Type::from('string'), 'json'));
+        self::assertEquals('foo', $serializer->deserialize('<?xml version="1.0" encoding="UTF-8"?><result><![CDATA[foo]]></result>', Type::from('string'), 'xml'));
     }
 
     public function testDoesAddDefaultHandlers()
     {
         $serializer = $this->builder->build();
 
-        $this->assertEquals('"2020-04-16T00:00:00+00:00"', $serializer->serialize(new \DateTime('2020-04-16', new \DateTimeZone('UTC')), 'json'));
+        self::assertEquals('"2020-04-16T00:00:00+00:00"', $serializer->serialize(new \DateTime('2020-04-16', new \DateTimeZone('UTC')), 'json'));
     }
 
     public function testDoesNotAddDefaultHandlersWhenExplicitlyConfigured()
     {
-        $this->assertSame($this->builder, $this->builder->configureHandlers(function (HandlerRegistry $registry) {
+        self::assertSame($this->builder, $this->builder->configureHandlers(function (HandlerRegistry $registry) {
         }));
 
-        $this->assertEquals('{}', $this->builder->build()->serialize(new \DateTime('2020-04-16'), 'json'));
+        self::assertEquals('{}', $this->builder->build()->serialize(new \DateTime('2020-04-16'), 'json'));
     }
 
     /**
@@ -50,7 +50,7 @@ class SerializerBuilderTest extends TestCase
      */
     public function testDoesNotAddOtherVisitorsWhenConfiguredExplicitly()
     {
-        $this->assertSame(
+        self::assertSame(
             $this->builder,
             $this->builder->setSerializationVisitor('json', new JsonSerializationVisitor(new CamelCaseNamingStrategy()))
         );

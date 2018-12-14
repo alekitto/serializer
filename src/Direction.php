@@ -18,7 +18,7 @@ class Direction
      */
     public static function parseDirection(string $dirStr): int
     {
-        switch (strtolower($dirStr)) {
+        switch (\strtolower($dirStr)) {
             case 'serialization':
                 return self::DIRECTION_SERIALIZATION;
 
@@ -26,7 +26,7 @@ class Direction
                 return self::DIRECTION_DESERIALIZATION;
 
             default:
-                throw new InvalidArgumentException(sprintf('The direction "%s" does not exist.', $dirStr));
+                throw new InvalidArgumentException(\sprintf('The direction "%s" does not exist.', $dirStr));
         }
     }
 }

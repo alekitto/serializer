@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Handler;
 
 interface SubscribingHandlerInterface
 {
-    /**
+    /*
      * Return format:.
      *
      *      yield [

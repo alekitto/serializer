@@ -13,7 +13,7 @@ class ValidationFailedException extends RuntimeException
 
     public function __construct(ConstraintViolationList $list)
     {
-        parent::__construct(sprintf('Validation failed with %d error(s).', count($list)));
+        parent::__construct(\sprintf('Validation failed with %d error(s).', \count($list)));
 
         $this->list = $list;
     }

@@ -32,7 +32,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
     public function pop()
     {
         $metadata = $this->stack->pop();
-        array_pop($this->currentPath);
+        \array_pop($this->currentPath);
 
         return $metadata;
     }

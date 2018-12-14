@@ -11,7 +11,7 @@ class DateHandlerTest extends AbstractHandlerTest
 {
     public function testGetSubscribingMethodsShouldReturnAllTypes()
     {
-        $this->assertCount(9, iterator_to_array($this->handler->getSubscribingMethods()));
+        self::assertCount(9, \iterator_to_array($this->handler->getSubscribingMethods()));
     }
 
     public function testSerializeDateTimeShouldUseFormatTheDateTimeObject()
@@ -56,17 +56,17 @@ class DateHandlerTest extends AbstractHandlerTest
 
     public function testDeserializeDateTime()
     {
-        $this->assertNull($this->handler->deserializeDateTime($this->visitor->reveal(), null, Type::parse(\DateTime::class), $this->context->reveal()));
+        self::assertNull($this->handler->deserializeDateTime($this->visitor->reveal(), null, Type::parse(\DateTime::class), $this->context->reveal()));
 
-        $this->assertEquals(
+        self::assertEquals(
             new \DateTimeImmutable('2018-12-12T22:00:00Z'),
             $this->handler->deserializeDateTimeImmutable($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(\DateTimeImmutable::class), $this->context->reveal())
         );
-        $this->assertEquals(
+        self::assertEquals(
             new \DateTime('2018-12-12T22:00:00Z'),
             $this->handler->deserializeDateTime($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(\DateTime::class), $this->context->reveal())
         );
-        $this->assertEquals(
+        self::assertEquals(
             new Chronos('2018-12-12T22:00:00Z'),
             $this->handler->deserializeChronos($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(\DateTime::class), $this->context->reveal())
         );

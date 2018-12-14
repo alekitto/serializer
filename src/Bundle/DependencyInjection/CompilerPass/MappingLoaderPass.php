@@ -29,8 +29,8 @@ class MappingLoaderPass implements CompilerPassInterface
 
         foreach ($container->getParameter('kernel.bundles') as $bundle) {
             $reflection = new \ReflectionClass($bundle);
-            $xml_paths = array_merge($xml_paths, glob(dirname($reflection->getFileName()).'/'.$mappingPath.'/*.xml'));
-            $yaml_paths = array_merge($yaml_paths, glob(dirname($reflection->getFileName()).'/'.$mappingPath.'/*.yml'));
+            $xml_paths = \array_merge($xml_paths, \glob(\dirname($reflection->getFileName()).'/'.$mappingPath.'/*.xml'));
+            $yaml_paths = \array_merge($yaml_paths, \glob(\dirname($reflection->getFileName()).'/'.$mappingPath.'/*.yml'));
         }
 
         $xmlDefinition->replaceArgument(0, $xml_paths);

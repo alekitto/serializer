@@ -45,14 +45,14 @@ class Lexer extends AbstractLexer
 
         // Differentiate between quoted names, identifiers, input parameters and symbols
         if ("'" === $value[0]) {
-            $value = str_replace("''", "'", substr($value, 1, strlen($value) - 2));
+            $value = \str_replace("''", "'", \substr($value, 1, \strlen($value) - 2));
 
             return self::T_STRING;
         } elseif ('"' === $value[0]) {
-            $value = substr($value, 1, strlen($value) - 2);
+            $value = \substr($value, 1, \strlen($value) - 2);
 
             return self::T_STRING;
-        } elseif (ctype_alpha($value[0])) {
+        } elseif (\ctype_alpha($value[0])) {
             return self::T_IDENTIFIER;
         } else {
             switch ($value) {
