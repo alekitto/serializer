@@ -32,17 +32,7 @@ class RegisterHandlersPass implements CompilerPassInterface
                 ));
             }
 
-            $reflClass = new \ReflectionClass($class);
-            $method = $reflClass->getMethod('getSubscribingMethods');
-
-            if (! $method->isStatic()) {
-                \trigger_error('Implementing getSubscribingMethods as non-static method is deprecated', E_USER_DEPRECATED);
-                $registryDef->addMethodCall('registerSubscribingHandler', [new Reference($serviceId)]);
-
-                continue;
-            }
-
-            foreach ($method->invoke(null) as $methodData) {
+            foreach ($class::getSubscribingMethods() as $methodData) {
                 if (! isset($methodData['type'])) {
                     throw new \RuntimeException(\sprintf('For each subscribing method a "type" attribute must be given for %s.', $class));
                 }

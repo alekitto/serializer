@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Handler;
 
 interface SubscribingHandlerInterface
 {
-    /*
+    /**
      * Return format:.
      *
      *      yield [
@@ -17,5 +17,5 @@ interface SubscribingHandlerInterface
      *
      * @return iterable
      */
-    // public static function getSubscribingMethods(): iterable;
+     public static function getSubscribingMethods(): iterable;
 }
