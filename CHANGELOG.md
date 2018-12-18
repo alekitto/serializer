@@ -19,6 +19,7 @@ For instructions on how to upgrade from one version to another, please see the d
   `@AdditionalField` annotation to replace it if called in a POST_SERIALIZE event
 - [BC Break] Removed Twig extension
 - [BC Break] Extracted MetadataStack and removed helper method from Context
+- [BC Break] SubscribingHandlerInterface::getSubscribingMethods is now static
 - Added `InitializedObjectConstructor`: uses `target` attribute for root object deserialization
 - Refactored `GraphNavigator`
 - Serialize timestamp (DateTime<'U'>) as integer
@@ -41,3 +42,5 @@ For instructions on how to upgrade from one version to another, please see the d
 - Added `int` and `bool` shortcut for integer and boolean types
 - Added `OnExclude` attribute. You can now choose to skip the excluded property or to expose it as null (default)
 - `Context`s are now cloneable
+- Added symfony serializer adapter, exposing Symfony's serializer interface
+- Handle Chronos (`cakephp/chronos` package) objects in DateHandler
