@@ -6,7 +6,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 
 /**
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"PROPERTY", "ANNOTATION"})
  */
 final class OnExclude
 {
