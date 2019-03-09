@@ -35,16 +35,14 @@ and easier to set-up in general::
 
     class MyHandler implements SubscribingHandlerInterface
     {
-        public static function getSubscribingMethods()
+        public static function getSubscribingMethods(): iterable
         {
-            return array(
-                array(
-                    'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
-                    'format' => 'json',
-                    'type' => 'DateTime',
-                    'method' => 'serializeDateTimeToJson',
-                ),
-            );
+            yield [
+                'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+                'format' => 'json',
+                'type' => 'DateTime',
+                'method' => 'serializeDateTimeToJson',
+            ];
         }
 
         public function serializeDateTimeToJson(JsonSerializationVisitor $visitor, \DateTime $date, array $type, Context $context)

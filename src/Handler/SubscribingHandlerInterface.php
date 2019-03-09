@@ -17,5 +17,5 @@ interface SubscribingHandlerInterface
      *
      * @return iterable
      */
-     public static function getSubscribingMethods(): iterable;
+    public static function getSubscribingMethods(): iterable;
 }

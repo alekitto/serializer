@@ -16,6 +16,7 @@ very easily:
         $serializer->serialize($object, 'json');
         $serializer->serialize($object, 'xml');
         $serializer->serialize($object, 'yml');
+        $serializer->serialize($object, 'array'); // Or $serializer->normalize($object);
 
     .. code-block :: jinja
 

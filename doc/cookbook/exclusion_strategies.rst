@@ -46,6 +46,7 @@ then it is easier to change the exclusion policy, and only mark these few proper
 
 Versioning Objects
 ------------------
+
 KcsSerializerBundle comes by default with a very neat feature which allows
 you to add versioning support to your objects, e.g. if you want to
 expose them via an API that is consumed by a third-party:
@@ -105,7 +106,9 @@ You can achieve that by using the ``@Groups`` annotation on your properties.
 
         /** @Groups({"details"}) */
         private $comments;
-        
+
+        // You can also exclude a property if a serialization group is defined.
+        /** @Groups({"!details"}) */
         private $createdAt;
     }
 
@@ -113,13 +116,17 @@ You can then tell the serializer which groups to serialize in your controller::
 
     use Kcs\Serializer\SerializationContext;
 
-    $serializer->serialize(new BlogPost(), 'json', SerializationContext::create()->setGroups(array('list')));
-    
-    //will output $id, $title and $nbComments.
+    $serializer->serialize(new BlogPost(), 'json', SerializationContext::create()->setGroups(['list']));
 
-    $serializer->serialize(new BlogPost(), 'json', SerializationContext::create()->setGroups(array('Default', 'list')));
-    
-    //will output $id, $title, $nbComments and $createdAt.
+    // will output $id, $title and $nbComments.
+
+    $serializer->serialize(new BlogPost(), 'json', SerializationContext::create()->setGroups(['Default', 'list']));
+
+    // will output $id, $title, $nbComments and $createdAt.
+
+    $serializer->serialize(new BlogPost(), 'json', SerializationContext::create()->setGroups(['details']);
+
+    // will output $id, $title, $comments
 
 Overriding Groups of Deeper Branches of the Graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,7 +135,7 @@ depths of the object graph.
 
 For example if you have a User that has a manager and friends::
 
-    use JMS\Serializer\Annotation\Groups;
+    use Kcs\Serializer\Annotation\Groups;
 
     class User
     {
@@ -173,7 +180,7 @@ And the following object graph::
 
 You can override groups on specific paths::
 
-    use JMS\Serializer\SerializationContext;
+    use Kcs\Serializer\SerializationContext;
 
     $context = SerializationContext::create()->setGroups(array(
         'Default', // Serialize John's name

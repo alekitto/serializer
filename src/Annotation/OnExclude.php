@@ -10,8 +10,8 @@ use Kcs\Serializer\Exception\RuntimeException;
  */
 final class OnExclude
 {
-    const NULL = 'null';
-    const SKIP = 'skip';
+    public const NULL = 'null';
+    public const SKIP = 'skip';
 
     /**
      * @var string

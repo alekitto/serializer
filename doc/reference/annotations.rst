@@ -1,90 +1,6 @@
 Annotations
 -----------
 
-@ExclusionPolicy
-~~~~~~~~~~~~~~~~
-This annotation can be defined on a class to indicate the exclusion strategy
-that should be used for the class.
-
-+----------+----------------------------------------------------------------+
-| Policy   | Description                                                    |
-+==========+================================================================+
-| all      | all properties are excluded by default; only properties marked |
-|          | with @Expose will be serialized/unserialized                   |
-+----------+----------------------------------------------------------------+
-| none     | no properties are excluded by default; all properties except   |
-|          | those marked with @Exclude will be serialized/unserialized     |
-+----------+----------------------------------------------------------------+
-
-@Exclude
-~~~~~~~~
-This annotation can be defined on a property to indicate that the property should
-not be serialized/unserialized. Works only in combination with NoneExclusionPolicy.
-
-@Expose
-~~~~~~~
-This annotation can be defined on a property to indicate that the property should
-be serialized/unserialized. Works only in combination with AllExclusionPolicy.
-
-@SerializedName
-~~~~~~~~~~~~~~~
-This annotation can be defined on a property to define the serialized name for a
-property. If this is not defined, the property will be translated from camel-case
-to a lower-cased underscored name, e.g. camelCase -> camel_case.
-
-@Since
-~~~~~~
-This annotation can be defined on a property to specify starting from which
-version this property is available. If an earlier version is serialized, then
-this property is excluded automatically. The version must be in a format that is
-understood by PHP's ``version_compare`` function.
-
-@Until
-~~~~~~
-This annotation can be defined on a property to specify until which version this
-property was available. If a later version is serialized, then this property is
-excluded automatically. The version must be in a format that is understood by
-PHP's ``version_compare`` function.
-
-@Groups
-~~~~~~~
-This annotation can be defined on a property to specifiy to if the property
-should be serialized when only serializing specific groups (see
-:doc:`../cookbook/exclusion_strategies`).
-
-@MaxDepth
-~~~~~~~~~
-This annotation can be defined on a property to limit the depth to which the
-content will be serialized. It is very useful when a property will contain a
-large object graph.
-
-@AccessType
-~~~~~~~~~~~
-This annotation can be defined on a property, or a class to specify in which way
-the properties should be accessed. By default, the serializer will retrieve, or
-set the value via reflection, but you may change this to use a public method instead:
-
-.. code-block :: php
-
-    <?php
-    use Kcs\Serializer\Annotation\AccessType;
-
-    /** @AccessType("public_method") */
-    class User
-    {
-        private $name;
-
-        public function getName()
-        {
-            return $this->name;
-        }
-
-        public function setName($name)
-        {
-            $this->name = trim($name);
-        }
-    }
-
 @Accessor
 ~~~~~~~~~
 This annotation can be defined on a property to specify which public method should
@@ -169,64 +85,40 @@ default the order is undefined, but you may change it to either "alphabetical", 
         }
     }
 
-@VirtualProperty
-~~~~~~~~~~~~~~~~
-This annotation can be defined on a method to indicate that the data returned by
-the method should appear like a property of the object.
-
-**Note**: This only works for serialization and is completely ignored during
-deserialization.
-
-@Inline
-~~~~~~~
-This annotation can be defined on a property to indicate that the data of the property
-should be inlined.
-
-**Note**: This only works for serialization, the serializer will not be able to deserialize
-objects with this annotation. Also, AccessorOrder will be using the name of the property
-to determine the order.
-
-@ReadOnly
-~~~~~~~~~
-This annotation can be defined on a property to indicate that the data of the property
-is read only and cannot be set during deserialization.
-
-A property can be marked as non read only with ``@ReadOnly(false)`` annotation (useful when a class is marked as read only).
-
-@PreSerialize
-~~~~~~~~~~~~~
-This annotation can be defined on a method which is supposed to be called before
-the serialization of the object starts.
-
-@PostSerialize
-~~~~~~~~~~~~~~
-This annotation can be defined on a method which is then called directly after the
-object has been serialized.
-
-@PostDeserialize
-~~~~~~~~~~~~~~~~
-This annotation can be defined on a method which is supposed to be called after
-the object has been deserialized.
-
-@HandlerCallback
-~~~~~~~~~~~~~~~~
-This annotation can be defined on a method if serialization/deserialization is handled
-by the object iself.
+@AccessType
+~~~~~~~~~~~
+This annotation can be defined on a property, or a class to specify in which way
+the properties should be accessed. By default, the serializer will retrieve, or
+set the value via public methods, but you may change this to use a reflection instead:
 
 .. code-block :: php
 
     <?php
+    use Kcs\Serializer\Annotation\AccessType;
 
-    class Article
+    /** @AccessType("property") */
+    class User
     {
-        /**
-         * @HandlerCallback("xml", direction = "serialization")
-         */
-        public function serializeToXml(XmlSerializationVisitor $visitor)
+        private $name;
+
+        public function getName()
         {
-            // custom logic here
+            return $this->name;
+        }
+
+        public function setName($name)
+        {
+            $this->name = trim($name);
         }
     }
+
+@AdditionalField
+~~~~~~~~~~~~~~~~
+
+This annotation can be used to add a virtual property based on the object instance
+without writing a virtual property method.
+The default type of the AdditionalField is 'ClassName::property' and should be
+handled by a specific serializer handler
 
 @Discriminator
 ~~~~~~~~~~~~~~
@@ -241,6 +133,103 @@ to the least super type::
     abstract class Vehicle { }
     class Car extends Vehicle { }
     class Moped extends Vehicle { }
+
+@Exclude
+~~~~~~~~
+This annotation can be defined on a property to indicate that the property should
+not be serialized/unserialized. Works only in combination with ExclusionPolicy('none').
+
+@ExclusionPolicy
+~~~~~~~~~~~~~~~~
+This annotation can be defined on a class to indicate the exclusion strategy
+that should be used for the class.
+
++----------+----------------------------------------------------------------+
+| Policy   | Description                                                    |
++==========+================================================================+
+| all      | all properties are excluded by default; only properties marked |
+|          | with @Expose will be serialized/unserialized                   |
++----------+----------------------------------------------------------------+
+| none     | no properties are excluded by default; all properties except   |
+|          | those marked with @Exclude will be serialized/unserialized     |
++----------+----------------------------------------------------------------+
+
+@Expose
+~~~~~~~
+This annotation can be defined on a property to indicate that the property should
+be serialized/unserialized. Works only in combination with AllExclusionPolicy.
+
+@Groups
+~~~~~~~
+This annotation can be defined on a property to specify if the property
+should be serialized or excluded when only serializing specific groups (see
+:doc:`../cookbook/exclusion_strategies`).
+To exclude a property the group name must be prefixed with "!"
+
+@Inline
+~~~~~~~
+This annotation can be defined on a property to indicate that the data of the property
+should be inlined.
+
+**Note**: This only works for serialization, the serializer will not be able to deserialize
+objects with this annotation. Also, AccessorOrder will be using the name of the property
+to determine the order.
+
+@MaxDepth
+~~~~~~~~~
+This annotation can be defined on a property to limit the depth to which the
+content will be serialized. It is very useful when a property will contain a
+large object graph.
+
+@OnExclude
+~~~~~~~~~~
+Change the behavior of the property exclusion. The default behavior is to skip
+the property, but can be set to serialize as null with @OnExclude("null").
+
+@PostDeserialize
+~~~~~~~~~~~~~~~~
+This annotation can be defined on a method which is supposed to be called after
+the object has been deserialized.
+
+@PostSerialize
+~~~~~~~~~~~~~~
+This annotation can be defined on a method which is then called directly after the
+object has been serialized.
+
+@PreSerialize
+~~~~~~~~~~~~~
+This annotation can be defined on a method which is supposed to be called before
+the serialization of the object starts.
+
+@ReadOnly
+~~~~~~~~~
+This annotation can be defined on a property to indicate that the data of the property
+is read only and cannot be set during deserialization.
+
+A property can be marked as non read only with ``@ReadOnly(false)`` annotation (useful when a class is marked as read only).
+
+@SerializedName
+~~~~~~~~~~~~~~~
+This annotation can be defined on a property to define the serialized name for a
+property. If this is not defined, the property will be translated from camel-case
+to a lower-cased underscored name, e.g. camelCase -> camel_case.
+
+@Since
+~~~~~~
+This annotation can be defined on a property to specify starting from which
+version this property is available. If an earlier version is serialized, then
+this property is excluded automatically. The version must be in a format that is
+understood by PHP's ``version_compare`` function.
+
+@StaticField
+~~~~~~~~~~~~~~~
+Can be used to add an additional static property to an object. For example, you can use::
+
+    @StaticField(name="additional", value="12", attributes={@Type("integer")})
+
+To add a property named "additional" which has a value of 12.
+Attributes such as @Type, @Groups, @OnExclude, etc can be added to the "attributes"
+property of this annotation.
 
 @Type
 ~~~~~
@@ -279,7 +268,8 @@ Available Types:
 +---------------------------+--------------------------------------------------+
 | DateTime<'format', 'zone'>| PHP's DateTime object (custom format/timezone)   |
 +---------------------------+--------------------------------------------------+
-| T                         | Where T is a fully qualified class name.         |
+| T                         | Where T is a fully qualified class name          |
+|                           | or a custom name (a specific handler is needed). |
 +---------------------------+--------------------------------------------------+
 | ArrayCollection<T>        | Similar to array<T>, but will be deserialized    |
 |                           | into Doctrine's ArrayCollection class.           |
@@ -336,35 +326,20 @@ Examples:
         private $keyValueStore;
     }
 
-@XmlRoot
-~~~~~~~~
-This allows you to specify the name of the top-level element.
+@Until
+~~~~~~
+This annotation can be defined on a property to specify until which version this
+property was available. If a later version is serialized, then this property is
+excluded automatically. The version must be in a format that is understood by
+PHP's ``version_compare`` function.
 
-.. code-block :: php
+@VirtualProperty
+~~~~~~~~~~~~~~~~
+This annotation can be defined on a method to indicate that the data returned by
+the method should appear like a property of the object.
 
-    <?php
-
-    use Kcs\Serializer\Annotation\XmlRoot;
-
-    /** @XmlRoot("user") */
-    class User
-    {
-        private $name = 'Johannes';
-    }
-
-Resulting XML:
-
-.. code-block :: xml
-
-    <user>
-        <name><![CDATA[Johannes]]></name>
-    </user>
-
-.. note ::
-
-    @XmlRoot only applies to the root element, but is for example not taken into
-    account for collections. You can define the entry name for collections using
-    @XmlList, or @XmlMap.
+**Note**: This only works for serialization and is completely ignored during
+deserialization.
 
 @XmlAttribute
 ~~~~~~~~~~~~~
@@ -391,100 +366,6 @@ Resulting XML:
     <result id="1">
         <name><![CDATA[Johannes]]></name>
     </result>
-
-@XmlValue
-~~~~~~~~~
-This allows you to mark properties which should be set as the value of the
-current element. Note that this has the limitation that any additional
-properties of that object must have the @XmlAttribute annotation.
-XMlValue also has property cdata. Which has the same meaning as the one in
-XMLElement.
-
-.. code-block :: php
-
-    <?php
-
-    use Kcs\Serializer\Annotation\XmlAttribute;
-    use Kcs\Serializer\Annotation\XmlValue;
-    use Kcs\Serializer\Annotation\XmlRoot;
-
-    /** @XmlRoot("price") */
-    class Price
-    {
-        /** @XmlAttribute */
-        private $currency = 'EUR';
-
-        /** @XmlValue */
-        private $amount = 1.23;
-    }
-
-Resulting XML:
-
-.. code-block :: xml
-
-    <price currency="EUR">1.23</price>
-
-@XmlList
-~~~~~~~~
-This allows you to define several properties of how arrays should be
-serialized. This is very similar to @XmlMap, and should be used if the
-keys of the array are not important.
-
-.. code-block :: php
-
-    <?php
-
-    use Kcs\Serializer\Annotation\XmlList;
-    use Kcs\Serializer\Annotation\XmlRoot;
-
-    /** @XmlRoot("post") */
-    class Post
-    {
-        /**
-         * @XmlList(inline = true, entry = "comment")
-         */
-        private $comments = array(
-            new Comment('Foo'),
-            new Comment('Bar'),
-        );
-    }
-
-    class Comment
-    {
-        private $text;
-
-        public function __construct($text)
-        {
-            $this->text = $text;
-        }
-    }
-
-Resulting XML:
-
-.. code-block :: xml
-
-    <post>
-        <comment>
-            <text><![CDATA[Foo]]></text>
-        </comment>
-        <comment>
-            <text><![CDATA[Bar]]></text>
-        </comment>
-    </post>
-
-You can also specify the entry tag namespace using the ``namespace`` attribute (``@XmlList(inline = true, entry = "comment", namespace="http://www.example.com/ns")``). 
-
-@XmlMap
-~~~~~~~
-Similar to @XmlList, but the keys of the array are meaningful.
-
-@XmlKeyValuePairs
-~~~~~~~~~~~~~~~~~
-This allows you to use the keys of an array as xml tags.
-
-.. note ::
-
-    When a key is an invalid xml tag name (e.g. 1_foo) the tag name *entry* will be used instead of the key.
 
 @XmlAttributeMap
 ~~~~~~~~~~~~~~~~
@@ -539,6 +420,68 @@ Resulting XML:
 
     <atom:id>my_id</atom:id>
 
+@XmlKeyValuePairs
+~~~~~~~~~~~~~~~~~
+This allows you to use the keys of an array as xml tags.
+
+.. note ::
+
+    When a key is an invalid xml tag name (e.g. 1_foo) the tag name *entry* will be used instead of the key.
+
+@XmlList
+~~~~~~~~
+This allows you to define several properties of how arrays should be
+serialized. This is very similar to @XmlMap, and should be used if the
+keys of the array are not important.
+
+.. code-block :: php
+
+    <?php
+
+    use Kcs\Serializer\Annotation\XmlList;
+    use Kcs\Serializer\Annotation\XmlRoot;
+
+    /** @XmlRoot("post") */
+    class Post
+    {
+        /**
+         * @XmlList(inline = true, entry = "comment")
+         */
+        private $comments = array(
+            new Comment('Foo'),
+            new Comment('Bar'),
+        );
+    }
+
+    class Comment
+    {
+        private $text;
+
+        public function __construct($text)
+        {
+            $this->text = $text;
+        }
+    }
+
+Resulting XML:
+
+.. code-block :: xml
+
+    <post>
+        <comment>
+            <text><![CDATA[Foo]]></text>
+        </comment>
+        <comment>
+            <text><![CDATA[Bar]]></text>
+        </comment>
+    </post>
+
+You can also specify the entry tag namespace using the ``namespace`` attribute (``@XmlList(inline = true, entry = "comment", namespace="http://www.example.com/ns")``).
+
+@XmlMap
+~~~~~~~
+Similar to @XmlList, but the keys of the array are meaningful.
+
 @XmlNamespace
 ~~~~~~~~~~~~~
 This annotation allows you to specify Xml namespace/s and prefix used.
@@ -582,3 +525,65 @@ Resulting XML:
             <full_name><![CDATA[Foo Bar]]></full_name>
         </atom:author>
     </blog>
+
+@XmlRoot
+~~~~~~~~
+This allows you to specify the name of the top-level element.
+
+.. code-block :: php
+
+    <?php
+
+    use Kcs\Serializer\Annotation\XmlRoot;
+
+    /** @XmlRoot("user") */
+    class User
+    {
+        private $name = 'Johannes';
+    }
+
+Resulting XML:
+
+.. code-block :: xml
+
+    <user>
+        <name><![CDATA[Johannes]]></name>
+    </user>
+
+.. note ::
+
+    @XmlRoot only applies to the root element, but is for example not taken into
+    account for collections. You can define the entry name for collections using
+    @XmlList, or @XmlMap.
+
+@XmlValue
+~~~~~~~~~
+This allows you to mark properties which should be set as the value of the
+current element. Note that this has the limitation that any additional
+properties of that object must have the @XmlAttribute annotation.
+XMlValue also has property cdata. Which has the same meaning as the one in
+XMLElement.
+
+.. code-block :: php
+
+    <?php
+
+    use Kcs\Serializer\Annotation\XmlAttribute;
+    use Kcs\Serializer\Annotation\XmlValue;
+    use Kcs\Serializer\Annotation\XmlRoot;
+
+    /** @XmlRoot("price") */
+    class Price
+    {
+        /** @XmlAttribute */
+        private $currency = 'EUR';
+
+        /** @XmlValue */
+        private $amount = 1.23;
+    }
+
+Resulting XML:
+
+.. code-block :: xml
+
+    <price currency="EUR">1.23</price>

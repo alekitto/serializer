@@ -13,27 +13,37 @@ on the other hand, can be simple callables and do not require a dedicated class.
 
 .. code-block :: php
 
-    class MyEventSubscriber implements Kcs\Serializer\EventDispatcher\EventSubscriberInterface
+    use Kcs\Serializer\EventDispatcher\Events;
+    use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
+    use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+    class MyEventSubscriber implements EventSubscriberInterface
     {
+
+        /**
+         * {@inheritdoc}
+         */
         public static function getSubscribedEvents()
         {
-            return array(
-                array('event' => 'serializer.pre_serialize', 'method' => 'onPreSerialize'),
-            );
+            return [
+                Events::PRE_SERIALIZE => ['onPreSerialize', 20],
+            ];
         }
 
-        public function onPreSerialize(Kcs\Serializer\EventDispatcher\PreSerializeEvent $event)
+        public function onPreSerialize(PreSerializeEvent $event)
         {
             // do something
         }
     }
 
     $builder
-        ->configureListeners(function(Kcs\Serializer\EventDispatcher\EventDispatcher $dispatcher) {
-            $dispatcher->addListener('serializer.pre_serialize',
+        ->configureListeners(function(Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) {
+            $dispatcher->addListener(
+                Events::PRE_SERIALIZE,
                 function(Kcs\Serializer\EventDispatcher\PreSerializeEvent $event) {
                     // do something
-                }
+                },
+                $priority = 10
             );
 
             $dispatcher->addSubscriber(new MyEventSubscriber());

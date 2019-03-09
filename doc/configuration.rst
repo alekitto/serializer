@@ -1,7 +1,9 @@
 Configuration
 =============
 
-    TODO
+If using this as standalone library you should initialize doctrine annotations library::
+
+    Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
 
 Constructing a Serializer
 -------------------------

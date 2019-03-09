@@ -4,6 +4,7 @@ Serializer
 Introduction
 ------------
 This library allows you to (de-)serialize data of any complexity. Currently, it supports XML, JSON, and YAML.
+It is a fork of the popular JMS serializer.
 
 It also provides you with a rich tool-set to adapt the output to your specific needs.
 
@@ -32,6 +33,10 @@ For standalone projects usage of the provided builder is encouraged::
     $serializer = Kcs\Serializer\SerializerBuilder::create()->build();
     $jsonContent = $serializer->serialize($data, 'json');
     echo $jsonContent; // or return it in a Response
+
+Or you can use the included symfony bundle::
+
+    new \Kcs\Serializer\Bundle\SerializerBundle();
 
 Documentation
 -------------
@@ -62,11 +67,10 @@ Documentation
 License
 -------
 
-The code is released under the business-friendly `Apache2 license`_. 
+The code is released under the business-friendly `MIT license`.
 
 Documentation is subject to the `Attribution-NonCommercial-NoDerivs 3.0 Unported
 license`_.
 
-.. _Apache2 license: http://www.apache.org/licenses/LICENSE-2.0.html
 .. _Attribution-NonCommercial-NoDerivs 3.0 Unported license: http://creativecommons.org/licenses/by-nc-nd/3.0/
 

@@ -90,16 +90,9 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * Converts objects to an array structure.
-     *
-     * This is useful when the data needs to be passed on to other methods which expect array data.
-     *
-     * @param mixed                $data    anything that converts to an array, typically an object or an array of objects
-     * @param SerializationContext $context
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function toArray($data, SerializationContext $context = null): array
+    public function normalize($data, SerializationContext $context = null): array
     {
         $result = $this->serialize($data, 'array', $context);
 
@@ -115,15 +108,9 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * Restores objects from an array structure.
-     *
-     * @param array                  $data
-     * @param Type                   $type
-     * @param DeserializationContext $context
-     *
-     * @return mixed this returns whatever the passed type is, typically an object or an array of objects
+     * {@inheritdoc}
      */
-    public function fromArray(array $data, Type $type, DeserializationContext $context = null)
+    public function denormalize(array $data, Type $type, DeserializationContext $context = null)
     {
         return $this->deserialize($data, $type, 'array', $context);
     }
