@@ -55,7 +55,7 @@ class ArrayTest extends TestCase
             ],
         ];
 
-        $result = $this->serializer->toArray($order);
+        $result = $this->serializer->normalize($order);
 
         self::assertEquals($expected, $result);
     }
@@ -67,7 +67,7 @@ class ArrayTest extends TestCase
      */
     public function testToArrayWithScalar($input)
     {
-        $result = $this->serializer->toArray($input);
+        $result = $this->serializer->normalize($input);
 
         self::assertEquals([$input], $result);
     }
@@ -91,14 +91,14 @@ class ArrayTest extends TestCase
         ];
 
         $expected = new Order(new Price(2.5));
-        $result = $this->serializer->fromArray($data, Type::from(Order::class));
+        $result = $this->serializer->denormalize($data, Type::from(Order::class));
 
         self::assertEquals($expected, $result);
     }
 
     public function testToArrayReturnsArrayObjectAsArray()
     {
-        $result = $this->serializer->toArray(new Author(null));
+        $result = $this->serializer->normalize(new Author(null));
 
         self::assertSame([], $result);
     }
@@ -108,7 +108,7 @@ class ArrayTest extends TestCase
         $list = new AuthorList();
         $list->add(new Author(null));
 
-        $result = $this->serializer->toArray($list);
+        $result = $this->serializer->normalize($list);
         self::assertSame(['authors' => [[]]], $result);
     }
 }
