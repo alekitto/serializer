@@ -2,8 +2,8 @@ This document details changes between individual versions.
 
 For instructions on how to upgrade from one version to another, please see the dedicated UPGRADING document.
 
-2.0 (???)
----------
+2.0 (2019-03-11)
+----------------
 - [BC Break] Changed namespace to Kcs\Serializer
 - [BC Break] Replaced metadata library. Now using `kcs/metadata` package
 - [BC Break] Removed class metadata stack from `GraphNavigator`
