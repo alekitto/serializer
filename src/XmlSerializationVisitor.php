@@ -115,7 +115,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
 
-        if (1 === $this->nodeStack->count() && null === $this->document->documentElement) {
+        if (null === $this->document->documentElement && 1 === $this->nodeStack->count()) {
             $this->createRootNode($metadata);
         }
 
@@ -135,7 +135,9 @@ class XmlSerializationVisitor extends AbstractVisitor
 
             if (null === $currentNode) {
                 continue;
-            } elseif (\is_array($currentNode)) {
+            }
+
+            if (\is_array($currentNode)) {
                 $nodes = \array_merge($nodes, $currentNode);
             } else {
                 $nodes[] = $currentNode;
@@ -215,7 +217,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public function visitArray($data, Type $type, Context $context)
     {
-        if (1 === $this->nodeStack->count() && null === $this->document->documentElement) {
+        if (null === $this->document->documentElement && 1 === $this->nodeStack->count()) {
             $this->createRootNode();
         }
 
@@ -272,7 +274,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         $nodes = $this->currentNodes ?: [];
         $this->currentNodes = $this->nodeStack->pop();
-        if (0 === $this->nodeStack->count() && null === $this->document->documentElement) {
+        if (null === $this->document->documentElement && 0 === $this->nodeStack->count()) {
             $rootNode = $this->document->createElement('result');
             $this->document->appendChild($rootNode);
 
@@ -409,7 +411,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function createElement(?string $namespace, ?string $elementName): \DOMElement
     {
-        if (! empty($namespace) && $prefix = $this->lookupPrefix($namespace)) {
+        if (null !== $namespace && $prefix = $this->lookupPrefix($namespace)) {
             $node = $this->document->createElement($prefix.':'.$elementName);
         } else {
             $node = $this->document->createElement($elementName);

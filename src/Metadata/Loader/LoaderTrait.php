@@ -9,9 +9,8 @@ trait LoaderTrait
     private function createAnnotationObject(string $name)
     {
         $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
-        $annotation = new $annotationClass();
 
-        return $annotation;
+        return new $annotationClass();
     }
 
     private function getDefaultPropertyName($annotation): ?string

@@ -12,6 +12,7 @@ use Kcs\Serializer\Tests\Fixtures\AuthorReadOnly;
 use Kcs\Serializer\Tests\Fixtures\BlogPost;
 use Kcs\Serializer\Tests\Fixtures\Comment;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Car;
+use Kcs\Serializer\Tests\Fixtures\Discriminator\Moped;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithStaticFields;
@@ -20,6 +21,7 @@ use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualPropertiesAndExcludeAll;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
 use Kcs\Serializer\Tests\Fixtures\Person;
+use Kcs\Serializer\Tests\Fixtures\Price;
 use Kcs\Serializer\Tests\Fixtures\SimpleClassObject;
 use Kcs\Serializer\Tests\Fixtures\SimpleSubClassObject;
 use Kcs\Serializer\Type\Type;
@@ -27,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 
 abstract class BaseLoaderTest extends TestCase
 {
-    public function testLoadBlogPostMetadata()
+    public function testLoadBlogPostMetadata(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -97,7 +99,7 @@ abstract class BaseLoaderTest extends TestCase
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         self::assertEquals($p, $m->getAttributeMetadata('author'));
 
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Price'));
+        $m = new ClassMetadata(new \ReflectionClass(Price::class));
         $this->getLoader()->loadClassMetadata($m);
         self::assertNotNull($m);
 
@@ -108,7 +110,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals($p, $m->getAttributeMetadata('price'));
     }
 
-    public function testStaticFields()
+    public function testStaticFields(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithStaticFields::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -125,7 +127,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals($p, $m->getAttributeMetadata('additional_2'));
     }
 
-    public function testVirtualProperty()
+    public function testVirtualProperty(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithVirtualProperties::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -143,7 +145,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals($p, $m->getAttributeMetadata('virtualValue'));
     }
 
-    public function testXmlKeyValuePairs()
+    public function testXmlKeyValuePairs(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithXmlKeyValuePairs::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -152,7 +154,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertTrue($m->getAttributeMetadata('array')->xmlKeyValuePairs);
     }
 
-    public function testVirtualPropertyWithExcludeAll()
+    public function testVirtualPropertyWithExcludeAll(): void
     {
         $a = new ObjectWithVirtualPropertiesAndExcludeAll();
         $m = new ClassMetadata(new \ReflectionClass($a));
@@ -166,7 +168,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals($p, $m->getAttributeMetadata('virtualValue'));
     }
 
-    public function testReadOnlyDefinedBeforeGetterAndSetter()
+    public function testReadOnlyDefinedBeforeGetterAndSetter(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(AuthorReadOnly::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -174,7 +176,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertNotNull($m);
     }
 
-    public function testLoadDiscriminator()
+    public function testLoadDiscriminator(): void
     {
         /** @var $m ClassMetadata */
         $m = new ClassMetadata(new \ReflectionClass(Vehicle::class));
@@ -185,15 +187,15 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals($m->getName(), $m->discriminatorBaseClass);
         self::assertEquals(
             [
-                'car' => 'Kcs\Serializer\Tests\Fixtures\Discriminator\Car',
-                'moped' => 'Kcs\Serializer\Tests\Fixtures\Discriminator\Moped',
+                'car' => Car::class,
+                'moped' => Moped::class,
             ],
             $m->discriminatorMap
         );
         self::assertEquals(['Default', 'discriminator_group'], $m->discriminatorGroups);
     }
 
-    public function testLoadDiscriminatorSubClass()
+    public function testLoadDiscriminatorSubClass(): void
     {
         /** @var $m ClassMetadata */
         $m = new ClassMetadata(new \ReflectionClass(Car::class));
@@ -207,7 +209,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals([], $m->discriminatorGroups);
     }
 
-    public function testLoadXmlObjectWithNamespacesMetadata()
+    public function testLoadXmlObjectWithNamespacesMetadata(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(ObjectWithXmlNamespaces::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -257,7 +259,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals($p, $m->getAttributeMetadata('language'));
     }
 
-    public function testMaxDepth()
+    public function testMaxDepth(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(Node::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -265,7 +267,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertEquals(2, $m->getAttributeMetadata('children')->maxDepth);
     }
 
-    public function testPersonCData()
+    public function testPersonCData(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(Person::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -274,7 +276,7 @@ abstract class BaseLoaderTest extends TestCase
         self::assertFalse($m->getAttributeMetadata('name')->xmlElementCData);
     }
 
-    public function testXmlNamespaceInheritanceMetadata()
+    public function testXmlNamespaceInheritanceMetadata(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(SimpleClassObject::class));
         $this->getLoader()->loadClassMetadata($m);
@@ -376,14 +378,14 @@ abstract class BaseLoaderTest extends TestCase
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://old.foo.example.org';
         $p->xmlAttribute = true;
-        $p->class = 'Kcs\Serializer\Tests\Fixtures\SimpleClassObject';
+        $p->class = SimpleClassObject::class;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         self::assertEquals($p, $subm->getAttributeMetadata('foo'));
 
         $p = new PropertyMetadata($subm->getName(), 'bar');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
-        $p->class = 'Kcs\Serializer\Tests\Fixtures\SimpleClassObject';
+        $p->class = SimpleClassObject::class;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         self::assertEquals($p, $subm->getAttributeMetadata('bar'));
     }
@@ -391,5 +393,5 @@ abstract class BaseLoaderTest extends TestCase
     /**
      * @return LoaderInterface
      */
-    abstract protected function getLoader();
+    abstract protected function getLoader(): LoaderInterface;
 }

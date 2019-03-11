@@ -10,7 +10,7 @@ use Prophecy\Argument;
 
 class PropelCollectionHandlerTest extends AbstractHandlerTest
 {
-    public function testSerializeShouldReturnStringRepresentation()
+    public function testSerializeShouldReturnStringRepresentation(): void
     {
         $data = [new TestSubject('lolo'), new TestSubject('pepe')];
 

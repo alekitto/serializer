@@ -28,7 +28,7 @@ class StaticPropertyMetadata extends PropertyMetadata
     /**
      * {@inheritdoc}
      */
-    public function setValue($obj, $value)
+    public function setValue($obj, $value): void
     {
         throw new \LogicException('StaticPropertyMetadata is immutable.');
     }

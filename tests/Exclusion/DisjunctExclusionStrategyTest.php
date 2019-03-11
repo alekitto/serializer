@@ -12,7 +12,7 @@ use Prophecy\Argument;
 
 class DisjunctExclusionStrategyTest extends TestCase
 {
-    public function testShouldSkipClassShortCircuiting()
+    public function testShouldSkipClassShortCircuiting(): void
     {
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
         $context = SerializationContext::create();
@@ -31,7 +31,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         self::assertTrue($strat->shouldSkipClass($metadata, $context));
     }
 
-    public function testShouldSkipClassDisjunctBehavior()
+    public function testShouldSkipClassDisjunctBehavior(): void
     {
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
         $context = SerializationContext::create();
@@ -50,7 +50,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         self::assertTrue($strat->shouldSkipClass($metadata, $context));
     }
 
-    public function testShouldSkipClassReturnsFalseIfNoPredicateMatched()
+    public function testShouldSkipClassReturnsFalseIfNoPredicateMatched(): void
     {
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
         $context = SerializationContext::create();
@@ -69,7 +69,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         self::assertFalse($strat->shouldSkipClass($metadata, $context));
     }
 
-    public function testShouldSkipPropertyShortCircuiting()
+    public function testShouldSkipPropertyShortCircuiting(): void
     {
         $metadata = new StaticPropertyMetadata(\stdClass::class, 'foo', 'bar');
         $context = SerializationContext::create();
@@ -88,7 +88,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         self::assertTrue($strat->shouldSkipProperty($metadata, $context));
     }
 
-    public function testShouldSkipPropertyDisjunct()
+    public function testShouldSkipPropertyDisjunct(): void
     {
         $metadata = new StaticPropertyMetadata(\stdClass::class, 'foo', 'bar');
         $context = SerializationContext::create();
@@ -107,7 +107,7 @@ class DisjunctExclusionStrategyTest extends TestCase
         self::assertTrue($strat->shouldSkipProperty($metadata, $context));
     }
 
-    public function testShouldSkipPropertyReturnsFalseIfNoPredicateMatches()
+    public function testShouldSkipPropertyReturnsFalseIfNoPredicateMatches(): void
     {
         $metadata = new StaticPropertyMetadata(\stdClass::class, 'foo', 'bar');
         $context = SerializationContext::create();

@@ -157,10 +157,8 @@ class GraphNavigator
         }
 
         $metadata = $this->getMetadataForType($type);
-        if (null !== $metadata) {
-            if (! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
-                $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
-            }
+        if (null !== $metadata && ! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
+            $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
         }
 
         $context->getVisitor()->startVisiting($data, $type, $context);

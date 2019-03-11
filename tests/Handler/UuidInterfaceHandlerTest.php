@@ -11,18 +11,18 @@ use Ramsey\Uuid\UuidInterface;
 
 class UuidInterfaceHandlerTest extends AbstractHandlerTest
 {
-    public function testGetSubscribingMethodsShouldReturnAllTypes()
+    public function testGetSubscribingMethodsShouldReturnAllTypes(): void
     {
-        self::assertCount(6, \iterator_to_array($this->handler->getSubscribingMethods()));
+        self::assertCount(6, \iterator_to_array($this->handler::getSubscribingMethods()));
     }
 
-    public function testSerializeShouldHandleNullValue()
+    public function testSerializeShouldHandleNullValue(): void
     {
         $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled();
         $this->handler->serialize($this->visitor->reveal(), null, Type::parse(UuidInterface::class), $this->context->reveal());
     }
 
-    public function testSerializeShouldReturnStringRepresentation()
+    public function testSerializeShouldReturnStringRepresentation(): void
     {
         $this->visitor->visitString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95', Argument::type(Type::class), $this->context)->shouldBeCalled();
 
@@ -30,13 +30,13 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
         $this->handler->serialize($this->visitor->reveal(), $uuid, Type::parse(Uuid::class), $this->context->reveal());
     }
 
-    public function testDeserializeShouldHandleNullValue()
+    public function testDeserializeShouldHandleNullValue(): void
     {
         $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled();
         $this->handler->deserialize($this->visitor->reveal(), null, Type::parse(UuidInterface::class), $this->context->reveal());
     }
 
-    public function testDeserializeShouldReturnUuidObject()
+    public function testDeserializeShouldReturnUuidObject(): void
     {
         $uuid = Uuid::fromString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95');
 

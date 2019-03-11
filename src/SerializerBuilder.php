@@ -75,7 +75,7 @@ class SerializerBuilder
     /**
      * @var null|Cache
      */
-    private $cache = null;
+    private $cache;
 
     /**
      * @var AnnotationReader
@@ -85,7 +85,7 @@ class SerializerBuilder
     /**
      * @var null|LoaderInterface
      */
-    private $metadataLoader = null;
+    private $metadataLoader;
 
     public static function create(): self
     {

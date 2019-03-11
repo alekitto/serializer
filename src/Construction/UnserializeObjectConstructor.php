@@ -27,7 +27,7 @@ class UnserializeObjectConstructor implements ObjectConstructorInterface
      */
     private function getInstantiator(): Instantiator
     {
-        if (null == $this->instantiator) {
+        if (null === $this->instantiator) {
             $this->instantiator = new Instantiator();
         }
 

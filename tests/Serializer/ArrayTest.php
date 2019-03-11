@@ -45,7 +45,7 @@ class ArrayTest extends TestCase
         );
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $order = new Order(new Price(5));
 
@@ -65,7 +65,7 @@ class ArrayTest extends TestCase
      * @expectedException \Kcs\Serializer\Exception\RuntimeException
      * @expectedExceptionMessageRegExp /The input data of type ".+" did not convert to an array, but got a result of type ".+"./
      */
-    public function testToArrayWithScalar($input)
+    public function testToArrayWithScalar($input): void
     {
         $result = $this->serializer->normalize($input);
 
@@ -82,7 +82,7 @@ class ArrayTest extends TestCase
         ];
     }
 
-    public function testFromArray()
+    public function testFromArray(): void
     {
         $data = [
             'cost' => [
@@ -96,14 +96,14 @@ class ArrayTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    public function testToArrayReturnsArrayObjectAsArray()
+    public function testToArrayReturnsArrayObjectAsArray(): void
     {
         $result = $this->serializer->normalize(new Author(null));
 
         self::assertSame([], $result);
     }
 
-    public function testToArrayConversNestedArrayObjects()
+    public function testToArrayConversNestedArrayObjects(): void
     {
         $list = new AuthorList();
         $list->add(new Author(null));

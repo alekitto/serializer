@@ -17,7 +17,7 @@ use Prophecy\Argument;
 
 class ContextTest extends TestCase
 {
-    public function testSerializationContextPathAndDepth()
+    public function testSerializationContextPathAndDepth(): void
     {
         $object = new Node([
             new Node(),
@@ -45,7 +45,7 @@ class ContextTest extends TestCase
         self::assertEquals(3, $context->getDepth());
     }
 
-    public function testSerializationMetadataStack()
+    public function testSerializationMetadataStack(): void
     {
         $object = new Node([
             $child = new InlineChild(),
@@ -56,7 +56,7 @@ class ContextTest extends TestCase
         $exclusionStrategy->shouldSkipProperty(Argument::type(PropertyMetadata::class), Argument::type(SerializationContext::class))
             ->will(function ($args) {
                 /** @var SerializationContext $context */
-                list($propertyMetadata, $context) = $args;
+                [$propertyMetadata, $context] = $args;
                 $stack = $context->getMetadataStack();
 
                 if (Node::class === $propertyMetadata->class && 'children' === $propertyMetadata->name) {
@@ -75,7 +75,7 @@ class ContextTest extends TestCase
         $serializer->serialize($object, 'json', SerializationContext::create()->addExclusionStrategy($exclusionStrategy->reveal()));
     }
 
-    public function testSerializeNullOption()
+    public function testSerializeNullOption(): void
     {
         $context = SerializationContext::create();
         self::assertFalse($context->shouldSerializeNull());
@@ -93,7 +93,7 @@ class ContextTest extends TestCase
         self::assertFalse($context->shouldSerializeNull());
     }
 
-    public function testContextShouldBeCloneable()
+    public function testContextShouldBeCloneable(): void
     {
         $context = SerializationContext::create();
         $context->setGroups(['foobar']);

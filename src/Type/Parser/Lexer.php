@@ -6,13 +6,13 @@ use Doctrine\Common\Lexer\AbstractLexer;
 
 class Lexer extends AbstractLexer
 {
-    const T_NONE = 1;
-    const T_STRING = 2;
-    const T_COMMA = 3;
-    const T_CLOSED_BRACKET = 4;
-    const T_OPEN_BRACKET = 5;
+    public const T_NONE = 1;
+    public const T_STRING = 2;
+    public const T_COMMA = 3;
+    public const T_CLOSED_BRACKET = 4;
+    public const T_OPEN_BRACKET = 5;
 
-    const T_IDENTIFIER = 100;
+    public const T_IDENTIFIER = 100;
 
     /**
      * {@inheritdoc}
@@ -45,27 +45,31 @@ class Lexer extends AbstractLexer
 
         // Differentiate between quoted names, identifiers, input parameters and symbols
         if ("'" === $value[0]) {
-            $value = \str_replace("''", "'", \substr($value, 1, \strlen($value) - 2));
+            $value = \str_replace("''", "'", \substr($value, 1, -1));
 
             return self::T_STRING;
-        } elseif ('"' === $value[0]) {
-            $value = \substr($value, 1, \strlen($value) - 2);
+        }
+
+        if ('"' === $value[0]) {
+            $value = \substr($value, 1, -1);
 
             return self::T_STRING;
-        } elseif (\ctype_alpha($value[0])) {
+        }
+
+        if (\ctype_alpha($value[0])) {
             return self::T_IDENTIFIER;
-        } else {
-            switch ($value) {
-                case ',':
-                    return self::T_COMMA;
-                case '>':
-                    return self::T_CLOSED_BRACKET;
-                case '<':
-                    return self::T_OPEN_BRACKET;
-                default:
-                    // Do nothing
-                    break;
-            }
+        }
+
+        switch ($value) {
+            case ',':
+                return self::T_COMMA;
+            case '>':
+                return self::T_CLOSED_BRACKET;
+            case '<':
+                return self::T_OPEN_BRACKET;
+            default:
+                // Do nothing
+                break;
         }
 
         return $type;

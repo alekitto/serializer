@@ -164,7 +164,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     /**
      * @param array|\ArrayObject $data the passed data must be understood by whatever encoding function is applied later
      */
-    public function setRoot($data)
+    public function setRoot($data): void
     {
         $this->root = $data;
     }
@@ -202,7 +202,7 @@ class GenericSerializationVisitor extends AbstractVisitor
      * @param mixed  $value This value must either be a regular scalar, or an array.
      *                      It must not contain any objects anymore.
      */
-    protected function addData($key, $value)
+    protected function addData($key, $value): void
     {
         if (isset($this->data[$key])) {
             throw new InvalidArgumentException(\sprintf('There is already data for "%s".', $key));
@@ -211,7 +211,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->data[$key] = $value;
     }
 
-    protected function setData($data)
+    protected function setData($data): void
     {
         $this->data = $data;
     }

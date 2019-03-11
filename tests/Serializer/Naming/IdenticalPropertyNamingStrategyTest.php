@@ -20,7 +20,7 @@ class IdenticalPropertyNamingStrategyTest extends TestCase
     /**
      * @dataProvider providePropertyNames
      */
-    public function testTranslateName(string $propertyName)
+    public function testTranslateName(string $propertyName): void
     {
         $mockProperty = $this->prophesize(PropertyMetadata::class);
         $mockProperty->name = $propertyName;

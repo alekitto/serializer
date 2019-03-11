@@ -3,33 +3,36 @@
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
 use Kcs\Metadata\Loader\FilesLoader;
+use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\YamlLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Tests\Fixtures\BlogPost;
+use Kcs\Serializer\Tests\Fixtures\Person;
 use Kcs\Serializer\Type\Type;
 
 class YamlLoaderTest extends BaseLoaderTest
 {
-    public function testAccessorOrderIsInferred()
+    public function testAccessorOrderIsInferred(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Person'));
+        $m = new ClassMetadata(new \ReflectionClass(Person::class));
         $this->getLoaderForSubDir('accessor_inferred')->loadClassMetadata($m);
         self::assertEquals(['age', 'name'], \array_keys($m->getAttributesMetadata()));
     }
 
-    public function testShortExposeSyntax()
+    public function testShortExposeSyntax(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\Person'));
+        $m = new ClassMetadata(new \ReflectionClass(Person::class));
         $this->getLoaderForSubDir('short_expose')->loadClassMetadata($m);
 
         self::assertArrayHasKey('name', $m->getAttributesMetadata());
         self::assertArrayNotHasKey('age', $m->getAttributesMetadata());
     }
 
-    public function testBlogPost()
+    public function testBlogPost(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoaderForSubDir('exclude_all')->loadClassMetadata($m);
 
         self::assertArrayHasKey('title', $m->getAttributesMetadata());
@@ -40,9 +43,9 @@ class YamlLoaderTest extends BaseLoaderTest
         }
     }
 
-    public function testBlogPostExcludeNoneStrategy()
+    public function testBlogPostExcludeNoneStrategy(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoaderForSubDir('exclude_none')->loadClassMetadata($m);
 
         self::assertArrayNotHasKey('title', $m->getAttributesMetadata());
@@ -53,9 +56,9 @@ class YamlLoaderTest extends BaseLoaderTest
         }
     }
 
-    public function testBlogPostCaseInsensitive()
+    public function testBlogPostCaseInsensitive(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoaderForSubDir('case')->loadClassMetadata($m);
 
         $p = new PropertyMetadata($m->getName(), 'title');
@@ -63,9 +66,9 @@ class YamlLoaderTest extends BaseLoaderTest
         self::assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
-    public function testBlogPostAccessor()
+    public function testBlogPostAccessor(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoaderForSubDir('accessor')->loadClassMetadata($m);
 
         self::assertArrayHasKey('title', $m->getAttributesMetadata());
@@ -76,14 +79,14 @@ class YamlLoaderTest extends BaseLoaderTest
         self::assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
-    private function getLoaderForSubDir($subDir = 'base')
+    private function getLoaderForSubDir($subDir = 'base'): FilesLoader
     {
         $locator = new IteratorFileLocator();
 
         return new FilesLoader($locator->locate(__DIR__.'/yml'.($subDir ? '/'.$subDir : ''), '.yml'), YamlLoader::class);
     }
 
-    protected function getLoader()
+    protected function getLoader(): LoaderInterface
     {
         return $this->getLoaderForSubDir();
     }

@@ -16,7 +16,7 @@ use Prophecy\Argument;
 
 class DoctrineObjectConstructorTest extends TestCase
 {
-    public function testConstructorUseFallbackIfNoManagerMatch()
+    public function testConstructorUseFallbackIfNoManagerMatch(): void
     {
         $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
         $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
@@ -43,7 +43,7 @@ class DoctrineObjectConstructorTest extends TestCase
             ->shouldHaveBeenCalled();
     }
 
-    public function testConstructorUseFallbackIfObjectIsTransient()
+    public function testConstructorUseFallbackIfObjectIsTransient(): void
     {
         $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
         $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
@@ -74,7 +74,7 @@ class DoctrineObjectConstructorTest extends TestCase
             ->shouldHaveBeenCalled();
     }
 
-    public function testConstructorUseFallbackIfFindReturnsNull()
+    public function testConstructorUseFallbackIfFindReturnsNull(): void
     {
         $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
         $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());
@@ -106,7 +106,7 @@ class DoctrineObjectConstructorTest extends TestCase
             ->shouldHaveBeenCalled();
     }
 
-    public function testConstructorUseFallbackIfDataDoesNotContainsIdentifier()
+    public function testConstructorUseFallbackIfDataDoesNotContainsIdentifier(): void
     {
         $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);
         $objectConstructor = new DoctrineObjectConstructor($fallbackConstructor->reveal());

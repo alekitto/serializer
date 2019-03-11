@@ -16,7 +16,7 @@ class Tag
      */
     public $name;
 
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -24,17 +24,15 @@ class Tag
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      * @param string $name
-     *
-     * @return Tag
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }

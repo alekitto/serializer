@@ -14,7 +14,7 @@ class SerializerBuilderTest extends TestCase
     /** @var SerializerBuilder */
     private $builder;
 
-    public function testBuildWithoutAnythingElse()
+    public function testBuildWithoutAnythingElse(): void
     {
         $serializer = $this->builder->build();
 
@@ -29,14 +29,14 @@ class SerializerBuilderTest extends TestCase
         self::assertEquals('foo', $serializer->deserialize('<?xml version="1.0" encoding="UTF-8"?><result><![CDATA[foo]]></result>', Type::from('string'), 'xml'));
     }
 
-    public function testDoesAddDefaultHandlers()
+    public function testDoesAddDefaultHandlers(): void
     {
         $serializer = $this->builder->build();
 
         self::assertEquals('"2020-04-16T00:00:00+00:00"', $serializer->serialize(new \DateTime('2020-04-16', new \DateTimeZone('UTC')), 'json'));
     }
 
-    public function testDoesNotAddDefaultHandlersWhenExplicitlyConfigured()
+    public function testDoesNotAddDefaultHandlersWhenExplicitlyConfigured(): void
     {
         self::assertSame($this->builder, $this->builder->configureHandlers(function (HandlerRegistry $registry) {
         }));
@@ -48,7 +48,7 @@ class SerializerBuilderTest extends TestCase
      * @expectedException \Kcs\Serializer\Exception\UnsupportedFormatException
      * @expectedExceptionMessage The format "xml" is not supported for serialization
      */
-    public function testDoesNotAddOtherVisitorsWhenConfiguredExplicitly()
+    public function testDoesNotAddOtherVisitorsWhenConfiguredExplicitly(): void
     {
         self::assertSame(
             $this->builder,

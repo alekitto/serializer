@@ -31,12 +31,4 @@ class JsonDeserializationVisitor extends GenericDeserializationVisitor
                 throw new RuntimeException('Could not decode JSON.');
         }
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResult()
-    {
-        return $this->getRoot();
-    }
 }

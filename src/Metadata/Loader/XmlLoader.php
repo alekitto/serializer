@@ -175,7 +175,7 @@ class XmlLoader extends AnnotationLoader
         $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
 
         foreach ($element->children() as $name => $child) {
-            if (\in_array($name, $excludedChildren)) {
+            if (\in_array($name, $excludedChildren, true)) {
                 continue;
             }
 
@@ -185,7 +185,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    private function getAnnotationFromElement(\SimpleXMLElement $element, string $name)
+    private function getAnnotationFromElement(\SimpleXMLElement $element, string $name): array
     {
         $annotations = [];
 
@@ -217,7 +217,7 @@ class XmlLoader extends AnnotationLoader
         return \reset($elems);
     }
 
-    private function getAnnotationsFromAttributes(\SimpleXMLElement $element, array $excludeAttributes = [])
+    private function getAnnotationsFromAttributes(\SimpleXMLElement $element, array $excludeAttributes = []): array
     {
         $annotations = [];
 

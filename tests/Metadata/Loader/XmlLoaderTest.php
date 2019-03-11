@@ -3,18 +3,21 @@
 namespace Kcs\Serializer\Tests\Metadata\Driver;
 
 use Kcs\Metadata\Loader\FilesLoader;
+use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\XmlLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Tests\Fixtures\BlogPost;
+use Kcs\Serializer\Tests\Fixtures\GetSetObject;
 use Kcs\Serializer\Tests\Metadata\Loader\BaseLoaderTest;
 use Kcs\Serializer\Type\Type;
 
 class XmlLoaderTest extends BaseLoaderTest
 {
-    public function testBlogPostExcludeAllStrategy()
+    public function testBlogPostExcludeAllStrategy(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoader('exclude_all')->loadClassMetadata($m);
 
         self::assertArrayHasKey('title', $m->getAttributesMetadata());
@@ -25,9 +28,9 @@ class XmlLoaderTest extends BaseLoaderTest
         }
     }
 
-    public function testBlogPostExcludeNoneStrategy()
+    public function testBlogPostExcludeNoneStrategy(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoader('exclude_none')->loadClassMetadata($m);
 
         self::assertArrayNotHasKey('title', $m->getAttributesMetadata());
@@ -38,9 +41,9 @@ class XmlLoaderTest extends BaseLoaderTest
         }
     }
 
-    public function testBlogPostCaseInsensitive()
+    public function testBlogPostCaseInsensitive(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\BlogPost'));
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
         $this->getLoader('case')->loadClassMetadata($m);
 
         $p = new PropertyMetadata($m->getName(), 'title');
@@ -48,9 +51,9 @@ class XmlLoaderTest extends BaseLoaderTest
         self::assertEquals($p, $m->getAttributeMetadata('title'));
     }
 
-    public function testAccessorAttributes()
+    public function testAccessorAttributes(): void
     {
-        $m = new ClassMetadata(new \ReflectionClass('Kcs\Serializer\Tests\Fixtures\GetSetObject'));
+        $m = new ClassMetadata(new \ReflectionClass(GetSetObject::class));
         $this->getLoader()->loadClassMetadata($m);
 
         $p = new PropertyMetadata($m->getName(), 'name');
@@ -61,10 +64,10 @@ class XmlLoaderTest extends BaseLoaderTest
         self::assertEquals($p, $m->getAttributeMetadata('name'));
     }
 
-    protected function getLoader()
+    protected function getLoader(): LoaderInterface
     {
         $append = '/base';
-        if (1 == \func_num_args()) {
+        if (1 === \func_num_args()) {
             $append = '/'.\func_get_arg(0);
         }
 

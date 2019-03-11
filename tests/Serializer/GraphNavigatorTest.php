@@ -56,7 +56,7 @@ class GraphNavigatorTest extends TestCase
      * @expectedException \Kcs\Serializer\Exception\RuntimeException
      * @expectedExceptionMessage Resources are not supported in serialized data.
      */
-    public function testResourceThrowsException()
+    public function testResourceThrowsException(): void
     {
         $context = $this->prophesize(SerializationContext::class);
         $context->getVisitor()->willReturn($this->prophesize(VisitorInterface::class));
@@ -66,7 +66,7 @@ class GraphNavigatorTest extends TestCase
         $this->navigator->accept(STDIN, null, $context->reveal());
     }
 
-    public function testNavigatorPassesInstanceOnSerialization()
+    public function testNavigatorPassesInstanceOnSerialization(): void
     {
         $context = $this->prophesize(SerializationContext::class);
         $context->getMetadataStack()->willReturn($this->prophesize(MetadataStack::class));
@@ -98,7 +98,7 @@ class GraphNavigatorTest extends TestCase
         ;
     }
 
-    public function testNavigatorChangeTypeOnSerialization()
+    public function testNavigatorChangeTypeOnSerialization(): void
     {
         $object = new SerializableClass();
 
@@ -171,5 +171,6 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
 
     public function serialize(): string
     {
+        return '';
     }
 }

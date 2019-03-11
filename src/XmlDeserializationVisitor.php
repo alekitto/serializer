@@ -115,7 +115,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 break;
 
             default:
-                throw new LogicException(\sprintf('The array type does not support more than 2 parameters, but got %s.', \json_encode($type['params'])));
+                throw new LogicException(\sprintf('The array type does not support more than 2 parameters, but got %s.', \var_export($type['params'], true)));
         }
 
         $this->setData($result);
@@ -205,7 +205,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         } elseif ('false' === $data || '0' === $data) {
             $data = false;
         } else {
-            throw new RuntimeException(\sprintf('Could not convert data to boolean. Expected "true", "false", "1" or "0", but got %s.', \json_encode($data)));
+            throw new RuntimeException(\sprintf('Could not convert data to boolean. Expected "true", "false", "1" or "0", but got %s.', \var_export($data, true)));
         }
 
         return parent::visitBoolean($data, $type, $context);

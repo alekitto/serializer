@@ -21,7 +21,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     public function visitArray($data, Type $type, Context $context)
     {
         if (! \is_array($data)) {
-            throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \json_encode($data)));
+            throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \var_export($data, true)));
         }
 
         // If no further parameters were given, keys/values are just passed as is.
@@ -58,7 +58,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 return $result;
 
             default:
-                throw new RuntimeException(\sprintf('Array type cannot have more than 2 parameters, but got %s.', \json_encode($type->getParams())));
+                throw new RuntimeException(\sprintf('Array type cannot have more than 2 parameters, but got %s.', \var_export($type->getParams(), true)));
         }
     }
 
@@ -107,13 +107,5 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         $this->addData($name, $v);
 
         return $v;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResult()
-    {
-        return $this->getRoot();
     }
 }

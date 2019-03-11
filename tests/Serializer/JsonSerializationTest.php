@@ -137,12 +137,12 @@ class JsonSerializationTest extends BaseSerializationTest
     /**
      * @dataProvider getPrimitiveTypes
      */
-    public function testPrimitiveTypes(string $primitiveType, $data)
+    public function testPrimitiveTypes(string $primitiveType, $data): void
     {
         $visitor = $this->serializationVisitors['json'];
         $functionToCall = 'visit'.\ucfirst($primitiveType);
         $result = $visitor->$functionToCall($data, Type::null(), $this->prophesize(Context::class)->reveal());
-        if ('double' == $primitiveType) {
+        if ('double' === $primitiveType) {
             $primitiveType = 'float';
         }
         self::assertInternalType($primitiveType, $result);
@@ -151,7 +151,7 @@ class JsonSerializationTest extends BaseSerializationTest
     /**
      * @group empty-object
      */
-    public function testSerializeEmptyObject()
+    public function testSerializeEmptyObject(): void
     {
         self::assertEquals('{}', $this->serialize(new Author(null)));
     }
@@ -161,7 +161,7 @@ class JsonSerializationTest extends BaseSerializationTest
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Your data could not be encoded because it contains invalid UTF8 characters.
      */
-    public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff()
+    public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff(): void
     {
         \ini_set('display_errors', '1');
         $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
@@ -172,13 +172,13 @@ class JsonSerializationTest extends BaseSerializationTest
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Your data could not be encoded because it contains invalid UTF8 characters.
      */
-    public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn()
+    public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn(): void
     {
         \ini_set('display_errors', '0');
         $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
     }
 
-    public function testSerializeArrayWithEmptyObject()
+    public function testSerializeArrayWithEmptyObject(): void
     {
         self::assertEquals('[{}]', $this->serialize([new \stdClass()]));
     }

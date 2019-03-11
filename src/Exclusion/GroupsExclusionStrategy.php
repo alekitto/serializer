@@ -8,7 +8,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
-    const DEFAULT_GROUP = 'Default';
+    public const DEFAULT_GROUP = 'Default';
 
     /**
      * @var string[]
@@ -60,17 +60,17 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             $groups = $this->getGroupsFor($navigatorContext);
 
             if (empty($property->groups) && empty($property->exclusionGroups)) {
-                return ! \in_array(self::DEFAULT_GROUP, $groups);
+                return ! \in_array(self::DEFAULT_GROUP, $groups, true);
             }
 
             foreach ($property->exclusionGroups as $group) {
-                if (\in_array($group, $groups)) {
+                if (\in_array($group, $groups, true)) {
                     return true;
                 }
             }
 
             foreach ($property->groups as $group) {
-                if (\in_array($group, $groups)) {
+                if (\in_array($group, $groups, true)) {
                     return false;
                 }
             }

@@ -33,7 +33,7 @@ class SerializerTest extends TestCase
         $this->adapter = new Serializer($this->serializer->reveal());
     }
 
-    public function testSerializeShouldCallSerialize()
+    public function testSerializeShouldCallSerialize(): void
     {
         $obj = new \stdClass();
 
@@ -45,7 +45,7 @@ class SerializerTest extends TestCase
         self::assertEquals('{}', $this->adapter->serialize($obj, 'json'));
     }
 
-    public function testSerializeShouldForwardSerializationGroups()
+    public function testSerializeShouldForwardSerializationGroups(): void
     {
         $obj = new \stdClass();
 
@@ -62,7 +62,7 @@ class SerializerTest extends TestCase
         $this->adapter->serialize($obj, 'json', ['groups' => ['group1', 'group2']]);
     }
 
-    public function testDeserializeShouldCallDeserialize()
+    public function testDeserializeShouldCallDeserialize(): void
     {
         $obj = new \stdClass();
 
@@ -80,7 +80,7 @@ class SerializerTest extends TestCase
         self::assertEquals($obj, $this->adapter->deserialize('{}', \stdClass::class, 'json'));
     }
 
-    public function testDeserializeShouldForwardDeserializationGroups()
+    public function testDeserializeShouldForwardDeserializationGroups(): void
     {
         $obj = new \stdClass();
 
@@ -107,7 +107,7 @@ class SerializerTest extends TestCase
         ));
     }
 
-    public function testDeserializeShouldForwardTargetObject()
+    public function testDeserializeShouldForwardTargetObject(): void
     {
         $obj = new GetSetObject();
 

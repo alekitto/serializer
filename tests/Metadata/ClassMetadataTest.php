@@ -4,12 +4,11 @@ namespace Kcs\Serializer\Tests\Metadata;
 
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\SerializationContext;
 use PHPUnit\Framework\TestCase;
 
 class ClassMetadataTest extends TestCase
 {
-    public function getAccessOrderCases()
+    public function getAccessOrderCases(): array
     {
         return [
             [['b', 'a'], ['b', 'a']],
@@ -23,7 +22,7 @@ class ClassMetadataTest extends TestCase
     /**
      * @dataProvider getAccessOrderCases
      */
-    public function testSetAccessorOrderCustom(array $order, array $expected)
+    public function testSetAccessorOrderCustom(array $order, array $expected): void
     {
         $metadata = new ClassMetadata(new \ReflectionClass(PropertyMetadataOrder::class));
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'b'));
@@ -34,7 +33,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals($expected, \array_keys($metadata->getAttributesMetadata()));
     }
 
-    public function testSetAccessorOrderAlphabetical()
+    public function testSetAccessorOrderAlphabetical(): void
     {
         $metadata = new ClassMetadata(new \ReflectionClass(PropertyMetadataOrder::class));
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'b'));
@@ -49,7 +48,7 @@ class ClassMetadataTest extends TestCase
     /**
      * @dataProvider providerPublicMethodData
      */
-    public function testAccessorTypePublicMethod($property, $getterInit, $setterInit, $getterName, $setterName)
+    public function testAccessorTypePublicMethod($property, $getterInit, $setterInit, $getterName, $setterName): void
     {
         $object = new PropertyMetadataPublicMethod();
 
@@ -57,7 +56,7 @@ class ClassMetadataTest extends TestCase
         $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getterInit, $setterInit);
 
         $metadata->setValue($object, 'x');
-        self::assertEquals(\sprintf('%1$s:%1$s:x', \strtoupper($property)), $metadata->getValue($object, new SerializationContext()));
+        self::assertEquals(\sprintf('%1$s:%1$s:x', \strtoupper($property)), $metadata->getValue($object));
 
         self::assertEquals($getterName, $metadata->getter);
         self::assertEquals($setterName, $metadata->setter);
@@ -67,7 +66,7 @@ class ClassMetadataTest extends TestCase
      * @dataProvider providerPublicMethodException
      * @expectedException \Kcs\Serializer\Exception\RuntimeException
      */
-    public function testAccessorTypePublicMethodException($getter, $setter)
+    public function testAccessorTypePublicMethodException($getter, $setter): void
     {
         $object = new PropertyMetadataPublicMethod();
 
@@ -83,7 +82,7 @@ class ClassMetadataTest extends TestCase
         }
     }
 
-    public function testAccessorTypePublicMethodWithPublicPropertyException()
+    public function testAccessorTypePublicMethodWithPublicPropertyException(): void
     {
         $object = new PropertyMetadataPublicMethod();
         $object->f = 'FOOBAR';
@@ -97,7 +96,7 @@ class ClassMetadataTest extends TestCase
         self::assertEquals('BARBAR', $object->f);
     }
 
-    public function providerPublicMethodData()
+    public function providerPublicMethodData(): array
     {
         return [
             ['a', null, null, 'getA', 'setA'],
@@ -107,7 +106,7 @@ class ClassMetadataTest extends TestCase
         ];
     }
 
-    public function providerPublicMethodException()
+    public function providerPublicMethodException(): array
     {
         return [
             [null, null],
@@ -132,42 +131,42 @@ class PropertyMetadataPublicMethod
     private $e;
     public $f;
 
-    public function getA()
+    public function getA(): string
     {
         return 'A:'.$this->a;
     }
 
-    public function setA($a)
+    public function setA($a): void
     {
         $this->a = 'A:'.$a;
     }
 
-    public function isB()
+    public function isB(): string
     {
         return 'B:'.$this->b;
     }
 
-    public function setB($b)
+    public function setB($b): void
     {
         $this->b = 'B:'.$b;
     }
 
-    public function hasC()
+    public function hasC(): string
     {
         return 'C:'.$this->c;
     }
 
-    public function setC($c)
+    public function setC($c): void
     {
         $this->c = 'C:'.$c;
     }
 
-    public function fetchD()
+    public function fetchD(): string
     {
         return 'D:'.$this->d;
     }
 
-    public function saveD($d)
+    public function saveD($d): void
     {
         $this->d = 'D:'.$d;
     }

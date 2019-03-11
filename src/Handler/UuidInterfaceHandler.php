@@ -12,7 +12,7 @@ use Ramsey\Uuid\UuidInterface;
 
 class UuidInterfaceHandler implements SubscribingHandlerInterface
 {
-    const TYPES = [
+    private const TYPES = [
         UuidInterface::class,
         Uuid::class,
         DegradedUuid::class,

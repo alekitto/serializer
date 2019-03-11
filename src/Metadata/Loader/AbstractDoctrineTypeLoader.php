@@ -21,7 +21,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
      *
      * @var string[]
      */
-    protected $fieldMapping = [
+    protected const FIELD_MAPPING = [
         'string' => 'string',
         'text' => 'string',
         'blob' => 'string',
@@ -135,10 +135,10 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     protected function normalizeFieldType($type): ?string
     {
-        if (! isset($this->fieldMapping[$type])) {
+        if (! isset(static::FIELD_MAPPING[$type])) {
             return null;
         }
 
-        return $this->fieldMapping[$type];
+        return static::FIELD_MAPPING[$type];
     }
 }

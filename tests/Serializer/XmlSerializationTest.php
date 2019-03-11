@@ -26,7 +26,7 @@ class XmlSerializationTest extends BaseSerializationTest
     /**
      * @expectedException \Kcs\Serializer\Exception\RuntimeException
      */
-    public function testInvalidUsageOfXmlValue()
+    public function testInvalidUsageOfXmlValue(): void
     {
         $obj = new InvalidUsageOfXmlValue();
         $this->serialize($obj);
@@ -35,7 +35,7 @@ class XmlSerializationTest extends BaseSerializationTest
     /**
      * @dataProvider getXMLBooleans
      */
-    public function testXMLBooleans(string $xmlBoolean, bool $boolean)
+    public function testXMLBooleans(string $xmlBoolean, bool $boolean): void
     {
         if ($this->hasDeserializer()) {
             self::assertSame($boolean, $this->deserialize('<result>'.$xmlBoolean.'</result>', 'boolean'));
@@ -52,7 +52,7 @@ class XmlSerializationTest extends BaseSerializationTest
         ];
     }
 
-    public function testPropertyIsObjectWithAttributeAndValue()
+    public function testPropertyIsObjectWithAttributeAndValue(): void
     {
         $personCollection = new PersonLocation();
         $person = new Person();
@@ -64,7 +64,7 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertEquals($this->getContent('person_location'), $this->serialize($personCollection));
     }
 
-    public function testPropertyIsCollectionOfObjectsWithAttributeAndValue()
+    public function testPropertyIsCollectionOfObjectsWithAttributeAndValue(): void
     {
         $personCollection = new PersonCollection();
         $person = new Person();
@@ -80,7 +80,7 @@ class XmlSerializationTest extends BaseSerializationTest
      * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
      * @expectedExceptionMessage The document type "<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource=XmlSerializationTest.php">]>" is not allowed. If it is safe, you may add it to the whitelist configuration.
      */
-    public function testExternalEntitiesAreDisabledByDefault()
+    public function testExternalEntitiesAreDisabledByDefault(): void
     {
         $this->deserialize('<?xml version="1.0"?>
             <!DOCTYPE author [
@@ -95,12 +95,12 @@ class XmlSerializationTest extends BaseSerializationTest
      * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
      * @expectedExceptionMessage The document type "<!DOCTYPE foo>" is not allowed. If it is safe, you may add it to the whitelist configuration.
      */
-    public function testDocumentTypesAreNotAllowed()
+    public function testDocumentTypesAreNotAllowed(): void
     {
         $this->deserialize('<?xml version="1.0"?><!DOCTYPE foo><foo></foo>', 'stdClass');
     }
 
-    public function testWhitelistedDocumentTypesAreAllowed()
+    public function testWhitelistedDocumentTypesAreAllowed(): void
     {
         $this->deserializationVisitors['xml']->setDoctypeWhitelist([
             '<!DOCTYPE authorized SYSTEM "http://authorized_url.dtd">',
@@ -120,7 +120,7 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertTrue(true);
     }
 
-    public function testVirtualAttributes()
+    public function testVirtualAttributes(): void
     {
         self::assertEquals(
             $this->getContent('virtual_attributes'),
@@ -128,7 +128,7 @@ class XmlSerializationTest extends BaseSerializationTest
         );
     }
 
-    public function testVirtualValues()
+    public function testVirtualValues(): void
     {
         self::assertEquals(
             $this->getContent('virtual_values'),
@@ -136,7 +136,7 @@ class XmlSerializationTest extends BaseSerializationTest
         );
     }
 
-    public function testVirtualXmlList()
+    public function testVirtualXmlList(): void
     {
         self::assertEquals(
             $this->getContent('virtual_properties_list'),
@@ -144,7 +144,7 @@ class XmlSerializationTest extends BaseSerializationTest
         );
     }
 
-    public function testVirtualXmlMap()
+    public function testVirtualXmlMap(): void
     {
         self::assertEquals(
             $this->getContent('virtual_properties_map'),
@@ -152,7 +152,7 @@ class XmlSerializationTest extends BaseSerializationTest
         );
     }
 
-    public function testObjectWithNamespacesAndList()
+    public function testObjectWithNamespacesAndList(): void
     {
         $object = new ObjectWithNamespacesAndList();
         $object->name = 'name';
@@ -180,7 +180,7 @@ class XmlSerializationTest extends BaseSerializationTest
         );
     }
 
-    public function testArrayKeyValues()
+    public function testArrayKeyValues(): void
     {
         self::assertEquals($this->getContent('array_key_values'), $this->serializer->serialize(new ObjectWithXmlKeyValuePairs(), 'xml'));
     }
@@ -189,7 +189,7 @@ class XmlSerializationTest extends BaseSerializationTest
      * @dataProvider getDateTime
      * @group datetime
      */
-    public function testDateTimeNoCData($key, $value, $type)
+    public function testDateTimeNoCData($key, $value, $type): void
     {
         $handlerRegistry = new HandlerRegistry();
         $handlerRegistry->registerSubscribingHandler(new DateHandler(\DateTime::ISO8601, 'UTC', false));
@@ -200,7 +200,7 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertEquals($this->getContent($key.'_no_cdata'), $serializer->serialize($value, $this->getFormat()));
     }
 
-    public function testObjectWithXmlNamespaces()
+    public function testObjectWithXmlNamespaces(): void
     {
         $object = new ObjectWithXmlNamespaces('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
 
@@ -225,13 +225,13 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertAttributeEquals('Foo Bar', 'author', $deserialized);
     }
 
-    public function testObjectWithXmlRootNamespace()
+    public function testObjectWithXmlRootNamespace(): void
     {
         $object = new ObjectWithXmlRootNamespace('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
         self::assertEquals($this->getContent('object_with_xml_root_namespace'), $this->serialize($object));
     }
 
-    public function testXmlNamespacesInheritance()
+    public function testXmlNamespacesInheritance(): void
     {
         $object = new SimpleClassObject();
         $object->foo = 'foo';

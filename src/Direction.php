@@ -6,8 +6,8 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
 
 class Direction
 {
-    const DIRECTION_DESERIALIZATION = 2;
-    const DIRECTION_SERIALIZATION = 1;
+    public const DIRECTION_DESERIALIZATION = 2;
+    public const DIRECTION_SERIALIZATION = 1;
 
     /**
      * Parses a direction string to one of the direction constants.

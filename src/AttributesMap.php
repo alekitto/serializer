@@ -19,7 +19,7 @@ class AttributesMap implements \ArrayAccess
      */
     public function get(string $key, $default = null)
     {
-        return isset($this->map[$key]) ? $this->map[$key] : $default;
+        return $this->map[$key] ?? $default;
     }
 
     /**

@@ -4,8 +4,12 @@ namespace Kcs\Serializer\Tests\Bundle;
 
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Tests\Fixtures\Kernel\AppKernel;
+use PhpCollection\Sequence;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class SerializerBundleTest extends WebTestCase
 {
@@ -17,32 +21,32 @@ class SerializerBundleTest extends WebTestCase
         return new AppKernel('test', true);
     }
 
-    public function testHandlerShouldBeRegistered()
+    public function testHandlerShouldBeRegistered(): void
     {
-        $client = $this->createClient();
+        $client = self::createClient();
         $registry = $client->getContainer()->get('handler_registry');
 
         $handler = $registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'TestObject');
         self::assertEquals([$client->getContainer()->get('test_handler'), 'serialize'], $handler);
     }
 
-    public function testDefaultHandlersAreRegistered()
+    public function testDefaultHandlersAreRegistered(): void
     {
-        $client = $this->createClient();
+        $client = self::createClient();
         $registry = $client->getContainer()->get('handler_registry');
 
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'ArrayCollection'));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Validator\ConstraintViolation'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, ConstraintViolation::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, \DateTime::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Symfony\Component\Form\Form'));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PhpCollection\Sequence'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Form::class));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Sequence::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PropelCollection'));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'Ramsey\Uuid\UuidInterface'));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, UuidInterface::class));
     }
 
-    public function testFunctional()
+    public function testFunctional(): void
     {
-        $client = $this->createClient();
+        $client = self::createClient();
 
         $client->request('GET', '/json');
         $response = $client->getResponse();

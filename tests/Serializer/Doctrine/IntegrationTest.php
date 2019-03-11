@@ -35,7 +35,7 @@ class IntegrationTest extends TestCase
      */
     private $serializer;
 
-    public function testDiscriminatorIsInferredFromDoctrine()
+    public function testDiscriminatorIsInferredFromDoctrine(): void
     {
         /** @var EntityManager $em */
         $em = $this->registry->getManager();
@@ -93,7 +93,7 @@ class IntegrationTest extends TestCase
         $this->prepareDatabase();
     }
 
-    private function prepareDatabase()
+    private function prepareDatabase(): void
     {
         /** @var EntityManager $em */
         $em = $this->registry->getManager();
@@ -122,9 +122,7 @@ class IntegrationTest extends TestCase
         $cfg->setProxyNamespace('Kcs\Serializer\DoctrineProxy');
         $cfg->setProxyDir(\sys_get_temp_dir().'/serializer-test-proxies');
 
-        $em = EntityManager::create($con, $cfg);
-
-        return $em;
+        return EntityManager::create($con, $cfg);
     }
 }
 

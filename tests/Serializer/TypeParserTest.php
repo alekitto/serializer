@@ -16,7 +16,7 @@ class TypeParserTest extends TestCase
     /**
      * @dataProvider getTypes
      */
-    public function testParse(string $type, Type $expected)
+    public function testParse(string $type, Type $expected): void
     {
         self::assertEquals($expected, $this->parser->parse($type));
     }
@@ -38,7 +38,7 @@ class TypeParserTest extends TestCase
     /**
      * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
-    public function testParamTypeMustEndWithBracket()
+    public function testParamTypeMustEndWithBracket(): void
     {
         $this->parser->parse('Foo<bar');
     }
@@ -46,7 +46,7 @@ class TypeParserTest extends TestCase
     /**
      * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
-    public function testMustStartWithName()
+    public function testMustStartWithName(): void
     {
         $this->parser->parse(',');
     }
@@ -54,7 +54,7 @@ class TypeParserTest extends TestCase
     /**
      * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
-    public function testEmptyParams()
+    public function testEmptyParams(): void
     {
         $this->parser->parse('Foo<>');
     }
@@ -62,7 +62,7 @@ class TypeParserTest extends TestCase
     /**
      * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
-    public function testNoTrailingComma()
+    public function testNoTrailingComma(): void
     {
         $this->parser->parse('Foo<aa,>');
     }
@@ -70,7 +70,7 @@ class TypeParserTest extends TestCase
     /**
      * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
      */
-    public function testLeadingBackslash()
+    public function testLeadingBackslash(): void
     {
         $this->parser->parse('Foo<\Bar>');
     }

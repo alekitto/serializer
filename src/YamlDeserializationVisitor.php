@@ -19,12 +19,4 @@ class YamlDeserializationVisitor extends GenericDeserializationVisitor
 
         return Yaml::parse($str, $flags);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getResult()
-    {
-        return $this->getRoot();
-    }
 }

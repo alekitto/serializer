@@ -55,7 +55,7 @@ class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->authors[$offset]) ? $this->authors[$offset] : null;
+        return $this->authors[$offset] ?? null;
     }
 
     /**

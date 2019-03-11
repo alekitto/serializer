@@ -4,6 +4,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Version;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
@@ -44,6 +45,7 @@ use Kcs\Serializer\Tests\Fixtures\CustomDeserializationObject;
 use Kcs\Serializer\Tests\Fixtures\DateTimeArraysObject;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Car;
 use Kcs\Serializer\Tests\Fixtures\Discriminator\Moped;
+use Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle;
 use Kcs\Serializer\Tests\Fixtures\Garage;
 use Kcs\Serializer\Tests\Fixtures\GetSetObject;
 use Kcs\Serializer\Tests\Fixtures\GroupsObject;
@@ -110,7 +112,7 @@ abstract class BaseSerializationTest extends TestCase
     protected $serializationVisitors;
     protected $deserializationVisitors;
 
-    public function testSerializeNullArray()
+    public function testSerializeNullArray(): void
     {
         $arr = ['foo' => 'bar', 'baz' => null, null];
 
@@ -120,7 +122,7 @@ abstract class BaseSerializationTest extends TestCase
         );
     }
 
-    public function testSerializeNullObject()
+    public function testSerializeNullObject(): void
     {
         $obj = new ObjectWithNullProperty('foo', 'bar');
 
@@ -133,7 +135,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @dataProvider getTypes
      */
-    public function testNull(string $type)
+    public function testNull(string $type): void
     {
         self::assertEquals($this->getContent('null'), $this->serialize(null), $type);
 
@@ -154,7 +156,7 @@ abstract class BaseSerializationTest extends TestCase
         ];
     }
 
-    public function testString()
+    public function testString(): void
     {
         self::assertEquals($this->getContent('string'), $this->serialize('foo'));
 
@@ -166,7 +168,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @dataProvider getBooleans
      */
-    public function testBooleans(string $strBoolean, bool $boolean)
+    public function testBooleans(string $strBoolean, bool $boolean): void
     {
         self::assertEquals($this->getContent('boolean_'.$strBoolean), $this->serialize($boolean));
 
@@ -186,7 +188,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @dataProvider getNumerics
      */
-    public function testNumerics(string $key, $value, string $type)
+    public function testNumerics(string $key, $value, string $type): void
     {
         self::assertEquals($this->getContent($key), $this->serialize($value));
 
@@ -206,7 +208,7 @@ abstract class BaseSerializationTest extends TestCase
         ];
     }
 
-    public function testSimpleObject()
+    public function testSimpleObject(): void
     {
         self::assertEquals($this->getContent('simple_object'), $this->serialize($obj = new SimpleObject('foo', 'bar')));
 
@@ -215,7 +217,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayStrings()
+    public function testArrayStrings(): void
     {
         $data = ['foo', 'bar'];
         self::assertEquals($this->getContent('array_strings'), $this->serialize($data));
@@ -225,7 +227,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayBooleans()
+    public function testArrayBooleans(): void
     {
         $data = [true, false];
         self::assertEquals($this->getContent('array_booleans'), $this->serialize($data));
@@ -235,7 +237,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayIntegers()
+    public function testArrayIntegers(): void
     {
         $data = [1, 3, 4];
         self::assertEquals($this->getContent('array_integers'), $this->serialize($data));
@@ -245,7 +247,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayFloats()
+    public function testArrayFloats(): void
     {
         $data = [1.34, 3.0, 6.42];
         self::assertEquals($this->getContent('array_floats'), $this->serialize($data));
@@ -255,7 +257,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayObjects()
+    public function testArrayObjects(): void
     {
         $data = [new SimpleObject('foo', 'bar'), new SimpleObject('baz', 'boo')];
         self::assertEquals($this->getContent('array_objects'), $this->serialize($data));
@@ -265,7 +267,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayListAndMapDifference()
+    public function testArrayListAndMapDifference(): void
     {
         $arrayData = [0 => 1, 2 => 2, 3 => 3]; // Misses key 1
         $data = new ObjectWithIntListAndIntMap($arrayData, $arrayData);
@@ -273,7 +275,7 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('array_list_and_map_difference'), $this->serialize($data));
     }
 
-    public function testDateTimeArrays()
+    public function testDateTimeArrays(): void
     {
         $data = [
             new \DateTime('2047-01-01 12:47:47', new \DateTimeZone('UTC')),
@@ -287,7 +289,7 @@ abstract class BaseSerializationTest extends TestCase
 
         if ($this->hasDeserializer()) {
             /** @var DateTimeArraysObject $deserializedObject */
-            $deserializedObject = $this->deserialize($this->getContent('array_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\DateTimeArraysObject');
+            $deserializedObject = $this->deserialize($this->getContent('array_datetimes_object'), DateTimeArraysObject::class);
 
             /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
             foreach ($deserializedObject->getArrayWithDefaultDateTime() as $dateTime) {
@@ -302,7 +304,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testNamedDateTimeArrays()
+    public function testNamedDateTimeArrays(): void
     {
         $data = [
             new \DateTime('2047-01-01 12:47:47', new \DateTimeZone('UTC')),
@@ -321,7 +323,7 @@ abstract class BaseSerializationTest extends TestCase
             }
 
             /** @var NamedDateTimeArraysObject $deserializedObject */
-            $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject');
+            $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), NamedDateTimeArraysObject::class);
 
             /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
             foreach ($deserializedObject->getNamedArrayWithFormattedDate() as $dateTime) {
@@ -332,7 +334,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testNamedDateTimeInterfaceArrays()
+    public function testNamedDateTimeInterfaceArrays(): void
     {
         $data = [
             new \DateTimeImmutable('2047-01-01 12:47:47', new \DateTimeZone('UTC')),
@@ -351,7 +353,7 @@ abstract class BaseSerializationTest extends TestCase
             }
 
             /** @var NamedDateTimeInterfaceArraysObject $deserializedObject */
-            $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), 'Kcs\Serializer\Tests\Fixtures\NamedDateTimeInterfaceArraysObject');
+            $deserializedObject = $this->deserialize($this->getContent('array_named_datetimes_object'), NamedDateTimeInterfaceArraysObject::class);
 
             /* deserialized object has a default timezone set depending on user's timezone settings. That's why we manually set the UTC timezone on the DateTime objects. */
             foreach ($deserializedObject->getNamedArrayWithFormattedDate() as $dateTime) {
@@ -362,7 +364,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testArrayMixed()
+    public function testArrayMixed(): void
     {
         self::assertEquals($this->getContent('array_mixed'), $this->serialize(['foo', 1, true, new SimpleObject('foo', 'bar'), [1, 3, true]]));
     }
@@ -371,7 +373,7 @@ abstract class BaseSerializationTest extends TestCase
      * @dataProvider getDateTime
      * @group datetime
      */
-    public function testDateTime(string $key, \DateTimeInterface $value, string $type)
+    public function testDateTime(string $key, \DateTimeInterface $value, string $type): void
     {
         self::assertEquals($this->getContent($key), $this->serialize($value));
 
@@ -395,26 +397,26 @@ abstract class BaseSerializationTest extends TestCase
      * @dataProvider getTimestamp
      * @group datetime
      */
-    public function testTimestamp(string $key, Timestamp $value)
+    public function testTimestamp(string $key, Timestamp $value): void
     {
         self::assertEquals($this->getContent($key), $this->serialize($value));
     }
 
-    public function getTimestamp()
+    public function getTimestamp(): array
     {
         return [
             ['timestamp', new Timestamp(new \DateTime('2016-02-11 00:00:00', new \DateTimeZone('UTC')))],
         ];
     }
 
-    public function testDateInterval()
+    public function testDateInterval(): void
     {
         $duration = new \DateInterval('PT45M');
 
         self::assertEquals($this->getContent('date_interval'), $this->serializer->serialize($duration, $this->getFormat()));
     }
 
-    public function testBlogPost()
+    public function testBlogPost(): void
     {
         $post = new BlogPost('This is a nice title.', $author = new Author('Foo Bar'), new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), new Publisher('Bar Foo'));
         $post->addComment($comment = new Comment($author, 'foo'));
@@ -437,7 +439,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testDeserializingNull()
+    public function testDeserializingNull(): void
     {
         $objectConstructor = new InitializedBlogPostConstructor();
         $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
@@ -460,7 +462,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testReadOnly()
+    public function testReadOnly(): void
     {
         $author = new AuthorReadOnly(123, 'Ruud Kamphuis');
         self::assertEquals($this->getContent('readonly'), $this->serialize($author));
@@ -472,7 +474,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testReadOnlyClass()
+    public function testReadOnlyClass(): void
     {
         $author = new AuthorReadOnlyPerClass(123, 'Ruud Kamphuis');
         self::assertEquals($this->getContent('readonly'), $this->serialize($author));
@@ -484,7 +486,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testPrice()
+    public function testPrice(): void
     {
         $price = new Price(3);
         self::assertEquals($this->getContent('price'), $this->serialize($price));
@@ -495,7 +497,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testOrder()
+    public function testOrder(): void
     {
         $order = new Order(new Price(12.34));
         self::assertEquals($this->getContent('order'), $this->serialize($order));
@@ -505,7 +507,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testCurrencyAwarePrice()
+    public function testCurrencyAwarePrice(): void
     {
         $price = new CurrencyAwarePrice(2.34);
         self::assertEquals($this->getContent('currency_aware_price'), $this->serialize($price));
@@ -515,7 +517,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testOrderWithCurrencyAwarePrice()
+    public function testOrderWithCurrencyAwarePrice(): void
     {
         $order = new CurrencyAwareOrder(new CurrencyAwarePrice(1.23));
         self::assertEquals($this->getContent('order_with_currency_aware_price'), $this->serialize($order));
@@ -525,7 +527,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testInline()
+    public function testInline(): void
     {
         $inline = new InlineParent();
 
@@ -535,7 +537,7 @@ abstract class BaseSerializationTest extends TestCase
         // no deserialization support
     }
 
-    public function testInlineEmptyChild()
+    public function testInlineEmptyChild(): void
     {
         $inline = new InlineParent(new InlineChildEmpty());
 
@@ -548,7 +550,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @group log
      */
-    public function testLog()
+    public function testLog(): void
     {
         self::assertEquals($this->getContent('log'), $this->serialize($log = new Log()));
 
@@ -558,7 +560,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testCircularReference()
+    public function testCircularReference(): void
     {
         $object = new CircularReferenceParent();
         self::assertEquals($this->getContent('circular_reference'), $this->serialize($object));
@@ -567,14 +569,14 @@ abstract class BaseSerializationTest extends TestCase
             $deserialized = $this->deserialize($this->getContent('circular_reference'), \get_class($object));
 
             $col = $this->getField($deserialized, 'collection');
-            self::assertEquals(2, \count($col));
+            self::assertCount(2, $col);
             self::assertEquals('child1', $col[0]->getName());
             self::assertEquals('child2', $col[1]->getName());
             self::assertSame($deserialized, $col[0]->getParent());
             self::assertSame($deserialized, $col[1]->getParent());
 
             $col = $this->getField($deserialized, 'anotherCollection');
-            self::assertEquals(2, \count($col));
+            self::assertCount(2, $col);
             self::assertEquals('child1', $col[0]->getName());
             self::assertEquals('child2', $col[1]->getName());
             self::assertSame($deserialized, $col[0]->getParent());
@@ -582,7 +584,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testLifecycleCallbacks()
+    public function testLifecycleCallbacks(): void
     {
         $object = new ObjectWithLifecycleCallbacks();
         self::assertEquals($this->getContent('lifecycle_callbacks'), $this->serialize($object));
@@ -594,7 +596,7 @@ abstract class BaseSerializationTest extends TestCase
         }
     }
 
-    public function testFormErrors()
+    public function testFormErrors(): void
     {
         $errors = [
             new FormError('This is the form error'),
@@ -604,7 +606,7 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('form_errors'), $this->serialize($errors));
     }
 
-    public function testNestedFormErrors()
+    public function testNestedFormErrors(): void
     {
         $dispatcher = $this->prophesize(EventDispatcherInterface::class);
 
@@ -625,7 +627,7 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('nested_form_errors'), $this->serialize($form));
     }
 
-    public function testFormErrorsWithNonFormComponents()
+    public function testFormErrorsWithNonFormComponents(): void
     {
         if (! \class_exists(SubmitType::class)) {
             self::markTestSkipped('Not using Symfony Form >= 2.3 with submit type');
@@ -651,14 +653,14 @@ abstract class BaseSerializationTest extends TestCase
         self::assertTrue(true);  // Exception not thrown
     }
 
-    public function testConstraintViolation()
+    public function testConstraintViolation(): void
     {
         $violation = new ConstraintViolation('Message of violation', 'Message of violation', [], null, 'foo', null);
 
         self::assertEquals($this->getContent('constraint_violation'), $this->serialize($violation));
     }
 
-    public function testConstraintViolationList()
+    public function testConstraintViolationList(): void
     {
         $violations = new ConstraintViolationList();
         $violations->add(new ConstraintViolation('Message of violation', 'Message of violation', [], null, 'foo', null));
@@ -667,9 +669,9 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('constraint_violation_list'), $this->serialize($violations));
     }
 
-    public function testDoctrineProxy()
+    public function testDoctrineProxy(): void
     {
-        if (! \class_exists('Doctrine\ORM\Version')) {
+        if (! \class_exists(Version::class)) {
             self::markTestSkipped('Doctrine is not available.');
         }
 
@@ -678,9 +680,9 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('orm_proxy'), $this->serialize($object));
     }
 
-    public function testInitializedDoctrineProxy()
+    public function testInitializedDoctrineProxy(): void
     {
-        if (! \class_exists('Doctrine\ORM\Version')) {
+        if (! \class_exists(Version::class)) {
             self::markTestSkipped('Doctrine is not available.');
         }
 
@@ -690,35 +692,35 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('orm_proxy'), $this->serialize($object));
     }
 
-    public function testCustomAccessor()
+    public function testCustomAccessor(): void
     {
         $post = new IndexedCommentsBlogPost();
 
         self::assertEquals($this->getContent('custom_accessor'), $this->serialize($post));
     }
 
-    public function testMixedAccessTypes()
+    public function testMixedAccessTypes(): void
     {
         $object = new GetSetObject();
 
         self::assertEquals($this->getContent('mixed_access_types'), $this->serialize($object));
 
         if ($this->hasDeserializer()) {
-            $object = $this->deserialize($this->getContent('mixed_access_types'), 'Kcs\Serializer\Tests\Fixtures\GetSetObject');
+            $object = $this->deserialize($this->getContent('mixed_access_types'), GetSetObject::class);
             self::assertAttributeEquals(1, 'id', $object);
             self::assertAttributeEquals('Johannes', 'name', $object);
             self::assertAttributeEquals(42, 'readOnlyProperty', $object);
         }
     }
 
-    public function testAccessorOrder()
+    public function testAccessorOrder(): void
     {
         self::assertEquals($this->getContent('accessor_order_child'), $this->serialize(new AccessorOrderChild()));
         self::assertEquals($this->getContent('accessor_order_parent'), $this->serialize(new AccessorOrderParent()));
         self::assertEquals($this->getContent('accessor_order_methods'), $this->serialize(new AccessorOrderMethod()));
     }
 
-    public function testGroups()
+    public function testGroups(): void
     {
         $groupsObject = new GroupsObject();
 
@@ -750,7 +752,7 @@ abstract class BaseSerializationTest extends TestCase
         );
     }
 
-    public function testAdvancedGroups()
+    public function testAdvancedGroups(): void
     {
         $adrien = new GroupsUser(
             'John',
@@ -803,19 +805,19 @@ abstract class BaseSerializationTest extends TestCase
      * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
      * @expectedExceptionMessage Invalid group name "foo, bar" on "Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject->foo", did you mean to create multiple groups?
      */
-    public function testInvalidGroupName()
+    public function testInvalidGroupName(): void
     {
         $groupsObject = new InvalidGroupsObject();
 
         $this->serializer->serialize($groupsObject, $this->getFormat());
     }
 
-    public function testVirtualProperty()
+    public function testVirtualProperty(): void
     {
         self::assertEquals($this->getContent('virtual_properties'), $this->serialize(new ObjectWithVirtualProperties()));
     }
 
-    public function testVirtualVersions()
+    public function testVirtualVersions(): void
     {
         self::assertEquals(
             $this->getContent('virtual_properties_low'),
@@ -833,7 +835,7 @@ abstract class BaseSerializationTest extends TestCase
         );
     }
 
-    public function testCustomHandler()
+    public function testCustomHandler(): void
     {
         if (! $this->hasDeserializer()) {
             return;
@@ -850,12 +852,12 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals('customly_unserialized_value', $object->someProperty);
     }
 
-    public function testInput()
+    public function testInput(): void
     {
         self::assertEquals($this->getContent('input'), $this->serializer->serialize(new Input(), $this->getFormat()));
     }
 
-    public function testObjectWithEmptyHash()
+    public function testObjectWithEmptyHash(): void
     {
         self::assertEquals($this->getContent('hash_empty'), $this->serializer->serialize(new ObjectWithEmptyHash(), $this->getFormat()));
     }
@@ -863,7 +865,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @group null
      */
-    public function testSerializeObjectWhenNull()
+    public function testSerializeObjectWhenNull(): void
     {
         self::assertEquals(
             $this->getContent('object_when_null'),
@@ -879,7 +881,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @group polymorphic
      */
-    public function testPolymorphicObjects()
+    public function testPolymorphicObjects(): void
     {
         self::assertEquals(
             $this->getContent('car'),
@@ -889,28 +891,21 @@ abstract class BaseSerializationTest extends TestCase
         if ($this->hasDeserializer()) {
             self::assertEquals(
                 new Car(5),
-                $this->deserialize(
-                    $this->getContent('car'),
-                    'Kcs\Serializer\Tests\Fixtures\Discriminator\Car'
-                ),
+                $this->deserialize($this->getContent('car'), Car::class),
                 'Class is resolved correctly when concrete sub-class is used.'
             );
 
             self::assertEquals(
                 new Car(5),
-                $this->deserialize(
-                    $this->getContent('car'),
-                    'Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle'
+                $this->deserialize($this->getContent('car'),
+                    Vehicle::class
                 ),
                 'Class is resolved correctly when least supertype is used.'
             );
 
             self::assertEquals(
                 new Car(5),
-                $this->deserialize(
-                    $this->getContent('car_without_type'),
-                    'Kcs\Serializer\Tests\Fixtures\Discriminator\Car'
-                ),
+                $this->deserialize($this->getContent('car_without_type'), Car::class),
                 'Class is resolved correctly when concrete sub-class is used and no type is defined.'
             );
         }
@@ -919,7 +914,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @group polymorphic
      */
-    public function testNestedPolymorphicObjects()
+    public function testNestedPolymorphicObjects(): void
     {
         $garage = new Garage([new Car(3), new Moped(1)]);
         self::assertEquals(
@@ -930,10 +925,7 @@ abstract class BaseSerializationTest extends TestCase
         if ($this->hasDeserializer()) {
             self::assertEquals(
                 $garage,
-                $this->deserialize(
-                    $this->getContent('garage'),
-                    'Kcs\Serializer\Tests\Fixtures\Garage'
-                )
+                $this->deserialize($this->getContent('garage'), Garage::class)
             );
         }
     }
@@ -941,7 +933,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * @group polymorphic
      */
-    public function testNestedPolymorphicInterfaces()
+    public function testNestedPolymorphicInterfaces(): void
     {
         $garage = new VehicleInterfaceGarage([new Car(3), new Moped(1)]);
         self::assertEquals(
@@ -964,19 +956,16 @@ abstract class BaseSerializationTest extends TestCase
      * @group polymorphic
      * @expectedException \LogicException
      */
-    public function testPolymorphicObjectsInvalidDeserialization()
+    public function testPolymorphicObjectsInvalidDeserialization(): void
     {
         if (! $this->hasDeserializer()) {
             throw new \LogicException('No deserializer');
         }
 
-        $this->deserialize(
-            $this->getContent('car_without_type'),
-            'Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle'
-        );
+        $this->deserialize($this->getContent('car_without_type'), Vehicle::class);
     }
 
-    public function testDepthExclusionStrategy()
+    public function testDepthExclusionStrategy(): void
     {
         $context = SerializationContext::create()
             ->addExclusionStrategy(new DepthExclusionStrategy())
@@ -997,7 +986,7 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('tree'), $this->serializer->serialize($data, $this->getFormat(), $context));
     }
 
-    public function testDeserializingIntoExistingObject()
+    public function testDeserializingIntoExistingObject(): void
     {
         if (! $this->hasDeserializer()) {
             return;
@@ -1023,10 +1012,10 @@ abstract class BaseSerializationTest extends TestCase
 
         self::assertSame($order, $deseralizedOrder);
         self::assertEquals(new Order(new Price(12.34)), $deseralizedOrder);
-        self::assertAttributeInstanceOf('Kcs\Serializer\Tests\Fixtures\Price', 'cost', $deseralizedOrder);
+        self::assertAttributeInstanceOf(Price::class, 'cost', $deseralizedOrder);
     }
 
-    public function testAdditionalField()
+    public function testAdditionalField(): void
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
             function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
@@ -1044,7 +1033,7 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('object_with_additional_field'), $this->serialize($list));
     }
 
-    public function testSetTypeInSerialization()
+    public function testSetTypeInSerialization(): void
     {
         self::assertEquals($this->getContent('type_passed_to_serialize'), $this->serialize([
             new Author('Foo'),
@@ -1052,7 +1041,7 @@ abstract class BaseSerializationTest extends TestCase
         ], null, Type::parse('array<AuthorAsType>')));
     }
 
-    public function testAdditionalFieldInheritedBySubclasses()
+    public function testAdditionalFieldInheritedBySubclasses(): void
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
             function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
@@ -1166,7 +1155,7 @@ abstract class BaseSerializationTest extends TestCase
         return $ref->getValue($obj);
     }
 
-    private function setField($obj, $name, $value)
+    private function setField($obj, $name, $value): void
     {
         $ref = new \ReflectionProperty($obj, $name);
         $ref->setAccessible(true);

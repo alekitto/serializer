@@ -15,9 +15,9 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
  */
 class ClassMetadata extends BaseClassMetadata
 {
-    const ACCESSOR_ORDER_UNDEFINED = 'undefined';
-    const ACCESSOR_ORDER_ALPHABETICAL = 'alphabetical';
-    const ACCESSOR_ORDER_CUSTOM = 'custom';
+    public const ACCESSOR_ORDER_UNDEFINED = 'undefined';
+    public const ACCESSOR_ORDER_ALPHABETICAL = 'alphabetical';
+    public const ACCESSOR_ORDER_CUSTOM = 'custom';
 
     /**
      * @var string
@@ -104,7 +104,7 @@ class ClassMetadata extends BaseClassMetadata
      */
     public $discriminatorGroups = [];
 
-    public function setDiscriminator(string $fieldName, array $map, array $groups)
+    public function setDiscriminator(string $fieldName, array $map, array $groups): void
     {
         if (empty($fieldName)) {
             throw new \InvalidArgumentException('The $fieldName cannot be empty.');
@@ -129,7 +129,7 @@ class ClassMetadata extends BaseClassMetadata
      * @throws InvalidArgumentException When the accessor order is not valid
      * @throws InvalidArgumentException When the custom order is not valid
      */
-    public function setAccessorOrder($order, array $customOrder = [])
+    public function setAccessorOrder($order, array $customOrder = []): void
     {
         if (! \in_array($order, [self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM], true)) {
             throw new InvalidArgumentException(\sprintf('The accessor order "%s" is invalid.', $order));
@@ -137,7 +137,7 @@ class ClassMetadata extends BaseClassMetadata
 
         foreach ($customOrder as $name) {
             if (! \is_string($name)) {
-                throw new InvalidArgumentException(\sprintf('$customOrder is expected to be a list of strings, but got element of value %s.', \json_encode($name)));
+                throw new InvalidArgumentException(\sprintf('$customOrder is expected to be a list of strings, but got element of value %s.', \var_export($name, true)));
             }
         }
 
@@ -206,7 +206,7 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
-    public function registerNamespace(string $uri, ?string $prefix = null)
+    public function registerNamespace(string $uri, ?string $prefix = null): void
     {
         if (null === $prefix) {
             $prefix = '';

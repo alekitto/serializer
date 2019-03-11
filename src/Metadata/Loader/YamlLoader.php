@@ -117,13 +117,13 @@ class YamlLoader extends AnnotationLoader
             $annotations = \array_merge($annotations, $this->loadProperty($methodConfig));
         }
 
-        if (\array_search($methodName, $config['pre_serialize'])) {
+        if (\in_array($methodName, $config['pre_serialize'], true)) {
             $annotations[] = new Annotations\PreSerialize();
         }
-        if (\array_search($methodName, $config['post_serialize'])) {
+        if (\in_array($methodName, $config['post_serialize'], true)) {
             $annotations[] = new Annotations\PostSerialize();
         }
-        if (\array_search($methodName, $config['post_deserialize'])) {
+        if (\in_array($methodName, $config['post_deserialize'], true)) {
             $annotations[] = new Annotations\PostDeserialize();
         }
 
@@ -171,14 +171,12 @@ class YamlLoader extends AnnotationLoader
 
     private function getClassConfig($class): array
     {
-        $config = isset($this->config[$class]) ? $this->config[$class] : [];
-
         return \array_merge([
             'virtual_properties' => [],
             'pre_serialize' => [],
             'post_serialize' => [],
             'post_deserialize' => [],
-        ], $config);
+        ], $this->config[$class] ?? []);
     }
 
     private function createAnnotationsForArray($value, string $key): array

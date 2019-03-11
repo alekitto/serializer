@@ -10,8 +10,8 @@ use Kcs\Serializer\Exception\RuntimeException;
  */
 final class ExclusionPolicy
 {
-    const NONE = 'NONE';
-    const ALL = 'ALL';
+    public const NONE = 'NONE';
+    public const ALL = 'ALL';
 
     /**
      * @var string

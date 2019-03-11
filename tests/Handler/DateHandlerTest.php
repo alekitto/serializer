@@ -9,12 +9,12 @@ use Kcs\Serializer\Type\Type;
 
 class DateHandlerTest extends AbstractHandlerTest
 {
-    public function testGetSubscribingMethodsShouldReturnAllTypes()
+    public function testGetSubscribingMethodsShouldReturnAllTypes(): void
     {
-        self::assertCount(9, \iterator_to_array($this->handler->getSubscribingMethods()));
+        self::assertCount(9, \iterator_to_array($this->handler::getSubscribingMethods()));
     }
 
-    public function testSerializeDateTimeShouldUseFormatTheDateTimeObject()
+    public function testSerializeDateTimeShouldUseFormatTheDateTimeObject(): void
     {
         $type = Type::parse(\DateTime::class."<'d/m/Y H:i:s'>");
 
@@ -22,7 +22,7 @@ class DateHandlerTest extends AbstractHandlerTest
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
-    public function testSerializeDateTimeShouldUseDefaultFormat()
+    public function testSerializeDateTimeShouldUseDefaultFormat(): void
     {
         $type = Type::parse(\DateTime::class);
 
@@ -30,7 +30,7 @@ class DateHandlerTest extends AbstractHandlerTest
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
-    public function testSerializeDateTimeShouldReturnAnIntegerIfFormatIsTimestamp()
+    public function testSerializeDateTimeShouldReturnAnIntegerIfFormatIsTimestamp(): void
     {
         $type = Type::parse(\DateTime::class."<'U'>");
 
@@ -38,7 +38,7 @@ class DateHandlerTest extends AbstractHandlerTest
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
-    public function testSerializeDateTimeShouldFormatTheDateInterval()
+    public function testSerializeDateTimeShouldFormatTheDateInterval(): void
     {
         $type = Type::parse(\DateInterval::class);
 
@@ -46,7 +46,7 @@ class DateHandlerTest extends AbstractHandlerTest
         $this->handler->serializeDateInterval($this->visitor->reveal(), new \DateInterval('P1W'), $type, $this->context->reveal());
     }
 
-    public function testSerializeDateTimeShouldHandleDateTimeImmutable()
+    public function testSerializeDateTimeShouldHandleDateTimeImmutable(): void
     {
         $type = Type::parse(\DateTimeImmutable::class);
 
@@ -54,7 +54,7 @@ class DateHandlerTest extends AbstractHandlerTest
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTimeImmutable('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
-    public function testDeserializeDateTime()
+    public function testDeserializeDateTime(): void
     {
         self::assertNull($this->handler->deserializeDateTime($this->visitor->reveal(), null, Type::parse(\DateTime::class), $this->context->reveal()));
 

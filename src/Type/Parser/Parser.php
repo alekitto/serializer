@@ -26,6 +26,8 @@ final class Parser
      * @param string $input
      *
      * @return Type
+     *
+     * @throws SyntaxErrorException
      */
     public function parse(string $input): Type
     {

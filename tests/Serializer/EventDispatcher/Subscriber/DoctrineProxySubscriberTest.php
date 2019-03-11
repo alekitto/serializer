@@ -30,7 +30,7 @@ class DoctrineProxySubscriberTest extends TestCase
         $this->visitor = $this->prophesize(Context::class);
     }
 
-    public function testRewritesProxyClassName()
+    public function testRewritesProxyClassName(): void
     {
         $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), Type::from($obj));
         $this->subscriber->onPreSerialize($event);
@@ -39,7 +39,7 @@ class DoctrineProxySubscriberTest extends TestCase
         self::assertTrue($obj->__isInitialized());
     }
 
-    public function testDoesNotRewriteCustomType()
+    public function testDoesNotRewriteCustomType(): void
     {
         $event = $this->createEvent($obj = new SimpleObjectProxy('a', 'b'), Type::from('FakedName'));
         $this->subscriber->onPreSerialize($event);

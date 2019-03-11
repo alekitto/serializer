@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class DateIntervalFormatTest extends TestCase
 {
-    public function testFormat()
+    public function testFormat(): void
     {
         $dtf = new DateHandler();
 

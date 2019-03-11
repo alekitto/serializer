@@ -8,11 +8,11 @@ use Kcs\Serializer\Type\Type;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
-    const ACCESS_TYPE_PROPERTY = 'property';
-    const ACCESS_TYPE_PUBLIC_METHOD = 'public_method';
+    public const ACCESS_TYPE_PROPERTY = 'property';
+    public const ACCESS_TYPE_PUBLIC_METHOD = 'public_method';
 
-    const ON_EXCLUDE_NULL = 'null';
-    const ON_EXCLUDE_SKIP = 'skip';
+    public const ON_EXCLUDE_NULL = 'null';
+    public const ON_EXCLUDE_SKIP = 'skip';
 
     /**
      * @var string
@@ -127,7 +127,7 @@ class PropertyMetadata extends BasePropertyMetadata
     /**
      * @var int|null
      */
-    public $maxDepth = null;
+    public $maxDepth;
 
     /**
      * @var string
@@ -180,7 +180,7 @@ class PropertyMetadata extends BasePropertyMetadata
         return $obj->{$this->getter}();
     }
 
-    public function setValue($obj, $value)
+    public function setValue($obj, $value): void
     {
         if ($this->readOnly) {
             return;
@@ -198,7 +198,9 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->setter instanceof \Closure) {
-            return \call_user_func($this->setter->bindTo($obj), $value);
+            \call_user_func($this->setter->bindTo($obj), $value);
+
+            return;
         }
 
         $obj->{$this->setter}($value);
