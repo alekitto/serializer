@@ -22,10 +22,6 @@
         "kcs/metadata": "^2.1"
     },
     "conflict": {
-        "ext-dom": "*",
-        "ext-json": "*",
-        "ext-libxml": "*",
-        "ext-simplexml": "*",
         "twig/twig": "<1.12",
         "doctrine/phpcr-odm": "<1.1.4"
     },
