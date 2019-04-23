@@ -110,7 +110,7 @@ class GraphNavigator
 
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
-        if (\is_object($data) && \is_subclass_of($data, $type->getName(), false)) {
+        if (\is_object($data) && \is_subclass_of($data, $type->name, false)) {
             $type = new Type(\get_class($data), $type->getParams());
         }
 
@@ -125,7 +125,7 @@ class GraphNavigator
             }
         }
 
-        $visitor = $context->getVisitor();
+        $visitor = $context->visitor;
         $visitor->startVisiting($data, $type, $context);
         $this->callVisitor($data, $type, $context, $metadata);
 
@@ -161,7 +161,7 @@ class GraphNavigator
             $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
         }
 
-        $context->getVisitor()->startVisiting($data, $type, $context);
+        $context->visitor->startVisiting($data, $type, $context);
         $rs = $this->callVisitor($data, $type, $context, $metadata);
 
         if (null !== $metadata) {
@@ -174,7 +174,7 @@ class GraphNavigator
             $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
         }
 
-        $rs = $context->getVisitor()->endVisiting($rs, $type, $context);
+        $rs = $context->visitor->endVisiting($rs, $type, $context);
         $context->decreaseDepth();
 
         return $rs;
@@ -182,14 +182,14 @@ class GraphNavigator
 
     private function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
     {
-        $visitor = $context->getVisitor();
+        $visitor = $context->visitor;
 
         // First, try whether a custom handler exists for the given type
-        if (null !== $handler = $this->handlerRegistry->getHandler($context->direction, $type->getName())) {
+        if (null !== $handler = $this->handlerRegistry->getHandler($context->direction, $type->name)) {
             return $visitor->visitCustom($handler, $data, $type, $context);
         }
 
-        switch ($type->getName()) {
+        switch ($type->name) {
             case 'NULL':
                 return $visitor->visitNull($data, $type, $context);
 
@@ -238,19 +238,17 @@ class GraphNavigator
      */
     private function getMetadataForType(Type $type): ?ClassMetadata
     {
-        if ($metadata = $type->getMetadata()) {
+        if ($metadata = $type->metadata) {
             return $metadata;
         }
 
-        $name = $type->getName();
+        $name = $type->name;
         if (isset(self::BUILTIN_TYPES[$name]) || (! \class_exists($name) && ! \interface_exists($name))) {
             return null;
         }
 
         $metadata = $this->metadataFactory->getMetadataFor($name);
-        $type->setMetadata($metadata);
-
-        return $metadata;
+        return $type->metadata = $metadata;
     }
 
     private function visitArray(VisitorInterface $visitor, $data, Type $type, Context $context)

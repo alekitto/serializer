@@ -59,7 +59,7 @@ class GraphNavigatorTest extends TestCase
     public function testResourceThrowsException(): void
     {
         $context = $this->prophesize(SerializationContext::class);
-        $context->getVisitor()->willReturn($this->prophesize(VisitorInterface::class));
+        $context->visitor = $this->prophesize(VisitorInterface::class);
         $context->direction = Direction::DIRECTION_SERIALIZATION;
         $context->guessType(STDIN)->willReturn(new Type('resource'));
 
@@ -75,7 +75,7 @@ class GraphNavigatorTest extends TestCase
         $metadata = $this->metadataFactory->getMetadataFor(\get_class($object));
 
         $context->direction = Direction::DIRECTION_SERIALIZATION;
-        $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
+        $context->visitor = $visitor = $this->prophesize(VisitorInterface::class);
         $visitor->visitObject(Argument::cetera())->willReturn();
         $context->guessType($object)->willReturn(new Type(SerializableClass::class));
 
@@ -104,7 +104,7 @@ class GraphNavigatorTest extends TestCase
 
         $this->dispatcher->addListener(Events::PRE_SERIALIZE, function (PreSerializeEvent $event) {
             $type = $event->getType();
-            $type->setName(\JsonSerializable::class);
+            $type->name = \JsonSerializable::class;
         });
 
         $this->handlerRegistry->registerSubscribingHandler($handler = new TestSubscribingHandler());
@@ -114,7 +114,7 @@ class GraphNavigatorTest extends TestCase
         $context->direction = Direction::DIRECTION_SERIALIZATION;
         $context->guessType($object)->willReturn(new Type(SerializableClass::class));
 
-        $context->getVisitor()->willReturn($visitor = $this->prophesize(VisitorInterface::class));
+        $context->visitor = $visitor = $this->prophesize(VisitorInterface::class);
         $visitor->visitCustom(Argument::cetera())->willReturn();
 
         $visitor->startVisiting(Argument::cetera())->shouldBeCalled();

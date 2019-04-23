@@ -33,7 +33,7 @@ class Event extends BaseEvent
 
     public function getVisitor(): VisitorInterface
     {
-        return $this->context->getVisitor();
+        return $this->context->visitor;
     }
 
     public function getContext(): Context

@@ -21,7 +21,7 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         $type = $event->getType();
 
         if ($type->is(\get_class($object))) {
-            $type->setName(\get_parent_class($object));
+            $type->name = \get_parent_class($object);
         }
     }
 

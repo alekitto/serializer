@@ -8,13 +8,15 @@ use Kcs\Serializer\Type\Parser\Parser;
 
 /**
  * Serialized type representation.
+ *
+ * @internal
  */
-class Type
+/* final */ class Type
 {
     /**
      * @var string
      */
-    private $name;
+    public $name;
 
     /**
      * @var array
@@ -24,7 +26,7 @@ class Type
     /**
      * @var MetadataInterface
      */
-    private $metadata;
+    public $metadata;
 
     /**
      * Type constructor.
@@ -94,9 +96,13 @@ class Type
 
     /**
      * @return string
+     *
+     * @deprecated
      */
     public function getName(): string
     {
+        @trigger_error('Using Type::getName() is deprecated. Please use name property directly.', E_USER_DEPRECATED);
+
         return $this->name;
     }
 
@@ -104,9 +110,13 @@ class Type
      * @param string $name
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function setName(string $name): self
     {
+        @trigger_error('Using Type::setName() is deprecated. Please use name property directly.', E_USER_DEPRECATED);
+
         $this->name = $name;
         $this->metadata = null;
 
@@ -176,9 +186,13 @@ class Type
 
     /**
      * @return MetadataInterface
+     *
+     * @deprecated
      */
     public function getMetadata(): ?MetadataInterface
     {
+        @trigger_error('Using Type::getMetadata() is deprecated. Please use metadata property directly.', E_USER_DEPRECATED);
+
         return $this->metadata;
     }
 
@@ -186,9 +200,12 @@ class Type
      * @param MetadataInterface $metadata
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function setMetadata(MetadataInterface $metadata): self
     {
+        @trigger_error('Using Type::setMetadata() is deprecated. Please use metadata property directly.', E_USER_DEPRECATED);
         $this->metadata = $metadata;
 
         return $this;
