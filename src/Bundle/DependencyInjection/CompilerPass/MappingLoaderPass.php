@@ -29,8 +29,21 @@ class MappingLoaderPass implements CompilerPassInterface
 
         foreach ($container->getParameter('kernel.bundles') as $bundle) {
             $reflection = new \ReflectionClass($bundle);
-            $xml_paths = \array_merge($xml_paths, \glob(\dirname($reflection->getFileName()).'/'.$mappingPath.'/*.xml'));
-            $yaml_paths = \array_merge($yaml_paths, \glob(\dirname($reflection->getFileName()).'/'.$mappingPath.'/*.yml'));
+
+            try {
+                $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(\dirname($reflection->getFileName()).'/'.$mappingPath));
+                /** @var \SplFileInfo $fileInfo */
+                foreach ($iterator as $fileInfo) {
+                    $extension = $fileInfo->getExtension();
+                    if ('xml' === $extension) {
+                        $xml_paths[] = $fileInfo->getPathname();
+                    } elseif ('yaml' === $extension || 'yml' === $extension) {
+                        $yaml_paths[] = $fileInfo->getPathname();
+                    }
+                }
+            } catch (\UnexpectedValueException $e) {
+                // Directory not found or not a dir.
+            }
         }
 
         $xmlDefinition->replaceArgument(0, $xml_paths);
