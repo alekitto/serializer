@@ -2,9 +2,7 @@
 
 namespace Kcs\Serializer;
 
-use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\PropertyMetadata;
-use Kcs\Serializer\Type\Type;
 
 class DeserializationContext extends Context
 {

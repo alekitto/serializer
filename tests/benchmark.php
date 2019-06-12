@@ -45,7 +45,7 @@ $serializer = \Kcs\Serializer\SerializerBuilder::create()
     ->build();
 $collection = createCollection();
 $metrics = [];
-$f = function ($format) use ($serializer, $collection) {
+$f = static function ($format) use ($serializer, $collection) {
     $serializer->serialize($collection, $format);
 };
 
@@ -73,7 +73,7 @@ $serialized = [
 $type = new \Kcs\Serializer\Type\Type('array', [
     \Kcs\Serializer\Type\Type::from(\Kcs\Serializer\Tests\Fixtures\BlogPost::class),
 ]);
-$d = function ($format) use ($serializer, $serialized, $type) {
+$d = static function ($format) use ($serializer, $serialized, $type) {
     $serializer->deserialize($serialized[$format], $type, $format);
 };
 

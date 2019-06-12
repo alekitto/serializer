@@ -26,7 +26,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             $groups = [self::DEFAULT_GROUP];
         }
 
-        $this->nestedGroups = (function () use (&$groups): bool {
+        $this->nestedGroups = (static function () use (&$groups): bool {
             foreach ($groups as $group) {
                 if (\is_array($group)) {
                     return true;

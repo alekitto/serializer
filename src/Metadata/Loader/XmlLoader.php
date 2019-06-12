@@ -222,7 +222,7 @@ class XmlLoader extends AnnotationLoader
         $annotations = [];
 
         foreach ($this->loadAnnotationProperties($element) as $attrName => $value) {
-            if (\in_array($attrName, $excludeAttributes)) {
+            if (\in_array($attrName, $excludeAttributes, true)) {
                 continue;
             }
 

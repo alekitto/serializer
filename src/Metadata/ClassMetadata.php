@@ -253,7 +253,7 @@ class ClassMetadata extends BaseClassMetadata
             case self::ACCESSOR_ORDER_CUSTOM:
                 $order = $this->customOrder;
                 $sorting = \array_flip(\array_keys($this->attributesMetadata));
-                \uksort($this->attributesMetadata, function ($a, $b) use ($order, $sorting): int {
+                \uksort($this->attributesMetadata, static function ($a, $b) use ($order, $sorting): int {
                     $existsA = isset($order[$a]);
                     $existsB = isset($order[$b]);
 

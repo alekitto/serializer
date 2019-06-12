@@ -88,7 +88,7 @@ use Kcs\Serializer\Type\Parser\Parser;
     {
         static $nullType = null;
         if (null === $nullType) {
-            $nullType = new static('NULL');
+            $nullType = new self('NULL');
         }
 
         return $nullType;
