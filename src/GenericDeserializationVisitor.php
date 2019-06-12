@@ -18,7 +18,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitHash($data, Type $type, Context $context)
     {
         if (! \is_array($data)) {
             throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \var_export($data, true)));
@@ -60,6 +60,33 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
             default:
                 throw new RuntimeException(\sprintf('Array type cannot have more than 2 parameters, but got %s.', \var_export($type->getParams(), true)));
         }
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitArray($data, Type $type, Context $context)
+    {
+        if ($type->countParams() !== 1) {
+            @trigger_error('Calling visitArray with hash map is deprecated. Please call visitHash instead.', E_USER_DEPRECATED);
+            return $this->visitHash($data, $type, $context);
+        }
+
+        if (! \is_array($data)) {
+            throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \var_export($data, true)));
+        }
+
+        $listType = $type->getParam(0);
+
+        $result = [];
+        foreach ($data as $v) {
+            $result[] = $context->accept($v, $listType);
+        }
+
+        $this->setData($result);
+
+        return $result;
     }
 
     /**

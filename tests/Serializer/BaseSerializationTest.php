@@ -1019,7 +1019,7 @@ abstract class BaseSerializationTest extends TestCase
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
             function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
-                return $visitor->visitArray([
+                return $visitor->visitHash([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
                     'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
                 ], Type::parse('array<string,string>'), $context);
@@ -1045,7 +1045,7 @@ abstract class BaseSerializationTest extends TestCase
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
             function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
-                return $visitor->visitArray([
+                return $visitor->visitHash([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
                     'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
                 ], Type::parse('array<string,string>'), $context);
@@ -1098,12 +1098,12 @@ abstract class BaseSerializationTest extends TestCase
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',
             function (VisitorInterface $visitor, $object, Type $type, Context $context) {
-                return $visitor->visitArray(\iterator_to_array($object), $type, $context);
+                return $visitor->visitHash(\iterator_to_array($object), $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorAsType',
             function (VisitorInterface $visitor, Author $object, Type $type, Context $context) {
-                return $visitor->visitArray(['name' => $object->getName()], $type, $context);
+                return $visitor->visitHash(['name' => $object->getName()], $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_DESERIALIZATION, 'AuthorList',

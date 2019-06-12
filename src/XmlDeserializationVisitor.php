@@ -67,7 +67,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitHash($data, Type $type, Context $context)
     {
         $currentMetadata = $context->getMetadataStack()->getCurrent();
 
@@ -116,6 +116,36 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
             default:
                 throw new LogicException(\sprintf('The array type does not support more than 2 parameters, but got %s.', \var_export($type['params'], true)));
+        }
+
+        $this->setData($result);
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitArray($data, Type $type, Context $context)
+    {
+        if ($type->countParams() !== 1) {
+            @trigger_error('Calling visitArray with hash map is deprecated. Please call visitHash instead.', E_USER_DEPRECATED);
+            return $this->visitHash($data, $type, $context);
+        }
+
+        $currentMetadata = $context->getMetadataStack()->getCurrent();
+
+        $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
+        $namespace = (null !== $currentMetadata && $currentMetadata->xmlEntryNamespace) ? $currentMetadata->xmlEntryNamespace : null;
+        $result = [];
+
+        $nodes = null !== $namespace ? $data->children($namespace)->$entryName : $data->$entryName;
+        foreach ($nodes as $v) {
+            if ($this->isNullNode($v)) {
+                $result[] = $this->visitNull(null, Type::null(), $context);
+            } else {
+                $result[] = $context->accept($v, $type->getParam(0));
+            }
         }
 
         $this->setData($result);

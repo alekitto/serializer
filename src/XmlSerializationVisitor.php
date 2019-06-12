@@ -215,7 +215,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitHash($data, Type $type, Context $context)
     {
         if (null === $this->document->documentElement && 1 === $this->nodeStack->count()) {
             $this->createRootNode();
@@ -241,6 +241,41 @@ class XmlSerializationVisitor extends AbstractVisitor
             if (null !== $attributeName) {
                 $this->currentNodes->setAttribute($attributeName, (string) $k);
             }
+
+            $nodes[] = $this->currentNodes;
+        }
+
+        return $this->currentNodes = $nodes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitArray($data, Type $type, Context $context)
+    {
+        if ($type->countParams() !== 1) {
+            @trigger_error('Calling visitArray with hash map is deprecated. Please call visitHash instead.', E_USER_DEPRECATED);
+            return $this->visitHash($data, $type, $context);
+        }
+
+        if (null === $this->document->documentElement && 1 === $this->nodeStack->count()) {
+            $this->createRootNode();
+        }
+
+        /** @var PropertyMetadata $metadata */
+        $nodeName = 'entry';
+        if (($metadata = $context->getMetadataStack()->getCurrent()) && ! empty($metadata->xmlEntryName)) {
+            $nodeName = $metadata->xmlEntryName;
+        }
+
+        $namespace = null !== $metadata ? $metadata->xmlEntryNamespace : null;
+
+        /** @var \DOMNode[] $nodes */
+        $nodes = [];
+        $elementType = $this->getElementType($type);
+        foreach ($data as $v) {
+            $this->currentNodes = $this->createElement($namespace, $nodeName);
+            $context->accept($v, $elementType);
 
             $nodes[] = $this->currentNodes;
         }

@@ -44,9 +44,9 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitHash($data, Type $type, Context $context)
     {
-        $result = parent::visitArray($data, $type, $context);
+        $result = parent::visitHash($data, $type, $context);
 
         if ($type->hasParam(1) && 0 === \count($result)) {
             // ArrayObject is specially treated by the json_encode function and

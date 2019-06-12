@@ -98,11 +98,20 @@ abstract class GraphNavigator
                 return $visitor->visitDouble($data, $type, $context);
 
             case 'array':
+                if (\method_exists($visitor, 'visitHash')) {
+                    if (1 === $type->countParams()) {
+                        return $visitor->visitArray($data, $type, $context);
+                    }
+
+                    return $visitor->visitHash($data, $type, $context);
+                }
+
                 return $visitor->visitArray($data, $type, $context);
 
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
                 throw new RuntimeException($msg);
+
             default:
                 if (null === $metadata) {
                     // Missing handler for custom type

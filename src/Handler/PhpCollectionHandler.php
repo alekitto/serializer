@@ -43,12 +43,12 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context)
     {
-        return $visitor->visitArray(\iterator_to_array($map), $type, $context);
+        return $visitor->visitHash(\iterator_to_array($map), $type, $context);
     }
 
     public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context): MapInterface
     {
-        return new Map($visitor->visitArray($data, $type, $context));
+        return new Map($visitor->visitHash($data, $type, $context));
     }
 
     public function serializeSequence(VisitorInterface $visitor, Sequence $sequence, Type $type, Context $context)

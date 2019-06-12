@@ -13,6 +13,7 @@ use Kcs\Serializer\Type\Type;
  * output format.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ * @author Alessandro Chitolina <alekitto@gmail.com>
  */
 interface VisitorInterface
 {
@@ -79,6 +80,15 @@ interface VisitorInterface
      * @return mixed
      */
     public function visitArray($data, Type $type, Context $context);
+
+    /**
+     * @param mixed   $data
+     * @param Type    $type
+     * @param Context $context
+     *
+     * @return mixed
+     */
+    /* public function visitHash($data, Type $type, Context $context); */
 
     /**
      * @param ClassMetadata $metadata

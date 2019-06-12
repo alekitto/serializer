@@ -83,7 +83,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitHash($data, Type $type, Context $context)
     {
         $rs = [];
         $elementType = $this->getElementType($type);
@@ -102,6 +102,32 @@ class GenericSerializationVisitor extends AbstractVisitor
             } else {
                 $rs[ $k ] = $v;
             }
+        }
+
+        return $this->data = $rs;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitArray($data, Type $type, Context $context)
+    {
+        if ($type->countParams() !== 1) {
+            @trigger_error('Calling visitArray with hash map is deprecated. Please call visitHash instead.', E_USER_DEPRECATED);
+            return $this->visitHash($data, $type, $context);
+        }
+
+        $rs = [];
+        $elementType = $this->getElementType($type);
+
+        foreach ($data as $k => $v) {
+            $v = $this->navigator->accept($v, $elementType, $context);
+
+            if (null === $v && ! $context->shouldSerializeNull()) {
+                continue;
+            }
+
+            $rs[] = $v;
         }
 
         return $this->data = $rs;

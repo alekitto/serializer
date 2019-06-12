@@ -47,11 +47,19 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
     {
-        return $visitor->visitArray($collection->toArray(), $type, $context);
+        if ($type->countParams() === 1) {
+            return $visitor->visitArray($collection->toArray(), $type, $context);
+        }
+
+        return $visitor->visitHash($collection->toArray(), $type, $context);
     }
 
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
     {
-        return new ArrayCollection($visitor->visitArray($data, $type, $context));
+        if ($type->countParams() === 1) {
+            return new ArrayCollection($visitor->visitArray($data, $type, $context));
+        }
+
+        return new ArrayCollection($visitor->visitHash($data, $type, $context));
     }
 }
