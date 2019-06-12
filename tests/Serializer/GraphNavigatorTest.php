@@ -4,8 +4,6 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
-use Kcs\Serializer\Construction\ObjectConstructorInterface;
-use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
@@ -18,6 +16,7 @@ use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\SerializationContext;
+use Kcs\Serializer\SerializeGraphNavigator;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use PHPUnit\Framework\TestCase;
@@ -36,11 +35,6 @@ class GraphNavigatorTest extends TestCase
      * @var HandlerRegistryInterface
      */
     private $handlerRegistry;
-
-    /**
-     * @var ObjectConstructorInterface
-     */
-    private $objectConstructor;
 
     /**
      * @var EventDispatcherInterface
@@ -90,10 +84,10 @@ class GraphNavigatorTest extends TestCase
         $exclusionStrategy->shouldSkipClass($metadata, $context)->willReturn(false);
         $context->getExclusionStrategy()->willReturn($exclusionStrategy);
 
-        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new SerializeGraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->dispatcher);
         $this->navigator->accept($object, null, $context->reveal());
 
-        $visitor->visitObject($metadata, Argument::any(), Argument::type(Type::class), $context, Argument::type(ObjectConstructorInterface::class))
+        $visitor->visitObject($metadata, Argument::any(), Argument::type(Type::class), $context)
             ->shouldHaveBeenCalled()
         ;
     }
@@ -124,7 +118,7 @@ class GraphNavigatorTest extends TestCase
         $context->startVisiting(Argument::any())->shouldBeCalled();
         $context->stopVisiting(Argument::any())->shouldBeCalled();
 
-        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new SerializeGraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->dispatcher);
         $this->navigator->accept($object, null, $context->reveal());
 
         $visitor->visitCustom([$handler, 'serialize'], Argument::any(), Argument::type(Type::class), $context)
@@ -138,12 +132,11 @@ class GraphNavigatorTest extends TestCase
     {
         $this->dispatcher = new EventDispatcher();
         $this->handlerRegistry = new HandlerRegistry();
-        $this->objectConstructor = new UnserializeObjectConstructor();
 
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
         $this->metadataFactory = new MetadataFactory($loader);
-        $this->navigator = new GraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+        $this->navigator = new SerializeGraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->dispatcher);
     }
 }
 

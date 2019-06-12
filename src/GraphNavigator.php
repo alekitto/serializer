@@ -3,15 +3,8 @@
 namespace Kcs\Serializer;
 
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
-use Kcs\Serializer\Construction\ObjectConstructorInterface;
-use Kcs\Serializer\EventDispatcher\Events;
-use Kcs\Serializer\EventDispatcher\PostDeserializeEvent;
-use Kcs\Serializer\EventDispatcher\PostSerializeEvent;
-use Kcs\Serializer\EventDispatcher\PreDeserializeEvent;
-use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
-use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -25,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  * @author Alessandro Chitolina <alekitto@gmail.com>
  */
-class GraphNavigator
+abstract class GraphNavigator
 {
     private const BUILTIN_TYPES = [
         'NULL' => true,
@@ -43,33 +36,26 @@ class GraphNavigator
     /**
      * @var null|EventDispatcherInterface
      */
-    private $dispatcher;
+    protected $dispatcher;
 
     /**
      * @var MetadataFactoryInterface
      */
-    private $metadataFactory;
+    protected $metadataFactory;
 
     /**
      * @var HandlerRegistryInterface
      */
     private $handlerRegistry;
 
-    /**
-     * @var ObjectConstructorInterface
-     */
-    private $objectConstructor;
-
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
         HandlerRegistryInterface $handlerRegistry,
-        ObjectConstructorInterface $objectConstructor,
         ?EventDispatcherInterface $dispatcher = null
     ) {
         $this->dispatcher = $dispatcher;
         $this->metadataFactory = $metadataFactory;
         $this->handlerRegistry = $handlerRegistry;
-        $this->objectConstructor = $objectConstructor;
     }
 
     /**
@@ -81,106 +67,9 @@ class GraphNavigator
      *
      * @return mixed the return value depends on the direction, and type of visitor
      */
-    public function accept($data, ?Type $type = null, Context $context)
-    {
-        if (null === $type) {
-            $type = $context->guessType($data);
-        }
+    abstract public function accept($data, ?Type $type, Context $context);
 
-        if ($context instanceof SerializationContext) {
-            return $this->serialize($data, $type, $context);
-        }
-
-        return $this->deserialize($data, $type, $context);
-    }
-
-    private function serialize($data, Type $type, SerializationContext $context)
-    {
-        if (null === $data) {
-            $type = Type::null();
-        }
-
-        if ($inVisitingStack = \is_object($data)) {
-            if ($context->isVisiting($data) && ! $context->getMetadataStack()->getCurrent() instanceof AdditionalPropertyMetadata) {
-                return null;
-            }
-
-            $context->startVisiting($data);
-        }
-
-        // If we're serializing a polymorphic type, then we'll be interested in the
-        // metadata for the actual type of the object, not the base class.
-        if (\is_object($data) && \is_subclass_of($data, $type->name, false)) {
-            $type = new Type(\get_class($data), $type->getParams());
-        }
-
-        if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
-            $data = $event->getData();
-        }
-
-        if (null !== ($metadata = $this->getMetadataForType($type))) {
-            foreach ($metadata->preSerializeMethods as $method) {
-                $method->getReflection()->invoke($data);
-            }
-        }
-
-        $visitor = $context->visitor;
-        $visitor->startVisiting($data, $type, $context);
-        $this->callVisitor($data, $type, $context, $metadata);
-
-        if (null !== $metadata) {
-            foreach ($metadata->postSerializeMethods as $method) {
-                $method->getReflection()->invoke($data);
-            }
-        }
-
-        if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
-        }
-
-        $rs = $visitor->endVisiting($data, $type, $context);
-        if ($inVisitingStack) {
-            $context->stopVisiting($data);
-        }
-
-        return $rs;
-    }
-
-    private function deserialize($data, Type $type, DeserializationContext $context)
-    {
-        $context->increaseDepth();
-
-        if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
-            $data = $event->getData();
-        }
-
-        $metadata = $this->getMetadataForType($type);
-        if (null !== $metadata && ! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
-            $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
-        }
-
-        $context->visitor->startVisiting($data, $type, $context);
-        $rs = $this->callVisitor($data, $type, $context, $metadata);
-
-        if (null !== $metadata) {
-            foreach ($metadata->postDeserializeMethods as $method) {
-                $method->getReflection()->invoke($rs);
-            }
-        }
-
-        if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
-        }
-
-        $rs = $context->visitor->endVisiting($rs, $type, $context);
-        $context->decreaseDepth();
-
-        return $rs;
-    }
-
-    private function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
+    protected function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
     {
         $visitor = $context->visitor;
 
@@ -209,7 +98,7 @@ class GraphNavigator
                 return $visitor->visitDouble($data, $type, $context);
 
             case 'array':
-                return $this->visitArray($visitor, $data, $type, $context);
+                return $visitor->visitArray($data, $type, $context);
 
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
@@ -225,7 +114,7 @@ class GraphNavigator
                     return null;
                 }
 
-                return $visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
+                return $this->visitObject($metadata, $data, $type, $context);
         }
     }
 
@@ -236,7 +125,7 @@ class GraphNavigator
      *
      * @return null|ClassMetadata
      */
-    private function getMetadataForType(Type $type): ?ClassMetadata
+    protected function getMetadataForType(Type $type): ?ClassMetadata
     {
         if ($metadata = $type->metadata) {
             return $metadata;
@@ -251,12 +140,5 @@ class GraphNavigator
         return $type->metadata = $metadata;
     }
 
-    private function visitArray(VisitorInterface $visitor, $data, Type $type, Context $context)
-    {
-        if ($context instanceof SerializationContext && $type->hasParam(0) && ! $type->hasParam(1)) {
-            $data = \array_values($data);
-        }
-
-        return $visitor->visitArray($data, $type, $context);
-    }
+    abstract protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context);
 }

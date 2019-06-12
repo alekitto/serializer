@@ -51,12 +51,4 @@ class DeserializationContext extends Context
 
         return parent::filterPropertyMetadata($propertyMetadata);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function guessType($data): Type
-    {
-        throw new RuntimeException('The type must be given for all properties when deserializing.');
-    }
 }

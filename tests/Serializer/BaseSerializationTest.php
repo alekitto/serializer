@@ -114,7 +114,7 @@ abstract class BaseSerializationTest extends TestCase
 
     public function testSerializeNullArray(): void
     {
-        $arr = ['foo' => 'bar', 'baz' => null, null];
+        $arr = ['foo' => 'bar', 'baz' => null];
 
         self::assertEquals(
             $this->getContent('nullable'),

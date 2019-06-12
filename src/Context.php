@@ -228,15 +228,6 @@ abstract class Context
 
     abstract public function getDepth(): int;
 
-    /**
-     * Guesses the serialization type for the given data.
-     *
-     * @param mixed $data
-     *
-     * @return Type
-     */
-    abstract public function guessType($data): Type;
-
     protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata): bool
     {
         return ! $this->isPropertyExcluded($propertyMetadata);

@@ -33,6 +33,21 @@ class Serializer implements SerializerInterface
     private $navigator;
 
     /**
+     * @var HandlerRegistryInterface
+     */
+    private $handlerRegistry;
+
+    /**
+     * @var ObjectConstructorInterface
+     */
+    private $objectConstructor;
+
+    /**
+     * @var EventDispatcherInterface|null
+     */
+    private $dispatcher;
+
+    /**
      * Constructor.
      *
      * @param MetadataFactoryInterface                $factory
@@ -54,7 +69,9 @@ class Serializer implements SerializerInterface
         $this->serializationVisitors = $serializationVisitors;
         $this->deserializationVisitors = $deserializationVisitors;
 
-        $this->navigator = new GraphNavigator($this->factory, $handlerRegistry, $objectConstructor, $dispatcher);
+        $this->handlerRegistry = $handlerRegistry;
+        $this->objectConstructor = $objectConstructor;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -62,6 +79,8 @@ class Serializer implements SerializerInterface
      */
     public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null)
     {
+        $this->navigator = new SerializeGraphNavigator($this->factory, $this->handlerRegistry, $this->dispatcher);
+
         if (null === $context) {
             $context = new SerializationContext();
         }
@@ -78,6 +97,8 @@ class Serializer implements SerializerInterface
      */
     public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null)
     {
+        $this->navigator = new DeserializeGraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
+
         if (null === $context) {
             $context = new DeserializationContext();
         }

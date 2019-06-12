@@ -52,7 +52,11 @@ class SerializationContext extends Context
     }
 
     /**
-     * {@inheritdoc}
+     * Guesses the serialization type for the given data.
+     *
+     * @param mixed $data
+     *
+     * @return Type
      */
     public function guessType($data): Type
     {

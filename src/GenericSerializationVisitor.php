@@ -87,15 +87,21 @@ class GenericSerializationVisitor extends AbstractVisitor
     {
         $rs = [];
         $elementType = $this->getElementType($type);
+        $onlyValues = $type->hasParam(0) && ! $type->hasParam(1);
+        $isAssociative = ! $onlyValues && \array_keys($data) !== \range(0, \count($data) - 1);
 
         foreach ($data as $k => $v) {
             $v = $this->navigator->accept($v, $elementType, $context);
 
-            if (null === $v && (! \is_string($k) || ! $context->shouldSerializeNull())) {
+            if (null === $v && ! $isAssociative && ! $context->shouldSerializeNull()) {
                 continue;
             }
 
-            $rs[$k] = $v;
+            if ($onlyValues) {
+                $rs[] = $v;
+            } else {
+                $rs[ $k ] = $v;
+            }
         }
 
         return $this->data = $rs;
