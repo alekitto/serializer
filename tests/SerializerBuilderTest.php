@@ -2,6 +2,7 @@
 
 namespace Kcs\Serializer\Tests;
 
+use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
@@ -38,18 +39,15 @@ class SerializerBuilderTest extends TestCase
 
     public function testDoesNotAddDefaultHandlersWhenExplicitlyConfigured(): void
     {
-        self::assertSame($this->builder, $this->builder->configureHandlers(function (HandlerRegistry $registry) {
-        }));
-
+        self::assertSame($this->builder, $this->builder->configureHandlers(static function (HandlerRegistry $registry) { }));
         self::assertEquals('{}', $this->builder->build()->serialize(new \DateTime('2020-04-16'), 'json'));
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\UnsupportedFormatException
-     * @expectedExceptionMessage The format "xml" is not supported for serialization
-     */
     public function testDoesNotAddOtherVisitorsWhenConfiguredExplicitly(): void
     {
+        $this->expectException(UnsupportedFormatException::class);
+        $this->expectExceptionMessage('The format "xml" is not supported for serialization');
+
         self::assertSame(
             $this->builder,
             $this->builder->setSerializationVisitor('json', new JsonSerializationVisitor(new CamelCaseNamingStrategy()))
@@ -58,7 +56,7 @@ class SerializerBuilderTest extends TestCase
         $this->builder->build()->serialize('foo', 'xml');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->builder = SerializerBuilder::create();
     }

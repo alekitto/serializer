@@ -25,7 +25,7 @@
         </service>
 
         <service class="Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber" id="kcs_serializer.doctrine_proxy_subscriber">
-            <tag name="kernel.event_subscriber" />
+            <tag name="kernel.event_listener" event="Kcs\Serializer\EventDispatcher\PreSerializeEvent" method="onPreSerialize" priority="20" />
         </service>
 
         <service class="Kcs\Metadata\Loader\FilesLoader" id="kcs_serializer.metadata.loader.xml">

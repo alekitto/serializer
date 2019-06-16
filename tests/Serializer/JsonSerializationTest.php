@@ -142,10 +142,26 @@ class JsonSerializationTest extends BaseSerializationTest
         $visitor = $this->serializationVisitors['json'];
         $functionToCall = 'visit'.\ucfirst($primitiveType);
         $result = $visitor->$functionToCall($data, Type::null(), $this->prophesize(Context::class)->reveal());
-        if ('double' === $primitiveType) {
-            $primitiveType = 'float';
+
+        switch ($primitiveType) {
+            case 'boolean':
+                $primitiveType = 'Bool';
+                break;
+
+            case 'double':
+                $primitiveType = 'Float';
+                break;
+
+            case 'integer':
+                $primitiveType = 'Int';
+                break;
+
+            default:
+                $primitiveType = \ucfirst($primitiveType);
+                break;
         }
-        self::assertInternalType($primitiveType, $result);
+
+        self::{'assertIs'.$primitiveType}($result);
     }
 
     /**
@@ -158,22 +174,24 @@ class JsonSerializationTest extends BaseSerializationTest
 
     /**
      * @group encoding
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Your data could not be encoded because it contains invalid UTF8 characters.
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Your data could not be encoded because it contains invalid UTF8 characters.');
+
         \ini_set('display_errors', '1');
         $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
     }
 
     /**
      * @group encoding
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Your data could not be encoded because it contains invalid UTF8 characters.
      */
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Your data could not be encoded because it contains invalid UTF8 characters.');
+
         \ini_set('display_errors', '0');
         $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
     }

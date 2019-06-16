@@ -5,15 +5,14 @@ namespace Kcs\Serializer\EventDispatcher;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
-use Symfony\Component\EventDispatcher\Event as BaseEvent;
+use Psr\EventDispatcher\StoppableEventInterface;
 
-class Event extends BaseEvent
+class Event implements StoppableEventInterface
 {
     /**
      * @var Type
      */
     protected $type;
-
     /**
      * @var Context
      */
@@ -23,6 +22,11 @@ class Event extends BaseEvent
      * @var mixed
      */
     private $data;
+
+    /**
+     * @var bool
+     */
+    private $propagationStopped = false;
 
     public function __construct(Context $context, $data, Type $type)
     {
@@ -59,5 +63,21 @@ class Event extends BaseEvent
     public function setData($data): void
     {
         $this->data = $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isPropagationStopped(): bool
+    {
+        return $this->propagationStopped;
+    }
+
+    /**
+     * Stops the propagation of the event to further event listeners.
+     */
+    public function stopPropagation(): void
+    {
+        $this->propagationStopped = true;
     }
 }

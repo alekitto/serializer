@@ -4,6 +4,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Exception\InvalidArgumentException;
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\SerializationContext;
@@ -23,11 +24,10 @@ use Kcs\Serializer\Type\Type;
 
 class XmlSerializationTest extends BaseSerializationTest
 {
-    /**
-     * @expectedException \Kcs\Serializer\Exception\RuntimeException
-     */
     public function testInvalidUsageOfXmlValue(): void
     {
+        $this->expectException(RuntimeException::class);
+
         $obj = new InvalidUsageOfXmlValue();
         $this->serialize($obj);
     }
@@ -76,12 +76,11 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertEquals($this->getContent('person_collection'), $this->serialize($personCollection));
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The document type "<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource=XmlSerializationTest.php">]>" is not allowed. If it is safe, you may add it to the whitelist configuration.
-     */
     public function testExternalEntitiesAreDisabledByDefault(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The document type "<!DOCTYPE author [<!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource=XmlSerializationTest.php">]>" is not allowed. If it is safe, you may add it to the whitelist configuration.');
+
         $this->deserialize('<?xml version="1.0"?>
             <!DOCTYPE author [
                 <!ENTITY foo SYSTEM "php://filter/read=convert.base64-encode/resource='.\basename(__FILE__).'">
@@ -91,12 +90,11 @@ class XmlSerializationTest extends BaseSerializationTest
             </result>', 'stdClass');
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
-     * @expectedExceptionMessage The document type "<!DOCTYPE foo>" is not allowed. If it is safe, you may add it to the whitelist configuration.
-     */
     public function testDocumentTypesAreNotAllowed(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The document type "<!DOCTYPE foo>" is not allowed. If it is safe, you may add it to the whitelist configuration.');
+
         $this->deserialize('<?xml version="1.0"?><!DOCTYPE foo><foo></foo>', 'stdClass');
     }
 
@@ -219,10 +217,10 @@ class XmlSerializationTest extends BaseSerializationTest
 
         $deserialized = $this->deserialize($this->getContent('object_with_xml_namespacesalias'), \get_class($object));
         self::assertEquals('2011-07-30T00:00:00+0000', $this->getField($deserialized, 'createdAt')->format(\DateTime::ISO8601));
-        self::assertAttributeEquals('This is a nice title.', 'title', $deserialized);
-        self::assertAttributeSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', 'etag', $deserialized);
-        self::assertAttributeSame('en', 'language', $deserialized);
-        self::assertAttributeEquals('Foo Bar', 'author', $deserialized);
+        self::assertEquals('This is a nice title.', $this->getField($deserialized, 'title'));
+        self::assertSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->getField($deserialized, 'etag'));
+        self::assertSame('en', $this->getField($deserialized, 'language'));
+        self::assertEquals('Foo Bar', $this->getField($deserialized, 'author'));
     }
 
     public function testObjectWithXmlRootNamespace(): void

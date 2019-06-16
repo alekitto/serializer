@@ -4,6 +4,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\HandlerRegistry;
@@ -30,7 +31,7 @@ class ArrayTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
         $loader = new AnnotationLoader();
@@ -62,11 +63,11 @@ class ArrayTest extends TestCase
 
     /**
      * @dataProvider scalarValues
-     * @expectedException \Kcs\Serializer\Exception\RuntimeException
-     * @expectedExceptionMessageRegExp /The input data of type ".+" did not convert to an array, but got a result of type ".+"./
      */
     public function testToArrayWithScalar($input): void
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageRegExp('/The input data of type ".+" did not convert to an array, but got a result of type ".+"./');
         $result = $this->serializer->normalize($input);
 
         self::assertEquals([$input], $result);

@@ -10,7 +10,9 @@ use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
+use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Exclusion\DepthExclusionStrategy;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
@@ -429,13 +431,13 @@ abstract class BaseSerializationTest extends TestCase
         if ($this->hasDeserializer()) {
             $deserialized = $this->deserialize($this->getContent('blog_post'), \get_class($post));
             self::assertEquals('2011-07-30T00:00:00+0000', $this->getField($deserialized, 'createdAt')->format(\DateTime::ISO8601));
-            self::assertAttributeEquals('This is a nice title.', 'title', $deserialized);
-            self::assertAttributeSame(false, 'published', $deserialized);
-            self::assertAttributeSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', 'etag', $deserialized);
-            self::assertAttributeEquals(new ArrayCollection([$comment]), 'comments', $deserialized);
-            self::assertAttributeEquals(new Sequence([$comment]), 'comments2', $deserialized);
-            self::assertAttributeEquals($author, 'author', $deserialized);
-            self::assertAttributeEquals([$tag1, $tag2], 'tag', $deserialized);
+            self::assertEquals('This is a nice title.', $this->getField($deserialized, 'title'));
+            self::assertFalse($this->getField($deserialized, 'published'));
+            self::assertSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->getField($deserialized, 'etag'));
+            self::assertEquals(new ArrayCollection([$comment]), $this->getField($deserialized, 'comments'));
+            self::assertEquals(new Sequence([$comment]), $this->getField($deserialized, 'comments2'));
+            self::assertEquals($author, $this->getField($deserialized, 'author'));
+            self::assertEquals([$tag1, $tag2], $this->getField($deserialized, 'tag'));
         }
     }
 
@@ -455,9 +457,9 @@ abstract class BaseSerializationTest extends TestCase
             $deserialized = $this->deserialize($this->getContent('blog_post_unauthored'), \get_class($post), DeserializationContext::create()->setSerializeNull(true));
 
             self::assertEquals('2011-07-30T00:00:00+0000', $this->getField($deserialized, 'createdAt')->format(\DateTime::ISO8601));
-            self::assertAttributeEquals('This is a nice title.', 'title', $deserialized);
-            self::assertAttributeSame(false, 'published', $deserialized);
-            self::assertAttributeEquals(new ArrayCollection(), 'comments', $deserialized);
+            self::assertEquals('This is a nice title.', $this->getField($deserialized, 'title'));
+            self::assertFalse($this->getField($deserialized, 'published'));
+            self::assertEquals(new ArrayCollection(), $this->getField($deserialized, 'comments'));
             self::assertEquals(null, $this->getField($deserialized, 'author'));
         }
     }
@@ -588,7 +590,7 @@ abstract class BaseSerializationTest extends TestCase
     {
         $object = new ObjectWithLifecycleCallbacks();
         self::assertEquals($this->getContent('lifecycle_callbacks'), $this->serialize($object));
-        self::assertAttributeSame(null, 'name', $object);
+        self::assertNull($this->getField($object, 'name'));
 
         if ($this->hasDeserializer()) {
             $deserialized = $this->deserialize($this->getContent('lifecycle_callbacks'), \get_class($object));
@@ -707,9 +709,9 @@ abstract class BaseSerializationTest extends TestCase
 
         if ($this->hasDeserializer()) {
             $object = $this->deserialize($this->getContent('mixed_access_types'), GetSetObject::class);
-            self::assertAttributeEquals(1, 'id', $object);
-            self::assertAttributeEquals('Johannes', 'name', $object);
-            self::assertAttributeEquals(42, 'readOnlyProperty', $object);
+            self::assertEquals(1, $this->getField($object, 'id'));
+            self::assertEquals('Johannes', $this->getField($object, 'name'));
+            self::assertEquals(42, $this->getField($object, 'readOnlyProperty'));
         }
     }
 
@@ -801,12 +803,11 @@ abstract class BaseSerializationTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid group name "foo, bar" on "Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject->foo", did you mean to create multiple groups?
-     */
     public function testInvalidGroupName(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid group name "foo, bar" on "Kcs\Serializer\Tests\Fixtures\InvalidGroupsObject->foo", did you mean to create multiple groups?');
+
         $groupsObject = new InvalidGroupsObject();
 
         $this->serializer->serialize($groupsObject, $this->getFormat());
@@ -841,7 +842,7 @@ abstract class BaseSerializationTest extends TestCase
             return;
         }
 
-        $handler = function (): CustomDeserializationObject {
+        $handler = static function (): CustomDeserializationObject {
             return new CustomDeserializationObject('customly_unserialized_value');
         };
 
@@ -954,10 +955,10 @@ abstract class BaseSerializationTest extends TestCase
 
     /**
      * @group polymorphic
-     * @expectedException \LogicException
      */
     public function testPolymorphicObjectsInvalidDeserialization(): void
     {
+        $this->expectException(\LogicException::class);
         if (! $this->hasDeserializer()) {
             throw new \LogicException('No deserializer');
         }
@@ -1012,13 +1013,13 @@ abstract class BaseSerializationTest extends TestCase
 
         self::assertSame($order, $deseralizedOrder);
         self::assertEquals(new Order(new Price(12.34)), $deseralizedOrder);
-        self::assertAttributeInstanceOf(Price::class, 'cost', $deseralizedOrder);
+        self::assertInstanceOf(Price::class, $this->getField($deseralizedOrder, 'cost'));
     }
 
     public function testAdditionalField(): void
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
-            function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
+            static function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
                 return $visitor->visitHash([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
                     'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
@@ -1044,7 +1045,7 @@ abstract class BaseSerializationTest extends TestCase
     public function testAdditionalFieldInheritedBySubclasses(): void
     {
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
-            function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
+            static function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
                 return $visitor->visitHash([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
                     'comments' => 'http://foo.bar/details/'.$author->getName().'/comments',
@@ -1081,7 +1082,7 @@ abstract class BaseSerializationTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
@@ -1097,17 +1098,17 @@ abstract class BaseSerializationTest extends TestCase
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',
-            function (VisitorInterface $visitor, $object, Type $type, Context $context) {
+            static function (VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitHash(\iterator_to_array($object), $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorAsType',
-            function (VisitorInterface $visitor, Author $object, Type $type, Context $context) {
+            static function (VisitorInterface $visitor, Author $object, Type $type, Context $context) {
                 return $visitor->visitHash(['name' => $object->getName()], $type, $context);
             }
         );
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_DESERIALIZATION, 'AuthorList',
-            function (VisitorInterface $visitor, $data, $type, Context $context) {
+            static function (VisitorInterface $visitor, $data, $type, Context $context) {
                 $type = new Type(
                     'array',
                     [
@@ -1127,7 +1128,7 @@ abstract class BaseSerializationTest extends TestCase
         );
 
         $this->dispatcher = new EventDispatcher();
-        $this->dispatcher->addSubscriber(new DoctrineProxySubscriber());
+        $this->dispatcher->addListener(PreSerializeEvent::class, [new DoctrineProxySubscriber(), 'onPreSerialize'], 20);
 
         $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
         $objectConstructor = new UnserializeObjectConstructor();

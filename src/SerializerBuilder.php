@@ -4,11 +4,11 @@ namespace Kcs\Serializer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Cache\Cache;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
+use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\Handler\DateHandler;
@@ -20,15 +20,15 @@ use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
 
 /**
  * Builder for serializer instances.
  *
  * This object makes serializer construction a breeze for projects that do not use
  * any special dependency injection container.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class SerializerBuilder
 {
@@ -73,7 +73,7 @@ class SerializerBuilder
     private $propertyNamingStrategy;
 
     /**
-     * @var null|Cache
+     * @var null|CacheItemPoolInterface
      */
     private $cache;
 
@@ -106,7 +106,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function setCache(?Cache $cache = null): self
+    public function setCache(?CacheItemPoolInterface $cache = null): self
     {
         $this->cache = $cache;
 
@@ -150,8 +150,8 @@ class SerializerBuilder
     {
         $this->listenersConfigured = true;
 
-        if (null !== $this->eventDispatcher) {
-            $this->eventDispatcher->addSubscriber(new DoctrineProxySubscriber());
+        if ($this->eventDispatcher instanceof SymfonyEventDispatcher) {
+            $this->eventDispatcher->addListener(PreSerializeEvent::class, [new DoctrineProxySubscriber(), 'onPreSerialize'], 20);
         }
 
         return $this;

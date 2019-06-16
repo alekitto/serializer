@@ -24,7 +24,7 @@ class DoctrineProxySubscriberTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->subscriber = new DoctrineProxySubscriber();
         $this->visitor = $this->prophesize(Context::class);

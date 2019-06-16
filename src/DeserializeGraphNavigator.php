@@ -11,7 +11,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DeserializeGraphNavigator extends GraphNavigator
 {
@@ -44,7 +44,7 @@ class DeserializeGraphNavigator extends GraphNavigator
         $context->increaseDepth();
 
         if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::PRE_DESERIALIZE, $event = new PreDeserializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch($event = new PreDeserializeEvent($context, $data, $type));
             $data = $event->getData();
         }
 
@@ -63,7 +63,7 @@ class DeserializeGraphNavigator extends GraphNavigator
         }
 
         if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::POST_DESERIALIZE, new PostDeserializeEvent($context, $rs, $type));
+            $this->dispatcher->dispatch(new PostDeserializeEvent($context, $rs, $type));
         }
 
         $rs = $context->visitor->endVisiting($rs, $type, $context);

@@ -3,11 +3,9 @@
 namespace Kcs\Serializer\EventDispatcher\Subscriber;
 
 use Doctrine\Common\Persistence\Proxy;
-use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class DoctrineProxySubscriber implements EventSubscriberInterface
+class DoctrineProxySubscriber
 {
     public function onPreSerialize(PreSerializeEvent $event): void
     {
@@ -23,15 +21,5 @@ class DoctrineProxySubscriber implements EventSubscriberInterface
         if ($type->is(\get_class($object))) {
             $type->name = \get_parent_class($object);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents(): iterable
-    {
-        return [
-            Events::PRE_SERIALIZE => ['onPreSerialize', 20],
-        ];
     }
 }

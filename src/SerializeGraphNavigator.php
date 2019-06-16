@@ -49,7 +49,7 @@ class SerializeGraphNavigator extends GraphNavigator
         }
 
         if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::PRE_SERIALIZE, $event = new PreSerializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch($event = new PreSerializeEvent($context, $data, $type));
             $data = $event->getData();
         }
 
@@ -70,7 +70,7 @@ class SerializeGraphNavigator extends GraphNavigator
         }
 
         if (null !== $this->dispatcher && ! \is_scalar($data)) {
-            $this->dispatcher->dispatch(Events::POST_SERIALIZE, new PostSerializeEvent($context, $data, $type));
+            $this->dispatcher->dispatch(new PostSerializeEvent($context, $data, $type));
         }
 
         $rs = $visitor->endVisiting($data, $type, $context);

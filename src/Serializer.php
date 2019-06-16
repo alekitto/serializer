@@ -8,7 +8,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Type\Type;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Serializer implements SerializerInterface
 {

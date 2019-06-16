@@ -2,6 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
+use Kcs\Serializer\Exception\SyntaxErrorException;
 use Kcs\Serializer\Type\Parser\Parser;
 use Kcs\Serializer\Type\Type;
 use PHPUnit\Framework\TestCase;
@@ -35,50 +36,40 @@ class TypeParserTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
-     */
     public function testParamTypeMustEndWithBracket(): void
     {
+        $this->expectException(SyntaxErrorException::class);
         $this->parser->parse('Foo<bar');
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
-     */
     public function testMustStartWithName(): void
     {
+        $this->expectException(SyntaxErrorException::class);
         $this->parser->parse(',');
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
-     */
     public function testEmptyParams(): void
     {
+        $this->expectException(SyntaxErrorException::class);
         $this->parser->parse('Foo<>');
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
-     */
     public function testNoTrailingComma(): void
     {
+        $this->expectException(SyntaxErrorException::class);
         $this->parser->parse('Foo<aa,>');
     }
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\SyntaxErrorException
-     */
     public function testLeadingBackslash(): void
     {
+        $this->expectException(SyntaxErrorException::class);
         $this->parser->parse('Foo<\Bar>');
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->parser = new Parser();
     }

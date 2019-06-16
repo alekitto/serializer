@@ -2,6 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Metadata;
 
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use PHPUnit\Framework\TestCase;
@@ -64,10 +65,10 @@ class ClassMetadataTest extends TestCase
 
     /**
      * @dataProvider providerPublicMethodException
-     * @expectedException \Kcs\Serializer\Exception\RuntimeException
      */
     public function testAccessorTypePublicMethodException($getter, $setter): void
     {
+        $this->expectException(RuntimeException::class);
         $object = new PropertyMetadataPublicMethod();
 
         $metadata = new PropertyMetadata(\get_class($object), 'e');

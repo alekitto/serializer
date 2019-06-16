@@ -62,13 +62,13 @@ class IntegrationTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $connection = $this->createConnection();
         $entityManager = $this->createEntityManager($connection);
 
         $this->registry = $registry = new SimpleManagerRegistry(
-            function ($id) use ($connection, $entityManager) {
+            static function ($id) use ($connection, $entityManager) {
                 switch ($id) {
                     case 'default_connection':
                         return $connection;

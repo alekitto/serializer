@@ -7,6 +7,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;
 use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\HandlerRegistry;
@@ -46,12 +47,11 @@ class GraphNavigatorTest extends TestCase
      */
     private $navigator;
 
-    /**
-     * @expectedException \Kcs\Serializer\Exception\RuntimeException
-     * @expectedExceptionMessage Resources are not supported in serialized data.
-     */
     public function testResourceThrowsException(): void
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Resources are not supported in serialized data.');
+
         $context = $this->prophesize(SerializationContext::class);
         $context->visitor = $this->prophesize(VisitorInterface::class);
         $context->direction = Direction::DIRECTION_SERIALIZATION;
@@ -96,7 +96,7 @@ class GraphNavigatorTest extends TestCase
     {
         $object = new SerializableClass();
 
-        $this->dispatcher->addListener(Events::PRE_SERIALIZE, function (PreSerializeEvent $event) {
+        $this->dispatcher->addListener(PreSerializeEvent::class, static function (PreSerializeEvent $event) {
             $type = $event->getType();
             $type->name = \JsonSerializable::class;
         });
@@ -128,7 +128,7 @@ class GraphNavigatorTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dispatcher = new EventDispatcher();
         $this->handlerRegistry = new HandlerRegistry();

@@ -25,7 +25,7 @@ abstract class AbstractHandlerTest extends TestCase
      */
     protected $context;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->visitor = $this->prophesize(VisitorInterface::class);
         $this->context = $this->prophesize(Context::class);

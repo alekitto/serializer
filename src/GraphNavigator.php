@@ -7,7 +7,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles traversal along the object graph.

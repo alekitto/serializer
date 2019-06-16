@@ -27,7 +27,7 @@ class SerializerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->serializer = $this->prophesize(SerializerInterface::class);
         $this->adapter = new Serializer($this->serializer->reveal());
@@ -50,7 +50,7 @@ class SerializerTest extends TestCase
         $obj = new \stdClass();
 
         $this->serializer
-            ->serialize($obj, 'json', Argument::that(function (SerializationContext $context): bool {
+            ->serialize($obj, 'json', Argument::that(static function (SerializationContext $context): bool {
                 self::assertEquals(['group1', 'group2'], $context->attributes->get('groups'));
 
                 return true;
@@ -89,7 +89,7 @@ class SerializerTest extends TestCase
                 '{}',
                 new Type('stdClass'),
                 'json',
-                Argument::that(function (DeserializationContext $context): bool {
+                Argument::that(static function (DeserializationContext $context): bool {
                     self::assertEquals(['group1', 'group2'], $context->attributes->get('groups'));
 
                     return true;
@@ -116,7 +116,7 @@ class SerializerTest extends TestCase
                 '{}',
                 new Type(GetSetObject::class),
                 'json',
-                Argument::that(function (DeserializationContext $context) use ($obj): bool {
+                Argument::that(static function (DeserializationContext $context) use ($obj): bool {
                     self::assertSame($obj, $context->attributes->get('target'));
 
                     return true;
