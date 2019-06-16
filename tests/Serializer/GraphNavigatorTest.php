@@ -5,7 +5,6 @@ namespace Kcs\Serializer\Tests\Serializer;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Direction;
-use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exclusion\ExclusionStrategyInterface;

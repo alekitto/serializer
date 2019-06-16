@@ -2,7 +2,6 @@
 
 namespace Kcs\Serializer;
 
-use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PostSerializeEvent;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;

@@ -4,7 +4,6 @@ namespace Kcs\Serializer;
 
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
-use Kcs\Serializer\EventDispatcher\Events;
 use Kcs\Serializer\EventDispatcher\PostDeserializeEvent;
 use Kcs\Serializer\EventDispatcher\PreDeserializeEvent;
 use Kcs\Serializer\Exception\RuntimeException;
