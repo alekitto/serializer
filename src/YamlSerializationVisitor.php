@@ -8,8 +8,6 @@ use Symfony\Component\Yaml\Yaml;
  * Serialization Visitor for the YAML format.
  *
  * @see http://www.yaml.org/spec/
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class YamlSerializationVisitor extends GenericSerializationVisitor
 {

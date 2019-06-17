@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-class CacheNamingStrategy implements PropertyNamingStrategyInterface
+final class CacheNamingStrategy implements PropertyNamingStrategyInterface
 {
     /**
      * @var PropertyNamingStrategyInterface

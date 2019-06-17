@@ -136,7 +136,15 @@ class Serializer implements SerializerInterface
         return $this->deserialize($data, $type, 'array', $context);
     }
 
-    private function visit(VisitorInterface $visitor, Context $context, $data, $format, Type $type = null)
+    /**
+     * @return MetadataFactoryInterface
+     */
+    public function getMetadataFactory(): MetadataFactoryInterface
+    {
+        return $this->factory;
+    }
+
+    private function visit(VisitorInterface $visitor, Context $context, $data, $format, ?Type $type)
     {
         $data = $visitor->prepare($data);
         $context->initialize($format, $visitor, $this->navigator, $this->factory);
@@ -145,13 +153,5 @@ class Serializer implements SerializerInterface
         $this->navigator->accept($data, $type, $context);
 
         return $visitor->getResult();
-    }
-
-    /**
-     * @return MetadataFactoryInterface
-     */
-    public function getMetadataFactory(): MetadataFactoryInterface
-    {
-        return $this->factory;
     }
 }

@@ -11,12 +11,6 @@ class YamlDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function prepare($str)
     {
-        if (\defined('Symfony\Component\Yaml\Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE')) {
-            $flags = Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE;
-        } else {
-            $flags = true;
-        }
-
-        return Yaml::parse($str, $flags);
+        return Yaml::parse($str, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
 }

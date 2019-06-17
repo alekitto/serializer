@@ -40,7 +40,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     private $nodeStack;
 
     /**
-     * @var \DOMNode[]|
+     * @var \DOMNode[]
      */
     private $currentNodes;
 
@@ -62,7 +62,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = [ $node ];
     }
 
-    public function visitSimpleString($data)
+    public function visitSimpleString($data): array
     {
         return $this->currentNodes = [ $this->createTextNode((string) $data) ];
     }
@@ -105,13 +105,8 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitObject(
-        ClassMetadata $metadata,
-        $data,
-        Type $type,
-        Context $context,
-        ?ObjectConstructorInterface $objectConstructor = null
-    ) {
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
+    {
         $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
 

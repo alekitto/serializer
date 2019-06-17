@@ -6,7 +6,7 @@ use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Type\Type;
 use Symfony\Component\Serializer\SerializerInterface as SymfonySerializerInterface;
 
-class Serializer implements SymfonySerializerInterface
+final class Serializer implements SymfonySerializerInterface
 {
     /**
      * @var SerializerInterface

@@ -9,7 +9,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterface
+final class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterface
 {
     /**
      * @var PropertyNamingStrategyInterface

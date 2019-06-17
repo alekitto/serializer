@@ -4,7 +4,7 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Exception\InvalidArgumentException;
 
-class Direction
+final class Direction
 {
     public const DIRECTION_DESERIALIZATION = 2;
     public const DIRECTION_SERIALIZATION = 1;

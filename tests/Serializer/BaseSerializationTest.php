@@ -460,7 +460,7 @@ abstract class BaseSerializationTest extends TestCase
             self::assertEquals('This is a nice title.', $this->getField($deserialized, 'title'));
             self::assertFalse($this->getField($deserialized, 'published'));
             self::assertEquals(new ArrayCollection(), $this->getField($deserialized, 'comments'));
-            self::assertEquals(null, $this->getField($deserialized, 'author'));
+            self::assertNull($this->getField($deserialized, 'author'));
         }
     }
 

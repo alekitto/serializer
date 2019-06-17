@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Type\Parser;
 
 use Doctrine\Common\Lexer\AbstractLexer;
 
-class Lexer extends AbstractLexer
+final class Lexer extends AbstractLexer
 {
     public const T_NONE = 1;
     public const T_STRING = 2;

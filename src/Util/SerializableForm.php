@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
 /**
  * @XmlRoot(name="form")
  */
-class SerializableForm
+final class SerializableForm
 {
     /**
      * @Type("array<Symfony\Component\Form\FormError>")

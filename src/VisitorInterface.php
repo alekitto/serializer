@@ -88,7 +88,7 @@ interface VisitorInterface
      *
      * @return mixed
      */
-    /* public function visitHash($data, Type $type, Context $context); */
+    public function visitHash($data, Type $type, Context $context);
 
     /**
      * @param ClassMetadata $metadata

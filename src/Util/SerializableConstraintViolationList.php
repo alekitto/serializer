@@ -8,7 +8,7 @@ use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\XmlList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class SerializableConstraintViolationList
+final class SerializableConstraintViolationList
 {
     /**
      * @Type("array<Kcs\Serializer\Util\SerializableConstraintViolation>")

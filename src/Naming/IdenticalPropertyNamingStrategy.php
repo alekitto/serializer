@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-class IdenticalPropertyNamingStrategy implements PropertyNamingStrategyInterface
+final class IdenticalPropertyNamingStrategy implements PropertyNamingStrategyInterface
 {
     /**
      * {@inheritdoc}

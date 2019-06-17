@@ -6,7 +6,7 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\RuntimeException;
 
-class HandlerRegistry implements HandlerRegistryInterface
+final class HandlerRegistry implements HandlerRegistryInterface
 {
     /**
      * @var SubscribingHandlerInterface[]

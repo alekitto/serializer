@@ -12,6 +12,8 @@ class SerializeGraphNavigator extends GraphNavigator
 {
     /**
      * @inheritDoc
+     *
+     * @param SerializationContext $context
      */
     public function accept($data, ?Type $type, Context $context)
     {

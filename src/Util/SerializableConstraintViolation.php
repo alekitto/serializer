@@ -12,7 +12,7 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
  * @XmlRoot("violation")
  * @ReadOnly()
  */
-class SerializableConstraintViolation
+final class SerializableConstraintViolation
 {
     /**
      * @Type("string")
