@@ -248,11 +248,6 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public function visitArray($data, Type $type, Context $context)
     {
-        if ($type->countParams() !== 1) {
-            @trigger_error('Calling visitArray with hash map is deprecated. Please call visitHash instead.', E_USER_DEPRECATED);
-            return $this->visitHash($data, $type, $context);
-        }
-
         if (null === $this->document->documentElement && 1 === $this->nodeStack->count()) {
             $this->createRootNode();
         }

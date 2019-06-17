@@ -109,19 +109,6 @@ abstract class Context
         return $this->metadataFactory;
     }
 
-    /**
-     * Gets the context visitor.
-     *
-     * @return VisitorInterface
-     * @deprecated
-     */
-    public function getVisitor(): VisitorInterface
-    {
-        @trigger_error('Using Context::getVisitor() is deprecated. Please use visitor property directly.', E_USER_DEPRECATED);
-
-        return $this->visitor;
-    }
-
     public function getNavigator(): GraphNavigator
     {
         return $this->navigator;

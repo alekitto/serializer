@@ -128,11 +128,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function visitArray($data, Type $type, Context $context)
     {
-        if ($type->countParams() !== 1) {
-            @trigger_error('Calling visitArray with hash map is deprecated. Please call visitHash instead.', E_USER_DEPRECATED);
-            return $this->visitHash($data, $type, $context);
-        }
-
         $currentMetadata = $context->getMetadataStack()->getCurrent();
 
         $entryName = (null !== $currentMetadata && $currentMetadata->xmlEntryName) ? $currentMetadata->xmlEntryName : 'entry';
