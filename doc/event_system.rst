@@ -26,7 +26,7 @@ on the other hand, can be simple callables and do not require a dedicated class.
         public static function getSubscribedEvents()
         {
             return [
-                Events::PRE_SERIALIZE => ['onPreSerialize', 20],
+                PreSerializeEvent::class => ['onPreSerialize', 20],
             ];
         }
 
@@ -39,7 +39,7 @@ on the other hand, can be simple callables and do not require a dedicated class.
     $builder
         ->configureListeners(function(Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher) {
             $dispatcher->addListener(
-                Events::PRE_SERIALIZE,
+                Kcs\Serializer\EventDispatcher\PreSerializeEvent::class,
                 function(Kcs\Serializer\EventDispatcher\PreSerializeEvent $event) {
                     // do something
                 },
@@ -53,34 +53,37 @@ on the other hand, can be simple callables and do not require a dedicated class.
 Events
 ------
 
-serializer.pre_serialize
-~~~~~~~~~~~~~~~~~~~~~~~~
+Kcs\Serializer\EventDispatcher\PreSerializeEvent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 This is dispatched before a type is visited. You have access to the visitor,
 data, and type. Listeners may modify the type that is being used for
 serialization.
 
 **Event Object**: ``Kcs\Serializer\EventDispatcher\PreSerializeEvent``
 
-serializer.post_serialize
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Kcs\Serializer\EventDispatcher\PostSerializeEvent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 This is dispatched right before a type is left. You can for example use this
 to add additional data for an object that you normally do not save inside
 objects such as links.
 
-**Event Object**: ``Kcs\Serializer\EventDispatcher\ObjectEvent``
+**Event Object**: ``Kcs\Serializer\EventDispatcher\PostSerializeEvent``
 
-serializer.pre_deserialize
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Kcs\Serializer\EventDispatcher\PreDeserializeEvent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is dispatched before an object is deserialized. You can use this to
 modify submitted data, or modify the type that is being used for deserialization.
 
 **Event Object**: ``Kcs\Serializer\EventDispatcher\PreDeserializeEvent``
 
-serializer.post_deserialize
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Kcs\Serializer\EventDispatcher\PostDeserializeEvent
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 This is dispatched after a type is processed. You can use it to normalize
 submitted data if you require external services for example, or also to
 perform validation of the submitted data.
 
-**Event Object**: ``Kcs\Serializer\EventDispatcher\ObjectEvent``
+**Event Object**: ``Kcs\Serializer\EventDispatcher\PostDeserializeEvent``

@@ -58,7 +58,3 @@ YAML Reference
                     cdata: false
                     namespace: http://www.w3.org/2005/Atom
                 max_depth: 2
-
-        pre_serialize: [foo, bar]
-        post_serialize: [foo, bar]
-        post_deserialize: [foo, bar]

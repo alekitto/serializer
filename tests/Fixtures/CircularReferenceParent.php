@@ -4,7 +4,6 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\PostDeserialize;
 use Kcs\Serializer\Annotation\Type;
 
 /**
@@ -28,8 +27,7 @@ class CircularReferenceParent
         $this->anotherCollection->add(new CircularReferenceChild('child2', $this));
     }
 
-    /** @PostDeserialize */
-    public function afterDeserialization()
+    public function afterDeserialization(): void
     {
         if (! $this->collection) {
             $this->collection = [];

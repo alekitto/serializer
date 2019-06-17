@@ -117,16 +117,6 @@ class YamlLoader extends AnnotationLoader
             $annotations = \array_merge($annotations, $this->loadProperty($methodConfig));
         }
 
-        if (\in_array($methodName, $config['pre_serialize'], true)) {
-            $annotations[] = new Annotations\PreSerialize();
-        }
-        if (\in_array($methodName, $config['post_serialize'], true)) {
-            $annotations[] = new Annotations\PostSerialize();
-        }
-        if (\in_array($methodName, $config['post_deserialize'], true)) {
-            $annotations[] = new Annotations\PostDeserialize();
-        }
-
         return $annotations;
     }
 
@@ -173,9 +163,6 @@ class YamlLoader extends AnnotationLoader
     {
         return \array_merge([
             'virtual_properties' => [],
-            'pre_serialize' => [],
-            'post_serialize' => [],
-            'post_deserialize' => [],
         ], $this->config[$class] ?? []);
     }
 

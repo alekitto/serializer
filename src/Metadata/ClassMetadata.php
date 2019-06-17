@@ -35,21 +35,6 @@ class ClassMetadata extends BaseClassMetadata
     public $readOnly = false;
 
     /**
-     * @var MethodMetadata[]
-     */
-    public $preSerializeMethods = [];
-
-    /**
-     * @var MethodMetadata[]
-     */
-    public $postSerializeMethods = [];
-
-    /**
-     * @var MethodMetadata[]
-     */
-    public $postDeserializeMethods = [];
-
-    /**
      * @var string
      */
     public $xmlRootName;
@@ -155,21 +140,6 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
-    public function addPreSerializeMethod(MethodMetadata $method): void
-    {
-        $this->preSerializeMethods[] = $method;
-    }
-
-    public function addPostSerializeMethod(MethodMetadata $method): void
-    {
-        $this->postSerializeMethods[] = $method;
-    }
-
-    public function addPostDeserializeMethod(MethodMetadata $method): void
-    {
-        $this->postDeserializeMethods[] = $method;
-    }
-
     public function merge(MetadataInterface $object): void
     {
         if (! $object instanceof self) {
@@ -178,9 +148,6 @@ class ClassMetadata extends BaseClassMetadata
 
         parent::merge($object);
 
-        $this->preSerializeMethods = \array_merge($object->preSerializeMethods, $this->preSerializeMethods);
-        $this->postSerializeMethods = \array_merge($object->postSerializeMethods, $this->postSerializeMethods);
-        $this->postDeserializeMethods = \array_merge($object->postDeserializeMethods, $this->postDeserializeMethods);
         $this->xmlRootName = $this->xmlRootName ?: $object->xmlRootName;
         $this->xmlRootNamespace = $this->xmlRootNamespace ?: $object->xmlRootNamespace;
         $this->xmlNamespaces = \array_merge($object->xmlNamespaces, $this->xmlNamespaces);

@@ -10,6 +10,7 @@ use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\EventDispatcher\PostDeserializeEvent;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Exception\InvalidArgumentException;
@@ -64,7 +65,6 @@ use Kcs\Serializer\Tests\Fixtures\NamedDateTimeInterfaceArraysObject;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithEmptyHash;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
-use Kcs\Serializer\Tests\Fixtures\ObjectWithLifecycleCallbacks;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithNullProperty;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVersionedVirtualProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualProperties;
@@ -568,6 +568,15 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('circular_reference'), $this->serialize($object));
 
         if ($this->hasDeserializer()) {
+            $this->dispatcher->addListener(PostDeserializeEvent::class, static function (PostDeserializeEvent $event): void {
+                $object = $event->getData();
+                if (! $object instanceof CircularReferenceParent) {
+                    return;
+                }
+
+                $object->afterDeserialization();
+            });
+
             $deserialized = $this->deserialize($this->getContent('circular_reference'), \get_class($object));
 
             $col = $this->getField($deserialized, 'collection');
@@ -583,18 +592,6 @@ abstract class BaseSerializationTest extends TestCase
             self::assertEquals('child2', $col[1]->getName());
             self::assertSame($deserialized, $col[0]->getParent());
             self::assertSame($deserialized, $col[1]->getParent());
-        }
-    }
-
-    public function testLifecycleCallbacks(): void
-    {
-        $object = new ObjectWithLifecycleCallbacks();
-        self::assertEquals($this->getContent('lifecycle_callbacks'), $this->serialize($object));
-        self::assertNull($this->getField($object, 'name'));
-
-        if ($this->hasDeserializer()) {
-            $deserialized = $this->deserialize($this->getContent('lifecycle_callbacks'), \get_class($object));
-            self::assertEquals($object, $deserialized);
         }
     }
 

@@ -186,21 +186,6 @@ large object graph.
 Change the behavior of the property exclusion. The default behavior is to skip
 the property, but can be set to serialize as null with @OnExclude("null").
 
-@PostDeserialize
-~~~~~~~~~~~~~~~~
-This annotation can be defined on a method which is supposed to be called after
-the object has been deserialized.
-
-@PostSerialize
-~~~~~~~~~~~~~~
-This annotation can be defined on a method which is then called directly after the
-object has been serialized.
-
-@PreSerialize
-~~~~~~~~~~~~~
-This annotation can be defined on a method which is supposed to be called before
-the serialization of the object starts.
-
 @ReadOnly
 ~~~~~~~~~
 This annotation can be defined on a property to indicate that the data of the property

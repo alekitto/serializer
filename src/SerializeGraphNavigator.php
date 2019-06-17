@@ -54,21 +54,9 @@ class SerializeGraphNavigator extends GraphNavigator
             $data = $event->getData();
         }
 
-        if (null !== ($metadata = $this->getMetadataForType($type))) {
-            foreach ($metadata->preSerializeMethods as $method) {
-                $method->getReflection()->invoke($data);
-            }
-        }
-
         $visitor = $context->visitor;
         $visitor->startVisiting($data, $type, $context);
-        $this->callVisitor($data, $type, $context, $metadata);
-
-        if (null !== $metadata) {
-            foreach ($metadata->postSerializeMethods as $method) {
-                $method->getReflection()->invoke($data);
-            }
-        }
+        $this->callVisitor($data, $type, $context, $this->getMetadataForType($type));
 
         if (null !== $this->dispatcher && ! \is_scalar($data)) {
             $this->dispatcher->dispatch(new PostSerializeEvent($context, $data, $type));

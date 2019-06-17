@@ -101,23 +101,9 @@ class AnnotationLoader implements LoaderInterface
 
         $methodAnnotations = $this->getMethodAnnotations($method);
         foreach ($methodAnnotations as $annotation) {
-            switch (true) {
-                case $annotation instanceof Annotation\PreSerialize:
-                    $classMetadata->addPreSerializeMethod(new MethodMetadata($class, $method->name));
-                    break;
-
-                case $annotation instanceof Annotation\PostDeserialize:
-                    $classMetadata->addPostDeserializeMethod(new MethodMetadata($class, $method->name));
-                    break;
-
-                case $annotation instanceof Annotation\PostSerialize:
-                    $classMetadata->addPostSerializeMethod(new MethodMetadata($class, $method->name));
-                    break;
-
-                case $annotation instanceof Annotation\VirtualProperty:
-                    $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
-                    $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
-                    break;
+            if ($annotation instanceof Annotation\VirtualProperty) {
+                $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
+                $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
             }
         }
     }

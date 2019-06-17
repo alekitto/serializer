@@ -28,6 +28,8 @@ class DeserializeGraphNavigator extends GraphNavigator
 
     /**
      * @inheritDoc
+     *
+     * @param DeserializationContext $context
      */
     public function accept($data, ?Type $type, Context $context)
     {
@@ -54,12 +56,6 @@ class DeserializeGraphNavigator extends GraphNavigator
 
         $context->visitor->startVisiting($data, $type, $context);
         $rs = $this->callVisitor($data, $type, $context, $metadata);
-
-        if (null !== $metadata) {
-            foreach ($metadata->postDeserializeMethods as $method) {
-                $method->getReflection()->invoke($rs);
-            }
-        }
 
         if (null !== $this->dispatcher && ! \is_scalar($data)) {
             $this->dispatcher->dispatch(new PostDeserializeEvent($context, $rs, $type));

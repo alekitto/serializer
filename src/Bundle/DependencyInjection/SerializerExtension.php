@@ -2,12 +2,14 @@
 
 namespace Kcs\Serializer\Bundle\DependencyInjection;
 
-use Doctrine\Common\Cache\FilesystemCache;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Parameter;
 
 final class SerializerExtension extends Extension
 {
@@ -25,8 +27,12 @@ final class SerializerExtension extends Extension
             ;
         }
 
-        if (! $container->getParameter('kernel.debug') && \class_exists(FilesystemCache::class)) {
-            $container->register('kcs_serializer.metadata.cache', FilesystemCache::class)
+        if (! $container->getParameter('kernel.debug') && \class_exists(AbstractAdapter::class)) {
+            $container->register('kcs_serializer.metadata.cache', AdapterInterface::class)
+                ->setFactory(AbstractAdapter::class.'::createSystemCache')
+                ->addArgument('')
+                ->addArgument(0)
+                ->addArgument(new Parameter('container.build_id'))
                 ->addArgument('%kernel.cache_dir%/kcs_serializer')
             ;
         }
