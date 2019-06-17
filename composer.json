@@ -58,6 +58,7 @@
         "symfony/framework-bundle": "^4.3",
         "symfony/http-kernel": "^4.3",
         "symfony/phpunit-bridge": "^4.3",
+        "symfony/property-info": "^4.3",
         "symfony/serializer": "^4.3",
         "symfony/translation": "^4.3",
         "symfony/validator": "^4.3",

@@ -3,6 +3,9 @@
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\DoctrinePHPCRTypeLoader;
+use Kcs\Serializer\Metadata\Loader\DoctrineTypeLoader;
+use Kcs\Serializer\Metadata\Loader\PropertyInfoTypeLoader;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -60,5 +63,35 @@ class MappingLoaderPass implements CompilerPassInterface
         $container->getDefinition('kcs_serializer.metadata.loader')
             ->replaceArgument(0, $loaders)
         ;
+
+        if ($container->hasDefinition('property_info')) {
+            $container->register('.kcs_serializer.property_info.metadata.loader')
+                ->setPublic(false)
+                ->setClass(PropertyInfoTypeLoader::class)
+                ->setDecoratedService('kcs_serializer.metadata.loader')
+                ->addArgument(new Reference('.kcs_serializer.property_info.metadata.loader.inner'))
+                ->addArgument(new Reference('property_info'))
+            ;
+        }
+
+        if ($container->hasDefinition('doctrine_phpcr')) {
+            $container->register('.kcs_serializer.doctrine_phpcr.metadata.loader')
+                ->setPublic(false)
+                ->setClass(DoctrinePHPCRTypeLoader::class)
+                ->setDecoratedService('kcs_serializer.metadata.loader')
+                ->addArgument(new Reference('.kcs_serializer.doctrine_phpcr.metadata.loader.inner'))
+                ->addArgument(new Reference('doctrine_phpcr'))
+            ;
+        }
+
+        if ($container->hasDefinition('doctrine')) {
+            $container->register('.kcs_serializer.doctrine.metadata.loader')
+                ->setPublic(false)
+                ->setClass(DoctrineTypeLoader::class)
+                ->setDecoratedService('kcs_serializer.metadata.loader')
+                ->addArgument(new Reference('.kcs_serializer.doctrine.metadata.loader.inner'))
+                ->addArgument(new Reference('doctrine'))
+            ;
+        }
     }
 }
