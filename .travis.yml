@@ -18,5 +18,6 @@ install: composer update $COMPOSER_FLAGS --prefer-dist --no-progress
 script: if [[ "$TRAVIS_PHP_VERSION" == "7.3" && -z "$SYMFONY_VERSION" && -z "$COMPOSER_FLAGS" ]]; then bin/phpunit --coverage-clover=coverage.clover; else bin/phpunit; fi
 
 after_success:
+    - bash <(curl -s https://codecov.io/bash)
     - wget https://scrutinizer-ci.com/ocular.phar
     - if [ -f coverage.clover ]; then php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
