@@ -11,7 +11,7 @@ class DateHandlerTest extends AbstractHandlerTest
 {
     public function testGetSubscribingMethodsShouldReturnAllTypes(): void
     {
-        self::assertCount(9, \iterator_to_array($this->handler::getSubscribingMethods()));
+        self::assertCount(10, \iterator_to_array($this->handler::getSubscribingMethods()));
     }
 
     public function testSerializeDateTimeShouldUseFormatTheDateTimeObject(): void
@@ -70,6 +70,17 @@ class DateHandlerTest extends AbstractHandlerTest
             new Chronos('2018-12-12T22:00:00Z'),
             $this->handler->deserializeChronos($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(\DateTime::class), $this->context->reveal())
         );
+    }
+
+    public function testDeserializeDateInterval(): void
+    {
+        $interval = $this->handler->deserializeDateInterval($this->visitor->reveal(), 'P1W');
+        self::assertEquals(new \DateInterval('P7D'), $interval);
+
+        $interval = $this->handler->deserializeDateInterval($this->visitor->reveal(), '-P1Y');
+        $expected = new \DateInterval('P1Y');
+        $expected->invert = 1;
+        self::assertEquals($expected, $interval);
     }
 
     protected function createHandler(): SubscribingHandlerInterface

@@ -12,6 +12,8 @@ use Kcs\Serializer\XmlSerializationVisitor;
 
 class DateHandler implements SubscribingHandlerInterface
 {
+    private const DATEINTERVAL_FORMAT = '%RP%yY%mM%dDT%hH%iM%sS';
+
     /**
      * @var string
      */
@@ -53,10 +55,17 @@ class DateHandler implements SubscribingHandlerInterface
                 'method' => 'serializeDateTime',
             ];
         }
+
         yield [
             'type' => \DateInterval::class,
             'direction' => Direction::DIRECTION_SERIALIZATION,
             'method' => 'serializeDateInterval',
+        ];
+
+        yield [
+            'type' => \DateInterval::class,
+            'direction' => Direction::DIRECTION_DESERIALIZATION,
+            'method' => 'deserializeDateInterval',
         ];
 
         yield [
@@ -97,6 +106,22 @@ class DateHandler implements SubscribingHandlerInterface
         return $this->serialize($visitor, $this->formatInterval($date), $type, $context);
     }
 
+    public function deserializeDateInterval(VisitorInterface $visitor, $value): \DateInterval
+    {
+        $negative = false;
+        if (isset($value[0]) && ('+' === $value[0] || '-' === $value[0])) {
+            $negative = '-' === $value[0];
+            $value = \substr($value, 1);
+        }
+
+        $interval = new \DateInterval($value);
+        if ($negative) {
+            $interval->invert = 1;
+        }
+
+        return $interval;
+    }
+
     public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type): ?\DateTimeInterface
     {
         return $this->deserializeDateTimeInterface(\DateTime::class, $data, $type);
@@ -120,40 +145,24 @@ class DateHandler implements SubscribingHandlerInterface
      * @param \DateInterval $dateInterval
      *
      * @return string
+     *
+     * @internal
      */
     public function formatInterval(\DateInterval $dateInterval): string
     {
-        $format = 'P';
+        $formatted = $dateInterval->format(self::DATEINTERVAL_FORMAT);
+        $formatted = \preg_replace('/(?<=\D)0[A-Z]/', '', $formatted);
+        $formatted = \str_replace('+', '', $formatted);
 
-        if (0 < $dateInterval->y) {
-            $format .= $dateInterval->y.'Y';
+        if ('PT' === $formatted) {
+            $formatted = 'PT0S';
         }
 
-        if (0 < $dateInterval->m) {
-            $format .= $dateInterval->m.'M';
+        if ('T' === \substr($formatted, -1)) {
+            $formatted = \substr($formatted, 0, -1);
         }
 
-        if (0 < $dateInterval->d) {
-            $format .= $dateInterval->d.'D';
-        }
-
-        if (0 < $dateInterval->h || 0 < $dateInterval->i || 0 < $dateInterval->s) {
-            $format .= 'T';
-        }
-
-        if (0 < $dateInterval->h) {
-            $format .= $dateInterval->h.'H';
-        }
-
-        if (0 < $dateInterval->i) {
-            $format .= $dateInterval->i.'M';
-        }
-
-        if (0 < $dateInterval->s) {
-            $format .= $dateInterval->s.'S';
-        }
-
-        return $format;
+        return $formatted;
     }
 
     private function deserializeDateTimeInterface(string $class, $data, Type $type): ?\DateTimeInterface
