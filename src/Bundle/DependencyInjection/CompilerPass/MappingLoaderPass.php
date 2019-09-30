@@ -54,6 +54,7 @@ class MappingLoaderPass implements CompilerPassInterface
 
         if ($container->has('annotation_reader')) {
             $definition = new Definition(AnnotationLoader::class);
+            $definition->setLazy(true);
             $definition->addMethodCall('setReader', [new Reference('annotation_reader')]);
             $container->setDefinition('kcs_serializer.metadata.loader.annotations', $definition);
 
@@ -67,6 +68,7 @@ class MappingLoaderPass implements CompilerPassInterface
         if ($container->hasDefinition('property_info')) {
             $container->register('.kcs_serializer.property_info.metadata.loader')
                 ->setPublic(false)
+                ->setLazy(true)
                 ->setClass(PropertyInfoTypeLoader::class)
                 ->setDecoratedService('kcs_serializer.metadata.loader')
                 ->addArgument(new Reference('.kcs_serializer.property_info.metadata.loader.inner'))
@@ -77,6 +79,7 @@ class MappingLoaderPass implements CompilerPassInterface
         if ($container->hasDefinition('doctrine_phpcr')) {
             $container->register('.kcs_serializer.doctrine_phpcr.metadata.loader')
                 ->setPublic(false)
+                ->setLazy(true)
                 ->setClass(DoctrinePHPCRTypeLoader::class)
                 ->setDecoratedService('kcs_serializer.metadata.loader')
                 ->addArgument(new Reference('.kcs_serializer.doctrine_phpcr.metadata.loader.inner'))
@@ -87,6 +90,7 @@ class MappingLoaderPass implements CompilerPassInterface
         if ($container->hasDefinition('doctrine')) {
             $container->register('.kcs_serializer.doctrine.metadata.loader')
                 ->setPublic(false)
+                ->setLazy(true)
                 ->setClass(DoctrineTypeLoader::class)
                 ->setDecoratedService('kcs_serializer.metadata.loader')
                 ->addArgument(new Reference('.kcs_serializer.doctrine.metadata.loader.inner'))
