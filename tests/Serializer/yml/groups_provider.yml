@@ -1,0 +1,6 @@
+foo: foo
+obj:
+    virt: virt_2
+    foo: foo
+    foobar: foobar
+    baz: baz

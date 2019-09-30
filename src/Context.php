@@ -78,6 +78,33 @@ abstract class Context
         return new static();
     }
 
+    public function createChildContext(array $attributes = []): self
+    {
+        if (! $this->initialized) {
+            throw new \LogicException('Cannot create a child context of an uninitialized context.');
+        }
+
+        $obj = new static();
+
+        $obj->attributes = clone $this->attributes;
+        foreach ($attributes as $key => $value) {
+            $obj->attributes->set($key, $value);
+        }
+
+        $obj->format = $this->format;
+        $obj->visitor = $this->visitor;
+        $obj->navigator = $this->navigator;
+        $obj->metadataFactory = $this->metadataFactory;
+        $obj->metadataStack = $this->metadataStack;
+
+        $obj->addVersionExclusionStrategy();
+        $obj->addGroupsExclusionStrategy();
+
+        $obj->initialized = true;
+
+        return $obj;
+    }
+
     public function initialize(
         string $format,
         VisitorInterface $visitor,

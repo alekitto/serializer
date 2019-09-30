@@ -28,6 +28,14 @@ class SerializationContext extends Context
         $this->visitingSet = new \SplObjectStorage();
     }
 
+    public function createChildContext(array $attributes = []): Context
+    {
+        $obj = parent::createChildContext($attributes);
+        $obj->visitingSet = $this->visitingSet;
+
+        return $obj;
+    }
+
     public function startVisiting($object): void
     {
         $this->visitingSet->attach($object);

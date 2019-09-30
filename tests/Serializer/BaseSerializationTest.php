@@ -52,6 +52,7 @@ use Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle;
 use Kcs\Serializer\Tests\Fixtures\Garage;
 use Kcs\Serializer\Tests\Fixtures\GetSetObject;
 use Kcs\Serializer\Tests\Fixtures\GroupsObject;
+use Kcs\Serializer\Tests\Fixtures\GroupsProvider;
 use Kcs\Serializer\Tests\Fixtures\GroupsUser;
 use Kcs\Serializer\Tests\Fixtures\IndexedCommentsBlogPost;
 use Kcs\Serializer\Tests\Fixtures\InitializedBlogPostConstructor;
@@ -1055,6 +1056,13 @@ abstract class BaseSerializationTest extends TestCase
         $list->add(new AuthorChild('Bar'));
 
         self::assertEquals($this->getContent('object_subclass_with_additional_field'), $this->serialize($list));
+    }
+
+    public function testGroupsAreProvidedIfObjectImplementsSerializationGroupsProvider(): void
+    {
+        $obj = new GroupsProvider();
+
+        self::assertEquals($this->getContent('groups_provider'), $this->serialize($obj));
     }
 
     abstract protected function getContent(string $key): string;
