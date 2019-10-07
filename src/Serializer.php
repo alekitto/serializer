@@ -111,6 +111,23 @@ class Serializer implements SerializerInterface
     }
 
     /**
+     * Whether the serializer supports the given format.
+     *
+     * @param string $format
+     * @param int    $direction
+     *
+     * @return bool
+     */
+    public function supports(string $format, int $direction): bool
+    {
+        if ($direction === Direction::DIRECTION_SERIALIZATION ) {
+            return isset($this->serializationVisitors[$format]);
+        }
+
+        return isset($this->deserializationVisitors[$format]);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function normalize($data, SerializationContext $context = null): array

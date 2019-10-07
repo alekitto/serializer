@@ -5,6 +5,7 @@ namespace Kcs\Serializer\Tests\Adapter\Symfony;
 use Kcs\Serializer\Adapter\Symfony\Serializer;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\SerializationContext;
+use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Tests\Fixtures\GetSetObject;
 use Kcs\Serializer\Type\Type;
@@ -132,5 +133,23 @@ class SerializerTest extends TestCase
             'json',
             ['object_to_populate' => $obj]
         ));
+    }
+
+    public function testEncode()
+    {
+        $serializer = new Serializer(SerializerBuilder::create()->addDefaultSerializationVisitors()->build());
+        $data = ['foo', [5, 3]];
+
+        $result = $serializer->encode($data, 'json');
+        $this->assertEquals(\json_encode($data), $result);
+    }
+
+    public function testDecode()
+    {
+        $serializer = new Serializer(SerializerBuilder::create()->addDefaultDeserializationVisitors()->build());
+        $data = ['foo', [5, 3]];
+
+        $result = $serializer->decode(\json_encode($data), 'json');
+        $this->assertEquals($data, $result);
     }
 }

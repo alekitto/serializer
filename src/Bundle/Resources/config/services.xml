@@ -110,7 +110,7 @@
         <service alias="kcs_serializer.naming.cache_strategy" id="kcs_serializer.naming.strategy" />
         <service alias="kcs_serializer.naming_strategy.camel_case" id="kcs_serializer.naming_strategy" />
 
-        <service alias="kcs_serializer.serializer" id="Kcs\Serializer\Serializer" public="true"/>
-        <service alias="kcs_serializer.serializer" id="Kcs\Serializer\SerializerInterface" public="true"/>
+        <service alias="kcs_serializer.serializer" id="Kcs\Serializer\Serializer" public="true" />
+        <service alias="kcs_serializer.serializer" id="Kcs\Serializer\SerializerInterface" public="true" />
     </services>
 </container>
