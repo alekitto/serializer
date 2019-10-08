@@ -124,7 +124,7 @@ interface VisitorInterface
      * @param Type    $type
      * @param Context $context
      */
-    public function startVisiting($data, Type $type, Context $context): void;
+    public function startVisiting(&$data, Type $type, Context $context): void;
 
     /**
      * Called after all properties of the object have been visited.

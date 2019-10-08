@@ -281,7 +281,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function startVisiting($data, Type $type, Context $context): void
+    public function startVisiting(&$data, Type $type, Context $context): void
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
