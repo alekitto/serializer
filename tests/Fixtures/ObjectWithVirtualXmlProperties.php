@@ -7,10 +7,7 @@ use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Since;
 use Kcs\Serializer\Annotation\Until;
 use Kcs\Serializer\Annotation\VirtualProperty;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\XmlValue;
+use Kcs\Serializer\Annotation\Xml;
 
 class ObjectWithVirtualXmlProperties
 {
@@ -18,7 +15,7 @@ class ObjectWithVirtualXmlProperties
      * @VirtualProperty
      * @SerializedName("foo")
      * @Groups({"attributes"})
-     * @XmlAttribute
+     * @Xml\Attribute
      */
     public function getVirualXmlAttributeValue()
     {
@@ -29,7 +26,7 @@ class ObjectWithVirtualXmlProperties
      * @VirtualProperty
      * @SerializedName("xml-value")
      * @Groups({"values"})
-     * @XmlValue
+     * @Xml\Value
      */
     public function getVirualXmlValue()
     {
@@ -40,7 +37,7 @@ class ObjectWithVirtualXmlProperties
      * @VirtualProperty
      * @SerializedName("list")
      * @Groups({"list"})
-     * @XmlList(inline = true, entry = "val")
+     * @Xml\XmlList(inline = true, entry = "val")
      */
     public function getVirualXmlList()
     {
@@ -51,7 +48,7 @@ class ObjectWithVirtualXmlProperties
      * @VirtualProperty
      * @SerializedName("map")
      * @Groups({"map"})
-     * @XmlMap(keyAttribute = "key")
+     * @Xml\Map(keyAttribute = "key")
      */
     public function getVirualXmlMap()
     {

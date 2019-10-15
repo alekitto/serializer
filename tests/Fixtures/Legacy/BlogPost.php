@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Kcs\Serializer\Tests\Fixtures;
+namespace Kcs\Serializer\Tests\Fixtures\Legacy;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Annotation\AccessType;
@@ -8,101 +8,104 @@ use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\OnExclude;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\XmlElement;
+use Kcs\Serializer\Annotation\XmlList;
+use Kcs\Serializer\Annotation\XmlMap;
+use Kcs\Serializer\Annotation\XmlNamespace;
+use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Tests\Fixtures\Author;
+use Kcs\Serializer\Tests\Fixtures\Comment;
+use Kcs\Serializer\Tests\Fixtures\Publisher;
+use Kcs\Serializer\Tests\Fixtures\Tag;
 use PhpCollection\Map;
 use PhpCollection\Sequence;
 
 /**
- * @Xml\Root("blog-post")
- * @Xml\XmlNamespace(uri="http://example.com/namespace")
- * @Xml\XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
- * @Xml\XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
- * @Xml\XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
+ * @XmlRoot("blog-post")
+ * @XmlNamespace(uri="http://example.com/namespace")
+ * @XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
+ * @XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
+ * @XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
  * @AccessType("property")
  */
-class NonAnnotatedBlogPost
+class BlogPost
 {
     /**
-     * @Xml\Element(cdata=false)
+     * @Type("string")
+     * @XmlElement(cdata=false)
      * @Groups({"comments","post"})
      */
     private $id = 'what_a_nice_id';
 
     /**
+     * @Type("string")
      * @Groups({"comments","post"})
-     * @Xml\Element(namespace="http://purl.org/dc/elements/1.1/");
+     * @XmlElement(namespace="http://purl.org/dc/elements/1.1/");
      * @OnExclude("skip")
      */
     private $title;
 
     /**
-     * @var \DateTimeInterface
-     *
-     * @Xml\Attribute
+     * @Type("DateTime")
+     * @XmlAttribute
      */
     private $createdAt;
 
     /**
+     * @Type("boolean")
      * @SerializedName("is_published")
-     * @Xml\Attribute
+     * @XmlAttribute
      * @Groups({"post"})
      */
     private $published;
 
     /**
-     * @var string
-     *
-     * @Xml\Attribute(namespace="http://schemas.google.com/g/2005")
+     * @Type("string")
+     * @XmlAttribute(namespace="http://schemas.google.com/g/2005")
      * @Groups({"post"})
      */
     private $etag;
 
     /**
-     * @var ArrayCollection<Comment>
-     *
-     * @Xml\XmlList(inline=true, entry="comment")
+     * @Type("ArrayCollection<Kcs\Serializer\Tests\Fixtures\Comment>")
+     * @XmlList(inline=true, entry="comment")
      * @Groups({"comments"})
      */
     private $comments;
 
     /**
-     * @var Sequence<Comment>
-     *
-     * @Xml\XmlList(inline=true, entry="comment2")
+     * @Type("PhpCollection\Sequence<Kcs\Serializer\Tests\Fixtures\Comment>")
+     * @XmlList(inline=true, entry="comment2")
      * @Groups({"comments"})
      */
     private $comments2;
 
     /**
-     * @var Map<string,string>
-     *
-     * @Xml\Map(keyAttribute = "key")
+     * @Type("PhpCollection\Map<string,string>")
+     * @XmlMap(keyAttribute = "key")
      */
     private $metadata;
 
     /**
-     * @var Author
-     *
+     * @Type("Kcs\Serializer\Tests\Fixtures\Author")
      * @Groups({"post"})
-     * @Xml\Element(namespace="http://www.w3.org/2005/Atom")
+     * @XmlElement(namespace="http://www.w3.org/2005/Atom")
      */
     private $author;
 
     /**
-     * @var string
-     *
      * @Type("Kcs\Serializer\Tests\Fixtures\Publisher")
      */
     private $publisher;
 
     /**
-     * @var array<Tag>
-     *
-     * @Xml\XmlList(inline=true, entry="tag", namespace="http://purl.org/dc/elements/1.1/");
+     * @Type("array<Kcs\Serializer\Tests\Fixtures\Tag>")
+     * @XmlList(inline=true, entry="tag", namespace="http://purl.org/dc/elements/1.1/");
      */
     private $tag;
 
-    public function __construct(string $title, Author $author, \DateTime $createdAt, Publisher $publisher)
+    public function __construct($title, Author $author, \DateTime $createdAt, Publisher $publisher)
     {
         $this->title = $title;
         $this->author = $author;
@@ -119,11 +122,6 @@ class NonAnnotatedBlogPost
     public function setPublished()
     {
         $this->published = true;
-    }
-
-    public function isPublished(): bool
-    {
-        return $this->published;
     }
 
     public function getMetadata()

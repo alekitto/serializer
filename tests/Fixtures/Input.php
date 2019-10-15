@@ -5,13 +5,13 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation as Serializer;
 
 /**
- * @Serializer\XmlRoot("input")
+ * @Serializer\Xml\Root("input")
  * @Serializer\AccessType("property")
  */
 class Input
 {
     /**
-     * @Serializer\XmlAttributeMap
+     * @Serializer\Xml\AttributeMap
      */
     private $attributes;
 

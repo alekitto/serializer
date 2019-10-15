@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Kcs\Serializer\Tests\Fixtures;
+namespace Kcs\Serializer\Tests\Fixtures\Legacy;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Xml\KeyValuePairs;
+use Kcs\Serializer\Annotation\XmlKeyValuePairs;
 
 /**
  * @AccessType("property")
@@ -12,7 +12,7 @@ class ObjectWithXmlKeyValuePairs
 {
     /**
      * @var array
-     * @KeyValuePairs()
+     * @XmlKeyValuePairs
      */
     private $array = [
         'key-one' => 'foo',

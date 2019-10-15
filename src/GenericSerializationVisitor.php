@@ -100,7 +100,7 @@ class GenericSerializationVisitor extends AbstractVisitor
             if ($onlyValues) {
                 $rs[] = $v;
             } else {
-                $rs[ $k ] = $v;
+                $rs[$k] = $v;
             }
         }
 

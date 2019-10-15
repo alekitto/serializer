@@ -3,14 +3,12 @@
 namespace Kcs\Serializer\Util;
 
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * @XmlRoot(name="form")
+ * @Xml\Root(name="form")
  */
 final class SerializableForm
 {
@@ -23,7 +21,7 @@ final class SerializableForm
 
     /**
      * @Type("array<Kcs\Serializer\Util\SerializableForm>")
-     * @XmlList(entry="form", inline=true)
+     * @Xml\XmlList(entry="form", inline=true)
      *
      * @var static[]
      */
@@ -31,7 +29,7 @@ final class SerializableForm
 
     /**
      * @Type("string")
-     * @XmlAttribute()
+     * @Xml\Attribute()
      *
      * @var string
      */

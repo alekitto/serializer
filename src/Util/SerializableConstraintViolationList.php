@@ -5,14 +5,14 @@ namespace Kcs\Serializer\Util;
 use Kcs\Serializer\Annotation\Inline;
 use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlList;
+use Kcs\Serializer\Annotation\Xml;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 final class SerializableConstraintViolationList
 {
     /**
      * @Type("array<Kcs\Serializer\Util\SerializableConstraintViolation>")
-     * @XmlList(entry="violation", inline=true)
+     * @Xml\XmlList(entry="violation", inline=true)
      * @Inline()
      * @ReadOnly()
      *

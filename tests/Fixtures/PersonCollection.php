@@ -5,18 +5,17 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 
 /**
- * @XmlRoot("person_collection")
+ * @Xml\Root("person_collection")
  * @AccessType("property")
  */
 class PersonCollection
 {
     /**
      * @Type("ArrayCollection<Kcs\Serializer\Tests\Fixtures\Person>")
-     * @XmlList(entry = "person", inline = true)
+     * @Xml\XmlList(entry = "person", inline = true)
      */
     public $persons;
 

@@ -65,7 +65,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
      *
      * @param ClassMetadata $metadata
      *
-     * @return null|ObjectManager
+     * @return ObjectManager|null
      */
     protected function getObjectManager(ClassMetadata $metadata): ?ObjectManager
     {

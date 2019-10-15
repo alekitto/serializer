@@ -5,16 +5,13 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\Accessor;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\ReadOnly;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 
-/** @XmlRoot("post") */
+/** @Xml\Root("post") */
 class IndexedCommentsBlogPost
 {
     /**
-     * @XmlMap(keyAttribute="author-name", inline=true, entry="comments")
+     * @Xml\Map(keyAttribute="author-name", inline=true, entry="comments")
      * @Accessor(getter="getCommentsIndexedByAuthor")
      * @ReadOnly()
      */
@@ -49,10 +46,10 @@ class IndexedCommentsBlogPost
  */
 class IndexedCommentsList
 {
-    /** @XmlList(inline=true, entry="comment") */
+    /** @Xml\XmlList(inline=true, entry="comment") */
     private $comments = [];
 
-    /** @XmlAttribute */
+    /** @Xml\Attribute */
     private $count = 0;
 
     public function addComment(Comment $comment)

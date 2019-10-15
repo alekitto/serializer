@@ -4,11 +4,10 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 
 /**
- * @XmlRoot("test-object", namespace="http://example.com/namespace")
+ * @Xml\Root("test-object", namespace="http://example.com/namespace")
  * @AccessType("property")
  */
 class ObjectWithXmlRootNamespace
@@ -20,13 +19,13 @@ class ObjectWithXmlRootNamespace
 
     /**
      * @Type("DateTime")
-     * @XmlAttribute
+     * @Xml\Attribute
      */
     private $createdAt;
 
     /**
      * @Type("string")
-     * @XmlAttribute
+     * @Xml\Attribute
      */
     private $etag;
 
@@ -37,7 +36,7 @@ class ObjectWithXmlRootNamespace
 
     /**
      * @Type("string")
-     * @XmlAttribute
+     * @Xml\Attribute
      */
     private $language;
 

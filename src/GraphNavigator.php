@@ -34,7 +34,7 @@ abstract class GraphNavigator
     ];
 
     /**
-     * @var null|EventDispatcherInterface
+     * @var EventDispatcherInterface|null
      */
     protected $dispatcher;
 
@@ -111,7 +111,6 @@ abstract class GraphNavigator
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
                 throw new RuntimeException($msg);
-
             default:
                 if (null === $metadata) {
                     // Missing handler for custom type
@@ -132,7 +131,7 @@ abstract class GraphNavigator
      *
      * @param Type $type
      *
-     * @return null|ClassMetadata
+     * @return ClassMetadata|null
      */
     protected function getMetadataForType(Type $type): ?ClassMetadata
     {
@@ -146,6 +145,7 @@ abstract class GraphNavigator
         }
 
         $metadata = $this->metadataFactory->getMetadataFor($name);
+
         return $type->metadata = $metadata;
     }
 

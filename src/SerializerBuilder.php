@@ -73,7 +73,7 @@ class SerializerBuilder
     private $propertyNamingStrategy;
 
     /**
-     * @var null|CacheItemPoolInterface
+     * @var CacheItemPoolInterface|null
      */
     private $cache;
 
@@ -83,7 +83,7 @@ class SerializerBuilder
     private $annotationReader;
 
     /**
-     * @var null|LoaderInterface
+     * @var LoaderInterface|null
      */
     private $metadataLoader;
 

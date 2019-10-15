@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Kcs\Serializer\Annotation;
+namespace Kcs\Serializer\Annotation\Xml;
 
-abstract class XmlCollection
+abstract class Collection
 {
     /**
      * @var string

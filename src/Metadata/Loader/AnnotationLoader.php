@@ -5,7 +5,6 @@ namespace Kcs\Serializer\Metadata\Loader;
 use Doctrine\Common\Annotations\Reader;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
-use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;

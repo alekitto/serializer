@@ -2,11 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation as Serializer;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Exclusion\GroupsExclusionStrategy;
 use Kcs\Serializer\Exclusion\SerializationGroupProviderInterface;
 use Kcs\Serializer\SerializationContext;
 

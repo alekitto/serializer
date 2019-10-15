@@ -2,19 +2,14 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Kcs\Serializer\Annotation\Xml\Element;
+
+@\trigger_error('XmlElement annotation is deprecated. Please use Xml\Element instead.', E_USER_DEPRECATED);
+
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-final class XmlElement
+class XmlElement extends Element
 {
-    /**
-     * @var bool
-     */
-    public $cdata = true;
-
-    /**
-     * @var string
-     */
-    public $namespace;
 }

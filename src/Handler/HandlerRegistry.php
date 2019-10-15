@@ -11,7 +11,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
     /**
      * @var SubscribingHandlerInterface[]
      */
-    protected $handlers;
+    private $handlers;
 
     public static function getDefaultMethod(int $direction, string $type): string
     {

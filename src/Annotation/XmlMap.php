@@ -2,14 +2,14 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Kcs\Serializer\Annotation\Xml\Map;
+
+@\trigger_error('XmlMap annotation is deprecated. Please use Xml\Map instead.', E_USER_DEPRECATED);
+
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-final class XmlMap extends XmlCollection
+class XmlMap extends Map
 {
-    /**
-     * @var string
-     */
-    public $keyAttribute = '_key';
 }

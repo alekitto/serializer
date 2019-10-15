@@ -2,10 +2,12 @@
 
 namespace Kcs\Serializer\Annotation;
 
+@\trigger_error('XmlList annotation is deprecated. Please use Xml\XmlList instead.', E_USER_DEPRECATED);
+
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-final class XmlList extends XmlCollection
+class XmlList extends Xml\XmlList
 {
 }

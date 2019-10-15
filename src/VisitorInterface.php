@@ -101,8 +101,7 @@ interface VisitorInterface
      */
     public function visitObject(
         ClassMetadata $metadata,
-        $data, Type
-        $type,
+        $data, Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
     );

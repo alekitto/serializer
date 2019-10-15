@@ -12,7 +12,7 @@ use Kcs\Serializer\Type\Type;
 class SerializeGraphNavigator extends GraphNavigator
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param SerializationContext $context
      */
@@ -30,7 +30,7 @@ class SerializeGraphNavigator extends GraphNavigator
         if ($data instanceof SerializationGroupProviderInterface) {
             $childGroups = $data->getSerializationGroups($context);
             $context = $context->createChildContext([
-                'groups' => ! \is_array($childGroups) ? \iterator_to_array($childGroups, false) : $childGroups
+                'groups' => ! \is_array($childGroups) ? \iterator_to_array($childGroups, false) : $childGroups,
             ]);
         }
 
