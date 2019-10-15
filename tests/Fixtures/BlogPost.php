@@ -8,28 +8,23 @@ use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\OnExclude;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlElement;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\XmlNamespace;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 use PhpCollection\Map;
 use PhpCollection\Sequence;
 
 /**
- * @XmlRoot("blog-post")
- * @XmlNamespace(uri="http://example.com/namespace")
- * @XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
- * @XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
- * @XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
+ * @Xml\Root("blog-post")
+ * @Xml\XmlNamespace(uri="http://example.com/namespace")
+ * @Xml\XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
+ * @Xml\XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
+ * @Xml\XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
  * @AccessType("property")
  */
 class BlogPost
 {
     /**
      * @Type("string")
-     * @XmlElement(cdata=false)
+     * @Xml\Element(cdata=false)
      * @Groups({"comments","post"})
      */
     private $id = 'what_a_nice_id';
@@ -37,56 +32,56 @@ class BlogPost
     /**
      * @Type("string")
      * @Groups({"comments","post"})
-     * @XmlElement(namespace="http://purl.org/dc/elements/1.1/");
+     * @Xml\Element(namespace="http://purl.org/dc/elements/1.1/");
      * @OnExclude("skip")
      */
     private $title;
 
     /**
      * @Type("DateTime")
-     * @XmlAttribute
+     * @Xml\Attribute
      */
     private $createdAt;
 
     /**
      * @Type("boolean")
      * @SerializedName("is_published")
-     * @XmlAttribute
+     * @Xml\Attribute
      * @Groups({"post"})
      */
     private $published;
 
     /**
      * @Type("string")
-     * @XmlAttribute(namespace="http://schemas.google.com/g/2005")
+     * @Xml\Attribute(namespace="http://schemas.google.com/g/2005")
      * @Groups({"post"})
      */
     private $etag;
 
     /**
      * @Type("ArrayCollection<Kcs\Serializer\Tests\Fixtures\Comment>")
-     * @XmlList(inline=true, entry="comment")
+     * @Xml\XmlList(inline=true, entry="comment")
      * @Groups({"comments"})
      */
     private $comments;
 
     /**
      * @Type("PhpCollection\Sequence<Kcs\Serializer\Tests\Fixtures\Comment>")
-     * @XmlList(inline=true, entry="comment2")
+     * @Xml\XmlList(inline=true, entry="comment2")
      * @Groups({"comments"})
      */
     private $comments2;
 
     /**
      * @Type("PhpCollection\Map<string,string>")
-     * @XmlMap(keyAttribute = "key")
+     * @Xml\Map(keyAttribute = "key")
      */
     private $metadata;
 
     /**
      * @Type("Kcs\Serializer\Tests\Fixtures\Author")
      * @Groups({"post"})
-     * @XmlElement(namespace="http://www.w3.org/2005/Atom")
+     * @Xml\Element(namespace="http://www.w3.org/2005/Atom")
      */
     private $author;
 
@@ -97,7 +92,7 @@ class BlogPost
 
     /**
      * @Type("array<Kcs\Serializer\Tests\Fixtures\Tag>")
-     * @XmlList(inline=true, entry="tag", namespace="http://purl.org/dc/elements/1.1/");
+     * @Xml\XmlList(inline=true, entry="tag", namespace="http://purl.org/dc/elements/1.1/");
      */
     private $tag;
 

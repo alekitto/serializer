@@ -47,7 +47,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
     {
-        if ($type->countParams() === 1) {
+        if (1 === $type->countParams()) {
             return $visitor->visitArray($collection->toArray(), $type, $context);
         }
 
@@ -56,7 +56,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
     {
-        if ($type->countParams() === 1) {
+        if (1 === $type->countParams()) {
             return new ArrayCollection($visitor->visitArray($data, $type, $context));
         }
 

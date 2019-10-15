@@ -28,20 +28,20 @@
             <tag name="kernel.event_listener" event="Kcs\Serializer\EventDispatcher\PreSerializeEvent" method="onPreSerialize" priority="20" />
         </service>
 
-        <service class="Kcs\Metadata\Loader\FilesLoader" id="kcs_serializer.metadata.loader.xml">
+        <service class="Kcs\Metadata\Loader\FilesLoader" id="kcs_serializer.metadata.loader.xml" lazy="true">
             <argument type="collection" />
             <argument>Kcs\Serializer\Metadata\Loader\XmlLoader</argument>
         </service>
-        <service class="Kcs\Metadata\Loader\FilesLoader" id="kcs_serializer.metadata.loader.yaml">
+        <service class="Kcs\Metadata\Loader\FilesLoader" id="kcs_serializer.metadata.loader.yaml" lazy="true">
             <argument type="collection" />
             <argument>Kcs\Serializer\Metadata\Loader\YamlLoader</argument>
         </service>
 
-        <service class="Kcs\Metadata\Loader\ChainLoader" id="kcs_serializer.metadata.loader">
+        <service class="Kcs\Metadata\Loader\ChainLoader" id="kcs_serializer.metadata.loader" lazy="true">
             <argument />
         </service>
 
-        <service class="Kcs\Serializer\Metadata\MetadataFactory" id="kcs_serializer.metadata.metadata_factory">
+        <service class="Kcs\Serializer\Metadata\MetadataFactory" id="kcs_serializer.metadata.metadata_factory" lazy="true">
             <argument type="service" id="kcs_serializer.metadata.loader" />
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="kcs_serializer.metadata.cache" on-invalid="null" />

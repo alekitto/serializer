@@ -2,21 +2,14 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Kcs\Serializer\Annotation\Xml\Root;
+
+@\trigger_error('XmlRoot annotation is deprecated. Please use Xml\Root instead.', E_USER_DEPRECATED);
+
 /**
  * @Annotation
  * @Target("CLASS")
  */
-final class XmlRoot
+class XmlRoot extends Root
 {
-    /**
-     * @Required
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var string
-     */
-    public $namespace;
 }

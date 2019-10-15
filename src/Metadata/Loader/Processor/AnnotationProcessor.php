@@ -21,6 +21,8 @@ class AnnotationProcessor
         Annotations\ExclusionPolicy::class => ExclusionPolicyProcessor::class,
         Annotations\XmlNamespace::class => XmlNamespaceProcessor::class,
         Annotations\XmlRoot::class => XmlRootProcessor::class,
+        Annotations\Xml\XmlNamespace::class => XmlNamespaceProcessor::class,
+        Annotations\Xml\Root::class => XmlRootProcessor::class,
 
         /* Property annotations */
         Annotations\Since::class => SinceProcessor::class,
@@ -34,6 +36,13 @@ class AnnotationProcessor
         Annotations\XmlAttribute::class => XmlAttributeProcessor::class,
         Annotations\XmlAttributeMap::class => XmlAttributeMapProcessor::class,
         Annotations\XmlValue::class => XmlValueProcessor::class,
+        Annotations\Xml\Element::class => XmlElementProcessor::class,
+        Annotations\Xml\XmlList::class => XmlCollectionProcessor::class,
+        Annotations\Xml\Map::class => XmlCollectionProcessor::class,
+        Annotations\Xml\KeyValuePairs::class => XmlKeyValuePairsProcessor::class,
+        Annotations\Xml\Attribute::class => XmlAttributeProcessor::class,
+        Annotations\Xml\AttributeMap::class => XmlAttributeMapProcessor::class,
+        Annotations\Xml\Value::class => XmlValueProcessor::class,
         Annotations\Groups::class => GroupsProcessor::class,
         Annotations\Inline::class => InlineProcessor::class,
         Annotations\MaxDepth::class => MaxDepthProcessor::class,

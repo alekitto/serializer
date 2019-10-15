@@ -62,7 +62,6 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         }
     }
 
-
     /**
      * {@inheritdoc}
      */

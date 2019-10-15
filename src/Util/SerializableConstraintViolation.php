@@ -4,19 +4,18 @@ namespace Kcs\Serializer\Util;
 
 use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**
- * @XmlRoot("violation")
+ * @Xml\Root("violation")
  * @ReadOnly()
  */
 final class SerializableConstraintViolation
 {
     /**
      * @Type("string")
-     * @XmlAttribute()
+     * @Xml\Attribute()
      *
      * @var string
      */

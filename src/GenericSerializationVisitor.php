@@ -100,7 +100,7 @@ class GenericSerializationVisitor extends AbstractVisitor
             if ($onlyValues) {
                 $rs[] = $v;
             } else {
-                $rs[ $k ] = $v;
+                $rs[$k] = $v;
             }
         }
 
@@ -154,7 +154,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function startVisiting($data, Type $type, Context $context): void
+    public function startVisiting(&$data, Type $type, Context $context): void
     {
         $this->dataStack->push($this->data);
         $this->data = null;

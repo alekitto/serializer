@@ -4,6 +4,7 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\EventDispatcher\PostSerializeEvent;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
+use Kcs\Serializer\Exclusion\SerializationGroupProviderInterface;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
@@ -11,7 +12,7 @@ use Kcs\Serializer\Type\Type;
 class SerializeGraphNavigator extends GraphNavigator
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param SerializationContext $context
      */
@@ -26,6 +27,13 @@ class SerializeGraphNavigator extends GraphNavigator
 
     protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context)
     {
+        if ($data instanceof SerializationGroupProviderInterface) {
+            $childGroups = $data->getSerializationGroups($context);
+            $context = $context->createChildContext([
+                'groups' => ! \is_array($childGroups) ? \iterator_to_array($childGroups, false) : $childGroups,
+            ]);
+        }
+
         return $context->visitor->visitObject($metadata, $data, $type, $context);
     }
 

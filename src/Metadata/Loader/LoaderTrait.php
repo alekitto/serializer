@@ -8,7 +8,20 @@ trait LoaderTrait
 {
     private function createAnnotationObject(string $name)
     {
-        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.Inflector::classify($name);
+        switch ($className = Inflector::classify($name)) {
+            case 'XmlList':
+            case 'XmlNamespace':
+                $className = 'Xml\\'.$className;
+                break;
+
+            default:
+                if (0 === \strpos($className, 'Xml')) {
+                    $className = 'Xml\\'.\substr($className, 3);
+                }
+                break;
+        }
+
+        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.$className;
 
         return new $annotationClass();
     }

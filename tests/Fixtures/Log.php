@@ -5,25 +5,23 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlMap;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml;
 
 /**
- * @XmlRoot("log")
+ * @Xml\Root("log")
  * @AccessType("property")
  */
 class Log
 {
     /**
      * @SerializedName("author_list")
-     * @XmlMap
+     * @Xml\Map
      * @Type("AuthorList")
      */
     private $authors;
 
     /**
-     * @XmlList(inline=true, entry = "comment")
+     * @Xml\XmlList(inline=true, entry = "comment")
      * @Type("array<Kcs\Serializer\Tests\Fixtures\Comment>")
      */
     private $comments;

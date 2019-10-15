@@ -4,7 +4,6 @@ namespace Kcs\Serializer\Metadata;
 
 use Kcs\Metadata\ClassMetadata as BaseClassMetadata;
 use Kcs\Metadata\MetadataInterface;
-use Kcs\Metadata\MethodMetadata;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 

@@ -83,7 +83,7 @@ final class Parser
             } else {
                 $this->syntaxError();
             }
-        } while (Lexer::T_COMMA === $this->lexer->lookahead['type'] && $this->lexer->moveNext());
+        } while (null !== $this->lexer->lookahead && Lexer::T_COMMA === $this->lexer->lookahead['type'] && $this->lexer->moveNext());
 
         $this->match(Lexer::T_CLOSED_BRACKET);
 
@@ -97,10 +97,13 @@ final class Parser
      */
     private function syntaxError(): void
     {
-        throw new SyntaxErrorException(
-            $this->lexer->getInputUntilPosition(PHP_INT_MAX),
-            $this->lexer->lookahead['value'] ?: 'end of string',
-            (int) $this->lexer->lookahead['position']
-        );
+        $value = null;
+        $position = null;
+        if (null !== $this->lexer->lookahead) {
+            $value = $this->lexer->lookahead['value'];
+            $position = (int) $this->lexer->lookahead['position'];
+        }
+
+        throw new SyntaxErrorException($this->lexer->getInputUntilPosition(PHP_INT_MAX), $value ?? 'end of string', $position);
     }
 }

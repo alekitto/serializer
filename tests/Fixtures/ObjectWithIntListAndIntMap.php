@@ -9,10 +9,10 @@ use Kcs\Serializer\Annotation as Serializer;
  */
 class ObjectWithIntListAndIntMap
 {
-    /** @Serializer\Type("array<integer>") @Serializer\XmlList */
+    /** @Serializer\Type("array<integer>") @Serializer\Xml\XmlList */
     private $list;
 
-    /** @Serializer\Type("array<integer,integer>") @Serializer\XmlMap */
+    /** @Serializer\Type("array<integer,integer>") @Serializer\Xml\Map */
     private $map;
 
     public function __construct(array $list, array $map)

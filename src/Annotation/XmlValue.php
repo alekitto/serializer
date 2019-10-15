@@ -2,14 +2,14 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Kcs\Serializer\Annotation\Xml\Value;
+
+@\trigger_error('XmlValue annotation is deprecated. Please use Xml\Value instead.', E_USER_DEPRECATED);
+
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-final class XmlValue
+class XmlValue extends Value
 {
-    /**
-     * @var bool
-     */
-    public $cdata = true;
 }

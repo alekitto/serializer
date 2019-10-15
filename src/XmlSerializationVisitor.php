@@ -59,12 +59,12 @@ class XmlSerializationVisitor extends AbstractVisitor
         $node = $this->document->createAttribute('xsi:nil');
         $node->value = 'true';
 
-        return $this->currentNodes = [ $node ];
+        return $this->currentNodes = [$node];
     }
 
     public function visitSimpleString($data): array
     {
-        return $this->currentNodes = [ $this->createTextNode((string) $data) ];
+        return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
 
     /**
@@ -75,7 +75,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         /** @var PropertyMetadata $metadata */
         $metadata = $context->getMetadataStack()->getCurrent();
 
-        return $this->currentNodes = [ $this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true) ];
+        return $this->currentNodes = [$this->createTextNode($data, $metadata ? $metadata->xmlElementCData : true)];
     }
 
     /**
@@ -83,7 +83,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public function visitInteger($data, Type $type, Context $context)
     {
-        return $this->currentNodes = [ $this->createTextNode($data) ];
+        return $this->currentNodes = [$this->createTextNode($data)];
     }
 
     /**
@@ -91,7 +91,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public function visitBoolean($data, Type $type, Context $context)
     {
-        return $this->currentNodes = [ $this->createTextNode($data ? 'true' : 'false') ];
+        return $this->currentNodes = [$this->createTextNode($data ? 'true' : 'false')];
     }
 
     /**
@@ -99,7 +99,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public function visitDouble($data, Type $type, Context $context)
     {
-        return $this->currentNodes = [ $this->createTextNode($data) ];
+        return $this->currentNodes = [$this->createTextNode($data)];
     }
 
     /**
@@ -144,23 +144,23 @@ class XmlSerializationVisitor extends AbstractVisitor
         if ($metadata->xmlAttribute) {
             $attributeName = $this->namingStrategy->translateName($metadata);
 
-            $this->currentNodes = [ $this->document->createElement('tmp') ];
+            $this->currentNodes = [$this->document->createElement('tmp')];
             $context->accept($v, $metadata->type);
 
             $node = $this->createAttributeNode($metadata, $attributeName);
             $node->appendChild($this->createTextNode((string) $this->currentNodes[0]->nodeValue));
 
-            return $this->currentNodes = [ $node ];
+            return $this->currentNodes = [$node];
         }
 
         if ($metadata->xmlValue) {
-            $this->currentNodes = [ $this->document->createElement('tmp') ];
+            $this->currentNodes = [$this->document->createElement('tmp')];
             $context->accept($v, $metadata->type);
 
             $node = $this->currentNodes[0]->childNodes->item(0);
             $this->currentNodes[0]->removeChild($node);
 
-            return $this->currentNodes = [ $node ];
+            return $this->currentNodes = [$node];
         }
 
         if ($metadata->xmlAttributeMap) {
@@ -180,7 +180,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         $elementName = $this->namingStrategy->translateName($metadata);
-        $this->currentNodes = [ $this->createElement($metadata->xmlNamespace, $elementName) ];
+        $this->currentNodes = [$this->createElement($metadata->xmlNamespace, $elementName)];
 
         $context->accept($v, $metadata->type);
 
@@ -225,7 +225,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $elementType = $this->getElementType($type);
         foreach ($data as $k => $v) {
             $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string) $k : $nodeName;
-            $this->currentNodes = [ $this->createElement($namespace, $elementName) ];
+            $this->currentNodes = [$this->createElement($namespace, $elementName)];
 
             $context->accept($v, $elementType);
             if (null !== $attributeName) {
@@ -259,7 +259,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $nodes = [];
         $elementType = $this->getElementType($type);
         foreach ($data as $v) {
-            $this->currentNodes = [ $this->createElement($namespace, $nodeName) ];
+            $this->currentNodes = [$this->createElement($namespace, $nodeName)];
             $context->accept($v, $elementType);
 
             $nodes[] = $this->currentNodes[0];
@@ -273,7 +273,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
-        $this->currentNodes = [ $this->document = $this->createDocument() ];
+        $this->currentNodes = [$this->document = $this->createDocument()];
         $this->nodeStack = new \SplStack();
         $this->attachNullNamespace = false;
     }
@@ -281,7 +281,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function startVisiting($data, Type $type, Context $context): void
+    public function startVisiting(&$data, Type $type, Context $context): void
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
@@ -298,7 +298,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             $rootNode = $this->document->createElement('result');
             $this->document->appendChild($rootNode);
 
-            $this->currentNodes = [ $rootNode ];
+            $this->currentNodes = [$rootNode];
         }
 
         foreach ($nodes as $node) {
@@ -461,6 +461,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->document->appendChild($rootNode);
 
         $this->nodeStack->pop();
-        $this->nodeStack->push([ $rootNode ]);
+        $this->nodeStack->push([$rootNode]);
     }
 }

@@ -4,25 +4,23 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlValue;
+use Kcs\Serializer\Annotation\Xml;
 
 /**
- * @XmlRoot("child")
+ * @Xml\Root("child")
  * @AccessType("property")
  */
 class Person
 {
     /**
      * @Type("string")
-     * @XmlValue(cdata=false)
+     * @Xml\Value(cdata=false)
      */
     public $name;
 
     /**
      * @Type("integer")
-     * @XmlAttribute
+     * @Xml\Attribute
      */
     public $age;
 }

@@ -53,12 +53,12 @@ class PropertyInfoTypeLoader implements LoaderInterface
                 continue;
             }
 
-            $type = reset($types);
+            $type = \reset($types);
             if ($type->isCollection()) {
                 $params = [];
 
                 $keyType = $type->getCollectionKeyType();
-                if ($keyType !== null && $keyType->getBuiltinType() !== SymfonyType::BUILTIN_TYPE_INT) {
+                if (null !== $keyType && SymfonyType::BUILTIN_TYPE_INT !== $keyType->getBuiltinType()) {
                     $params[] = $keyType->getClassName() ?? $keyType->getBuiltinType();
                 }
 

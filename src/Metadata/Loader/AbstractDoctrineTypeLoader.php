@@ -118,7 +118,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
     /**
      * @param string $className
      *
-     * @return null|DoctrineClassMetadata
+     * @return DoctrineClassMetadata|null
      */
     protected function tryLoadingDoctrineMetadata($className): ?DoctrineClassMetadata
     {

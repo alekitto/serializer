@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\XmlMap;
+use Kcs\Serializer\Annotation\Xml\Map;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class XmlCollectionProcessor extends PropertyMetadataProcessor
@@ -17,7 +17,7 @@ class XmlCollectionProcessor extends PropertyMetadataProcessor
         $metadata->xmlEntryName = $annotation->entry;
         $metadata->xmlEntryNamespace = $annotation->namespace;
 
-        if ($annotation instanceof XmlMap) {
+        if ($annotation instanceof Map) {
             $metadata->xmlKeyAttribute = $annotation->keyAttribute;
         }
     }

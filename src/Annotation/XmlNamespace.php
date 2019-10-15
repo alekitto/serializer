@@ -2,21 +2,12 @@
 
 namespace Kcs\Serializer\Annotation;
 
+@\trigger_error('XmlNamespace annotation is deprecated. Please use Xml\XmlNamespace instead.', E_USER_DEPRECATED);
+
 /**
  * @Annotation
  * @Target("CLASS")
  */
-final class XmlNamespace
+class XmlNamespace extends Xml\XmlNamespace
 {
-    /**
-     * @Required
-     *
-     * @var string
-     */
-    public $uri;
-
-    /**
-     * @var string
-     */
-    public $prefix = '';
 }

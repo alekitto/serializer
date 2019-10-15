@@ -3,7 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlKeyValuePairs;
+use Kcs\Serializer\Annotation\Xml\KeyValuePairs;
 
 /**
  * @AccessType("property")
@@ -12,7 +12,7 @@ class ObjectWithXmlKeyValuePairs
 {
     /**
      * @var array
-     * @XmlKeyValuePairs
+     * @KeyValuePairs()
      */
     private $array = [
         'key-one' => 'foo',

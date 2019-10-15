@@ -101,8 +101,7 @@ interface VisitorInterface
      */
     public function visitObject(
         ClassMetadata $metadata,
-        $data, Type
-        $type,
+        $data, Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
     );
@@ -124,7 +123,7 @@ interface VisitorInterface
      * @param Type    $type
      * @param Context $context
      */
-    public function startVisiting($data, Type $type, Context $context): void;
+    public function startVisiting(&$data, Type $type, Context $context): void;
 
     /**
      * Called after all properties of the object have been visited.

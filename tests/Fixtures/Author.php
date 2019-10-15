@@ -8,8 +8,8 @@ use Kcs\Serializer\Annotation as Serializer;
  * @Serializer\AccessType("property")
  * @Serializer\AdditionalField(name="links", attributes={
  *     @Serializer\SerializedName("_links"),
- *     @Serializer\XmlKeyValuePairs(),
- *     @Serializer\XmlList(inline=true)
+ *     @Serializer\Xml\KeyValuePairs(),
+ *     @Serializer\Xml\XmlList(inline=true)
  * })
  */
 class Author
