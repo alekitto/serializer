@@ -11,6 +11,7 @@ use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Tests\Fixtures\InvalidUsageOfXmlValue;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithNamespacesAndList;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithNullXmlAttribute;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualXmlProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
@@ -227,6 +228,14 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $object = new ObjectWithXmlRootNamespace('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
         self::assertEquals($this->getContent('object_with_xml_root_namespace'), $this->serialize($object));
+    }
+
+    public function testObjectWithXmlNullAttribute(): void
+    {
+        $object = new ObjectWithNullXmlAttribute('foo', 'bar');
+
+        self::assertEquals($this->getContent('object_with_null_xml_attribute'), $this->serialize($object, SerializationContext::create()->setSerializeNull(false)));
+        self::assertEquals($this->getContent('object_with_null_xml_attribute_serialized'), $this->serialize($object, SerializationContext::create()->setSerializeNull(true)));
     }
 
     public function testXmlNamespacesInheritance(): void
