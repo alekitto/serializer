@@ -18,6 +18,8 @@ final class SerializerExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
@@ -36,5 +38,9 @@ final class SerializerExtension extends Extension
                 ->addArgument('%kernel.cache_dir%/kcs_serializer')
             ;
         }
+
+        $container->setParameter('kcs_serializer.metadata_loader.property_info.enabled', $config['metadata']['property_info'] ?? false);
+        $container->setParameter('kcs_serializer.metadata_loader.doctrine_orm.enabled', $config['metadata']['doctrine_orm'] ?? false);
+        $container->setParameter('kcs_serializer.metadata_loader.doctrine_phpcr.enabled', $config['metadata']['doctrine_phpcr'] ?? false);
     }
 }

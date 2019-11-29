@@ -65,7 +65,7 @@ class MappingLoaderPass implements CompilerPassInterface
             ->replaceArgument(0, $loaders)
         ;
 
-        if ($container->hasDefinition('property_info')) {
+        if ($container->hasDefinition('property_info') && $container->getParameter('kcs_serializer.metadata_loader.property_info.enabled')) {
             $container->register('.kcs_serializer.property_info.metadata.loader')
                 ->setPublic(false)
                 ->setLazy(true)
@@ -76,7 +76,7 @@ class MappingLoaderPass implements CompilerPassInterface
             ;
         }
 
-        if ($container->hasDefinition('doctrine_phpcr')) {
+        if ($container->hasDefinition('doctrine_phpcr') && $container->getParameter('kcs_serializer.metadata_loader.doctrine_phpcr.enabled')) {
             $container->register('.kcs_serializer.doctrine_phpcr.metadata.loader')
                 ->setPublic(false)
                 ->setLazy(true)
@@ -87,7 +87,7 @@ class MappingLoaderPass implements CompilerPassInterface
             ;
         }
 
-        if ($container->hasDefinition('doctrine')) {
+        if ($container->hasDefinition('doctrine') && $container->getParameter('kcs_serializer.metadata_loader.doctrine_orm.enabled')) {
             $container->register('.kcs_serializer.doctrine.metadata.loader')
                 ->setPublic(false)
                 ->setLazy(true)
