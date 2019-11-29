@@ -11,7 +11,7 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
@@ -22,6 +22,7 @@ class Configuration implements ConfigurationInterface
             ->canBeDisabled()
             ->addDefaultsIfNotSet()
             ->children()
+                ->scalarNode('xml_default_encoding')->defaultValue('UTF-8')->end()
                 ->arrayNode('metadata')
                     ->addDefaultsIfNotSet()
                     ->children()

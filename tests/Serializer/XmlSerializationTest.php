@@ -65,6 +65,18 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertEquals($this->getContent('person_location'), $this->serialize($personCollection));
     }
 
+    public function testChangeDefaultEncoding(): void
+    {
+        $object = new SimpleClassObject();
+        $object->foo = 'foo';
+        $object->bar = 'bar';
+        $object->moo = 'moo';
+
+        $this->serializationVisitors['xml']->setDefaultEncoding('ISO-8859-1');
+
+        self::assertEquals($this->getContent('change_default_encoding'), $this->serialize($object));
+    }
+
     public function testPropertyIsCollectionOfObjectsWithAttributeAndValue(): void
     {
         $personCollection = new PersonCollection();

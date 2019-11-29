@@ -50,6 +50,16 @@ class XmlSerializationVisitor extends AbstractVisitor
     private $xmlNamespaces = [];
 
     /**
+     * Sets the default document encoding.
+     *
+     * @param string $defaultEncoding
+     */
+    public function setDefaultEncoding(string $defaultEncoding): void
+    {
+        $this->defaultEncoding = $defaultEncoding;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function visitNull($data, Type $type, Context $context)

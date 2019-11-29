@@ -29,6 +29,8 @@ final class SerializerExtension extends Extension
             ;
         }
 
+        $container->setParameter('kcs_serializer.xml_default_encoding', $config['xml_default_encoding'] ?? 'UTF-8');
+
         if (! $container->getParameter('kernel.debug') && \class_exists(AbstractAdapter::class)) {
             $container->register('kcs_serializer.metadata.cache', AdapterInterface::class)
                 ->setFactory(AbstractAdapter::class.'::createSystemCache')
