@@ -1,11 +1,14 @@
 json:
     path: /json
-    defaults: { _controller: 'AppBundle:Test:serialize', format: 'json' }
+    controller: Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController::serializeAction
+    defaults: { format: 'json' }
 
 xml:
     path: /xml
-    defaults: { _controller: 'AppBundle:Test:serialize', format: 'xml' }
+    controller: Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController::serializeAction
+    defaults: { format: 'xml' }
 
 yaml:
     path: /yaml
-    defaults: { _controller: 'AppBundle:Test:serialize', format: 'yaml' }
+    controller: Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController::serializeAction
+    defaults: { format: 'yaml' }

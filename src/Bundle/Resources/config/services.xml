@@ -97,7 +97,11 @@
         </service>
 
         <service class="Kcs\Serializer\GenericSerializationVisitor" id="kcs_serializer.serialization_visitor.array" parent="kcs_serialization.visitor.prototype" />
-        <service class="Kcs\Serializer\XmlSerializationVisitor" id="kcs_serializer.serialization_visitor.xml" parent="kcs_serialization.visitor.prototype" />
+        <service class="Kcs\Serializer\XmlSerializationVisitor" id="kcs_serializer.serialization_visitor.xml" parent="kcs_serialization.visitor.prototype">
+            <call method="setDefaultEncoding">
+                <argument>%kcs_serializer.xml_default_encoding%</argument>
+            </call>
+        </service>
         <service class="Kcs\Serializer\JsonSerializationVisitor" id="kcs_serializer.serialization_visitor.json" parent="kcs_serialization.visitor.prototype" />
         <service class="Kcs\Serializer\YamlSerializationVisitor" id="kcs_serializer.serialization_visitor.yaml" parent="kcs_serialization.visitor.prototype" />
 

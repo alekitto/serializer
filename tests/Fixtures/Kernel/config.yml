@@ -6,6 +6,8 @@ framework:
         resource: "%kernel.root_dir%/routing.yml"
 
 services:
+    Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController: ~
+
     test_handler:
         class: Kcs\Serializer\Tests\Fixtures\Kernel\Handler\TestHandler
         public: true
