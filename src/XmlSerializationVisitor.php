@@ -472,6 +472,10 @@ class XmlSerializationVisitor extends AbstractVisitor
             $rootNode = $this->document->createElement($rootName);
         }
 
+        if (null !== $metadata && null !== $metadata->xmlEncoding) {
+            $this->document->encoding = $metadata->xmlEncoding;
+        }
+
         $this->document->appendChild($rootNode);
 
         $this->nodeStack->pop();

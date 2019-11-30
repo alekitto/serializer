@@ -44,6 +44,11 @@ class ClassMetadata extends BaseClassMetadata
     public $xmlRootNamespace;
 
     /**
+     * @var string
+     */
+    public $xmlEncoding;
+
+    /**
      * @var string[]
      */
     public $xmlNamespaces = [];

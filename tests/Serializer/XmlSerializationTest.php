@@ -15,6 +15,7 @@ use Kcs\Serializer\Tests\Fixtures\ObjectWithNullXmlAttribute;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVirtualXmlProperties;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlKeyValuePairs;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlNamespaces;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlRootEncoding;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithXmlRootNamespace;
 use Kcs\Serializer\Tests\Fixtures\Person;
 use Kcs\Serializer\Tests\Fixtures\PersonCollection;
@@ -240,6 +241,12 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         $object = new ObjectWithXmlRootNamespace('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
         self::assertEquals($this->getContent('object_with_xml_root_namespace'), $this->serialize($object));
+    }
+
+    public function testObjectWithXmlRootEncoding(): void
+    {
+        $object = new ObjectWithXmlRootEncoding('This is èéàÈùå.');
+        self::assertEquals($this->getContent('object_with_xml_root_encoding'), $this->serialize($object));
     }
 
     public function testObjectWithXmlNullAttribute(): void

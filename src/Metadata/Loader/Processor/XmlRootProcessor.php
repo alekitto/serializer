@@ -13,5 +13,6 @@ class XmlRootProcessor extends ClassMetadataProcessor
     {
         $metadata->xmlRootName = $annotation->name;
         $metadata->xmlRootNamespace = $annotation->namespace;
+        $metadata->xmlEncoding = null !== $annotation->encoding ? \strtoupper($annotation->encoding) : null;
     }
 }

@@ -19,4 +19,9 @@ namespace Kcs\Serializer\Annotation\Xml;
      * @var string
      */
     public $namespace;
+
+    /**
+     * @var string
+     */
+    public $encoding;
 }
