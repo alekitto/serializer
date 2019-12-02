@@ -15,7 +15,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('framework');
+        $treeBuilder = new TreeBuilder('kcs_serializer');
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
