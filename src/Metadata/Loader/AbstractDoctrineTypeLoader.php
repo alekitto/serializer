@@ -7,8 +7,11 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\NullMetadata;
+use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\StaticPropertyMetadata;
+use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
@@ -82,6 +85,15 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
             // If the inner driver provides a type, don't guess anymore.
             if (null !== $propertyMetadata->type) {
+                continue;
+            }
+
+            // Virtual property or derived property: type should not be guessed.
+            if (
+                $propertyMetadata instanceof VirtualPropertyMetadata ||
+                $propertyMetadata instanceof StaticPropertyMetadata ||
+                $propertyMetadata instanceof AdditionalPropertyMetadata
+            ) {
                 continue;
             }
 
