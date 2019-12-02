@@ -5,6 +5,9 @@ framework:
     router:
         resource: "%kernel.root_dir%/routing.yml"
 
+kcs_serializer:
+    enabled: true
+
 services:
     Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController: ~
 

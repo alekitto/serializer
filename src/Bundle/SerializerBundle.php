@@ -5,7 +5,9 @@ namespace Kcs\Serializer\Bundle;
 use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\DoctrineConstructorPass;
 use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\MappingLoaderPass;
 use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\RegisterHandlersPass;
+use Kcs\Serializer\Bundle\DependencyInjection\SerializerExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class SerializerBundle extends Bundle
@@ -20,5 +22,10 @@ final class SerializerBundle extends Bundle
             ->addCompilerPass(new MappingLoaderPass())
             ->addCompilerPass(new DoctrineConstructorPass())
         ;
+    }
+
+    public function getContainerExtension(): ExtensionInterface
+    {
+        return new SerializerExtension();
     }
 }
