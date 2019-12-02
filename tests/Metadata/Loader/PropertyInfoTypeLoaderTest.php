@@ -7,9 +7,11 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\PropertyInfoTypeLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\Comment;
 use Kcs\Serializer\Tests\Fixtures\NonAnnotatedBlogPost;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithExcludedAndVirtualProperty;
 use Kcs\Serializer\Tests\Fixtures\Price;
 use Kcs\Serializer\Type\Type;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +35,19 @@ class PropertyInfoTypeLoaderTest extends TestCase
         $extractor = new PropertyInfoExtractor([$reflectionExtractor], [$reflectionExtractor, $phpDocExtractor], [$reflectionExtractor], [$reflectionExtractor], [$reflectionExtractor]);
 
         $this->loader = new PropertyInfoTypeLoader($loader, $extractor);
+    }
+
+    public function testObjectWithExcludedAndVirtualProperty(): void
+    {
+        $m = new ClassMetadata(new \ReflectionClass(ObjectWithExcludedAndVirtualProperty::class));
+        $this->loader->loadClassMetadata($m);
+
+        self::assertNotNull($m);
+
+        $p = new VirtualPropertyMetadata($m->getName(), 'getFoo');
+        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
+        $p->serializedName = 'foo';
+        self::assertEquals($p, $m->getAttributeMetadata('foo'));
     }
 
     public function testLoadBlogPostMetadata(): void

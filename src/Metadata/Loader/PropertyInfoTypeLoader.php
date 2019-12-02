@@ -4,8 +4,11 @@ namespace Kcs\Serializer\Metadata\Loader;
 
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
+use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\StaticPropertyMetadata;
+use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Symfony\Component\PropertyInfo\Type as SymfonyType;
 
@@ -45,6 +48,15 @@ class PropertyInfoTypeLoader implements LoaderInterface
 
             // If the inner driver provides a type, don't guess anymore.
             if (null !== $propertyMetadata->type) {
+                continue;
+            }
+
+            // Virtual property or derived property: type should not be guessed.
+            if (
+                $propertyMetadata instanceof VirtualPropertyMetadata ||
+                $propertyMetadata instanceof StaticPropertyMetadata ||
+                $propertyMetadata instanceof AdditionalPropertyMetadata
+            ) {
                 continue;
             }
 
