@@ -27,9 +27,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
                 return 'serialize'.$type;
 
             default:
-                throw new LogicException(\sprintf(
-                    'The direction %u does not exist; see GraphNavigator constants.', $direction
-                ));
+                throw new LogicException(\sprintf('The direction %u does not exist; see GraphNavigator constants.', $direction));
         }
     }
 

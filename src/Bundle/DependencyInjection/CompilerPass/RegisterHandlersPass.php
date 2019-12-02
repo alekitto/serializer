@@ -25,11 +25,7 @@ class RegisterHandlersPass implements CompilerPassInterface
 
             $class = $definition->getClass();
             if (! \is_subclass_of($class, SubscribingHandlerInterface::class, true)) {
-                throw new \RuntimeException(\sprintf(
-                    '%s is not implementing %s, but is tagged as kcs_serializer.handler',
-                    $serviceId,
-                    SubscribingHandlerInterface::class
-                ));
+                throw new \RuntimeException(\sprintf('%s is not implementing %s, but is tagged as kcs_serializer.handler', $serviceId, SubscribingHandlerInterface::class));
             }
 
             foreach ($class::getSubscribingMethods() as $methodData) {

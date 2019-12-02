@@ -44,10 +44,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         if (false !== \stripos($data, '<!doctype')) {
             $doctype = $this->getDomDocumentType($data);
             if (! \in_array($doctype, $this->doctypeWhitelist, true)) {
-                throw new InvalidArgumentException(\sprintf(
-                    'The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.',
-                    $doctype
-                ));
+                throw new InvalidArgumentException(\sprintf('The document type "%s" is not allowed. If it is safe, you may add it to the whitelist configuration.', $doctype));
             }
         }
 

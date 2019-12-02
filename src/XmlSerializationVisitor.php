@@ -400,20 +400,14 @@ class XmlSerializationVisitor extends AbstractVisitor
             if ($property->xmlValue && ! $hasXmlValue) {
                 $hasXmlValue = true;
             } elseif ($property->xmlValue) {
-                throw new RuntimeException(\sprintf(
-                    'Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s',
-                    $metadata->getName()
-                ));
+                throw new RuntimeException(\sprintf('Only one property can be target of @XmlValue attribute. Invalid usage detected in class %s', $metadata->getName()));
             }
         }
 
         if ($hasXmlValue) {
             foreach ($properties as $property) {
                 if (! $property->xmlValue && ! $property->xmlAttribute) {
-                    throw new RuntimeException(\sprintf(
-                        'If you make use of @XmlValue, all other properties in the class must have the @XmlAttribute annotation. Invalid usage detected in class %s.',
-                        $metadata->getName()
-                    ));
+                    throw new RuntimeException(\sprintf('If you make use of @XmlValue, all other properties in the class must have the @XmlAttribute annotation. Invalid usage detected in class %s.', $metadata->getName()));
                 }
             }
         }

@@ -44,13 +44,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
             null !== $translator &&
             ! $translator instanceof LegacyTranslatorInterface && ! $translator instanceof TranslatorInterface
         ) {
-            throw new \TypeError(\sprintf(
-                'Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed',
-                __CLASS__,
-                LegacyTranslatorInterface::class,
-                TranslatorInterface::class,
-                \is_object($translator) ? \get_class($translator) : \gettype($translator)
-            ));
+            throw new \TypeError(\sprintf('Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed', __CLASS__, LegacyTranslatorInterface::class, TranslatorInterface::class, \is_object($translator) ? \get_class($translator) : \gettype($translator)));
         }
 
         $this->translator = $translator;

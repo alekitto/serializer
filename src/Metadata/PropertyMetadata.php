@@ -242,12 +242,7 @@ class PropertyMetadata extends BasePropertyMetadata
             // Property does not exist.
         }
 
-        throw new RuntimeException(\sprintf(
-            'There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.',
-            \implode('" or "', $methods),
-            $this->class,
-            $this->name
-        ));
+        throw new RuntimeException(\sprintf('There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.', \implode('" or "', $methods), $this->class, $this->name));
     }
 
     protected function initializeSetterAccessor(): void

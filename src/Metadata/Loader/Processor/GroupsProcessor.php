@@ -20,11 +20,7 @@ class GroupsProcessor extends PropertyMetadataProcessor
         $annotation->groups = \array_map('trim', (array) $annotation->groups);
         foreach ($annotation->groups as $group) {
             if (false !== \strpos($group, ',')) {
-                throw new InvalidArgumentException(\sprintf(
-                    'Invalid group name "%s" on "%s", did you mean to create multiple groups?',
-                    \implode(', ', $annotation->groups),
-                    $metadata->class.'->'.$metadata->name
-                ));
+                throw new InvalidArgumentException(\sprintf('Invalid group name "%s" on "%s", did you mean to create multiple groups?', \implode(', ', $annotation->groups), $metadata->class.'->'.$metadata->name));
             }
 
             if ('!' === $group[0]) {

@@ -165,12 +165,7 @@ class ClassMetadata extends BaseClassMetadata
 
         if ($this->discriminatorFieldName && $object->discriminatorFieldName &&
             $this->discriminatorFieldName !== $object->discriminatorFieldName) {
-            throw new \LogicException(\sprintf(
-                'The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.',
-                $this->getName(),
-                $object->discriminatorBaseClass,
-                $object->discriminatorBaseClass
-            ));
+            throw new \LogicException(\sprintf('The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.', $this->getName(), $object->discriminatorBaseClass, $object->discriminatorBaseClass));
         }
 
         $this->mergeDiscriminatorMap($object);
@@ -198,17 +193,11 @@ class ClassMetadata extends BaseClassMetadata
         } elseif (isset($data->{$this->discriminatorFieldName})) {
             $typeValue = (string) $data->{$this->discriminatorFieldName};
         } else {
-            throw new \LogicException(
-                "The discriminator field name '{$this->discriminatorFieldName}' for ".
-                "base-class '{$this->getName()}' was not found in input data."
-            );
+            throw new \LogicException("The discriminator field name '{$this->discriminatorFieldName}' for "."base-class '{$this->getName()}' was not found in input data.");
         }
 
         if (! isset($this->discriminatorMap[$typeValue])) {
-            throw new \LogicException(
-                "The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: ".
-                \implode(', ', \array_keys($this->discriminatorMap))
-            );
+            throw new \LogicException("The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: ".\implode(', ', \array_keys($this->discriminatorMap)));
         }
 
         return $this->discriminatorMap[$typeValue];
@@ -253,10 +242,7 @@ class ClassMetadata extends BaseClassMetadata
         }
 
         if (false === $typeValue = \array_search($this->getName(), $object->discriminatorMap, true)) {
-            throw new \LogicException(
-                'The sub-class "'.$this->getName().
-                '" is not listed in the discriminator of the base class "'.$this->discriminatorBaseClass
-            );
+            throw new \LogicException('The sub-class "'.$this->getName().'" is not listed in the discriminator of the base class "'.$this->discriminatorBaseClass);
         }
 
         $this->discriminatorValue = $typeValue;

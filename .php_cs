@@ -23,5 +23,6 @@ return PhpCsFixer\Config::create()
         'ordered_imports' => true,
         'php_unit_test_case_static_method_calls' => ['call_type' => 'self'],
         'native_function_invocation' => true,
+        'no_superfluous_phpdoc_tags' => false,
     ])
 ;
