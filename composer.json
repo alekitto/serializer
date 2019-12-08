@@ -23,7 +23,8 @@
     },
     "conflict": {
         "twig/twig": "<1.12",
-        "doctrine/phpcr-odm": "<1.1.4"
+        "doctrine/phpcr-odm": "<1.1.4",
+        "symfony/event-dispatcher": ">=5.0"
     },
     "suggest": {
         "symfony/event-dispatcher": "Dispatch pre/post serialize events",
