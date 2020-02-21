@@ -27,7 +27,7 @@ use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Serializer;
@@ -1135,7 +1135,7 @@ abstract class BaseSerializationTest extends TestCase
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addListener(PreSerializeEvent::class, [new DoctrineProxySubscriber(), 'onPreSerialize'], 20);
 
-        $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
+        $namingStrategy = new SerializedNameAnnotationStrategy(new UnderscoreNamingStrategy());
         $objectConstructor = new UnserializeObjectConstructor();
         $this->serializationVisitors = [
             'array' => new GenericSerializationVisitor($namingStrategy),

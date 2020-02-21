@@ -4,6 +4,7 @@ namespace Kcs\Serializer\Bundle;
 
 use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\DoctrineConstructorPass;
 use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\MappingLoaderPass;
+use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\NamingStrategyPass;
 use Kcs\Serializer\Bundle\DependencyInjection\CompilerPass\RegisterHandlersPass;
 use Kcs\Serializer\Bundle\DependencyInjection\SerializerExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -18,6 +19,7 @@ final class SerializerBundle extends Bundle
     public function build(ContainerBuilder $container): void
     {
         $container
+            ->addCompilerPass(new NamingStrategyPass())
             ->addCompilerPass(new RegisterHandlersPass())
             ->addCompilerPass(new MappingLoaderPass())
             ->addCompilerPass(new DoctrineConstructorPass())

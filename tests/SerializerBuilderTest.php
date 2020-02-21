@@ -5,7 +5,7 @@ namespace Kcs\Serializer\Tests;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\JsonSerializationVisitor;
-use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Type\Type;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +50,7 @@ class SerializerBuilderTest extends TestCase
 
         self::assertSame(
             $this->builder,
-            $this->builder->setSerializationVisitor('json', new JsonSerializationVisitor(new CamelCaseNamingStrategy()))
+            $this->builder->setSerializationVisitor('json', new JsonSerializationVisitor(new UnderscoreNamingStrategy()))
         );
 
         $this->builder->build()->serialize('foo', 'xml');

@@ -17,7 +17,7 @@ use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\PropelCollectionHandler;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Psr\Cache\CacheItemPoolInterface;
@@ -262,6 +262,6 @@ class SerializerBuilder
             return;
         }
 
-        $this->propertyNamingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
+        $this->propertyNamingStrategy = new SerializedNameAnnotationStrategy(new UnderscoreNamingStrategy());
     }
 }

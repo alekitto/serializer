@@ -4,6 +4,8 @@ namespace Kcs\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
+@trigger_error('CamelCaseNamingStrategy is deprecated. Use UnderscoreNamingStrategy, IdenticalPropertyNamingStrategy or implement your own strategy.', E_USER_DEPRECATED);
+
 /**
  * Generic naming strategy which translates a camel-cased property name.
  *

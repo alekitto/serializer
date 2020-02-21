@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('xml_default_encoding')->defaultValue('UTF-8')->end()
+                ->scalarNode('naming_strategy')->defaultValue('underscore')->end()
                 ->arrayNode('metadata')
                     ->addDefaultsIfNotSet()
                     ->children()

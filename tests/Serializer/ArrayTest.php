@@ -10,7 +10,7 @@ use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\SerializerInterface;
@@ -33,7 +33,7 @@ class ArrayTest extends TestCase
      */
     protected function setUp(): void
     {
-        $namingStrategy = new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy());
+        $namingStrategy = new SerializedNameAnnotationStrategy(new UnderscoreNamingStrategy());
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
 
