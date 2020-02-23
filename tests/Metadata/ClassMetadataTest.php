@@ -5,6 +5,8 @@ namespace Kcs\Serializer\Tests\Metadata;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Tests\Fixtures\Entity_74;
+use Kcs\Serializer\Tests\Fixtures\Entity_74_Proxy;
 use PHPUnit\Framework\TestCase;
 
 class ClassMetadataTest extends TestCase
@@ -81,6 +83,37 @@ class ClassMetadataTest extends TestCase
         if (null === $setter) {
             $metadata->setValue($object, null);
         }
+    }
+
+    /**
+     * @requires PHP 7.4
+     */
+    public function testShouldNotThrowAccessingUninitializedProperty(): void
+    {
+        $object = new Entity_74();
+
+        $metadata = new PropertyMetadata(\get_class($object), 'uninitialized');
+        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PROPERTY);
+
+        self::assertNull($metadata->getValue($object));
+    }
+
+    /**
+     * @requires PHP 7.4
+     */
+    public function testShouldCallMagicGetOnUnsetProperties(): void
+    {
+        $object = new Entity_74_Proxy();
+
+        $metadata = new PropertyMetadata(\get_class($object), 'uninitialized');
+        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PROPERTY);
+
+        self::assertEquals(42, $metadata->getValue($object));
+
+        $metadata = new PropertyMetadata(\get_class($object), 'notUnset');
+        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PROPERTY);
+
+        self::assertNull($metadata->getValue($object));
     }
 
     public function testAccessorTypePublicMethodWithPublicPropertyException(): void
