@@ -16,6 +16,7 @@ use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\PropelCollectionHandler;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
@@ -229,6 +230,10 @@ class SerializerBuilder
 
             $metadataLoader = new AnnotationLoader();
             $metadataLoader->setReader($annotationReader);
+        }
+
+        if (PHP_VERSION_ID >= 70400) {
+            $metadataLoader = new ReflectionLoader($metadataLoader);
         }
 
         $metadataFactory = new MetadataFactory($metadataLoader, $this->eventDispatcher, $this->cache);

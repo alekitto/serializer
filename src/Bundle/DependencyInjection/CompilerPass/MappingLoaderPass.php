@@ -6,6 +6,7 @@ use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrinePHPCRTypeLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrineTypeLoader;
 use Kcs\Serializer\Metadata\Loader\PropertyInfoTypeLoader;
+use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -64,6 +65,15 @@ class MappingLoaderPass implements CompilerPassInterface
         $container->getDefinition('kcs_serializer.metadata.loader')
             ->replaceArgument(0, $loaders)
         ;
+
+        if (PHP_VERSION_ID >= 70400) {
+            $container->register('.kcs_serializer.reflection.metadata.loader')
+                ->setPublic(false)
+                ->setClass(ReflectionLoader::class)
+                ->setDecoratedService('kcs_serializer.metadata.loader')
+                ->addArgument(new Reference('.kcs_serializer.reflection.metadata.loader.inner'))
+            ;
+        }
 
         if ($container->hasDefinition('property_info') && $container->getParameter('kcs_serializer.metadata_loader.property_info.enabled')) {
             $container->register('.kcs_serializer.property_info.metadata.loader')

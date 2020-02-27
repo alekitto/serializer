@@ -10,6 +10,7 @@ use Kcs\Serializer\Annotation\AccessType;
 class Entity_74_Proxy extends Entity_74
 {
     public string $notUnset;
+    public ?string $nullableString;
 
     public function __construct()
     {
