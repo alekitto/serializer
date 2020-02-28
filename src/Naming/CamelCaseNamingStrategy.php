@@ -4,12 +4,11 @@ namespace Kcs\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-@trigger_error('CamelCaseNamingStrategy is deprecated. Use UnderscoreNamingStrategy, IdenticalPropertyNamingStrategy or implement your own strategy.', E_USER_DEPRECATED);
-
 /**
  * Generic naming strategy which translates a camel-cased property name.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ * @deprecated
  */
 final class CamelCaseNamingStrategy implements PropertyNamingStrategyInterface
 {
@@ -34,6 +33,7 @@ final class CamelCaseNamingStrategy implements PropertyNamingStrategyInterface
      */
     public function translateName(PropertyMetadata $property): string
     {
+        @\trigger_error('CamelCaseNamingStrategy is deprecated. Use UnderscoreNamingStrategy, IdenticalPropertyNamingStrategy or implement your own strategy.', E_USER_DEPRECATED);
         $name = \preg_replace('/[A-Z]/', $this->separator.'\\0', $property->name);
 
         if ($this->lowerCase) {
