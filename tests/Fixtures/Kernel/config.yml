@@ -7,6 +7,7 @@ framework:
 
 kcs_serializer:
     enabled: true
+    naming_strategy: underscore
 
 services:
     Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController: ~
