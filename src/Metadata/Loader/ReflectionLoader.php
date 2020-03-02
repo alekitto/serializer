@@ -5,6 +5,7 @@ namespace Kcs\Serializer\Metadata\Loader;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class ReflectionLoader implements LoaderInterface
 {
@@ -35,12 +36,22 @@ class ReflectionLoader implements LoaderInterface
                 continue;
             }
 
+            if ($propertyMetadata instanceof VirtualPropertyMetadata) {
+                $this->loadVirtualProperty($propertyMetadata);
+                continue;
+            }
+
             // If the inner driver provides a type, don't guess anymore.
             if (null !== $propertyMetadata->type) {
                 continue;
             }
 
-            $reflectionProperty = $propertyMetadata->getReflection();
+            try {
+                $reflectionProperty = $propertyMetadata->getReflection();
+            } catch (\ReflectionException $e) {
+                continue;
+            }
+
             if (! $reflectionProperty->hasType()) {
                 continue;
             }
@@ -49,5 +60,25 @@ class ReflectionLoader implements LoaderInterface
         }
 
         return true;
+    }
+
+    private function loadVirtualProperty(VirtualPropertyMetadata $propertyMetadata): void
+    {
+        try {
+            $reflection = new \ReflectionMethod($propertyMetadata->class, $propertyMetadata->getter);
+        } catch (\ReflectionException $e) {
+            return;
+        }
+
+        if (! $reflection->hasReturnType()) {
+            return;
+        }
+
+        $type = $reflection->getReturnType();
+        if (null === $type || $type->getName() === 'void') {
+            return;
+        }
+
+        $propertyMetadata->setType($type->getName());
     }
 }

@@ -34,5 +34,6 @@ class ReflectionLoaderTest extends TestCase
 
         self::assertEquals(Type::from('string'), $m->getAttributeMetadata('notUnset')->type);
         self::assertEquals(Type::from('string'), $m->getAttributeMetadata('nullableString')->type);
+        self::assertEquals(Type::from('string'), $m->getAttributeMetadata('virtualProperty')->type);
     }
 }

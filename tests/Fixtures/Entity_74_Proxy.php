@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Annotation\VirtualProperty;
 
 /**
  * @AccessType("property")
@@ -20,5 +21,13 @@ class Entity_74_Proxy extends Entity_74
     public function __get($name)
     {
         return 42;
+    }
+
+    /**
+     * @VirtualProperty()
+     */
+    public function getVirtualProperty(): string
+    {
+        return '';
     }
 }
