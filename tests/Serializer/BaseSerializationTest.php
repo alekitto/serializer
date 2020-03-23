@@ -23,6 +23,7 @@ use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\FormErrorHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
+use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
@@ -86,6 +87,7 @@ use Kcs\Serializer\YamlDeserializationVisitor;
 use Kcs\Serializer\YamlSerializationVisitor;
 use PhpCollection\Sequence;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
@@ -1065,6 +1067,13 @@ abstract class BaseSerializationTest extends TestCase
         self::assertEquals($this->getContent('groups_provider'), $this->serialize($obj));
     }
 
+    public function testUuid(): void
+    {
+        $uuid = Uuid::uuid5('1551cf94-fb02-4adc-8834-c4755f36faf8', 'foobar');
+
+        self::assertEquals($this->getContent('uuid'), $this->serialize($uuid));
+    }
+
     abstract protected function getContent(string $key): string;
 
     abstract protected function getFormat(): string;
@@ -1102,6 +1111,7 @@ abstract class BaseSerializationTest extends TestCase
         $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler($translator));
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
+        $this->handlerRegistry->registerSubscribingHandler(new UuidInterfaceHandler());
         $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',
             static function (VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitHash(\iterator_to_array($object), $type, $context);

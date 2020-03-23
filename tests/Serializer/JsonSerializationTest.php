@@ -84,6 +84,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['type_passed_to_serialize'] = '[{"name":"Foo"},{"name":"Bar"}]';
             $outputs['object_subclass_with_additional_field'] = '{"authors":[{"is_child":true,"_links":{"details":"http:\/\/foo.bar\/details\/Foo","comments":"http:\/\/foo.bar\/details\/Foo\/comments"},"full_name":"Foo"},{"is_child":true,"_links":{"details":"http:\/\/foo.bar\/details\/Bar","comments":"http:\/\/foo.bar\/details\/Bar\/comments"},"full_name":"Bar"}]}';
             $outputs['groups_provider'] = '{"foo":"foo","obj":{"virt":"virt_2","foo":"foo","foobar":"foobar","baz":"baz"}}';
+            $outputs['uuid'] = '"a3b5af04-42c7-5838-acd8-a963607eaafb"';
         }
 
         if (PHP_VERSION_ID >= 70000) {
