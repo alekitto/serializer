@@ -7,6 +7,7 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Ramsey\Uuid\DegradedUuid;
+use Ramsey\Uuid\Rfc4122;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
@@ -16,6 +17,12 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
         UuidInterface::class,
         Uuid::class,
         DegradedUuid::class,
+        Rfc4122\NilUuid::class,
+        Rfc4122\UuidV1::class,
+        Rfc4122\UuidV2::class,
+        Rfc4122\UuidV3::class,
+        Rfc4122\UuidV4::class,
+        Rfc4122\UuidV5::class,
     ];
 
     /**

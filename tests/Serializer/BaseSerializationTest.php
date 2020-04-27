@@ -1070,8 +1070,10 @@ abstract class BaseSerializationTest extends TestCase
     public function testUuid(): void
     {
         $uuid = Uuid::uuid5('1551cf94-fb02-4adc-8834-c4755f36faf8', 'foobar');
-
         self::assertEquals($this->getContent('uuid'), $this->serialize($uuid));
+
+        $uuid = Uuid::uuid4();
+        self::assertStringContainsString($uuid->toString(), $this->serialize($uuid));
     }
 
     abstract protected function getContent(string $key): string;
