@@ -36,13 +36,14 @@ class ReflectionLoader implements LoaderInterface
                 continue;
             }
 
-            if ($propertyMetadata instanceof VirtualPropertyMetadata) {
-                $this->loadVirtualProperty($propertyMetadata);
+            // If the inner driver provides a type, don't guess anymore.
+            if (null !== $propertyMetadata->type) {
+                
                 continue;
             }
 
-            // If the inner driver provides a type, don't guess anymore.
-            if (null !== $propertyMetadata->type) {
+            if ($propertyMetadata instanceof VirtualPropertyMetadata) {
+                $this->loadVirtualProperty($propertyMetadata);
                 continue;
             }
 
