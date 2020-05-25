@@ -2,6 +2,8 @@
 
 namespace Kcs\Serializer\Bundle\DependencyInjection;
 
+use Kcs\Serializer\Handler\DeserializationHandlerInterface;
+use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -27,6 +29,9 @@ final class SerializerExtension extends Extension
             $container->registerForAutoconfiguration(SubscribingHandlerInterface::class)
                 ->addTag('kcs_serializer.handler')
             ;
+
+            $container->registerForAutoconfiguration(SerializationHandlerInterface::class)->addTag('kcs_serializer.serialization_handler');
+            $container->registerForAutoconfiguration(DeserializationHandlerInterface::class)->addTag('kcs_serializer.deserialization_handler');
         }
 
         $container->setParameter('kcs_serializer.xml_default_encoding', $config['xml_default_encoding'] ?? 'UTF-8');

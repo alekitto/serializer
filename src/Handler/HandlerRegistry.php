@@ -71,6 +71,22 @@ final class HandlerRegistry implements HandlerRegistryInterface
     /**
      * {@inheritdoc}
      */
+    public function registerSerializationHandler(SerializationHandlerInterface $handler): HandlerRegistryInterface
+    {
+        return $this->registerHandler(Direction::DIRECTION_SERIALIZATION, $handler::getType(), new InternalSerializationHandler([$handler, 'serialize']));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function registerDeserializationHandler(DeserializationHandlerInterface $handler): HandlerRegistryInterface
+    {
+        return $this->registerHandler(Direction::DIRECTION_DESERIALIZATION, $handler::getType(), new InternalDeserializationHandler([$handler, 'deserialize']));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHandler(int $direction, string $typeName): ?callable
     {
         if (! isset($this->handlers[$direction][$typeName])) {

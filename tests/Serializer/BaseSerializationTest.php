@@ -20,9 +20,11 @@ use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\Handler\ConstraintViolationHandler;
 use Kcs\Serializer\Handler\DateHandler;
+use Kcs\Serializer\Handler\DeserializationHandlerInterface;
 use Kcs\Serializer\Handler\FormErrorHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
+use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\JsonSerializationVisitor;
@@ -850,6 +852,51 @@ abstract class BaseSerializationTest extends TestCase
 
         $serialized = $this->serializer->serialize(new CustomDeserializationObject('sometext'), $this->getFormat());
         $object = $this->serializer->deserialize($serialized, Type::from('CustomDeserializationObject'), $this->getFormat());
+        self::assertEquals('customly_unserialized_value', $object->someProperty);
+    }
+
+    public function testCustomSerializationHandler(): void
+    {
+        $handler = new class() implements SerializationHandlerInterface {
+            public static function getType(): string
+            {
+                return CustomDeserializationObject::class;
+            }
+
+            public function serialize($data)
+            {
+                return ['some_property' => $data->someProperty];
+            }
+        };
+
+        $this->handlerRegistry->registerSerializationHandler($handler);
+
+        $serialized = $this->serializer->serialize(new CustomDeserializationObject('sometext'), $this->getFormat());
+        self::assertEquals($this->getContent('custom_serialization_handler'), $serialized);
+    }
+
+    public function testCustomDeserializationHandler(): void
+    {
+        if (! $this->hasDeserializer()) {
+            return;
+        }
+
+        $handler = new class() implements DeserializationHandlerInterface {
+            public static function getType(): string
+            {
+                return CustomDeserializationObject::class;
+            }
+
+            public function deserialize($data)
+            {
+                return new CustomDeserializationObject('customly_unserialized_value');
+            }
+        };
+
+        $this->handlerRegistry->registerDeserializationHandler($handler);
+
+        $serialized = $this->serializer->serialize(new CustomDeserializationObject('sometext'), $this->getFormat());
+        $object = $this->serializer->deserialize($serialized, Type::from(CustomDeserializationObject::class), $this->getFormat());
         self::assertEquals('customly_unserialized_value', $object->someProperty);
     }
 

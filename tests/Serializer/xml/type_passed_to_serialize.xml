@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <result>
   <entry>
-    <entry><![CDATA[Foo]]></entry>
+    <name><![CDATA[Foo]]></name>
   </entry>
   <entry>
-    <entry><![CDATA[Bar]]></entry>
+    <name><![CDATA[Bar]]></name>
   </entry>
 </result>

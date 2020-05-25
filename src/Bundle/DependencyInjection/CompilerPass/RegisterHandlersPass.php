@@ -3,11 +3,15 @@
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\Handler\DeserializationHandlerInterface;
 use Kcs\Serializer\Handler\HandlerRegistry;
+use Kcs\Serializer\Handler\InternalSerializationHandler;
+use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterHandlersPass implements CompilerPassInterface
@@ -43,6 +47,28 @@ class RegisterHandlersPass implements CompilerPassInterface
                     $handlers[$direction][$methodData['type']] = [new ServiceClosureArgument(new Reference($serviceId)), $method];
                 }
             }
+        }
+
+        foreach ($container->findTaggedServiceIds('kcs_serializer.serialization_handler') as $serviceId => $unused) {
+            $definition = $container->findDefinition($serviceId);
+            $class = $definition->getClass();
+            if (! \is_subclass_of($class, SerializationHandlerInterface::class, true)) {
+                throw new \RuntimeException(\sprintf('%s is not implementing %s, but is tagged as kcs_serializer.serialization_handler', $serviceId, SerializationHandlerInterface::class));
+            }
+
+            $type = $class::getType();
+            $handlers[Direction::DIRECTION_SERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [new ServiceClosureArgument(new Reference($serviceId)), 'serialize']);
+        }
+
+        foreach ($container->findTaggedServiceIds('kcs_serializer.deserialization_handler') as $serviceId => $unused) {
+            $definition = $container->findDefinition($serviceId);
+            $class = $definition->getClass();
+            if (! \is_subclass_of($class, DeserializationHandlerInterface::class, true)) {
+                throw new \RuntimeException(\sprintf('%s is not implementing %s, but is tagged as kcs_serializer.deserialization_handler', $serviceId, DeserializationHandlerInterface::class));
+            }
+
+            $type = $class::getType();
+            $handlers[Direction::DIRECTION_DESERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [new ServiceClosureArgument(new Reference($serviceId)), 'deserialize']);
         }
 
         $registryDef->setArgument(0, $handlers);

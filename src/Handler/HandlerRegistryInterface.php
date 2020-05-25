@@ -25,6 +25,16 @@ interface HandlerRegistryInterface
     public function registerHandler(int $direction, string $typeName, $handler): self;
 
     /**
+     * Register a serialization handler.
+     */
+    public function registerSerializationHandler(SerializationHandlerInterface $handler): self;
+
+    /**
+     * Register a deserialization handler.
+     */
+    public function registerDeserializationHandler(DeserializationHandlerInterface $handler): self;
+
+    /**
      * @param int $direction one of the GraphNavigator::DIRECTION_??? constants
      *
      * @return callable|null

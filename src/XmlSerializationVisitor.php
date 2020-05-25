@@ -219,7 +219,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $nodes = [];
         $elementType = $this->getElementType($type);
         foreach ($data as $k => $v) {
-            $elementName = (null !== $metadata && $metadata->xmlKeyValuePairs && $this->isElementNameValid($k)) ? (string) $k : $nodeName;
+            $elementName = ((null === $metadata || $metadata->xmlKeyValuePairs) && $this->isElementNameValid($k)) ? (string) $k : $nodeName;
             $this->currentNodes = [$this->createElement($namespace, $elementName)];
 
             $context->accept($v, $elementType);
