@@ -15,15 +15,8 @@ use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class AnnotationLoader implements LoaderInterface
 {
-    /**
-     * @var Reader
-     */
-    private $reader;
-
-    /**
-     * @var AnnotationProcessor
-     */
-    private $processor;
+    private Reader $reader;
+    private AnnotationProcessor $processor;
 
     public function __construct()
     {

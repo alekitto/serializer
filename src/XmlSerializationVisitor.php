@@ -2,57 +2,38 @@
 
 namespace Kcs\Serializer;
 
+use DOMAttr;
+use DOMDocument;
+use DOMElement;
+use DOMNode;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use SplStack;
 
 /**
  * XmlSerializationVisitor.
  */
 class XmlSerializationVisitor extends AbstractVisitor
 {
-    /**
-     * @var \DOMDocument
-     */
-    public $document;
+    public DOMDocument $document;
 
-    /**
-     * @var string
-     */
-    private $defaultVersion = '1.0';
+    private string $defaultVersion = '1.0';
+    private string $defaultEncoding = 'UTF-8';
+    private bool $attachNullNamespace = false;
+    private SplStack $nodeStack;
 
-    /**
-     * @var string
-     */
-    private $defaultEncoding = 'UTF-8';
+    /** @var DOMNode[] */
+    private ?array $currentNodes = null;
 
-    /**
-     * @var bool
-     */
-    private $attachNullNamespace = false;
-
-    /**
-     * @var \SplStack
-     */
-    private $nodeStack;
-
-    /**
-     * @var \DOMNode[]
-     */
-    private $currentNodes;
-
-    /**
-     * @var string[]
-     */
-    private $xmlNamespaces = [];
+    /** @var string[] */
+    private array $xmlNamespaces = [];
 
     /**
      * Sets the default document encoding.
-     *
-     * @param string $defaultEncoding
      */
     public function setDefaultEncoding(string $defaultEncoding): void
     {
@@ -234,7 +215,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $attributeName = null !== $metadata ? $metadata->xmlKeyAttribute : null;
         $namespace = null !== $metadata ? $metadata->xmlEntryNamespace : null;
 
-        /** @var \DOMNode[] $nodes */
+        /** @var DOMNode[] $nodes */
         $nodes = [];
         $elementType = $this->getElementType($type);
         foreach ($data as $k => $v) {
@@ -269,7 +250,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         $namespace = null !== $metadata ? $metadata->xmlEntryNamespace : null;
 
-        /** @var \DOMNode[] $nodes */
+        /** @var DOMNode[] $nodes */
         $nodes = [];
         $elementType = $this->getElementType($type);
         foreach ($data as $v) {
@@ -288,7 +269,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
         $this->currentNodes = [$this->document = $this->createDocument()];
-        $this->nodeStack = new \SplStack();
+        $this->nodeStack = new SplStack();
         $this->attachNullNamespace = false;
     }
 
@@ -350,15 +331,10 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     /**
      * Create a new document object.
-     *
-     * @param string|null $version
-     * @param string|null $encoding
-     *
-     * @return \DOMDocument
      */
-    private function createDocument(?string $version = null, ?string $encoding = null): \DOMDocument
+    private function createDocument(?string $version = null, ?string $encoding = null): DOMDocument
     {
-        $doc = new \DOMDocument($version ?: $this->defaultVersion, $encoding ?: $this->defaultEncoding);
+        $doc = new DOMDocument($version ?: $this->defaultVersion, $encoding ?: $this->defaultEncoding);
         $doc->formatOutput = true;
 
         return $doc;
@@ -379,20 +355,12 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     /**
      * Checks that the name is a valid XML element name.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
     private function isElementNameValid($name): bool
     {
         return $name && \preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
-    /**
-     * @param ClassMetadata $metadata
-     * @param array         $properties
-     */
     private function validateObjectProperties(ClassMetadata $metadata, array $properties): void
     {
         $hasXmlValue = false;
@@ -413,13 +381,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
     }
 
-    /**
-     * @param PropertyMetadata $metadata
-     * @param string           $attributeName
-     *
-     * @return \DOMAttr
-     */
-    private function createAttributeNode(PropertyMetadata $metadata, string $attributeName): \DOMAttr
+    private function createAttributeNode(PropertyMetadata $metadata, string $attributeName): DOMAttr
     {
         if ($namespace = (string) $metadata->xmlNamespace) {
             $prefix = $this->lookupPrefix($namespace);
@@ -431,7 +393,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $node;
     }
 
-    private function createElement(?string $namespace, ?string $elementName): \DOMElement
+    private function createElement(?string $namespace, ?string $elementName): DOMElement
     {
         if (null !== $namespace && $prefix = $this->lookupPrefix($namespace)) {
             $node = $this->document->createElement($prefix.':'.$elementName);

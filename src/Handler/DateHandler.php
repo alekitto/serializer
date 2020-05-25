@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Handler;
 
 use Cake\Chronos\Chronos;
+use DateTimeZone;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\RuntimeException;
@@ -14,20 +15,9 @@ class DateHandler implements SubscribingHandlerInterface
 {
     private const DATEINTERVAL_FORMAT = '%RP%yY%mM%dDT%hH%iM%sS';
 
-    /**
-     * @var string
-     */
-    private $defaultFormat;
-
-    /**
-     * @var \DateTimeZone
-     */
-    private $defaultTimezone;
-
-    /**
-     * @var bool
-     */
-    private $xmlCData;
+    private string $defaultFormat;
+    private DateTimeZone $defaultTimezone;
+    private bool $xmlCData;
 
     /**
      * {@inheritdoc}
@@ -87,7 +77,7 @@ class DateHandler implements SubscribingHandlerInterface
         bool $xmlCData = true
     ) {
         $this->defaultFormat = $defaultFormat;
-        $this->defaultTimezone = new \DateTimeZone($defaultTimezone);
+        $this->defaultTimezone = new DateTimeZone($defaultTimezone);
         $this->xmlCData = $xmlCData;
     }
 
@@ -171,7 +161,7 @@ class DateHandler implements SubscribingHandlerInterface
             return null;
         }
 
-        $timezone = $type->hasParam(1) ? new \DateTimeZone($type->getParam(1)) : $this->defaultTimezone;
+        $timezone = $type->hasParam(1) ? new DateTimeZone($type->getParam(1)) : $this->defaultTimezone;
         $format = $this->getFormat($type);
         $datetime = $class::createFromFormat($format, (string) $data, $timezone);
 

@@ -2,6 +2,8 @@
 
 namespace Kcs\Serializer\Metadata;
 
+use LogicException;
+
 class AdditionalPropertyMetadata extends PropertyMetadata
 {
     /**
@@ -29,7 +31,7 @@ class AdditionalPropertyMetadata extends PropertyMetadata
      */
     public function setValue($obj, $value): void
     {
-        throw new \LogicException('AdditionalPropertyMetadata is immutable.');
+        throw new LogicException('AdditionalPropertyMetadata is immutable.');
     }
 
     /**

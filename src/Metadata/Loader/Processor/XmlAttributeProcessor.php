@@ -12,6 +12,6 @@ class XmlAttributeProcessor extends PropertyMetadataProcessor
     protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
         $metadata->xmlAttribute = true;
-        $metadata->xmlNamespace = $annotation->namespace;
+        $metadata->xmlNamespace = \is_string($annotation->namespace) ? $annotation->namespace : null;
     }
 }

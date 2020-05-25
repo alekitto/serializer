@@ -10,7 +10,7 @@ use Kcs\Serializer\VisitorInterface;
 
 class InitializedBlogPostConstructor extends UnserializeObjectConstructor
 {
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
     {
         if (! $type->is(BlogPost::class)) {
             return parent::construct($visitor, $metadata, $data, $type, $context);

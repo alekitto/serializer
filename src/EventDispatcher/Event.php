@@ -9,24 +9,12 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 class Event implements StoppableEventInterface
 {
-    /**
-     * @var Type
-     */
-    protected $type;
-    /**
-     * @var Context
-     */
-    private $context;
+    protected Type $type;
+    private Context $context;
+    private bool $propagationStopped = false;
 
-    /**
-     * @var mixed
-     */
+    /** @var mixed */
     private $data;
-
-    /**
-     * @var bool
-     */
-    private $propagationStopped = false;
 
     public function __construct(Context $context, $data, Type $type)
     {

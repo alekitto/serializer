@@ -180,7 +180,7 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOff(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Your data could not be encoded because it contains invalid UTF8 characters.');
+        $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded');
 
         \ini_set('display_errors', '1');
         $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);
@@ -192,7 +192,7 @@ class JsonSerializationTest extends BaseSerializationTest
     public function testSerializeWithNonUtf8EncodingWhenDisplayErrorsOn(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Your data could not be encoded because it contains invalid UTF8 characters.');
+        $this->expectExceptionMessage('Malformed UTF-8 characters, possibly incorrectly encoded');
 
         \ini_set('display_errors', '0');
         $this->serialize(['foo' => 'bar', 'bar' => \pack('H*', 'c32e')]);

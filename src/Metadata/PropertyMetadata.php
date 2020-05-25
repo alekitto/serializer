@@ -2,9 +2,13 @@
 
 namespace Kcs\Serializer\Metadata;
 
+use Closure;
+use Error;
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
+use const PHP_VERSION_ID;
+use ReflectionException;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
@@ -14,125 +18,40 @@ class PropertyMetadata extends BasePropertyMetadata
     public const ON_EXCLUDE_NULL = 'null';
     public const ON_EXCLUDE_SKIP = 'skip';
 
-    /**
-     * @var string
-     */
-    public $sinceVersion;
+    public ?string $sinceVersion = null;
+    public ?string $untilVersion = null;
 
-    /**
-     * @var string
-     */
-    public $untilVersion;
+    /** @var string[] */
+    public array $groups = [];
 
-    /**
-     * @var string[]
-     */
-    public $groups = [];
+    /** @var string[] */
+    public array $exclusionGroups = [];
 
-    /**
-     * @var string[]
-     */
-    public $exclusionGroups = [];
+    public string $onExclude = self::ON_EXCLUDE_NULL;
+    public ?string $serializedName = null;
+    public ?Type $type = null;
+    public bool $xmlCollection = false;
+    public bool $xmlCollectionInline = false;
+    public ?string $xmlEntryName = null;
+    public ?string $xmlEntryNamespace = null;
+    public ?string $xmlKeyAttribute = null;
+    public bool $xmlAttribute = false;
+    public bool $xmlValue = false;
+    public ?string $xmlNamespace = null;
+    public bool $xmlKeyValuePairs = false;
+    public bool $xmlElementCData = true;
 
-    /**
-     * @var string
-     */
-    public $onExclude = self::ON_EXCLUDE_NULL;
-
-    /**
-     * @var string
-     */
-    public $serializedName;
-
-    /**
-     * @var Type
-     */
-    public $type;
-
-    /**
-     * @var bool
-     */
-    public $xmlCollection = false;
-
-    /**
-     * @var bool
-     */
-    public $xmlCollectionInline = false;
-
-    /**
-     * @var string
-     */
-    public $xmlEntryName;
-
-    /**
-     * @var string
-     */
-    public $xmlEntryNamespace;
-
-    /**
-     * @var string
-     */
-    public $xmlKeyAttribute;
-
-    /**
-     * @var bool
-     */
-    public $xmlAttribute = false;
-
-    /**
-     * @var bool
-     */
-    public $xmlValue = false;
-
-    /**
-     * @var string
-     */
-    public $xmlNamespace;
-
-    /**
-     * @var bool
-     */
-    public $xmlKeyValuePairs = false;
-
-    /**
-     * @var bool
-     */
-    public $xmlElementCData = true;
-
-    /**
-     * @var string
-     */
+    /** @var string|callable|null */
     public $getter;
 
-    /**
-     * @var string
-     */
+    /** @var string|callable|null */
     public $setter;
 
-    /**
-     * @var bool
-     */
-    public $inline = false;
-
-    /**
-     * @var bool
-     */
-    public $readOnly = false;
-
-    /**
-     * @var bool
-     */
-    public $xmlAttributeMap = false;
-
-    /**
-     * @var int|null
-     */
-    public $maxDepth;
-
-    /**
-     * @var string
-     */
-    public $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
+    public bool $inline = false;
+    public bool $readOnly = false;
+    public bool $xmlAttributeMap = false;
+    public ?int $maxDepth = null;
+    public string $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
 
     /**
      * {@inheritdoc}
@@ -165,19 +84,19 @@ class PropertyMetadata extends BasePropertyMetadata
     {
         if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
             $reflector = $this->getReflection();
-            if (\PHP_VERSION_ID >= 70400 && $reflector->hasType() && !$reflector->isInitialized($obj)) {
+            if (PHP_VERSION_ID >= 70400 && $reflector->hasType() && ! $reflector->isInitialized($obj)) {
                 // There is no way to check if a property has been unset or if it is uninitialized.
                 // When trying to access an uninitialized property, __get method is triggered.
 
                 // If __get method is not present, no fallback is possible
                 // Otherwise we need to catch an Error in case we are trying to access an uninitialized but set property.
-                if (!method_exists($obj, '__get')) {
+                if (! \method_exists($obj, '__get')) {
                     return null;
                 }
 
                 try {
                     return $reflector->getValue($obj);
-                } catch (\Error $e) {
+                } catch (Error $e) {
                     return null;
                 }
             }
@@ -189,7 +108,7 @@ class PropertyMetadata extends BasePropertyMetadata
             $this->initializeGetterAccessor();
         }
 
-        if ($this->getter instanceof \Closure) {
+        if ($this->getter instanceof Closure) {
             return \call_user_func($this->getter->bindTo($obj));
         }
 
@@ -213,7 +132,7 @@ class PropertyMetadata extends BasePropertyMetadata
             $this->initializeSetterAccessor();
         }
 
-        if ($this->setter instanceof \Closure) {
+        if ($this->setter instanceof Closure) {
             \call_user_func($this->setter->bindTo($obj), $value);
 
             return;
@@ -254,7 +173,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
                 return;
             }
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             // Property does not exist.
         }
 
@@ -279,7 +198,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
                 return;
             }
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             // Property does not exist.
         }
 

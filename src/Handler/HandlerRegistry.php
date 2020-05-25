@@ -8,10 +8,8 @@ use Kcs\Serializer\Exception\RuntimeException;
 
 final class HandlerRegistry implements HandlerRegistryInterface
 {
-    /**
-     * @var SubscribingHandlerInterface[]
-     */
-    private $handlers;
+    /** @var SubscribingHandlerInterface[] */
+    private array $handlers;
 
     public static function getDefaultMethod(int $direction, string $type): string
     {

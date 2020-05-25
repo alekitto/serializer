@@ -35,21 +35,18 @@ interface SerializerInterface
      *
      * This is useful when the data needs to be passed on to other methods which expect array data.
      *
-     * @param mixed                $data    anything that converts to an array, typically an object or an array of objects
-     * @param SerializationContext $context
+     * @param mixed $data anything that converts to an array, typically an object or an array of objects
      *
-     * @return array
+     * @return array<mixed, mixed>
      */
     public function normalize($data, SerializationContext $context = null): array;
 
     /**
      * Restores objects from an array structure.
      *
-     * @param array                  $data
-     * @param Type                   $type
-     * @param DeserializationContext $context
+     * @param array<mixed, mixed> $data
      *
      * @return mixed this returns whatever the passed type is, typically an object or an array of objects
      */
-    public function denormalize(array $data, Type $type, DeserializationContext $context = null);
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null);
 }

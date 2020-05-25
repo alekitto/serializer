@@ -6,15 +6,8 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class DeserializationContext extends Context
 {
-    /**
-     * @var int
-     */
-    public $direction = Direction::DIRECTION_DESERIALIZATION;
-
-    /**
-     * @var int
-     */
-    private $depth = 0;
+    public int $direction = Direction::DIRECTION_DESERIALIZATION;
+    private int $depth = 0;
 
     /**
      * {@inheritdoc}

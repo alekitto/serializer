@@ -2,22 +2,20 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Doctrine\Common\Inflector\Inflector;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoaderTrait;
 use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Exception\XmlErrorException;
+use Kcs\Serializer\Inflector\Inflector;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use SimpleXMLElement;
 
 class XmlLoader extends AnnotationLoader
 {
     use FileLoaderTrait;
     use LoaderTrait;
 
-    /**
-     * @var \SimpleXMLElement
-     */
-    private $document;
+    private SimpleXMLElement $document;
 
     public function __construct($filePath)
     {
@@ -170,7 +168,7 @@ class XmlLoader extends AnnotationLoader
         return $pElem && null !== $pElem->attributes()->exclude;
     }
 
-    private function loadComplex(\SimpleXMLElement $element, array $excludedAttributes = ['name'], array $excludedChildren = []): array
+    private function loadComplex(SimpleXMLElement $element, array $excludedAttributes = ['name'], array $excludedChildren = []): array
     {
         $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
 
@@ -185,7 +183,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    private function getAnnotationFromElement(\SimpleXMLElement $element, string $name): array
+    private function getAnnotationFromElement(SimpleXMLElement $element, string $name): array
     {
         $annotations = [];
 
@@ -199,7 +197,7 @@ class XmlLoader extends AnnotationLoader
             }
 
             foreach ($this->loadAnnotationProperties($elem) as $attrName => $value) {
-                $annotation->{Inflector::camelize($attrName)} = $value;
+                $annotation->{Inflector::getInstance()->camelize($attrName)} = $value;
             }
 
             $annotations[] = $annotation;
@@ -217,7 +215,7 @@ class XmlLoader extends AnnotationLoader
         return \reset($elems);
     }
 
-    private function getAnnotationsFromAttributes(\SimpleXMLElement $element, array $excludeAttributes = []): array
+    private function getAnnotationsFromAttributes(SimpleXMLElement $element, array $excludeAttributes = []): array
     {
         $annotations = [];
 
@@ -238,11 +236,11 @@ class XmlLoader extends AnnotationLoader
     }
 
     /**
-     * @param \SimpleXMLElement $elem
+     * @param SimpleXMLElement $elem
      *
      * @return iterable
      */
-    private function loadAnnotationProperties(\SimpleXMLElement $elem): iterable
+    private function loadAnnotationProperties(SimpleXMLElement $elem): iterable
     {
         foreach ($elem->attributes() as $attrName => $value) {
             $value = (string) $value;

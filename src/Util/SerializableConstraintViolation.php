@@ -16,17 +16,13 @@ final class SerializableConstraintViolation
     /**
      * @Type("string")
      * @Xml\Attribute()
-     *
-     * @var string
      */
-    private $propertyPath;
+    private string $propertyPath;
 
     /**
      * @Type("string")
-     *
-     * @var string
      */
-    private $message;
+    private string $message;
 
     public function __construct(ConstraintViolationInterface $violation)
     {
@@ -34,17 +30,11 @@ final class SerializableConstraintViolation
         $this->message = $violation->getMessage();
     }
 
-    /**
-     * @return string
-     */
     public function getPropertyPath(): string
     {
         return $this->propertyPath;
     }
 
-    /**
-     * @return string
-     */
     public function getMessage(): string
     {
         return $this->message;

@@ -20,13 +20,7 @@ interface ObjectConstructorInterface
      * Implementations could for example create a new object calling "new", use
      * "unserialize" techniques, reflection, or other means.
      *
-     * @param VisitorInterface       $visitor
-     * @param ClassMetadata          $metadata
-     * @param mixed                  $data
-     * @param Type                   $type
-     * @param DeserializationContext $context
-     *
-     * @return object
+     * @param mixed $data
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context);
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object;
 }

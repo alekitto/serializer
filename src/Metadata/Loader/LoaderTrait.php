@@ -2,13 +2,14 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Doctrine\Common\Inflector\Inflector;
+use Kcs\Serializer\Inflector\Inflector;
+use ReflectionClass;
 
 trait LoaderTrait
 {
     private function createAnnotationObject(string $name)
     {
-        switch ($className = Inflector::classify($name)) {
+        switch ($className = Inflector::getInstance()->classify($name)) {
             case 'XmlList':
             case 'XmlNamespace':
                 $className = 'Xml\\'.$className;
@@ -28,7 +29,7 @@ trait LoaderTrait
 
     private function getDefaultPropertyName($annotation): ?string
     {
-        $reflectionAnnotation = new \ReflectionClass($annotation);
+        $reflectionAnnotation = new ReflectionClass($annotation);
         $properties = $reflectionAnnotation->getProperties();
 
         return isset($properties[0]) ? $properties[0]->name : null;

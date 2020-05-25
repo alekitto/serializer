@@ -14,10 +14,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DeserializeGraphNavigator extends GraphNavigator
 {
-    /**
-     * @var ObjectConstructorInterface
-     */
-    private $objectConstructor;
+    private ObjectConstructorInterface $objectConstructor;
 
     public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, ?EventDispatcherInterface $dispatcher = null)
     {

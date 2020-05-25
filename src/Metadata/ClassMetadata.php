@@ -6,6 +6,7 @@ use Kcs\Metadata\ClassMetadata as BaseClassMetadata;
 use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Exception\InvalidArgumentException;
+use LogicException;
 
 /**
  * Class Metadata used to customize the serialization process.
@@ -18,80 +19,21 @@ class ClassMetadata extends BaseClassMetadata
     public const ACCESSOR_ORDER_ALPHABETICAL = 'alphabetical';
     public const ACCESSOR_ORDER_CUSTOM = 'custom';
 
-    /**
-     * @var string
-     */
-    public $exclusionPolicy = ExclusionPolicy::NONE;
-
-    /**
-     * @var string
-     */
-    public $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
-
-    /**
-     * @var bool
-     */
-    public $readOnly = false;
-
-    /**
-     * @var string
-     */
-    public $xmlRootName;
-
-    /**
-     * @var string
-     */
-    public $xmlRootNamespace;
-
-    /**
-     * @var string
-     */
-    public $xmlEncoding;
-
-    /**
-     * @var string[]
-     */
-    public $xmlNamespaces = [];
-
-    /**
-     * @var string
-     */
-    public $accessorOrder;
-
-    /**
-     * @var string
-     */
-    public $customOrder;
-
-    /**
-     * @var bool
-     */
-    public $discriminatorDisabled = false;
-
-    /**
-     * @var string
-     */
-    public $discriminatorBaseClass;
-
-    /**
-     * @var string
-     */
-    public $discriminatorFieldName;
-
-    /**
-     * @var string
-     */
-    public $discriminatorValue;
-
-    /**
-     * @var string[]
-     */
-    public $discriminatorMap = [];
-
-    /**
-     * @var string[]
-     */
-    public $discriminatorGroups = [];
+    public string $exclusionPolicy = ExclusionPolicy::NONE;
+    public string $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
+    public bool $readOnly = false;
+    public ?string $xmlRootName = null;
+    public ?string $xmlRootNamespace = null;
+    public ?string $xmlEncoding = null;
+    public array $xmlNamespaces = [];
+    public ?string $accessorOrder = null;
+    public ?array $customOrder = null;
+    public bool $discriminatorDisabled = false;
+    public ?string $discriminatorBaseClass = null;
+    public ?string $discriminatorFieldName = null;
+    public ?string $discriminatorValue = null;
+    public array $discriminatorMap = [];
+    public array $discriminatorGroups = [];
 
     public function setDiscriminator(string $fieldName, array $map, array $groups): void
     {
@@ -112,13 +54,10 @@ class ClassMetadata extends BaseClassMetadata
     /**
      * Sets the order of properties in the class.
      *
-     * @param string $order
-     * @param array  $customOrder
-     *
      * @throws InvalidArgumentException When the accessor order is not valid
      * @throws InvalidArgumentException When the custom order is not valid
      */
-    public function setAccessorOrder($order, array $customOrder = []): void
+    public function setAccessorOrder(string $order, array $customOrder = []): void
     {
         if (! \in_array($order, [self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM], true)) {
             throw new InvalidArgumentException(\sprintf('The accessor order "%s" is invalid.', $order));
@@ -165,7 +104,7 @@ class ClassMetadata extends BaseClassMetadata
 
         if ($this->discriminatorFieldName && $object->discriminatorFieldName &&
             $this->discriminatorFieldName !== $object->discriminatorFieldName) {
-            throw new \LogicException(\sprintf('The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.', $this->getName(), $object->discriminatorBaseClass, $object->discriminatorBaseClass));
+            throw new LogicException(\sprintf('The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.', $this->getName(), $object->discriminatorBaseClass, $object->discriminatorBaseClass));
         }
 
         $this->mergeDiscriminatorMap($object);
@@ -193,11 +132,11 @@ class ClassMetadata extends BaseClassMetadata
         } elseif (isset($data->{$this->discriminatorFieldName})) {
             $typeValue = (string) $data->{$this->discriminatorFieldName};
         } else {
-            throw new \LogicException("The discriminator field name '{$this->discriminatorFieldName}' for "."base-class '{$this->getName()}' was not found in input data.");
+            throw new LogicException("The discriminator field name '{$this->discriminatorFieldName}' for "."base-class '{$this->getName()}' was not found in input data.");
         }
 
         if (! isset($this->discriminatorMap[$typeValue])) {
-            throw new \LogicException("The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: ".\implode(', ', \array_keys($this->discriminatorMap)));
+            throw new LogicException("The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: ".\implode(', ', \array_keys($this->discriminatorMap)));
         }
 
         return $this->discriminatorMap[$typeValue];
@@ -242,7 +181,7 @@ class ClassMetadata extends BaseClassMetadata
         }
 
         if (false === $typeValue = \array_search($this->getName(), $object->discriminatorMap, true)) {
-            throw new \LogicException('The sub-class "'.$this->getName().'" is not listed in the discriminator of the base class "'.$this->discriminatorBaseClass);
+            throw new LogicException('The sub-class "'.$this->getName().'" is not listed in the discriminator of the base class "'.$this->discriminatorBaseClass);
         }
 
         $this->discriminatorValue = $typeValue;

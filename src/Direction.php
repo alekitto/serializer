@@ -11,10 +11,6 @@ final class Direction
 
     /**
      * Parses a direction string to one of the direction constants.
-     *
-     * @param string $dirStr
-     *
-     * @return int
      */
     public static function parseDirection(string $dirStr): int
     {

@@ -18,9 +18,9 @@ use Kcs\Serializer\Handler\PropelCollectionHandler;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
@@ -33,60 +33,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDi
  */
 class SerializerBuilder
 {
-    /**
-     * @var HandlerRegistry
-     */
-    private $handlerRegistry;
+    private HandlerRegistry $handlerRegistry;
+    private bool $handlersConfigured = false;
+    private ?EventDispatcherInterface $eventDispatcher = null;
+    private bool $listenersConfigured = false;
+    private ?ObjectConstructorInterface $objectConstructor = null;
 
-    /**
-     * @var bool
-     */
-    private $handlersConfigured = false;
+    /** @var VisitorInterface[] */
+    private array $serializationVisitors;
 
-    /**
-     * @var EventDispatcherInterface|null
-     */
-    private $eventDispatcher;
+    /** @var VisitorInterface[] */
+    private array $deserializationVisitors;
 
-    /**
-     * @var bool
-     */
-    private $listenersConfigured = false;
-
-    /**
-     * @var ObjectConstructorInterface|null
-     */
-    private $objectConstructor;
-
-    /**
-     * @var array
-     */
-    private $serializationVisitors;
-
-    /**
-     * @var array
-     */
-    private $deserializationVisitors;
-
-    /**
-     * @var PropertyNamingStrategyInterface
-     */
-    private $propertyNamingStrategy;
-
-    /**
-     * @var CacheItemPoolInterface|null
-     */
-    private $cache;
-
-    /**
-     * @var AnnotationReader
-     */
-    private $annotationReader;
-
-    /**
-     * @var LoaderInterface|null
-     */
-    private $metadataLoader;
+    private ?PropertyNamingStrategyInterface $propertyNamingStrategy = null;
+    private ?CacheItemPoolInterface $cache = null;
+    private ?Reader $annotationReader = null;
+    private ?LoaderInterface $metadataLoader = null;
 
     public static function create(): self
     {
@@ -232,10 +194,7 @@ class SerializerBuilder
             $metadataLoader->setReader($annotationReader);
         }
 
-        if (PHP_VERSION_ID >= 70400) {
-            $metadataLoader = new ReflectionLoader($metadataLoader);
-        }
-
+        $metadataLoader = new ReflectionLoader($metadataLoader);
         $metadataFactory = new MetadataFactory($metadataLoader, $this->eventDispatcher, $this->cache);
 
         if (! $this->handlersConfigured) {

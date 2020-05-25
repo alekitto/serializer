@@ -13,26 +13,16 @@ use Kcs\Serializer\Type\Parser\Parser;
  */
 final class Type
 {
-    /**
-     * @var string
-     */
-    public $name;
+    public string $name;
+    public ?MetadataInterface $metadata = null;
 
-    /**
-     * @var array
-     */
-    private $params;
-
-    /**
-     * @var MetadataInterface
-     */
-    public $metadata;
+    /** @var array<string|int, mixed> */
+    private array $params;
 
     /**
      * Type constructor.
      *
-     * @param string $name
-     * @param array  $params
+     * @param array<string|int, mixed> $params
      */
     public function __construct(string $name, array $params = [])
     {
@@ -42,10 +32,6 @@ final class Type
 
     /**
      * Parse a type string and return a Type instance.
-     *
-     * @param $type
-     *
-     * @return Type
      */
     public static function parse(string $type): self
     {
@@ -61,8 +47,6 @@ final class Type
      * Create a new Type from an object or a class string.
      *
      * @param mixed $object
-     *
-     * @return Type
      */
     public static function from($object): self
     {
@@ -81,9 +65,6 @@ final class Type
         return new self($object);
     }
 
-    /**
-     * @return Type
-     */
     public static function null(): self
     {
         static $nullType = null;
@@ -95,7 +76,7 @@ final class Type
     }
 
     /**
-     * @return array
+     * @return array<string|int, mixed>
      */
     public function getParams(): array
     {
@@ -103,9 +84,7 @@ final class Type
     }
 
     /**
-     * @param array $params
-     *
-     * @return $this
+     * @param array<string|int, mixed> $params
      */
     public function setParams(array $params): self
     {
@@ -121,10 +100,6 @@ final class Type
 
     /**
      * Check if this type represents $class.
-     *
-     * @param string $class
-     *
-     * @return bool
      */
     public function is(string $class): bool
     {
@@ -135,8 +110,6 @@ final class Type
      * Returns if this type has param with index $index.
      *
      * @param string|int $index
-     *
-     * @return bool
      */
     public function hasParam($index): bool
     {

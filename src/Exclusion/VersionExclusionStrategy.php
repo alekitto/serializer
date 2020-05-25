@@ -8,10 +8,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class VersionExclusionStrategy implements ExclusionStrategyInterface
 {
-    /**
-     * @var string
-     */
-    private $version;
+    private string $version;
 
     public function __construct($version)
     {

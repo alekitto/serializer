@@ -7,23 +7,13 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use SplStack;
 
 class GenericSerializationVisitor extends AbstractVisitor
 {
-    /**
-     * @var GraphNavigator
-     */
-    private $navigator;
-
-    /**
-     * @var string|null
-     */
+    private ?GraphNavigator $navigator = null;
     private $root;
-
-    /**
-     * @var \SplStack
-     */
-    private $dataStack;
+    private SplStack $dataStack;
 
     /**
      * @var mixed
@@ -37,7 +27,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     {
         $this->navigator = $navigator;
         $this->root = null;
-        $this->dataStack = new \SplStack();
+        $this->dataStack = new SplStack();
     }
 
     /**

@@ -12,51 +12,19 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 class Serializer implements SerializerInterface
 {
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $factory;
+    private MetadataFactoryInterface $factory;
 
-    /**
-     * @var VisitorInterface[]
-     */
-    private $serializationVisitors;
+    /** @var VisitorInterface[] */
+    private array $serializationVisitors;
 
-    /**
-     * @var VisitorInterface[]
-     */
-    private $deserializationVisitors;
+    /** @var VisitorInterface[] */
+    private array $deserializationVisitors;
 
-    /**
-     * @var GraphNavigator
-     */
-    private $navigator;
+    private GraphNavigator $navigator;
+    private HandlerRegistryInterface $handlerRegistry;
+    private ObjectConstructorInterface $objectConstructor;
+    private ?EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var HandlerRegistryInterface
-     */
-    private $handlerRegistry;
-
-    /**
-     * @var ObjectConstructorInterface
-     */
-    private $objectConstructor;
-
-    /**
-     * @var EventDispatcherInterface|null
-     */
-    private $dispatcher;
-
-    /**
-     * Constructor.
-     *
-     * @param MetadataFactoryInterface                $factory
-     * @param Handler\HandlerRegistryInterface        $handlerRegistry
-     * @param Construction\ObjectConstructorInterface $objectConstructor
-     * @param VisitorInterface[]                      $serializationVisitors   of VisitorInterface
-     * @param VisitorInterface[]                      $deserializationVisitors of VisitorInterface
-     * @param EventDispatcherInterface                $dispatcher
-     */
     public function __construct(
         MetadataFactoryInterface $factory,
         HandlerRegistryInterface $handlerRegistry,
@@ -118,7 +86,7 @@ class Serializer implements SerializerInterface
         $result = $this->serialize($data, 'array', $context);
 
         if (! \is_array($result)) {
-            throw new RuntimeException(\sprintf('The input data of type "%s" did not convert to an array, but got a result of type "%s".', \is_object($data) ? \get_class($data) : \gettype($data), \is_object($result) ? \get_class($result) : \gettype($result)));
+            throw new RuntimeException(\sprintf('The input data of type "%s" did not convert to an array, but got a result of type "%s".', \get_debug_type($data), \get_debug_type($result)));
         }
 
         return $result;
@@ -127,14 +95,11 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize(array $data, Type $type, DeserializationContext $context = null)
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null)
     {
         return $this->deserialize($data, $type, 'array', $context);
     }
 
-    /**
-     * @return MetadataFactoryInterface
-     */
     public function getMetadataFactory(): MetadataFactoryInterface
     {
         return $this->factory;

@@ -33,20 +33,9 @@ abstract class GraphNavigator
         'resource' => true,
     ];
 
-    /**
-     * @var EventDispatcherInterface|null
-     */
-    protected $dispatcher;
-
-    /**
-     * @var MetadataFactoryInterface
-     */
-    protected $metadataFactory;
-
-    /**
-     * @var HandlerRegistryInterface
-     */
-    private $handlerRegistry;
+    protected ?EventDispatcherInterface $dispatcher;
+    protected MetadataFactoryInterface $metadataFactory;
+    private HandlerRegistryInterface $handlerRegistry;
 
     public function __construct(
         MetadataFactoryInterface $metadataFactory,
@@ -128,10 +117,6 @@ abstract class GraphNavigator
 
     /**
      * Get ClassMetadata instance for type. Returns null if class does not exist.
-     *
-     * @param Type $type
-     *
-     * @return ClassMetadata|null
      */
     protected function getMetadataForType(Type $type): ?ClassMetadata
     {

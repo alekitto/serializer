@@ -7,10 +7,7 @@ use Kcs\Serializer\Type\Type;
 
 abstract class AbstractVisitor implements VisitorInterface
 {
-    /**
-     * @var PropertyNamingStrategyInterface
-     */
-    protected $namingStrategy;
+    protected PropertyNamingStrategyInterface $namingStrategy;
 
     public function __construct(PropertyNamingStrategyInterface $namingStrategy)
     {

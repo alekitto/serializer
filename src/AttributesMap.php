@@ -5,9 +5,9 @@ namespace Kcs\Serializer;
 class AttributesMap implements \ArrayAccess
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    private $map = [];
+    private array $map = [];
 
     /**
      * Returns an attribute by name.
@@ -50,7 +50,7 @@ class AttributesMap implements \ArrayAccess
     /**
      * Returns a copy of the array map.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function all(): array
     {

@@ -2,32 +2,26 @@
 
 namespace Kcs\Serializer;
 
+use ArrayObject;
+use JsonException;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
+use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 
 class JsonSerializationVisitor extends GenericSerializationVisitor
 {
-    /**
-     * @var int
-     */
-    private $options = 0;
+    private int $options = 0;
 
     /**
      * {@inheritdoc}
      */
     public function getResult(): string
     {
-        $result = @\json_encode($this->getRoot(), $this->options);
-
-        switch (\json_last_error()) {
-            case JSON_ERROR_NONE:
-                return $result;
-
-            case JSON_ERROR_UTF8:
-                throw new \RuntimeException('Your data could not be encoded because it contains invalid UTF8 characters.');
-            default:
-                throw new \RuntimeException(\sprintf('An error occurred while encoding your data (error code %d).', \json_last_error()));
+        try {
+            return \json_encode($this->getRoot(), $this->options | JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new RuntimeException('An error occurred while encoding your data: '.$exception->getMessage(), 0, $exception);
         }
     }
 
@@ -51,7 +45,7 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         if ($type->hasParam(1) && 0 === \count($result)) {
             // ArrayObject is specially treated by the json_encode function and
             // serialized to { } while a mere array would be serialized to [].
-            $this->setData($result = new \ArrayObject());
+            $this->setData($result = new ArrayObject());
         }
 
         return $result;
@@ -66,7 +60,7 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
 
         // Force JSON output to "{}" instead of "[]" if it contains either no properties or all properties are null.
         if (0 === \count($rs)) {
-            $this->setData($rs = new \ArrayObject());
+            $this->setData($rs = new ArrayObject());
         }
 
         return $rs;

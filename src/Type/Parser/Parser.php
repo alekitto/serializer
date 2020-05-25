@@ -10,10 +10,7 @@ use Kcs\Serializer\Type\Type;
  */
 final class Parser
 {
-    /**
-     * @var Lexer
-     */
-    private $lexer;
+    private Lexer $lexer;
 
     public function __construct()
     {
@@ -22,10 +19,6 @@ final class Parser
 
     /**
      * Parse a type string.
-     *
-     * @param string $input
-     *
-     * @return Type
      *
      * @throws SyntaxErrorException
      */
@@ -39,8 +32,6 @@ final class Parser
 
     /**
      * Match a token in the lexer.
-     *
-     * @param int $type
      *
      * @return mixed
      *
@@ -60,8 +51,6 @@ final class Parser
 
     /**
      * Parse internal type string.
-     *
-     * @return Type
      *
      * @throws SyntaxErrorException
      */

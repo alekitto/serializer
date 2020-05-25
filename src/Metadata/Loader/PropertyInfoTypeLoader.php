@@ -18,15 +18,8 @@ use Symfony\Component\PropertyInfo\Type as SymfonyType;
  */
 class PropertyInfoTypeLoader implements LoaderInterface
 {
-    /**
-     * @var LoaderInterface
-     */
-    protected $delegate;
-
-    /**
-     * @var PropertyInfoExtractorInterface
-     */
-    private $propertyInfoExtractor;
+    protected LoaderInterface $delegate;
+    private PropertyInfoExtractorInterface $propertyInfoExtractor;
 
     public function __construct(LoaderInterface $delegate, PropertyInfoExtractorInterface $propertyInfoExtractor)
     {

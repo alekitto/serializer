@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Metadata\Loader;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
+use Exception;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
@@ -49,7 +50,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
         } elseif ($doctrineMetadata->hasAssociation($propertyName)) {
             try {
                 $targetEntity = $doctrineMetadata->getAssociationTargetClass($propertyName);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return;
             }
 

@@ -17,7 +17,7 @@ final class SerializableForm
      *
      * @var FormError[]
      */
-    private $errors = [];
+    private array $errors = [];
 
     /**
      * @Type("array<Kcs\Serializer\Util\SerializableForm>")
@@ -25,15 +25,13 @@ final class SerializableForm
      *
      * @var static[]
      */
-    private $children = [];
+    private array $children = [];
 
     /**
      * @Type("string")
      * @Xml\Attribute()
-     *
-     * @var string
      */
-    private $name;
+    private string $name;
 
     public function __construct(FormInterface $form)
     {
@@ -64,9 +62,6 @@ final class SerializableForm
         return $this->children;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;

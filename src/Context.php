@@ -12,56 +12,22 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use LogicException;
 
 /**
  * @property int $direction
  */
 abstract class Context
 {
-    /**
-     * @var AttributesMap
-     */
-    public $attributes;
-
-    /**
-     * @var string
-     */
-    private $format;
-
-    /**
-     * @var VisitorInterface
-     */
-    public $visitor;
-
-    /**
-     * @var GraphNavigator
-     */
-    private $navigator;
-
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadataFactory;
-
-    /**
-     * @var ExclusionStrategyInterface
-     */
-    private $exclusionStrategy;
-
-    /**
-     * @var bool
-     */
-    private $serializeNull = false;
-
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-
-    /**
-     * @var MetadataStack
-     */
-    private $metadataStack;
+    public AttributesMap $attributes;
+    private string $format;
+    public VisitorInterface $visitor;
+    private GraphNavigator $navigator;
+    private MetadataFactoryInterface $metadataFactory;
+    private ?ExclusionStrategyInterface $exclusionStrategy = null;
+    private bool $serializeNull = false;
+    private bool $initialized = false;
+    private MetadataStack $metadataStack;
 
     public function __construct()
     {
@@ -81,7 +47,7 @@ abstract class Context
     public function createChildContext(array $attributes = []): self
     {
         if (! $this->initialized) {
-            throw new \LogicException('Cannot create a child context of an uninitialized context.');
+            throw new LogicException('Cannot create a child context of an uninitialized context.');
         }
 
         $obj = new static();
@@ -112,7 +78,7 @@ abstract class Context
         MetadataFactoryInterface $factory
     ): void {
         if ($this->initialized) {
-            throw new \LogicException('This context was already initialized, and cannot be re-used.');
+            throw new LogicException('This context was already initialized, and cannot be re-used.');
         }
 
         $this->initialized = true;
@@ -206,9 +172,6 @@ abstract class Context
         return $this->format;
     }
 
-    /**
-     * @return MetadataStack
-     */
     public function getMetadataStack(): MetadataStack
     {
         return $this->metadataStack;
@@ -225,8 +188,6 @@ abstract class Context
 
     /**
      * Get the array of properties that should be serialized in an object.
-     *
-     * @param ClassMetadata $metadata
      *
      * @return PropertyMetadata[]
      */
@@ -253,7 +214,7 @@ abstract class Context
             return;
         }
 
-        throw new \LogicException('This context was already initialized and is immutable; you cannot modify it anymore.');
+        throw new LogicException('This context was already initialized and is immutable; you cannot modify it anymore.');
     }
 
     private function assertInitialized(): void
@@ -262,7 +223,7 @@ abstract class Context
             return;
         }
 
-        throw new \LogicException('This context is not initialized.');
+        throw new LogicException('This context is not initialized.');
     }
 
     /**

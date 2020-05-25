@@ -6,10 +6,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class ValidationFailedException extends RuntimeException
 {
-    /**
-     * @var ConstraintViolationList
-     */
-    private $list;
+    private ConstraintViolationList $list;
 
     public function __construct(ConstraintViolationList $list)
     {

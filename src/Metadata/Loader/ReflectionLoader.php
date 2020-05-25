@@ -9,10 +9,7 @@ use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
 class ReflectionLoader implements LoaderInterface
 {
-    /**
-     * @var LoaderInterface
-     */
-    private $delegate;
+    private LoaderInterface $delegate;
 
     public function __construct(LoaderInterface $delegate)
     {
@@ -20,7 +17,7 @@ class ReflectionLoader implements LoaderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
@@ -38,7 +35,6 @@ class ReflectionLoader implements LoaderInterface
 
             // If the inner driver provides a type, don't guess anymore.
             if (null !== $propertyMetadata->type) {
-                
                 continue;
             }
 
@@ -76,7 +72,7 @@ class ReflectionLoader implements LoaderInterface
         }
 
         $type = $reflection->getReturnType();
-        if (null === $type || $type->getName() === 'void') {
+        if (null === $type || 'void' === $type->getName()) {
             return;
         }
 

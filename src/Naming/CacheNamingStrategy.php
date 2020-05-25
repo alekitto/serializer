@@ -3,23 +3,17 @@
 namespace Kcs\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use SplObjectStorage;
 
 final class CacheNamingStrategy implements PropertyNamingStrategyInterface
 {
-    /**
-     * @var PropertyNamingStrategyInterface
-     */
-    private $delegate;
-
-    /**
-     * @var \SplObjectStorage
-     */
-    private $cache;
+    private PropertyNamingStrategyInterface $delegate;
+    private SplObjectStorage $cache;
 
     public function __construct(PropertyNamingStrategyInterface $delegate)
     {
         $this->delegate = $delegate;
-        $this->cache = new \SplObjectStorage();
+        $this->cache = new SplObjectStorage();
     }
 
     /**

@@ -31,6 +31,13 @@ class AppKernel extends Kernel
         $loader->load(__DIR__.'/config.yml');
     }
 
+    protected function getKernelParameters(): array
+    {
+        return parent::getKernelParameters() + [
+            'kernel.root_dir' => __DIR__,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */

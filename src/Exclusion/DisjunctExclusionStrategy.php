@@ -15,10 +15,8 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class DisjunctExclusionStrategy implements ExclusionStrategyInterface
 {
-    /**
-     * @var ExclusionStrategyInterface[]
-     */
-    private $delegates;
+    /** @var ExclusionStrategyInterface[] */
+    private array $delegates;
 
     /**
      * @param ExclusionStrategyInterface[] $delegates
@@ -54,7 +52,6 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
     public function shouldSkipProperty(PropertyMetadata $property, Context $context): bool
     {
         foreach ($this->delegates as $delegate) {
-            /** @var $delegate ExclusionStrategyInterface */
             if ($delegate->shouldSkipProperty($property, $context)) {
                 return true;
             }

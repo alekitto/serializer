@@ -13,13 +13,8 @@ use Kcs\Serializer\VisitorInterface;
  */
 class InitializedObjectConstructor implements ObjectConstructorInterface
 {
-    private $fallbackConstructor;
+    private ObjectConstructorInterface $fallbackConstructor;
 
-    /**
-     * Constructor.
-     *
-     * @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor
-     */
     public function __construct(ObjectConstructorInterface $fallbackConstructor)
     {
         $this->fallbackConstructor = $fallbackConstructor;
@@ -28,7 +23,7 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
     /**
      * {@inheritdoc}
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
     {
         if (1 === $context->getDepth() && $context->attributes->has('target')) {
             return $context->attributes->get('target');

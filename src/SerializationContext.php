@@ -4,18 +4,12 @@ namespace Kcs\Serializer;
 
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
+use SplObjectStorage;
 
 class SerializationContext extends Context
 {
-    /**
-     * @var int
-     */
-    public $direction = Direction::DIRECTION_SERIALIZATION;
-
-    /**
-     * @var \SplObjectStorage
-     */
-    private $visitingSet;
+    public int $direction = Direction::DIRECTION_SERIALIZATION;
+    private SplObjectStorage $visitingSet;
 
     public function initialize(
         string $format,
@@ -25,7 +19,7 @@ class SerializationContext extends Context
     ): void {
         parent::initialize($format, $visitor, $navigator, $factory);
 
-        $this->visitingSet = new \SplObjectStorage();
+        $this->visitingSet = new SplObjectStorage();
     }
 
     public function createChildContext(array $attributes = []): Context
@@ -63,8 +57,6 @@ class SerializationContext extends Context
      * Guesses the serialization type for the given data.
      *
      * @param mixed $data
-     *
-     * @return Type
      */
     public function guessType($data): Type
     {

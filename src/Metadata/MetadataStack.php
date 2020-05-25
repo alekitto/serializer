@@ -2,24 +2,20 @@
 
 namespace Kcs\Serializer\Metadata;
 
+use SplStack;
+
 /**
  * @author Alessandro Chitolina <alekitto@gmail.com>
  */
 class MetadataStack implements \IteratorAggregate, \Countable
 {
-    /**
-     * @var \SplStack
-     */
-    private $stack;
-
-    /**
-     * @var string[]
-     */
-    private $currentPath;
+    /** @var string[] */
+    private array $currentPath;
+    private SplStack $stack;
 
     public function __construct()
     {
-        $this->stack = new \SplStack();
+        $this->stack = new SplStack();
         $this->currentPath = [];
     }
 

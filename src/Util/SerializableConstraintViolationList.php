@@ -18,7 +18,7 @@ final class SerializableConstraintViolationList
      *
      * @var SerializableConstraintViolation[]
      */
-    private $violations = [];
+    private array $violations = [];
 
     public function __construct(ConstraintViolationListInterface $list)
     {

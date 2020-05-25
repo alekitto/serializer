@@ -10,15 +10,9 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
     public const DEFAULT_GROUP = 'Default';
 
-    /**
-     * @var string[]
-     */
-    private $groups;
-
-    /**
-     * @var bool
-     */
-    private $nestedGroups;
+    /** @var string[] */
+    private array $groups;
+    private bool $nestedGroups;
 
     public function __construct(array $groups)
     {

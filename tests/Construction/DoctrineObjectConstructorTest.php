@@ -37,10 +37,12 @@ class DoctrineObjectConstructorTest extends TestCase
         $metadata->getName()->willReturn('EntityObject');
 
         $context = $this->prophesize(DeserializationContext::class);
-        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), [], new Type('EntityObject'), $context->reveal());
 
         $fallbackConstructor->construct($visitor, $metadata, [], Argument::type(Type::class), $context)
-            ->shouldHaveBeenCalled();
+            ->willReturn(new \stdClass())
+            ->shouldBeCalled();
+
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), [], new Type('EntityObject'), $context->reveal());
     }
 
     public function testConstructorUseFallbackIfObjectIsTransient(): void
@@ -68,10 +70,12 @@ class DoctrineObjectConstructorTest extends TestCase
         $metadata->getName()->willReturn('EntityObject');
 
         $context = $this->prophesize(DeserializationContext::class);
-        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), [], new Type('EntityObject'), $context->reveal());
 
         $fallbackConstructor->construct($visitor, $metadata, [], Argument::type(Type::class), $context)
-            ->shouldHaveBeenCalled();
+            ->willReturn(new \stdClass())
+            ->shouldBeCalled();
+
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), [], new Type('EntityObject'), $context->reveal());
     }
 
     public function testConstructorUseFallbackIfFindReturnsNull(): void
@@ -100,10 +104,12 @@ class DoctrineObjectConstructorTest extends TestCase
         $metadata->getName()->willReturn('EntityObject');
 
         $context = $this->prophesize(DeserializationContext::class);
-        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), 4, new Type('EntityObject'), $context->reveal());
 
         $fallbackConstructor->construct($visitor, $metadata, 4, Argument::type(Type::class), $context)
-            ->shouldHaveBeenCalled();
+            ->willReturn(new \stdClass())
+            ->shouldBeCalled();
+
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), 4, new Type('EntityObject'), $context->reveal());
     }
 
     public function testConstructorUseFallbackIfDataDoesNotContainsIdentifier(): void
@@ -136,9 +142,11 @@ class DoctrineObjectConstructorTest extends TestCase
         $metadata->getName()->willReturn('EntityObject');
 
         $context = $this->prophesize(DeserializationContext::class);
-        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), ['field' => 'text'], new Type('EntityObject'), $context->reveal());
 
         $fallbackConstructor->construct($visitor, $metadata, ['field' => 'text'], Argument::type(Type::class), $context)
-            ->shouldHaveBeenCalled();
+            ->willReturn(new \stdClass())
+            ->shouldBeCalled();
+
+        $objectConstructor->construct($visitor->reveal(), $metadata->reveal(), ['field' => 'text'], new Type('EntityObject'), $context->reveal());
     }
 }

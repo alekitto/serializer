@@ -8,6 +8,7 @@ use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
+use SplObjectStorage;
 
 /**
  * Doctrine object constructor for new (or existing) objects during deserialization.
@@ -15,14 +16,10 @@ use Kcs\Serializer\VisitorInterface;
 class DoctrineObjectConstructor implements ObjectConstructorInterface
 {
     /**
-     * @var \SplObjectStorage|ManagerRegistry[]
+     * @var SplObjectStorage<ManagerRegistry>
      */
-    private $managerRegistryCollection;
-
-    /**
-     * @var ObjectConstructorInterface
-     */
-    private $fallbackConstructor;
+    private SplObjectStorage $managerRegistryCollection;
+    private ObjectConstructorInterface $fallbackConstructor;
 
     /**
      * Constructor.
@@ -32,13 +29,13 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     public function __construct(ObjectConstructorInterface $fallbackConstructor)
     {
         $this->fallbackConstructor = $fallbackConstructor;
-        $this->managerRegistryCollection = new \SplObjectStorage();
+        $this->managerRegistryCollection = new SplObjectStorage();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
     {
         $object = $this->loadFromObjectManager($metadata, $data);
 
@@ -47,10 +44,6 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
     /**
      * Add a manager registry to the collection.
-     *
-     * @param ManagerRegistry $managerRegistry
-     *
-     * @return $this
      */
     public function addManagerRegistry(ManagerRegistry $managerRegistry): self
     {

@@ -48,15 +48,8 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         'simple_array' => 'array<string>',
     ];
 
-    /**
-     * @var LoaderInterface
-     */
-    protected $delegate;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
+    protected LoaderInterface $delegate;
+    protected ManagerRegistry $registry;
 
     public function __construct(LoaderInterface $delegate, ManagerRegistry $registry)
     {

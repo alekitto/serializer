@@ -20,7 +20,7 @@ class Person
 
     /**
      * @Type("integer")
-     * @Xml\Attribute
+     * @Xml\Attribute()
      */
     public $age;
 }

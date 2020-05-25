@@ -10,23 +10,17 @@ use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use SimpleXMLElement;
 
 class XmlDeserializationVisitor extends GenericDeserializationVisitor
 {
-    /**
-     * @var bool
-     */
-    private $disableExternalEntities = true;
+    private bool $disableExternalEntities = true;
 
-    /**
-     * @var string[]
-     */
-    private $doctypeWhitelist = [];
+    /** @var string[] */
+    private array $doctypeWhitelist = [];
 
-    /**
-     * @var string[]
-     */
-    private $docNamespaces = [];
+    /** @var string[] */
+    private array $docNamespaces = [];
 
     public function enableExternalEntities(): void
     {
@@ -316,10 +310,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
     /**
      * Retrieves internalSubset even in bugfixed php versions.
-     *
-     * @param string $data
-     *
-     * @return string
      */
     private function getDomDocumentType(string $data): string
     {
@@ -343,7 +333,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $internalSubset;
     }
 
-    private function isNullNode(\SimpleXMLElement $node): bool
+    private function isNullNode(SimpleXMLElement $node): bool
     {
         if (! \array_key_exists('xsi', $this->docNamespaces)) {
             return false;

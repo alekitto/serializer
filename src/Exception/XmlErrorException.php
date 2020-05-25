@@ -2,14 +2,13 @@
 
 namespace Kcs\Serializer\Exception;
 
+use LibXMLError;
+
 class XmlErrorException extends RuntimeException
 {
-    /**
-     * @var \LibXMLError
-     */
-    private $xmlError;
+    private LibXMLError $xmlError;
 
-    public function __construct(\LibXMLError $error)
+    public function __construct(LibXMLError $error)
     {
         switch ($error->level) {
             case LIBXML_ERR_WARNING:
@@ -33,7 +32,7 @@ class XmlErrorException extends RuntimeException
         $this->xmlError = $error;
     }
 
-    public function getXmlError(): \LibXMLError
+    public function getXmlError(): LibXMLError
     {
         return $this->xmlError;
     }

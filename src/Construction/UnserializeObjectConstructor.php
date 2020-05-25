@@ -10,20 +10,15 @@ use Kcs\Serializer\VisitorInterface;
 
 class UnserializeObjectConstructor implements ObjectConstructorInterface
 {
-    /**
-     * @var Instantiator
-     */
-    private $instantiator;
+    private ?Instantiator $instantiator = null;
 
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context)
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
     {
         return $this->getInstantiator()->instantiate($metadata->getName());
     }
 
     /**
      * Gets the instantiator instance.
-     *
-     * @return Instantiator
      */
     private function getInstantiator(): Instantiator
     {

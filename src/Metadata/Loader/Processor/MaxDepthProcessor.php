@@ -11,6 +11,6 @@ class MaxDepthProcessor extends PropertyMetadataProcessor
      */
     protected static function doProcess($annotation, PropertyMetadata $metadata): void
     {
-        $metadata->maxDepth = $annotation->depth;
+        $metadata->maxDepth = (int) $annotation->depth;
     }
 }

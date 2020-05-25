@@ -14,8 +14,6 @@ interface SubscribingHandlerInterface
      *      ];
      *
      * The direction and method keys can be omitted.
-     *
-     * @return iterable
      */
     public static function getSubscribingMethods(): iterable;
 }

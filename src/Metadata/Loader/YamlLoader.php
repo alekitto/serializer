@@ -13,10 +13,8 @@ class YamlLoader extends AnnotationLoader
     use FileLoaderTrait;
     use LoaderTrait;
 
-    /**
-     * @var array
-     */
-    private $config;
+    /** @var array<mixed, mixed> */
+    private array $config;
 
     public function __construct(string $filePath)
     {

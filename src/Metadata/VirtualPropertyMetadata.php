@@ -2,6 +2,8 @@
 
 namespace Kcs\Serializer\Metadata;
 
+use LogicException;
+
 class VirtualPropertyMetadata extends PropertyMetadata
 {
     /**
@@ -26,7 +28,7 @@ class VirtualPropertyMetadata extends PropertyMetadata
      */
     public function setValue($obj, $value): void
     {
-        throw new \LogicException('VirtualPropertyMetadata is immutable.');
+        throw new LogicException('VirtualPropertyMetadata is immutable.');
     }
 
     /**

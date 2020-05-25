@@ -11,10 +11,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 final class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterface
 {
-    /**
-     * @var PropertyNamingStrategyInterface
-     */
-    private $delegate;
+    private PropertyNamingStrategyInterface $delegate;
 
     public function __construct(PropertyNamingStrategyInterface $namingStrategy)
     {
