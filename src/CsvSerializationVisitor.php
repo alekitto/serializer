@@ -42,32 +42,8 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
         $handle = \fopen('php://temp,', 'w+');
         $data = $this->getRoot();
 
-        if (! \is_iterable($data)) {
-            $data = [[$data]];
-        } elseif (empty($data)) {
-            $data = [[]];
-        } else {
-            $data = \is_array($data) ? $data : \iterator_to_array($data);
-
-            // Sequential arrays of arrays are considered as collections
-            if (
-                \array_keys($data) !== \array_keys(\array_values($data)) ||
-                0 < \count(\array_filter(\array_map('gettype', $data), static fn (string $t) => 'array' !== $t))
-            ) {
-                $data = [$data];
-            }
-        }
-
         [$delimiter, $keySeparator, $escapeFormulas, $enclosure, $escapeChar, $noHeaders, $outputBom] = $this->getOptions();
-
-        foreach ($data as &$value) {
-            $flattened = [];
-            $this->flatten($value, $flattened, $keySeparator, '', $escapeFormulas);
-            $value = $flattened;
-        }
-        unset($value);
-
-        $headers = $this->extractHeaders($data);
+        [$headers, $data] = $this->prepareData($data, $keySeparator, $escapeFormulas);
 
         if (! $noHeaders) {
             \fputcsv($handle, $headers, $delimiter, $enclosure, $escapeChar);
@@ -91,6 +67,39 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
         }
 
         return $value;
+    }
+
+    /**
+     * Prepares the data to be written as csv (or other tabular format).
+     */
+    final protected function prepareData(iterable $data, string $keySeparator, bool $escapeFormulas): array
+    {
+        if (! \is_iterable($data)) {
+            $data = [[$data]];
+        } elseif (empty($data)) {
+            $data = [[]];
+        } else {
+            $data = \is_array($data) ? $data : \iterator_to_array($data);
+
+            // Sequential arrays of arrays are considered as collections
+            if (
+                \array_keys($data) !== \array_keys(\array_values($data)) ||
+                0 < \count(\array_filter(\array_map('gettype', $data), static fn (string $t) => 'array' !== $t))
+            ) {
+                $data = [$data];
+            }
+        }
+
+        foreach ($data as &$value) {
+            $flattened = [];
+            $this->flatten($value, $flattened, $keySeparator, '', $escapeFormulas);
+            $value = $flattened;
+        }
+        unset($value);
+
+        $headers = $this->extractHeaders($data);
+
+        return [$headers, $data];
     }
 
     /**
