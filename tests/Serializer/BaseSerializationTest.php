@@ -8,6 +8,7 @@ use Doctrine\ORM\Version;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Context;
+use Kcs\Serializer\CsvSerializationVisitor;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\EventDispatcher\PostDeserializeEvent;
@@ -841,7 +842,7 @@ abstract class BaseSerializationTest extends TestCase
     public function testCustomHandler(): void
     {
         if (! $this->hasDeserializer()) {
-            return;
+            self::markTestSkipped('Deserializer not available');
         }
 
         $handler = static function (): CustomDeserializationObject {
@@ -878,7 +879,7 @@ abstract class BaseSerializationTest extends TestCase
     public function testCustomDeserializationHandler(): void
     {
         if (! $this->hasDeserializer()) {
-            return;
+            self::markTestSkipped('Deserializer not available');
         }
 
         $handler = new class() implements DeserializationHandlerInterface {
@@ -1037,7 +1038,7 @@ abstract class BaseSerializationTest extends TestCase
     public function testDeserializingIntoExistingObject(): void
     {
         if (! $this->hasDeserializer()) {
-            return;
+            self::markTestSkipped('Deserializer not available');
         }
 
         $objectConstructor = new InitializedObjectConstructor(new UnserializeObjectConstructor());
@@ -1201,6 +1202,7 @@ abstract class BaseSerializationTest extends TestCase
             'json' => new JsonSerializationVisitor($namingStrategy),
             'xml' => new XmlSerializationVisitor($namingStrategy),
             'yml' => new YamlSerializationVisitor($namingStrategy),
+            'csv' => new CsvSerializationVisitor($namingStrategy),
         ];
         $this->deserializationVisitors = [
             'array' => new GenericDeserializationVisitor($namingStrategy),

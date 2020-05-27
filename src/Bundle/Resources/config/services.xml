@@ -14,6 +14,7 @@
                 <argument key="json" type="service" id="kcs_serializer.serialization_visitor.json" />
                 <argument key="yaml" type="service" id="kcs_serializer.serialization_visitor.yaml" />
                 <argument key="xml" type="service" id="kcs_serializer.serialization_visitor.xml" />
+                <argument key="csv" type="service" id="kcs_serializer.serialization_visitor.csv" />
             </argument>
             <argument type="collection">
                 <argument key="array" type="service" id="kcs_serializer.deserialization_visitor.array" />
@@ -105,6 +106,7 @@
             </call>
         </service>
         <service class="Kcs\Serializer\JsonSerializationVisitor" id="kcs_serializer.serialization_visitor.json" parent="kcs_serialization.visitor.prototype" />
+        <service class="Kcs\Serializer\CsvSerializationVisitor" id="kcs_serializer.serialization_visitor.csv" parent="kcs_serialization.visitor.prototype" />
         <service class="Kcs\Serializer\YamlSerializationVisitor" id="kcs_serializer.serialization_visitor.yaml" parent="kcs_serialization.visitor.prototype" />
 
         <service class="Kcs\Serializer\GenericDeserializationVisitor" id="kcs_serializer.deserialization_visitor.array" parent="kcs_serialization.visitor.prototype" />

@@ -1,0 +1,2 @@
+author_list.0.full_name,author_list.1.full_name,comments.0.author.full_name,comments.0.text,comments.1.author.full_name,comments.1.text,comments.2.author.full_name,comments.2.text
+"Johannes Schmitt","John Doe","Foo Bar",foo,"Foo Bar",bar,"Foo Bar",baz

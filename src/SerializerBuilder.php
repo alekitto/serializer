@@ -165,6 +165,7 @@ class SerializerBuilder
             'xml' => new XmlSerializationVisitor($this->propertyNamingStrategy),
             'yml' => new YamlSerializationVisitor($this->propertyNamingStrategy),
             'json' => new JsonSerializationVisitor($this->propertyNamingStrategy),
+            'csv' => new CsvSerializationVisitor($this->propertyNamingStrategy),
         ];
 
         return $this;

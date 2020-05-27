@@ -1,0 +1,2 @@
+authors.0._links.details,authors.0._links.comments,authors.0.full_name,authors.1._links.details,authors.1._links.comments,authors.1.full_name
+http://foo.bar/details/Foo,http://foo.bar/details/Foo/comments,Foo,http://foo.bar/details/Bar,http://foo.bar/details/Bar/comments,Bar

@@ -1,0 +1,2 @@
+id,title,created_at,is_published,etag,comments.0.author.full_name,comments.0.text,comments2.0.author.full_name,comments2.0.text,metadata.foo,author.full_name,publisher.pub_name,tag.0.name,tag.1.name
+what_a_nice_id,"This is a nice title.",2011-07-30T00:00:00+00:00,0,1edf9bf60a32d89afbb85b2be849e3ceed5f5b10,"Foo Bar",foo,"Foo Bar",foo,bar,"Foo Bar","Bar Foo",tag1,tag2

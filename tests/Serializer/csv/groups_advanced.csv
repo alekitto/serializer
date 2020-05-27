@@ -1,0 +1,2 @@
+name,manager.name,manager.friends.0.nickname,manager.friends.1.nickname,friends.0.manager.name,friends.1.manager.name
+John,"John Manager",nickname,nickname,"John friend 1 manager","John friend 2 manager"

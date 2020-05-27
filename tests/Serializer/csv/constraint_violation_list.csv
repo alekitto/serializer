@@ -1,0 +1,3 @@
+property_path,message
+foo,"Message of violation"
+bar,"Message of another violation"

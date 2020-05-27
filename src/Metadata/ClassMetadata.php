@@ -26,6 +26,13 @@ class ClassMetadata extends BaseClassMetadata
     public ?string $xmlRootNamespace = null;
     public ?string $xmlEncoding = null;
     public array $xmlNamespaces = [];
+    public string $csvDelimiter = ',';
+    public string $csvEnclosure = '"';
+    public string $csvEscapeChar = '';
+    public bool $csvEscapeFormulas = false;
+    public string $csvKeySeparator = '.';
+    public bool $csvNoHeaders = false;
+    public bool $csvOutputBom = false;
     public ?string $accessorOrder = null;
     public ?array $customOrder = null;
     public bool $discriminatorDisabled = false;
