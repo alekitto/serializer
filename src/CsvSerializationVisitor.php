@@ -34,6 +34,13 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
         parent::setNavigator($navigator);
     }
 
+    private static function fputcsv($handle, array $data, string $delimiter, string $enclosure, string $escapeChar)
+    {
+        $data = \array_map(static fn (?string $value) => null === $value ? $value : str_replace($enclosure, $escapeChar.$enclosure, $value), $data);
+
+        return \fputcsv($handle, $data, $delimiter, $enclosure, $enclosure);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -46,12 +53,12 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
         [$headers, $data] = $this->prepareData($data, $keySeparator, $escapeFormulas);
 
         if (! $noHeaders) {
-            \fputcsv($handle, $headers, $delimiter, $enclosure, $escapeChar);
+            self::fputcsv($handle, $headers, $delimiter, $enclosure, $escapeChar);
         }
 
         $headers = \array_fill_keys($headers, '');
         foreach ($data as $row) {
-            \fputcsv($handle, \array_replace($headers, $row), $delimiter, $enclosure, $escapeChar);
+            self::fputcsv($handle, \array_replace($headers, $row), $delimiter, $enclosure, $escapeChar);
         }
 
         \rewind($handle);
@@ -72,7 +79,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     /**
      * Prepares the data to be written as csv (or other tabular format).
      */
-    final protected function prepareData(iterable $data, string $keySeparator, bool $escapeFormulas): array
+    final protected function prepareData($data, string $keySeparator, bool $escapeFormulas): array
     {
         if (! \is_iterable($data)) {
             $data = [[$data]];
@@ -141,7 +148,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     private function getOptions(): array
     {
         if (null === $this->rootMetadata) {
-            return [',', '.', false, '"', '', false, false];
+            return [',', '.', false, '"', '\\', false, false];
         }
 
         return [

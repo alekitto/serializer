@@ -43,6 +43,7 @@ class AnnotationProcessor
         Annotations\Xml\Attribute::class => XmlAttributeProcessor::class,
         Annotations\Xml\AttributeMap::class => XmlAttributeMapProcessor::class,
         Annotations\Xml\Value::class => XmlValueProcessor::class,
+        Annotations\Csv::class => CsvProcessor::class,
         Annotations\Groups::class => GroupsProcessor::class,
         Annotations\Inline::class => InlineProcessor::class,
         Annotations\MaxDepth::class => MaxDepthProcessor::class,
