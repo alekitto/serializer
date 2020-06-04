@@ -2,8 +2,8 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\Csv;
 
-use Kcs\Serializer\Annotation\Csv;
 use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Annotation\Csv;
 use Kcs\Serializer\Tests\Fixtures\GroupsObject;
 
 /**

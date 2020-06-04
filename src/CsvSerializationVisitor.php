@@ -36,7 +36,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
 
     private static function fputcsv($handle, array $data, string $delimiter, string $enclosure, string $escapeChar)
     {
-        $data = \array_map(static fn (?string $value) => null === $value ? $value : str_replace($enclosure, $escapeChar.$enclosure, $value), $data);
+        $data = \array_map(static fn (?string $value) => null === $value ? $value : \str_replace($enclosure, $escapeChar.$enclosure, $value), $data);
 
         return \fputcsv($handle, $data, $delimiter, $enclosure, $enclosure);
     }

@@ -57,7 +57,7 @@ class RegisterHandlersPass implements CompilerPassInterface
             }
 
             $type = $class::getType();
-            $handlers[Direction::DIRECTION_SERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [new ServiceClosureArgument(new Reference($serviceId)), 'serialize']);
+            $handlers[Direction::DIRECTION_SERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [[new ServiceClosureArgument(new Reference($serviceId)), 'serialize']]);
         }
 
         foreach ($container->findTaggedServiceIds('kcs_serializer.deserialization_handler') as $serviceId => $unused) {
@@ -68,7 +68,7 @@ class RegisterHandlersPass implements CompilerPassInterface
             }
 
             $type = $class::getType();
-            $handlers[Direction::DIRECTION_DESERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [new ServiceClosureArgument(new Reference($serviceId)), 'deserialize']);
+            $handlers[Direction::DIRECTION_DESERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [[new ServiceClosureArgument(new Reference($serviceId)), 'deserialize']]);
         }
 
         $registryDef->setArgument(0, $handlers);

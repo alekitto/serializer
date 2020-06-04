@@ -12,7 +12,7 @@ class CsvProcessor extends ClassMetadataProcessor
      */
     protected static function doProcess($annotation, ClassMetadata $metadata): void
     {
-        assert($annotation instanceof Csv);
+        \assert($annotation instanceof Csv);
 
         $metadata->csvDelimiter = $annotation->delimiter ?? ',';
         $metadata->csvEnclosure = $annotation->enclosure ?? '"';
