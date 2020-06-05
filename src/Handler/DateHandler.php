@@ -38,7 +38,7 @@ class DateHandler implements SubscribingHandlerInterface
             ];
         }
 
-        foreach ([\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class] as $class) {
+        foreach ([\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class, \Safe\DateTime::class, \Safe\DateTimeImmutable::class] as $class) {
             yield [
                 'type' => $class,
                 'direction' => Direction::DIRECTION_SERIALIZATION,
