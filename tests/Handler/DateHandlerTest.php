@@ -11,7 +11,7 @@ class DateHandlerTest extends AbstractHandlerTest
 {
     public function testGetSubscribingMethodsShouldReturnAllTypes(): void
     {
-        self::assertCount(10, \iterator_to_array($this->handler::getSubscribingMethods()));
+        self::assertCount(12, \iterator_to_array($this->handler::getSubscribingMethods()));
     }
 
     public function testSerializeDateTimeShouldUseFormatTheDateTimeObject(): void
@@ -20,6 +20,14 @@ class DateHandlerTest extends AbstractHandlerTest
 
         $this->visitor->visitString('12/12/2018 22:00:00', $type, $this->context)->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
+    }
+
+    public function testSerializeSafeDateTimeShouldUseFormatTheDateTimeObject(): void
+    {
+        $type = Type::parse(\DateTime::class."<'d/m/Y H:i:s'>");
+
+        $this->visitor->visitString('12/12/2018 22:00:00', $type, $this->context)->shouldBeCalled();
+        $this->handler->serializeDateTime($this->visitor->reveal(), new \Safe\DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
     public function testSerializeDateTimeShouldUseDefaultFormat(): void
@@ -52,6 +60,14 @@ class DateHandlerTest extends AbstractHandlerTest
 
         $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTimeImmutable('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
+    }
+
+    public function testSerializeDateTimeShouldHandleSafeDateTimeImmutable(): void
+    {
+        $type = Type::parse(\DateTimeImmutable::class);
+
+        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->shouldBeCalled();
+        $this->handler->serializeDateTime($this->visitor->reveal(), new \Safe\DateTimeImmutable('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
     public function testDeserializeDateTime(): void

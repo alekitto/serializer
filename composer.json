@@ -63,6 +63,7 @@
         "symfony/translation": "^4.3|^5.0",
         "symfony/validator": "^4.3|^5.0",
         "symfony/yaml": "^4.3|^5.0",
+        "thecodingmachine/safe": "^1.1",
         "twig/twig": "^1.12|^2.0|^3.0"
     },
     "autoload": {
