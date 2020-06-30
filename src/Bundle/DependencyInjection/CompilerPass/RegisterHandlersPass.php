@@ -5,6 +5,7 @@ namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Handler\DeserializationHandlerInterface;
 use Kcs\Serializer\Handler\HandlerRegistry;
+use Kcs\Serializer\Handler\InternalDeserializationHandler;
 use Kcs\Serializer\Handler\InternalSerializationHandler;
 use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
@@ -68,7 +69,7 @@ class RegisterHandlersPass implements CompilerPassInterface
             }
 
             $type = $class::getType();
-            $handlers[Direction::DIRECTION_DESERIALIZATION][$type] = new Definition(InternalSerializationHandler::class, [[new ServiceClosureArgument(new Reference($serviceId)), 'deserialize']]);
+            $handlers[Direction::DIRECTION_DESERIALIZATION][$type] = new Definition(InternalDeserializationHandler::class, [[new ServiceClosureArgument(new Reference($serviceId)), 'deserialize']]);
         }
 
         $registryDef->setArgument(0, $handlers);
