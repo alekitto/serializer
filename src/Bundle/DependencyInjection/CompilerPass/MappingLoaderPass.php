@@ -31,11 +31,9 @@ class MappingLoaderPass implements CompilerPassInterface
             new Reference('kcs_serializer.metadata.loader.xml'),
         ];
 
-        foreach ($container->getParameter('kernel.bundles') as $bundle) {
-            $reflection = new \ReflectionClass($bundle);
-
+        $loadPath = static function (string $path) use (&$xml_paths, &$yaml_paths) {
             try {
-                $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(\dirname($reflection->getFileName()).'/'.$mappingPath));
+                $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
                 /** @var \SplFileInfo $fileInfo */
                 foreach ($iterator as $fileInfo) {
                     $extension = $fileInfo->getExtension();
@@ -48,7 +46,14 @@ class MappingLoaderPass implements CompilerPassInterface
             } catch (\UnexpectedValueException $e) {
                 // Directory not found or not a dir.
             }
+        };
+
+        foreach ($container->getParameter('kernel.bundles') as $bundle) {
+            $reflection = new \ReflectionClass($bundle);
+            $loadPath(\dirname($reflection->getFileName()).'/'.$mappingPath);
         }
+
+        $loadPath($container->getParameter('kernel.project_dir').'/config/serializer');
 
         $xmlDefinition->replaceArgument(0, $xml_paths);
         $yamlDefinition->replaceArgument(0, $yaml_paths);
