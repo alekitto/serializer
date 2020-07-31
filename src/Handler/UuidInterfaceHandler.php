@@ -7,6 +7,9 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Ramsey\Uuid\DegradedUuid;
+use Ramsey\Uuid\Guid\Guid;
+use Ramsey\Uuid\Lazy\LazyUuidFromString;
+use Ramsey\Uuid\Nonstandard\UuidV6;
 use Ramsey\Uuid\Rfc4122;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -16,6 +19,7 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
     private const TYPES = [
         UuidInterface::class,
         Uuid::class,
+        Guid::class,
         DegradedUuid::class,
         Rfc4122\NilUuid::class,
         Rfc4122\UuidV1::class,
@@ -23,6 +27,8 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
         Rfc4122\UuidV3::class,
         Rfc4122\UuidV4::class,
         Rfc4122\UuidV5::class,
+        UuidV6::class,
+        LazyUuidFromString::class,
     ];
 
     /**

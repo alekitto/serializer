@@ -13,7 +13,7 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
 {
     public function testGetSubscribingMethodsShouldReturnAllTypes(): void
     {
-        self::assertCount(18, \iterator_to_array($this->handler::getSubscribingMethods()));
+        self::assertCount(24, \iterator_to_array($this->handler::getSubscribingMethods()));
     }
 
     public function testSerializeShouldHandleNullValue(): void
