@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
 use Exception;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;

@@ -3,9 +3,9 @@
 namespace Kcs\Serializer\Tests\Serializer\Doctrine;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Persistence\AbstractManagerRegistry;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\AbstractManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Proxy;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;

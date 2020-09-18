@@ -16,10 +16,11 @@
     ],
     "require": {
         "php": "^7.4",
-        "doctrine/common": "^2.0",
-        "doctrine/inflector": "^1.0",
-        "doctrine/lexer": "^1.0.1",
+        "doctrine/common": "^2.0 | ^3.0",
+        "doctrine/inflector": "^1.0 | ^2.0",
+        "doctrine/lexer": "^1.0",
         "kcs/metadata": "^2.0|^3.0",
+        "ocramius/package-versions": "^1.2|^2.0",
         "psr/event-dispatcher": "^1.0",
         "symfony/polyfill-php80": "^1.0"
     },
@@ -40,6 +41,7 @@
         "cakephp/chronos": "^2.0",
         "doctrine/annotations": "^1.0",
         "doctrine/orm": "^2.3",
+        "doctrine/persistence": "^2.0",
         "doctrine/phpcr-odm": "^1.0",
         "friendsofphp/php-cs-fixer": "^2.16",
         "jackalope/jackalope-doctrine-dbal": "^1.0",
@@ -74,7 +76,10 @@
     "autoload-dev": {
         "psr-4": {
             "Kcs\\Serializer\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "compat/doctrine_common_2.php"
+        ]
     },
     "config": {
         "sort-packages": true

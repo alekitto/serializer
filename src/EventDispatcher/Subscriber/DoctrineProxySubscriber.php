@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\EventDispatcher\Subscriber;
 
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
 
 class DoctrineProxySubscriber

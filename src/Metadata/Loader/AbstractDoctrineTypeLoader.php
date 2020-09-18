@@ -2,8 +2,8 @@
 
 namespace Kcs\Serializer\Metadata\Loader;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\NullMetadata;

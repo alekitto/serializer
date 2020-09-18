@@ -2,9 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Construction;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\ObjectManager;
 use Kcs\Serializer\Construction\DoctrineObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\DeserializationContext;
@@ -128,7 +128,7 @@ class DoctrineObjectConstructorTest extends TestCase
         $metadataFactory->isTransient('EntityObject')->willReturn(false);
 
         $objectManager->getClassMetadata('EntityObject')
-            ->willReturn($classMetadata = $this->prophesize(\Doctrine\Common\Persistence\Mapping\ClassMetadata::class));
+            ->willReturn($classMetadata = $this->prophesize(\Doctrine\Persistence\Mapping\ClassMetadata::class));
         $classMetadata->getIdentifierFieldNames()->willReturn(['id']);
 
         $objectConstructor

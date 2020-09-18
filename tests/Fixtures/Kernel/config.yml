@@ -4,6 +4,7 @@ framework:
     translator: ~
     router:
         resource: "%kernel.root_dir%/routing.yml"
+        utf8: true
 
 kcs_serializer:
     enabled: true

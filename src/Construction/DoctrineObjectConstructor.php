@@ -2,8 +2,8 @@
 
 namespace Kcs\Serializer\Construction;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
