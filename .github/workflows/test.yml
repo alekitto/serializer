@@ -1,0 +1,39 @@
+name: Tests
+on: [push, pull_request]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                composer_flags:
+                    - ''
+                    - '--prefer-lowest'
+
+                php_version:
+                    - '7.4'
+                    # Currently disabled as phpcr odm for php8 is not released yet and is required in tests.
+                    # - '8.0'
+
+        name: PHP ${{ matrix.php_version }}
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup PHP with pecl extension
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php_version }}
+                  tools: pecl
+                  extensions: :opcache, mongodb
+
+            - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
+            - run: composer update --with-all-dependencies ${{ matrix.composer_flags }}
+
+            - run: bin/phpunit --coverage-clover coverage.xml
+              env:
+                  XDEBUG_MODE: coverage
+
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v1
+              with:
+                  file: ./coverage.xml
