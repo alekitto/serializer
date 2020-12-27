@@ -11,9 +11,12 @@ use Kcs\Serializer\Tests\Fixtures\Csv\EscapeFormulas;
 use Kcs\Serializer\Tests\Fixtures\Csv\KeySeparator;
 use Kcs\Serializer\Tests\Fixtures\Csv\NoHeadersObject;
 use Kcs\Serializer\Tests\Fixtures\Price;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class CsvSerializationTest extends BaseSerializationTest
 {
+    use ProphecyTrait;
+
     public function testCsvDelimiter(): void
     {
         self::assertEquals($this->getContent('delimiter'), $this->serialize(new DelimiterObject()));

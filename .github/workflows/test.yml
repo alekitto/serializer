@@ -29,7 +29,7 @@ jobs:
             - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
             - run: composer update --with-all-dependencies ${{ matrix.composer_flags }}
 
-            - run: bin/phpunit --coverage-clover coverage.xml
+            - run: vendor/bin/phpunit --coverage-clover coverage.xml
               env:
                   XDEBUG_MODE: coverage
 

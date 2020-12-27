@@ -8,18 +8,18 @@ use Kcs\Serializer\EventDispatcher\Subscriber\DoctrineProxySubscriber;
 use Kcs\Serializer\Tests\Fixtures\SimpleObjectProxy;
 use Kcs\Serializer\Type\Type;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
 
 class DoctrineProxySubscriberTest extends TestCase
 {
-    /**
-     * @var Context
-     */
-    private $visitor;
+    use ProphecyTrait;
 
     /**
-     * @var DoctrineProxySubscriber
+     * @var Context|ObjectProphecy
      */
-    private $subscriber;
+    private ObjectProphecy $visitor;
+    private DoctrineProxySubscriber $subscriber;
 
     /**
      * {@inheritdoc}

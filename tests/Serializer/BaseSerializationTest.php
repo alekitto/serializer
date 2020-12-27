@@ -90,6 +90,7 @@ use Kcs\Serializer\YamlDeserializationVisitor;
 use Kcs\Serializer\YamlSerializationVisitor;
 use PhpCollection\Sequence;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -109,16 +110,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseSerializationTest extends TestCase
 {
-    protected $factory;
-    protected $dispatcher;
+    use ProphecyTrait;
 
-    /**
-     * @var Serializer
-     */
-    protected $serializer;
-    protected $handlerRegistry;
-    protected $serializationVisitors;
-    protected $deserializationVisitors;
+    protected MetadataFactory $factory;
+    protected EventDispatcher $dispatcher;
+
+    protected Serializer $serializer;
+    protected HandlerRegistry $handlerRegistry;
+    protected array $serializationVisitors;
+    protected array $deserializationVisitors;
 
     public function testSerializeNullArray(): void
     {

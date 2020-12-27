@@ -6,24 +6,23 @@ use Kcs\Serializer\Context;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\VisitorInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 abstract class AbstractHandlerTest extends TestCase
 {
-    /**
-     * @var SubscribingHandlerInterface
-     */
-    protected $handler;
+    use ProphecyTrait;
 
     /**
      * @var VisitorInterface|ObjectProphecy
      */
-    protected $visitor;
+    protected ObjectProphecy $visitor;
 
     /**
      * @var Context|ObjectProphecy
      */
-    protected $context;
+    protected ObjectProphecy $context;
+    protected SubscribingHandlerInterface $handler;
 
     protected function setUp(): void
     {

@@ -13,9 +13,12 @@ use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DoctrineObjectConstructorTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testConstructorUseFallbackIfNoManagerMatch(): void
     {
         $fallbackConstructor = $this->prophesize(ObjectConstructorInterface::class);

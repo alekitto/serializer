@@ -67,7 +67,7 @@ class ArrayTest extends TestCase
     public function testToArrayWithScalar($input): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/The input data of type ".+" did not convert to an array, but got a result of type ".+"./');
+        $this->expectExceptionMessageMatches('/The input data of type ".+" did not convert to an array, but got a result of type ".+"./');
         $result = $this->serializer->normalize($input);
 
         self::assertEquals([$input], $result);

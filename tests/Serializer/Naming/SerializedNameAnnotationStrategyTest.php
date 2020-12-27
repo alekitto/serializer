@@ -7,9 +7,12 @@ use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class SerializedNameAnnotationStrategyTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testTranslateNameShouldNotCallDecoratedStrategyIfSerializedNameIsSet(): void
     {
         $delegated = $this->prophesize(PropertyNamingStrategyInterface::class);

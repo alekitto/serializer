@@ -14,9 +14,12 @@ use Kcs\Serializer\VisitorInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class ContextTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testSerializationContextPathAndDepth(): void
     {
         $object = new Node([

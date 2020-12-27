@@ -5,12 +5,15 @@ namespace Kcs\Serializer\Tests\Serializer\Naming;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Naming\CamelCaseNamingStrategy;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @group legacy
  */
 class CamelCaseNamingStrategyTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function providePropertyNames(): iterable
     {
         return [

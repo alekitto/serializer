@@ -5,9 +5,12 @@ namespace Kcs\Serializer\Tests\Serializer\Naming;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class IdenticalPropertyNamingStrategyTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function providePropertyNames(): iterable
     {
         return [

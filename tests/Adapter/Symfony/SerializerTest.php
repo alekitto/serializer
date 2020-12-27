@@ -10,19 +10,18 @@ use Kcs\Serializer\Tests\Fixtures\GetSetObject;
 use Kcs\Serializer\Type\Type;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class SerializerTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var SerializerInterface|ObjectProphecy
      */
-    private $serializer;
-
-    /**
-     * @var Serializer
-     */
-    private $adapter;
+    private ObjectProphecy $serializer;
+    private Serializer $adapter;
 
     /**
      * {@inheritdoc}

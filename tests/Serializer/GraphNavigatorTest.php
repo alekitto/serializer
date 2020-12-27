@@ -21,30 +21,18 @@ use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GraphNavigatorTest extends TestCase
 {
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadataFactory;
+    use ProphecyTrait;
 
-    /**
-     * @var HandlerRegistryInterface
-     */
-    private $handlerRegistry;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var GraphNavigator
-     */
-    private $navigator;
+    private MetadataFactoryInterface $metadataFactory;
+    private HandlerRegistryInterface $handlerRegistry;
+    private EventDispatcherInterface $dispatcher;
+    private GraphNavigator $navigator;
 
     public function testResourceThrowsException(): void
     {

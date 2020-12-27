@@ -9,9 +9,12 @@ use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\SerializationContext;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class DisjunctExclusionStrategyTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testShouldSkipClassShortCircuiting(): void
     {
         $metadata = new ClassMetadata(new \ReflectionClass(\stdClass::class));
