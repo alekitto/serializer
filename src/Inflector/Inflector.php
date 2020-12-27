@@ -5,32 +5,68 @@ namespace Kcs\Serializer\Inflector;
 use Doctrine\Inflector\Inflector as DoctrineInflector;
 use Doctrine\Inflector\InflectorFactory;
 
-class Inflector
-{
-    private static ?self $instance = null;
-    private DoctrineInflector $inflector;
-
-    public function __construct()
+if (! class_exists(\Doctrine\Inflector\InflectorFactory::class)) {
+    class Inflector
     {
-        $this->inflector = InflectorFactory::create()->build();
-    }
+        private static ?self $instance = null;
 
-    public function classify(string $word): string
-    {
-        return $this->inflector->classify($word);
-    }
-
-    public function camelize(string $word): string
-    {
-        return $this->inflector->camelize($word);
-    }
-
-    public static function getInstance(): self
-    {
-        if (null === self::$instance) {
-            self::$instance = new self();
+        /**
+         * @internal
+         */
+        public function __construct()
+        {
         }
 
-        return self::$instance;
+        public function classify(string $word): string
+        {
+            return \Doctrine\Common\Inflector\Inflector::classify($word);
+        }
+
+        public function camelize(string $word): string
+        {
+            return \Doctrine\Common\Inflector\Inflector::camelize($word);
+        }
+
+        public static function getInstance(): self
+        {
+            if (null === self::$instance) {
+                self::$instance = new self();
+            }
+
+            return self::$instance;
+        }
+    }
+} else {
+    class Inflector
+    {
+        private static ?self $instance = null;
+        private DoctrineInflector $inflector;
+
+        /**
+         * @internal
+         */
+        public function __construct()
+        {
+            $this->inflector = InflectorFactory::create()->build();
+        }
+
+        public function classify(string $word): string
+        {
+            return $this->inflector->classify($word);
+        }
+
+        public function camelize(string $word): string
+        {
+            return $this->inflector->camelize($word);
+        }
+
+        public static function getInstance(): self
+        {
+            if (null === self::$instance) {
+                self::$instance = new self();
+            }
+
+            return self::$instance;
+        }
     }
 }
