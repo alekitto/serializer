@@ -13,9 +13,7 @@ use Kcs\Serializer\Annotation\Type;
  * @StaticField(name="additional_2", value="foobar")
  */
 #[AccessType(AccessType::PROPERTY)]
-#[StaticField(name: 'additional_1', value: '12', attributes: [
-    [Type::class, ['integer']],
-])]
+#[StaticField(name: 'additional_1', value: '12', attributes: [[Type::class, ['integer']]])]
 #[StaticField(name: 'additional_2', value: 'foobar')]
 class ObjectWithStaticFields
 {

@@ -11,10 +11,7 @@ use Kcs\Serializer\Annotation as Serializer;
  * })
  * @Serializer\AccessType("property")
  */
-#[Serializer\Discriminator(field: 'type', map: [
-    'car' => Car::class,
-    'moped' => Moped::class,
-])]
+#[Serializer\Discriminator(field: 'type', map: ['car' => Car::class, 'moped' => Moped::class])]
 #[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
 interface VehicleInterface
 {

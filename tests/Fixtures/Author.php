@@ -13,11 +13,7 @@ use Kcs\Serializer\Annotation as Serializer;
  * })
  */
 #[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
-#[Serializer\AdditionalField(name: 'links', attributes: [
-    [Serializer\SerializedName::class, ['_links']],
-    [Serializer\Xml\KeyValuePairs::class],
-    [Serializer\Xml\XmlList::class, ['inline' => true]],
-])]
+#[Serializer\AdditionalField(name: 'links', attributes: [[Serializer\SerializedName::class, ['_links']], [Serializer\Xml\KeyValuePairs::class], [Serializer\Xml\XmlList::class, ['inline' => true]]])]
 class Author
 {
     /**
