@@ -55,10 +55,10 @@ $f('array');
 $table = new \Symfony\Component\Console\Helper\Table($output);
 $table->setHeaders(['Format', 'Direction', 'Time']);
 
-$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 8);
+$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 9);
 $progressBar->start();
 
-foreach (['array', 'json', 'yml', 'xml'] as $format) {
+foreach (['array', 'json', 'yml', 'xml', 'csv'] as $format) {
     $table->addRow([$format, 'serialize', benchmark($f, $format)]);
     $progressBar->advance();
 }
@@ -68,6 +68,7 @@ $serialized = [
     'json' => $serializer->serialize($collection, 'json'),
     'yml' => $serializer->serialize($collection, 'yml'),
     'xml' => $serializer->serialize($collection, 'xml'),
+    'csv' => $serializer->serialize($collection, 'csv'),
 ];
 
 $type = new \Kcs\Serializer\Type\Type('array', [
