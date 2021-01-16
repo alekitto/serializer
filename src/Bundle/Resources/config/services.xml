@@ -82,7 +82,6 @@
         </service>
 
         <service class="Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy" id="kcs_serializer.naming_strategy.identical" />
-        <service class="Kcs\Serializer\Naming\CamelCaseNamingStrategy" id="kcs_serializer.naming_strategy.camel_case" />
         <service class="Kcs\Serializer\Naming\UnderscoreNamingStrategy" id="kcs_serializer.naming_strategy.underscore" />
         <service class="Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy" id="kcs_serializer.naming_strategy.identical_property" />
 
