@@ -22,8 +22,12 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /** @var string[] */
     private array $docNamespaces = [];
 
+    /**
+     * @deprecated Will be soon removed. Has no effect on PHP 8.
+     */
     public function enableExternalEntities(): void
     {
+        @trigger_error('Since kcs/serializer 3.6.0: '.__FUNCTION__.' is deprecated and has no effect on PHP 8', \E_USER_DEPRECATED);
         $this->disableExternalEntities = false;
     }
 
@@ -33,7 +37,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     public function prepare($data)
     {
         $previous = \libxml_use_internal_errors(true);
-        $previousEntityLoaderState = \libxml_disable_entity_loader($this->disableExternalEntities);
+
+        if (PHP_VERSION_ID < 80000) {
+            $previousEntityLoaderState = \libxml_disable_entity_loader($this->disableExternalEntities);
+        }
 
         if (false !== \stripos($data, '<!doctype')) {
             $doctype = $this->getDomDocumentType($data);
@@ -44,7 +51,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
         $doc = \simplexml_load_string($data);
         \libxml_use_internal_errors($previous);
-        \libxml_disable_entity_loader($previousEntityLoaderState);
+
+        if (isset($previousEntityLoaderState) && PHP_VERSION_ID < 80000) {
+            \libxml_disable_entity_loader($previousEntityLoaderState);
+        }
 
         if (false === $doc) {
             throw new XmlErrorException(\libxml_get_last_error());

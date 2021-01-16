@@ -12,8 +12,7 @@ jobs:
 
                 php_version:
                     - '7.4'
-                    # Currently disabled as phpcr odm for php8 is not released yet and is required in tests.
-                    # - '8.0'
+                    - '8.0'
 
         name: PHP ${{ matrix.php_version }}
         steps:

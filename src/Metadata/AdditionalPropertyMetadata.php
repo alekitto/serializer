@@ -44,7 +44,7 @@ class AdditionalPropertyMetadata extends PropertyMetadata
     /**
      * {@inheritdoc}
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
     }
 }
