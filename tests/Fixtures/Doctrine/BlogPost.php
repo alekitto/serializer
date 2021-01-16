@@ -7,14 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml\Attribute;
+use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Annotation\Xml\XmlList;
 
 /**
  * @ORM\Entity
- * @XmlRoot("blog-post")
+ * @Root("blog-post")
  */
+#[Root('blog-post')]
 class BlogPost
 {
     /**
@@ -26,6 +27,7 @@ class BlogPost
      * @ORM\Column(type="string")
      * @Groups({"comments","post"})
      */
+    #[Groups(['comments', 'post'])]
     private $title;
 
     /**
@@ -35,8 +37,9 @@ class BlogPost
 
     /**
      * @ORM\Column(type="datetime")
-     * @XmlAttribute
+     * @Attribute
      */
+    #[Attribute()]
     private $createdAt;
 
     /**
@@ -48,8 +51,11 @@ class BlogPost
      *
      * @SerializedName("is_published")
      * @Groups({"post"})
-     * @XmlAttribute
+     * @Attribute
      */
+    #[SerializedName('is_published')]
+    #[Groups(['post'])]
+    #[Attribute()]
     private $published;
 
     /**
@@ -57,12 +63,15 @@ class BlogPost
      * @XmlList(inline=true, entry="comment")
      * @Groups({"comments"})
      */
+    #[XmlList(inline: true, entry: 'comment')]
+    #[Groups(['comments'])]
     private $comments;
 
     /**
      * @ORM\OneToOne(targetEntity="Author")
      * @Groups({"post"})
      */
+    #[Groups(['post'])]
     private $author;
 
     public function __construct($title, Author $author, \DateTime $createdAt)

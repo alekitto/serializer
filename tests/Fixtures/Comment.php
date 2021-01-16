@@ -8,16 +8,19 @@ use Kcs\Serializer\Annotation\Type;
 /**
  * @AccessType("property")
  */
+#[AccessType(AccessType::PROPERTY)]
 class Comment
 {
     /**
      * @Type("Kcs\Serializer\Tests\Fixtures\Author")
      */
+    #[Type(Author::class)]
     private $author;
 
     /**
      * @Type("string")
      */
+    #[Type('string')]
     private $text;
 
     public function __construct(Author $author = null, $text)

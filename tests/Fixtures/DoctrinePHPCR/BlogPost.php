@@ -7,14 +7,15 @@ use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;
 use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlList;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml\Attribute;
+use Kcs\Serializer\Annotation\Xml\XmlList;
+use Kcs\Serializer\Annotation\Xml\Root;
 
 /**
  * @PHPCRODM\Document
- * @XmlRoot("blog-post")
+ * @Root("blog-post")
  */
+#[Root('blog-post')]
 class BlogPost
 {
     /**
@@ -23,24 +24,26 @@ class BlogPost
     protected $id;
 
     /**
-     * @PHPCRODM\String()
+     * @PHPCRODM\Field(type="string")
      * @Groups({"comments","post"})
      */
+    #[Groups(['comments', 'post'])]
     private $title;
 
     /**
-     * @PHPCRODM\String()
+     * @PHPCRODM\Field(type="string")
      */
     protected $slug;
 
     /**
-     * @PHPCRODM\Date()
-     * @XmlAttribute
+     * @PHPCRODM\Field(type="date")
+     * @Attribute
      */
+    #[Attribute()]
     private $createdAt;
 
     /**
-     * @PHPCRODM\Boolean()
+     * @PHPCRODM\Field(type="boolean")
      * @Type("integer")
      * This boolean to integer conversion is one of the few changes between this
      * and the standard BlogPost class. It's used to test the override behavior
@@ -48,8 +51,11 @@ class BlogPost
      *
      * @SerializedName("is_published")
      * @Groups({"post"})
-     * @XmlAttribute
+     * @Attribute
      */
+    #[SerializedName('is_published')]
+    #[Groups(['post'])]
+    #[Attribute()]
     private $published;
 
     /**
@@ -57,12 +63,15 @@ class BlogPost
      * @XmlList(inline=true, entry="comment")
      * @Groups({"comments"})
      */
+    #[XmlList(inline: true, entry: 'comment')]
+    #[Groups(['comments'])]
     private $comments;
 
     /**
      * @PHPCRODM\ReferenceOne(targetDocument="Author")
      * @Groups({"post"})
      */
+    #[Groups(['post'])]
     private $author;
 
     public function __construct($title, Author $author, \DateTime $createdAt)

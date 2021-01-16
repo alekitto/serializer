@@ -17,6 +17,7 @@ class Author
      * @ORM\Column(type="string")
      * @SerializedName("full_name")
      */
+    #[SerializedName('full_name')]
     private $name;
 
     public function __construct($name)

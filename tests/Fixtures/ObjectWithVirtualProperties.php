@@ -12,16 +12,20 @@ use Kcs\Serializer\Annotation\VirtualProperty;
  * @AccessorOrder("custom", custom = {"prop_name", "existField", "foo" })
  * @AccessType("property")
  */
+#[AccessorOrder('custom', custom: ['prop_name', 'existField', 'foo'])]
+#[AccessType(AccessType::PROPERTY)]
 class ObjectWithVirtualProperties
 {
     /**
      * @Type("string")
      */
+    #[Type('string')]
     protected $existField = 'value';
 
     /**
      * @VirtualProperty
      */
+    #[VirtualProperty()]
     public function getVirtualValue()
     {
         return 'value';
@@ -31,6 +35,8 @@ class ObjectWithVirtualProperties
      * @VirtualProperty
      * @SerializedName("test")
      */
+    #[VirtualProperty()]
+    #[SerializedName('test')]
     public function getVirtualSerializedValue()
     {
         return 'other-name';
@@ -40,6 +46,8 @@ class ObjectWithVirtualProperties
      * @VirtualProperty
      * @Type("int")
      */
+    #[VirtualProperty()]
+    #[Type('int')]
     public function getTypedVirtualProperty()
     {
         return '1';

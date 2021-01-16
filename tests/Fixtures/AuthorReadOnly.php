@@ -6,9 +6,9 @@ use Kcs\Serializer\Annotation\Accessor;
 use Kcs\Serializer\Annotation\ReadOnly;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml\Root;
 
-/** @XmlRoot("author") */
+/** @Root("author") */
 class AuthorReadOnly
 {
     /**

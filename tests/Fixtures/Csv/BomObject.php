@@ -10,6 +10,8 @@ use Kcs\Serializer\Tests\Fixtures\GroupsObject;
  * @Csv(outputBom=true)
  * @AccessType("property")
  */
+#[Csv(outputBom: true)]
+#[AccessType(AccessType::PROPERTY)]
 class BomObject extends GroupsObject
 {
 }

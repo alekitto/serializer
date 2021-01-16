@@ -10,6 +10,8 @@ use Kcs\Serializer\Annotation\Type;
  * @Csv(escapeFormulas=true)
  * @AccessType("property")
  */
+#[Csv(escapeFormulas: true)]
+#[AccessType(AccessType::PROPERTY)]
 class EscapeFormulas
 {
     /**

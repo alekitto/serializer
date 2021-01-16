@@ -86,7 +86,7 @@ class ClassMetadataTest extends TestCase
     }
 
     /**
-     * @requires PHP 7.4
+     * @requires PHP >= 7.4
      */
     public function testShouldNotThrowAccessingUninitializedProperty(): void
     {
@@ -99,7 +99,7 @@ class ClassMetadataTest extends TestCase
     }
 
     /**
-     * @requires PHP 7.4
+     * @requires PHP >= 7.4
      */
     public function testShouldCallMagicGetOnUnsetProperties(): void
     {

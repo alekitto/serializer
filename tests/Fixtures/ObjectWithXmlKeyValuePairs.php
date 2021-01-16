@@ -8,12 +8,14 @@ use Kcs\Serializer\Annotation\Xml\KeyValuePairs;
 /**
  * @AccessType("property")
  */
+#[AccessType(AccessType::PROPERTY)]
 class ObjectWithXmlKeyValuePairs
 {
     /**
      * @var array
      * @KeyValuePairs()
      */
+    #[KeyValuePairs()]
     private $array = [
         'key-one' => 'foo',
         'key-two' => 1,

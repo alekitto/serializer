@@ -10,6 +10,8 @@ use Kcs\Serializer\Tests\Fixtures\GroupsObject;
  * @Csv(delimiter=";")
  * @AccessType("property")
  */
+#[Csv(delimiter: ';')]
+#[AccessType(AccessType::PROPERTY)]
 class DelimiterObject extends GroupsObject
 {
 }

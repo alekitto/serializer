@@ -2,21 +2,32 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Attribute;
+use TypeError;
+
+use function Safe\sprintf;
+
 /**
  * @Annotation
  * @Target("PROPERTY")
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 final class Accessor
 {
-    /**
-     * @var string
-     */
-    public $getter;
+    public ?string $getter = null;
+    public ?string $setter = null;
 
-    /**
-     * @var string
-     */
-    public $setter;
+    public function __construct($getter = null, ?string $setter = null)
+    {
+        if (is_string($getter)) {
+            $data = ['getter' => $getter];
+        } elseif (is_array($getter)) {
+            $data = $getter;
+        } elseif (null !== $getter) {
+            throw new TypeError(sprintf('Argument #1 passed to %s must be a string. %s passed', __METHOD__, get_debug_type($getter)));
+        }
+
+        $this->getter = $data['getter'] ?? $data['value'] ?? null;
+        $this->setter = $setter ?? $data['setter'] ?? null;
+    }
 }

@@ -8,11 +8,13 @@ use Kcs\Serializer\Annotation\VirtualProperty;
 /**
  * @ExclusionPolicy("all")
  */
+#[ExclusionPolicy(ExclusionPolicy::ALL)]
 class ObjectWithVirtualPropertiesAndExcludeAll
 {
     /**
      * @VirtualProperty
      */
+    #[VirtualProperty()]
     public function getVirtualValue()
     {
         return 'value';

@@ -20,6 +20,12 @@ use PhpCollection\Sequence;
  * @Xml\XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
  * @AccessType("property")
  */
+#[Xml\Root('blog-post')]
+#[Xml\XmlNamespace(uri: "http://example.com/namespace")]
+#[Xml\XmlNamespace(uri: "http://schemas.google.com/g/2005", prefix: 'gd')]
+#[Xml\XmlNamespace(uri: "http://www.w3.org/2005/Atom", prefix: 'atom')]
+#[Xml\XmlNamespace(uri: "http://purl.org/dc/elements/1.1/", prefix: 'dc')]
+#[AccessType(AccessType::PROPERTY)]
 class BlogPost
 {
     /**
@@ -27,6 +33,9 @@ class BlogPost
      * @Xml\Element(cdata=false)
      * @Groups({"comments","post"})
      */
+    #[Type('string')]
+    #[Xml\Element(cdata: false)]
+    #[Groups(['comments', 'post'])]
     private $id = 'what_a_nice_id';
 
     /**
@@ -35,12 +44,18 @@ class BlogPost
      * @Xml\Element(namespace="http://purl.org/dc/elements/1.1/");
      * @OnExclude("skip")
      */
+    #[Type('string')]
+    #[Xml\Element(namespace: 'http://purl.org/dc/elements/1.1/')]
+    #[Groups(['comments', 'post'])]
+    #[OnExclude(OnExclude::SKIP)]
     private $title;
 
     /**
      * @Type("DateTime")
      * @Xml\Attribute
      */
+    #[Type(\DateTime::class)]
+    #[Xml\Attribute()]
     private $createdAt;
 
     /**
@@ -49,6 +64,10 @@ class BlogPost
      * @Xml\Attribute
      * @Groups({"post"})
      */
+    #[Type('boolean')]
+    #[SerializedName('is_published')]
+    #[Xml\Attribute()]
+    #[Groups(['post'])]
     private $published;
 
     /**
@@ -56,6 +75,9 @@ class BlogPost
      * @Xml\Attribute(namespace="http://schemas.google.com/g/2005")
      * @Groups({"post"})
      */
+    #[Type('string')]
+    #[Xml\Attribute(namespace: 'http://schemas.google.com/g/2005')]
+    #[Groups(['post'])]
     private $etag;
 
     /**
@@ -63,6 +85,9 @@ class BlogPost
      * @Xml\XmlList(inline=true, entry="comment")
      * @Groups({"comments"})
      */
+    #[Type('ArrayCollection<'.Comment::class.'>')]
+    #[Xml\XmlList(inline: true, entry: 'comment')]
+    #[Groups(['comments'])]
     private $comments;
 
     /**
@@ -70,12 +95,17 @@ class BlogPost
      * @Xml\XmlList(inline=true, entry="comment2")
      * @Groups({"comments"})
      */
+    #[Type(Sequence::class.'<'.Comment::class.'>')]
+    #[Xml\XmlList(inline: true, entry: 'comment2')]
+    #[Groups(['comments'])]
     private $comments2;
 
     /**
      * @Type("PhpCollection\Map<string,string>")
      * @Xml\Map(keyAttribute = "key")
      */
+    #[Type(Map::class.'<string, string>')]
+    #[Xml\Map(keyAttribute: 'key')]
     private $metadata;
 
     /**
@@ -83,17 +113,23 @@ class BlogPost
      * @Groups({"post"})
      * @Xml\Element(namespace="http://www.w3.org/2005/Atom")
      */
+    #[Type(Author::class)]
+    #[Groups(['post'])]
+    #[Xml\Element(namespace: 'http://www.w3.org/2005/Atom')]
     private $author;
 
     /**
      * @Type("Kcs\Serializer\Tests\Fixtures\Publisher")
      */
+    #[Type(Publisher::class)]
     private $publisher;
 
     /**
      * @Type("array<Kcs\Serializer\Tests\Fixtures\Tag>")
      * @Xml\XmlList(inline=true, entry="tag", namespace="http://purl.org/dc/elements/1.1/");
      */
+    #[Type('array<'.Tag::class.'>')]
+    #[Xml\XmlList(inline: true, entry: 'tag', namespace: 'http://purl.org/dc/elements/1.1/')]
     private $tag;
 
     public function __construct($title, Author $author, \DateTime $createdAt, Publisher $publisher)

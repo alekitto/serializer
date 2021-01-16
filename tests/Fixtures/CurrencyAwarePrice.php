@@ -5,19 +5,19 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation as Serializer;
 
 /**
- * @Serializer\XmlRoot("price")
+ * @Serializer\Xml\Root("price")
  * @Serializer\AccessType("property")
  */
 class CurrencyAwarePrice
 {
     /**
-     * @Serializer\XmlAttribute
+     * @Serializer\Xml\Attribute
      * @Serializer\Type("string")
      */
     private $currency;
 
     /**
-     * @Serializer\XmlValue
+     * @Serializer\Xml\Value
      * @Serializer\Type("double")
      */
     private $amount;

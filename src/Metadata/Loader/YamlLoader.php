@@ -77,12 +77,10 @@ class YamlLoader extends AnnotationLoader
                         $item = ['value' => $item];
                     }
 
-                    $annotation = new Annotations\StaticField();
-                    $annotation->name = $property;
-                    $annotation->value = $item['value'];
+                    $value = $item['value'];
                     unset($item['value']);
 
-                    $annotation->attributes = $this->loadProperty($item);
+                    $annotation = new Annotations\StaticField($property, $this->loadProperty($item), $value);
                     $annotations[] = $annotation;
                 }
 
@@ -93,7 +91,7 @@ class YamlLoader extends AnnotationLoader
                 continue;
             }
 
-            $annotations = \array_merge($annotations, $this->createAnnotationsForArray($value, $key));
+            \array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
         }
 
         return $annotations;
@@ -112,7 +110,7 @@ class YamlLoader extends AnnotationLoader
             $annotations[] = new Annotations\VirtualProperty();
 
             $methodConfig = $config['virtual_properties'][$methodName] ?: [];
-            $annotations = \array_merge($annotations, $this->loadProperty($methodConfig));
+            \array_push($annotations, ...$this->loadProperty($methodConfig));
         }
 
         return $annotations;
@@ -146,7 +144,7 @@ class YamlLoader extends AnnotationLoader
         $annotations = [];
 
         foreach ($config as $key => $value) {
-            $annotations = \array_merge($annotations, $this->createAnnotationsForArray($value, $key));
+            \array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
         }
 
         return $annotations;
@@ -171,25 +169,22 @@ class YamlLoader extends AnnotationLoader
         if (! \is_array($value)) {
             $annotation = $this->createAnnotationObject($key);
             if ($property = $this->getDefaultPropertyName($annotation)) {
-                $annotation->{$property} = $value;
+                $annotation->{$property} = $this->convertValue($annotation, $property, $value);
             }
 
             $annotations[] = $annotation;
         } elseif (self::isAssocArray($value)) {
             $annotation = $this->createAnnotationObject($key);
             foreach ($value as $property => $val) {
-                $annotation->{$property} = $val;
+                $annotation->{$property} = $this->convertValue($annotation, $property, $val);
             }
 
             $annotations[] = $annotation;
         } elseif ('groups' === $key) {
-            $annotation = new Annotations\Groups();
-            $annotation->groups = $value;
-
-            $annotations[] = $annotation;
+            $annotations[] = new Annotations\Groups($value);
         } else {
             foreach ($value as $annotValue) {
-                $annotations = \array_merge($annotations, $this->createAnnotationsForArray($annotValue, $key));
+                \array_push($annotations, ...$this->createAnnotationsForArray($annotValue, $key));
             }
         }
 

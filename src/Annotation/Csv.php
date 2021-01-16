@@ -2,44 +2,42 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Attribute;
+use TypeError;
+
+use function Safe\sprintf;
+
 /**
  * @Annotation
  * @Target({"CLASS"})
  */
-/* final */ class Csv
+#[Attribute(Attribute::TARGET_CLASS)]
+final class Csv
 {
-    /**
-     * @var string
-     */
-    public $delimiter;
+    public ?string $delimiter;
+    public ?string $enclosure;
+    public ?string $escapeChar;
+    public ?bool $escapeFormulas;
+    public ?string $keySeparator;
+    public ?bool $printHeaders;
+    public ?bool $outputBom;
 
-    /**
-     * @var string
-     */
-    public $enclosure;
+    public function __construct($delimiter, ?string $enclosure = null, ?string $escapeChar = null, ?bool $escapeFormulas = null, ?string $keySeparator = null, ?bool $printHeaders = null, ?bool $outputBom = null)
+    {
+        if (is_string($delimiter)) {
+            $data = ['delimiter' => $delimiter];
+        } elseif (is_array($delimiter)) {
+            $data = $delimiter;
+        } elseif (null !== $delimiter) {
+            throw new TypeError(sprintf('Argument #1 passed to %s must be a string or null. %s passed', __METHOD__, get_debug_type($delimiter)));
+        }
 
-    /**
-     * @var string
-     */
-    public $escapeChar;
-
-    /**
-     * @var bool
-     */
-    public $escapeFormulas;
-
-    /**
-     * @var string
-     */
-    public $keySeparator;
-
-    /**
-     * @var bool
-     */
-    public $printHeaders;
-
-    /**
-     * @var bool
-     */
-    public $outputBom;
+        $this->delimiter = $data['delimiter'] ?? $data['value'] ?? null;
+        $this->enclosure = $enclosure ?? $data['enclosure'] ?? null;
+        $this->escapeChar = $escapeChar ?? $data['escapeChar'] ?? null;
+        $this->escapeFormulas = $escapeFormulas ?? $data['escapeFormulas'] ?? null;
+        $this->keySeparator = $keySeparator ?? $data['keySeparator'] ?? null;
+        $this->printHeaders = $printHeaders ?? $data['printHeaders'] ?? null;
+        $this->outputBom = $outputBom ?? $data['outputBom'] ?? null;
+    }
 }

@@ -10,6 +10,8 @@ use Kcs\Serializer\Inflector\Inflector;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use SimpleXMLElement;
 
+use function explode;
+
 class XmlLoader extends AnnotationLoader
 {
     use FileLoaderTrait;
@@ -75,8 +77,12 @@ class XmlLoader extends AnnotationLoader
         $annotations = $this->loadComplex($element, ['name'], $exclude);
 
         foreach ($element->xpath('./discriminator') as $discriminatorElement) {
-            $discriminator = new Annotations\Discriminator();
+            $discriminator = new Annotations\Discriminator([]);
             foreach ($this->loadAnnotationProperties($discriminatorElement) as $attrName => $value) {
+                if ($attrName === 'groups' && is_string($value)) {
+                    $value = explode(',', $value);
+                }
+
                 $discriminator->{$attrName} = $value;
             }
 
@@ -91,7 +97,7 @@ class XmlLoader extends AnnotationLoader
         }
 
         foreach ($element->xpath('./static-field') as $fieldElement) {
-            $field = new Annotations\StaticField();
+            $field = (new \ReflectionClass(Annotations\StaticField::class))->newInstanceWithoutConstructor();
             foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
                 $field->{$attrName} = $value;
             }
@@ -228,7 +234,7 @@ class XmlLoader extends AnnotationLoader
             $annotations[] = $annotation;
 
             if ($property = $this->getDefaultPropertyName($annotation)) {
-                $annotation->{$property} = $value;
+                $annotation->{$property} = $this->convertValue($annotation, $property, $value);
             }
         }
 

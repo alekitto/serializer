@@ -4,19 +4,23 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlRoot;
-use Kcs\Serializer\Annotation\XmlValue;
+use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Annotation\Xml\Value;
 
 /**
- * @XmlRoot("price")
+ * @Root("price")
  * @AccessType("property")
  */
+#[Root('price')]
+#[AccessType(AccessType::PROPERTY)]
 class Price
 {
     /**
      * @Type("double")
-     * @XmlValue
+     * @Value
      */
+    #[Type('double')]
+    #[Value()]
     private $price;
 
     public function __construct($price)

@@ -2,12 +2,13 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Attribute;
+
 /**
  * @Annotation
  * @Target("METHOD")
- *
- * @author Alexander Klimenkov <alx.devel@gmail.com>
  */
+#[Attribute(Attribute::TARGET_METHOD)]
 final class VirtualProperty
 {
 }

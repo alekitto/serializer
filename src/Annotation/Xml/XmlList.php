@@ -2,10 +2,13 @@
 
 namespace Kcs\Serializer\Annotation\Xml;
 
+use Attribute;
+
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-/* final */ class XmlList extends Collection
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
+final class XmlList extends Collection
 {
 }

@@ -3,14 +3,14 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlValue;
+use Kcs\Serializer\Annotation\Xml\Value;
 
 /**
  * @AccessType("property")
  */
 class InvalidUsageOfXmlValue
 {
-    /** @XmlValue */
+    /** @Value */
     private $value = 'bar';
 
     private $element = 'foo';

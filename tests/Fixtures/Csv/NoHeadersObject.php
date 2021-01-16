@@ -10,6 +10,8 @@ use Kcs\Serializer\Annotation\Type;
  * @Csv(printHeaders=false)
  * @AccessType("property")
  */
+#[Csv(printHeaders: false)]
+#[AccessType(AccessType::PROPERTY)]
 class NoHeadersObject
 {
     /**

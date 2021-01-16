@@ -14,6 +14,11 @@ use Kcs\Serializer\Annotation as Serializer;
  * })
  * @Serializer\AccessType("property")
  */
+#[Serializer\Discriminator(field: 'type', map: [
+    'car' => Car::class,
+    'moped' => Moped::class,
+], groups: ['Default', 'discriminator_group'])]
+#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
 abstract class Vehicle
 {
     /** @Serializer\Type("integer") */

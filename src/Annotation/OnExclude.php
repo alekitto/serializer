@@ -2,12 +2,17 @@
 
 namespace Kcs\Serializer\Annotation;
 
+use Attribute;
 use Kcs\Serializer\Exception\RuntimeException;
+use TypeError;
+
+use function Safe\sprintf;
 
 /**
  * @Annotation
  * @Target({"PROPERTY", "ANNOTATION"})
  */
+#[Attribute(Attribute::TARGET_PROPERTY)]
 final class OnExclude
 {
     public const NULL = 'null';
@@ -16,19 +21,20 @@ final class OnExclude
     /**
      * @var string
      */
-    public $policy = self::NULL;
+    public string $policy = self::NULL;
 
-    public function __construct(?array $values = null)
+    public function __construct($policy)
     {
-        if (empty($values)) {
-            return;
+        if (is_string($policy)) {
+            $data = ['policy' => $policy];
+        } elseif (is_array($policy)) {
+            $data = $policy;
+        } else {
+            throw new TypeError(sprintf('Argument #1 passed to %s must be a string. %s passed', __METHOD__, get_debug_type($policy)));
         }
 
-        if (! \is_string($values['value'])) {
-            throw new RuntimeException('"value" must be a string.');
-        }
-
-        $this->policy = \strtolower($values['value']);
+        $policy = $data['policy'] ?? $data['value'];
+        $this->policy = \strtolower($policy);
 
         if (self::NULL !== $this->policy && self::SKIP !== $this->policy) {
             throw new RuntimeException('OnExclude policy must either be "null", or "skip".');

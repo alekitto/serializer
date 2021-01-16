@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlKeyValuePairs;
+use Kcs\Serializer\Annotation\Xml\KeyValuePairs;
 
 /**
  * @AccessType("property")
@@ -14,7 +14,7 @@ class NamedDateTimeInterfaceArraysObject
     /**
      * @var \DateTime[]
      * @Type("array<string,DateTimeInterface<'d.m.Y H:i:s'>>")
-     * @XmlKeyValuePairs
+     * @KeyValuePairs
      */
     private $namedArrayWithFormattedDate;
 

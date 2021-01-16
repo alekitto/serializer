@@ -10,17 +10,23 @@ use Kcs\Serializer\Annotation\Xml;
  * @Xml\Root("child")
  * @AccessType("property")
  */
+#[Xml\Root('child')]
+#[AccessType(AccessType::PROPERTY)]
 class Person
 {
     /**
      * @Type("string")
      * @Xml\Value(cdata=false)
      */
+    #[Type('string')]
+    #[Xml\Value(cdata: false)]
     public $name;
 
     /**
      * @Type("integer")
      * @Xml\Attribute()
      */
+    #[Type('integer')]
+    #[Xml\Attribute()]
     public $age;
 }

@@ -10,6 +10,8 @@ use Kcs\Serializer\Annotation\Type;
  * @Csv(enclosure="'")
  * @AccessType("property")
  */
+#[Csv(enclosure: "'")]
+#[AccessType(AccessType::PROPERTY)]
 class EnclosureObject
 {
     /**

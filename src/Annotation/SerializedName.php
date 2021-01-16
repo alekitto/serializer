@@ -2,29 +2,30 @@
 
 namespace Kcs\Serializer\Annotation;
 
-use Kcs\Serializer\Exception\RuntimeException;
+use Attribute;
+use TypeError;
+
+use function Safe\sprintf;
 
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 final class SerializedName
 {
-    /**
-     * @var string
-     */
-    public $name;
+    public string $name;
 
-    public function __construct(?array $values = null)
+    public function __construct($name)
     {
-        if (empty($values)) {
-            return;
+        if (is_string($name)) {
+            $data = ['name' => $name];
+        } elseif (is_array($name)) {
+            $data = $name;
+        } else {
+            throw new TypeError(sprintf('Argument #1 passed to %s must be a string. %s passed', __METHOD__, get_debug_type($name)));
         }
 
-        if (! \is_string($values['value'])) {
-            throw new RuntimeException(\sprintf('"value" must be a string.'));
-        }
-
-        $this->name = $values['value'];
+        $this->name = $data['name'] ?? $data['value'];
     }
 }

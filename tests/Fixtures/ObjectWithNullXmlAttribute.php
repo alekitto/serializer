@@ -3,7 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\XmlAttribute;
+use Kcs\Serializer\Annotation\Xml\Attribute;
 
 /**
  * @AccessType("property")
@@ -11,7 +11,7 @@ use Kcs\Serializer\Annotation\XmlAttribute;
 class ObjectWithNullXmlAttribute extends SimpleObject
 {
     /**
-     * @XmlAttribute()
+     * @Attribute()
      */
     private $nullAttribute = null;
 }

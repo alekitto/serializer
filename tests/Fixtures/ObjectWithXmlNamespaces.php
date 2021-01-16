@@ -4,48 +4,63 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\XmlAttribute;
-use Kcs\Serializer\Annotation\XmlElement;
-use Kcs\Serializer\Annotation\XmlNamespace;
-use Kcs\Serializer\Annotation\XmlRoot;
+use Kcs\Serializer\Annotation\Xml\Attribute;
+use Kcs\Serializer\Annotation\Xml\Element;
+use Kcs\Serializer\Annotation\Xml\XmlNamespace;
+use Kcs\Serializer\Annotation\Xml\Root;
 
 /**
- * @XmlRoot("test-object", namespace="http://example.com/namespace")
+ * @Root("test-object", namespace="http://example.com/namespace")
  * @XmlNamespace(uri="http://example.com/namespace")
  * @XmlNamespace(uri="http://schemas.google.com/g/2005", prefix="gd")
  * @XmlNamespace(uri="http://www.w3.org/2005/Atom", prefix="atom")
  * @AccessType("property")
  */
+#[Root('test-object', namespace: 'http://example.com/namespace')]
+#[XmlNamespace(uri: 'http://example.com/namespace')]
+#[XmlNamespace(uri: 'http://schemas.google.com/g/2005', prefix: 'gd')]
+#[XmlNamespace(uri: 'http://www.w3.org/2005/Atom', prefix: 'atom')]
+#[AccessType(AccessType::PROPERTY)]
 class ObjectWithXmlNamespaces
 {
     /**
      * @Type("string")
-     * @XmlElement(namespace="http://purl.org/dc/elements/1.1/");
+     * @Element(namespace="http://purl.org/dc/elements/1.1/");
      */
+    #[Type('string')]
+    #[Element(namespace: 'http://purl.org/dc/elements/1.1/')]
     private $title;
 
     /**
      * @Type("DateTime")
-     * @XmlAttribute
+     * @Attribute
      */
+    #[Type(\DateTime::class)]
+    #[Attribute()]
     private $createdAt;
 
     /**
      * @Type("string")
-     * @XmlAttribute(namespace="http://schemas.google.com/g/2005")
+     * @Attribute(namespace="http://schemas.google.com/g/2005")
      */
+    #[Type('string')]
+    #[Attribute(namespace: 'http://schemas.google.com/g/2005')]
     private $etag;
 
     /**
      * @Type("string")
-     * @XmlElement(namespace="http://www.w3.org/2005/Atom")
+     * @Element(namespace="http://www.w3.org/2005/Atom")
      */
+    #[Type('string')]
+    #[Element(namespace: 'http://www.w3.org/2005/Atom')]
     private $author;
 
     /**
      * @Type("string")
-     * @XmlAttribute(namespace="http://purl.org/dc/elements/1.1/");
+     * @Attribute(namespace="http://purl.org/dc/elements/1.1/");
      */
+    #[Type('string')]
+    #[Attribute(namespace: 'http://purl.org/dc/elements/1.1/')]
     private $language;
 
     public function __construct($title, $author, \DateTime $createdAt, $language)

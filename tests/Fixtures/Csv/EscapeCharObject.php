@@ -10,6 +10,8 @@ use Kcs\Serializer\Annotation\Type;
  * @Csv(escapeChar="%")
  * @AccessType("property")
  */
+#[Csv(escapeChar: "%")]
+#[AccessType(AccessType::PROPERTY)]
 class EscapeCharObject
 {
     /**
