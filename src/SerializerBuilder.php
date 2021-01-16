@@ -4,6 +4,7 @@ namespace Kcs\Serializer;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
+use Kcs\Metadata\Loader\ChainLoader;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
@@ -16,6 +17,7 @@ use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\PropelCollectionHandler;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
@@ -193,6 +195,11 @@ class SerializerBuilder
 
             $metadataLoader = new AnnotationLoader();
             $metadataLoader->setReader($annotationReader);
+
+            if (PHP_VERSION_ID >= 80000) {
+                $loaders = [ $metadataLoader, new AttributesLoader() ];
+                $metadataLoader = new ChainLoader($loaders);
+            }
         }
 
         $metadataLoader = new ReflectionLoader($metadataLoader);

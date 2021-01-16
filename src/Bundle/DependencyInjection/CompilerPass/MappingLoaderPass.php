@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrinePHPCRTypeLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrineTypeLoader;
 use Kcs\Serializer\Metadata\Loader\PropertyInfoTypeLoader;
@@ -57,6 +58,13 @@ class MappingLoaderPass implements CompilerPassInterface
 
         $xmlDefinition->replaceArgument(0, $xml_paths);
         $yamlDefinition->replaceArgument(0, $yaml_paths);
+
+        if (PHP_VERSION_ID >= 80000) {
+            $definition = new Definition(AttributesLoader::class);
+            $container->setDefinition('kcs_serializer.metadata.loader.attributes', $definition);
+
+            $loaders[] = new Reference('kcs_serializer.metadata.loader.attributes');
+        }
 
         if ($container->has('annotation_reader')) {
             $definition = new Definition(AnnotationLoader::class);
