@@ -6,8 +6,6 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 /**
  * Generic naming strategy which translates a camel-cased property name.
- *
- * @author Alessandro Chitolina <alekitto@gmail.com>
  */
 final class UnderscoreNamingStrategy implements PropertyNamingStrategyInterface
 {

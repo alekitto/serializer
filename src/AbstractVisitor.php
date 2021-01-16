@@ -30,7 +30,7 @@ abstract class AbstractVisitor implements VisitorInterface
         return $handler($this, $data, $type, $context);
     }
 
-    protected function getElementType(Type $type)
+    protected function getElementType(Type $type): ?Type
     {
         if (0 === $type->countParams()) {
             return null;

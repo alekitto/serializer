@@ -9,8 +9,6 @@ use Kcs\Serializer\VisitorInterface;
 
 /**
  * Implementations of this interface construct new objects during deserialization.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 interface ObjectConstructorInterface
 {

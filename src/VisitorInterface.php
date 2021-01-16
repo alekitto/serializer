@@ -11,9 +11,6 @@ use Kcs\Serializer\Type\Type;
  *
  * This contains the minimal set of values that must be supported for any
  * output format.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- * @author Alessandro Chitolina <alekitto@gmail.com>
  */
 interface VisitorInterface
 {
@@ -83,7 +80,8 @@ interface VisitorInterface
      */
     public function visitObject(
         ClassMetadata $metadata,
-        $data, Type $type,
+        $data,
+        Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
     );

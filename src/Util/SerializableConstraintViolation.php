@@ -11,17 +11,22 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
  * @Xml\Root("violation")
  * @ReadOnly()
  */
+#[Xml\Root('violation')]
+#[ReadOnly()]
 final class SerializableConstraintViolation
 {
     /**
      * @Type("string")
      * @Xml\Attribute()
      */
+    #[Type('string')]
+    #[Xml\Attribute()]
     private string $propertyPath;
 
     /**
      * @Type("string")
      */
+    #[Type('string')]
     private string $message;
 
     public function __construct(ConstraintViolationInterface $violation)

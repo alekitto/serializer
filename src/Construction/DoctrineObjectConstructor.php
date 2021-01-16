@@ -55,10 +55,6 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     /**
      * Get the object manager handling the specified class
      * Returns NULL if cannot be found.
-     *
-     * @param ClassMetadata $metadata
-     *
-     * @return ObjectManager|null
      */
     protected function getObjectManager(ClassMetadata $metadata): ?ObjectManager
     {
@@ -74,12 +70,9 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     /**
      * Try to load an object from doctrine.
      *
-     * @param ClassMetadata $metadata
-     * @param $data
-     *
-     * @return object|null
+     * @param mixed $data
      */
-    protected function loadFromObjectManager(ClassMetadata $metadata, $data)
+    protected function loadFromObjectManager(ClassMetadata $metadata, $data): ?object
     {
         // Locate possible ObjectManager
         if (null === $objectManager = $this->getObjectManager($metadata)) {

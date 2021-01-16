@@ -132,10 +132,6 @@ class DateHandler implements SubscribingHandlerInterface
     }
 
     /**
-     * @param \DateInterval $dateInterval
-     *
-     * @return string
-     *
      * @internal
      */
     public function formatInterval(\DateInterval $dateInterval): string
@@ -181,11 +177,6 @@ class DateHandler implements SubscribingHandlerInterface
         return $visitor->visitString($data, $type, $context);
     }
 
-    /**
-     * @param Type $type
-     *
-     * @return string
-     */
     private function getFormat(Type $type): string
     {
         return $type->hasParam(0) ? $type->getParam(0) : $this->defaultFormat;

@@ -9,10 +9,7 @@ interface SerializerInterface
     /**
      * Serializes the given data to the specified output format.
      *
-     * @param mixed                $data
-     * @param string               $format
-     * @param SerializationContext $context
-     * @param Type|null            $type
+     * @param mixed $data
      *
      * @return mixed
      */
@@ -21,10 +18,7 @@ interface SerializerInterface
     /**
      * Deserializes the given data to the specified type.
      *
-     * @param string|mixed           $data
-     * @param Type                   $type
-     * @param string                 $format
-     * @param DeserializationContext $context
+     * @param string|mixed $data
      *
      * @return mixed
      */

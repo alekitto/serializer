@@ -6,9 +6,6 @@ use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-/**
- * @author Adrien Brault <adrien.brault@gmail.com>
- */
 class DepthExclusionStrategy implements ExclusionStrategyInterface
 {
     /**

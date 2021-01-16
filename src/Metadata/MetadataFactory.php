@@ -5,9 +5,6 @@ namespace Kcs\Serializer\Metadata;
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Factory\AbstractMetadataFactory;
 
-/**
- * @author Alessandro Chitolina <alekitto@gmail.com>
- */
 class MetadataFactory extends AbstractMetadataFactory
 {
     /**

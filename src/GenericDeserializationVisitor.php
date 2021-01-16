@@ -10,8 +10,6 @@ use Kcs\Serializer\Type\Type;
 
 /**
  * Generic Deserialization Visitor.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class GenericDeserializationVisitor extends GenericSerializationVisitor
 {

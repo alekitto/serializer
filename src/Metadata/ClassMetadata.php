@@ -10,8 +10,6 @@ use LogicException;
 
 /**
  * Class Metadata used to customize the serialization process.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class ClassMetadata extends BaseClassMetadata
 {

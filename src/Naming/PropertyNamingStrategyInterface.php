@@ -9,8 +9,6 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  *
  * Implementations translate the property name to a serialized name that is
  * displayed.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 interface PropertyNamingStrategyInterface
 {

@@ -18,6 +18,10 @@ final class SerializableConstraintViolationList
      *
      * @var SerializableConstraintViolation[]
      */
+    #[Type('array<Kcs\Serializer\Util\SerializableConstraintViolation>')]
+    #[Xml\XmlList(entry: 'violation', inline: true)]
+    #[Inline()]
+    #[ReadOnly()]
     private array $violations = [];
 
     public function __construct(ConstraintViolationListInterface $list)

@@ -4,8 +4,6 @@ namespace Kcs\Serializer\Handler;
 
 /**
  * Handler Registry Interface.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 interface HandlerRegistryInterface
 {

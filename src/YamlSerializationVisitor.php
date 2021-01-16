@@ -14,7 +14,7 @@ class YamlSerializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function getResult()
+    public function getResult(): string
     {
         $result = Yaml::dump($this->getRoot(), PHP_INT_MAX);
         if ("\n" !== \substr($result, -1)) {

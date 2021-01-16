@@ -4,9 +4,6 @@ namespace Kcs\Serializer\Metadata;
 
 use SplStack;
 
-/**
- * @author Alessandro Chitolina <alekitto@gmail.com>
- */
 class MetadataStack implements \IteratorAggregate, \Countable
 {
     /** @var string[] */

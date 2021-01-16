@@ -10,8 +10,6 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  * Disjunct Exclusion Strategy.
  *
  * This strategy is short-circuiting and will skip a class, or property as soon as one of the delegates skips it.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class DisjunctExclusionStrategy implements ExclusionStrategyInterface
 {

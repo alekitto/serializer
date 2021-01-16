@@ -14,9 +14,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
  *
  * This class handles traversal along the graph, and calls different methods
  * on visitors, or custom handlers to process its nodes.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- * @author Alessandro Chitolina <alekitto@gmail.com>
  */
 abstract class GraphNavigator
 {

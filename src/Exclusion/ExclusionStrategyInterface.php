@@ -8,8 +8,6 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 /**
  * Interface for exclusion strategies.
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 interface ExclusionStrategyInterface
 {

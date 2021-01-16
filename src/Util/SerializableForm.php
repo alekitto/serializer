@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormInterface;
 /**
  * @Xml\Root(name="form")
  */
+#[Xml\Root(name: 'form')]
 final class SerializableForm
 {
     /**
@@ -17,6 +18,7 @@ final class SerializableForm
      *
      * @var FormError[]
      */
+    #[Type('array<Symfony\Component\Form\FormError>')]
     private array $errors = [];
 
     /**
@@ -25,12 +27,16 @@ final class SerializableForm
      *
      * @var static[]
      */
+    #[Type('array<Kcs\Serializer\Util\SerializableForm>')]
+    #[Xml\XmlList(entry: 'form', inline: true)]
     private array $children = [];
 
     /**
      * @Type("string")
      * @Xml\Attribute()
      */
+    #[Type('string')]
+    #[Xml\Attribute()]
     private string $name;
 
     public function __construct(FormInterface $form)
