@@ -51,7 +51,7 @@ final class StaticField
                 return new $element();
             }
 
-            [$className, $args] = $element;
+            [$className, $args] = $element + [null, []];
 
             return new $className(...$args);
         }, $attributes ?? $data['attributes'] ?? []);
