@@ -39,7 +39,7 @@ For additional information of attributes and elements, see [PHP attributes refer
                  your type contains "<" or ">" characters. -->
             <type><![CDATA[]]></type>
 
-            <accessor getter="getSomeProperty" setter="setSomeProperty />
+            <accessor getter="getSomeProperty" setter="setSomeProperty" />
             <xml-attribute namespace="http://www.w3.org/2005/Atom" />
             <xml-list inline="true" entry-name="foobar" />
             <xml-map inline="true" key-attribute-name="foo" entry-name="bar" namespace="http://www.w3.org/2005/Atom" />
