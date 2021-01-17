@@ -139,10 +139,9 @@ Arguments:
 | name (default) | string                    | yes      | The name of the additional field                 |
 | attributes     | [class-string, mixed[]][] | no       | Attributes to be applied to the additional field |
 
-> NOTE: `attributes` array elements are 2-elements array in which the first is the attribute class name
-> and the second is the array of arguments.
-> 
-> This is needed as PHP attributes only accepts constant expressions, so "new" is not valid in that context.
+?> `attributes` array elements are 2-elements array in which the first is the attribute class name
+and the second is the array of arguments.  
+This is needed as PHP attributes only accepts constant expressions, so "new" is not valid in that context.
 
 ```php
 use Kcs\Serializer\Annotation\AdditionalField;
@@ -204,12 +203,12 @@ to the least super type:
 
 Arguments:
 
-| name            | type                  | required | description                                                                             |
-| --------------- | --------------------- | -------- | --------------------------------------------------------------------------------------- |
-| field (default) | string                | no       | The field name                                                                          |
-| map             | array<string, string> | no       | The discriminator map                                                                   |
-| disabled        | bool                  | no       | Whether to disable discriminator (useful in combination with doctrine metadata loaders) |
-| groups          | string[]              | no       | The key separator                                                                       |
+| name          | type                  | required | description                                                                             |
+| ------------- | --------------------- | -------- | --------------------------------------------------------------------------------------- |
+| map (default) | array<string, string> | yes      | The discriminator map                                                                   |
+| field         | string                | no       | The field name                                                                          |
+| disabled      | bool                  | no       | Whether to disable discriminator (useful in combination with doctrine metadata loaders) |
+| groups        | string[]              | no       | The key separator                                                                       |
 
 ```php
 use Kcs\Serializer\Annotation\Discriminator;
@@ -544,7 +543,7 @@ This allows you to use the keys of an array as xml tags.
 
 No arguments.
 
-> When a key is an invalid xml tag name (e.g. 1_foo) the tag name *entry* will be used instead of the key.
+!> When a key is an invalid xml tag name (e.g. 1_foo) the tag name *entry* will be used instead of the key.
 
 Xml\Root
 --------
@@ -576,9 +575,9 @@ Resulting XML:
 </user>
 ```
 
-> Xml\Root only applies to the root element, but is for example not taken into 
-> account for collections. You can define the entry name for collections using 
-> Xml\XmlList, or Xml\Map.
+?> Xml\Root only applies to the root element, but is for example not taken into 
+account for collections. You can define the entry name for collections using 
+Xml\XmlList, or Xml\Map.
 
 Xml\Value
 ---------
