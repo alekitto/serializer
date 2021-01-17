@@ -8,8 +8,6 @@ use Kcs\Serializer\Type\Parser\Parser;
 
 /**
  * Serialized type representation.
- *
- * @internal
  */
 final class Type
 {
