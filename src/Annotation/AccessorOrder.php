@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use TypeError;
 
 use function Safe\sprintf;
@@ -16,6 +17,10 @@ use function Safe\sprintf;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class AccessorOrder
 {
+    public const UNDEFINED = ClassMetadata::ACCESSOR_ORDER_UNDEFINED;
+    public const ALPHABETICAL = ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL;
+    public const CUSTOM = ClassMetadata::ACCESSOR_ORDER_CUSTOM;
+
     /**
      * @Required
      */
