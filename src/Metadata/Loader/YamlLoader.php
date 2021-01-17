@@ -87,6 +87,15 @@ class YamlLoader extends AnnotationLoader
                 continue;
             }
 
+            if ('additional_fields' === $key) {
+                foreach ($value as $property => $item) {
+                    $annotation = new Annotations\AdditionalField($property, $this->loadProperty($item));
+                    $annotations[] = $annotation;
+                }
+
+                continue;
+            }
+
             if (\in_array($key, ['properties', 'virtual_properties'])) {
                 continue;
             }

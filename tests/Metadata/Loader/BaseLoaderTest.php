@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
 use Kcs\Metadata\Loader\LoaderInterface;
+use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\StaticPropertyMetadata;
@@ -108,6 +109,24 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlValue = true;
         $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
         self::assertEquals($p, $m->getAttributeMetadata('price'));
+    }
+
+    public function testAdditionalFields(): void
+    {
+        $m = new ClassMetadata(new \ReflectionClass(Author::class));
+        $this->getLoader()->loadClassMetadata($m);
+
+        self::assertArrayHasKey('name', $m->getAttributesMetadata());
+        self::assertArrayHasKey('links', $m->getAttributesMetadata());
+
+        $p = new AdditionalPropertyMetadata($m->getName(), 'links');
+        $p->type = Type::parse(Author::class . '::links');
+        $p->serializedName = '_links';
+        $p->xmlKeyValuePairs = true;
+        $p->xmlCollection = true;
+        $p->xmlCollectionInline = true;
+        $p->xmlEntryName = 'entry';
+        self::assertEquals($p, $m->getAttributeMetadata('links'));
     }
 
     public function testStaticFields(): void

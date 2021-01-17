@@ -1,0 +1,12 @@
+Kcs\Serializer\Tests\Fixtures\Author:
+    access_type: property
+    additional_fields:
+        links:
+            serialized_name: _links
+            xml_key_value_pairs: true
+            xml_list:
+                inline: true
+    properties:
+        name:
+            serialized_name: full_name
+            type: string

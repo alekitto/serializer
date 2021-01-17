@@ -20,8 +20,6 @@ final class ExclusionPolicy
 
     /**
      * @Required
-     *
-     * @var string
      */
     public string $policy;
 

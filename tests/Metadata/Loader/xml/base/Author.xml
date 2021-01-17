@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<serializer>
+    <class name="Kcs\Serializer\Tests\Fixtures\Author" access-type="property">
+        <property name="name" type="string" serialized-name="full_name" />
+        <additional-field name="links"
+            serialized-name="_links"
+            xml-key-value-pairs="true">
+            <xml-list inline="true" />
+        </additional-field>
+    </class>
+</serializer>

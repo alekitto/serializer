@@ -72,6 +72,7 @@ class XmlLoader extends AnnotationLoader
             'post-deserialize',
             'discriminator',
             'static-field',
+            'additional-field',
         ];
 
         $annotations = $this->loadComplex($element, ['name'], $exclude);
@@ -103,6 +104,16 @@ class XmlLoader extends AnnotationLoader
             }
 
             $field->attributes = $this->loadComplex($fieldElement, ['name', 'value']);
+            $annotations[] = $field;
+        }
+
+        foreach ($element->xpath('./additional-field') as $fieldElement) {
+            $field = (new \ReflectionClass(Annotations\AdditionalField::class))->newInstanceWithoutConstructor();
+            foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
+                $field->{$attrName} = $value;
+            }
+
+            $field->attributes = $this->loadComplex($fieldElement, ['name']);
             $annotations[] = $field;
         }
 
