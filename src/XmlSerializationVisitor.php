@@ -322,8 +322,9 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function createTextNode($data, bool $cdata = false)
     {
+        $data = (string) $data;
         if (! $cdata) {
-            return $this->document->createTextNode((string) $data);
+            return $this->document->createTextNode($data);
         }
 
         return $this->document->createCDATASection($data);
