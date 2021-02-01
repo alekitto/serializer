@@ -39,7 +39,8 @@ trait LoaderTrait
     private function convertValue(object $annotation, ?string $property, $value)
     {
         $reflectionProperty = new \ReflectionProperty($annotation, $property);
-        switch ((string)$reflectionProperty->getType()) {
+        $type = (string) $reflectionProperty->getType();
+        switch ($type) {
             case 'int':
                 $value = (int)$value;
                 break;
@@ -66,8 +67,7 @@ trait LoaderTrait
                 break;
 
             default:
-                var_dump($property, (string)$reflectionProperty->getType());
-                die;
+                throw new \RuntimeException(\sprintf('Cannot convert mapping value %s to %s', \var_export($value, true), $type));
         }
         return $value;
     }
