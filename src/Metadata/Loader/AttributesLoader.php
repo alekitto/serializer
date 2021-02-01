@@ -4,26 +4,40 @@ namespace Kcs\Serializer\Metadata\Loader;
 
 use Kcs\Serializer\Annotation;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
+use RuntimeException;
+
+use function count;
 
 class AttributesLoader extends AnnotationLoader
 {
-    public function __construct()
+    private ?AnnotationLoader $decorated;
+
+    public function __construct(?AnnotationLoader $annotationLoader = null)
     {
         if (PHP_VERSION_ID < 80000) {
-            throw new \RuntimeException('Attributes loader can only be used with PHP >= 8.0');
+            throw new RuntimeException('Attributes loader can only be used with PHP >= 8.0');
         }
 
         parent::__construct();
+
+        $this->decorated = $annotationLoader;
     }
 
-    protected function isExcluded(\ReflectionClass $class): bool
+    protected function isExcluded(ReflectionClass $class): bool
     {
-        return count($class->getAttributes(Annotation\Exclude::class)) !== 0;
+        if (null !== $this->decorated && $this->decorated->isExcluded($class)) {
+            return true;
+        }
+
+        return 0 !== count($class->getAttributes(Annotation\Exclude::class));
     }
 
     protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
-        $attributes = [];
+        $attributes = $this->decorated ? $this->decorated->getClassAnnotations($classMetadata) : [];
         foreach ($classMetadata->getReflectionClass()->getAttributes() as $attribute) {
             $attributes[] = $attribute->newInstance();
         }
@@ -31,9 +45,9 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
-    protected function getMethodAnnotations(\ReflectionMethod $method): array
+    protected function getMethodAnnotations(ReflectionMethod $method): array
     {
-        $attributes = [];
+        $attributes = $this->decorated ? $this->decorated->getMethodAnnotations($method) : [];
         foreach ($method->getAttributes() as $attribute) {
             $attributes[] = $attribute->newInstance();
         }
@@ -41,9 +55,9 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
-    protected function getPropertyAnnotations(\ReflectionProperty $property): array
+    protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
-        $attributes = [];
+        $attributes = $this->decorated ? $this->decorated->getPropertyAnnotations($property) : [];
         foreach ($property->getAttributes() as $attribute) {
             $attributes[] = $attribute->newInstance();
         }
@@ -51,8 +65,12 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
-    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata): bool
+    protected function isPropertyExcluded(ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
+        if (null !== $this->decorated && $this->decorated->isPropertyExcluded($property, $classMetadata)) {
+            return true;
+        }
+
         if (Annotation\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
             return 0 === count($property->getAttributes(Annotation\Expose::class));
         }

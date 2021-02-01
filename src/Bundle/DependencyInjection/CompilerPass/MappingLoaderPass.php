@@ -59,19 +59,22 @@ class MappingLoaderPass implements CompilerPassInterface
         $xmlDefinition->replaceArgument(0, $xml_paths);
         $yamlDefinition->replaceArgument(0, $yaml_paths);
 
+        if ($container->has('annotation_reader')) {
+            $definition = new Definition(AnnotationLoader::class);
+            $definition->addMethodCall('setReader', [new Reference('annotation_reader')]);
+
+            $container->setDefinition('kcs_serializer.metadata.loader.annotations', $definition);
+        }
+
         if (PHP_VERSION_ID >= 80000) {
             $definition = new Definition(AttributesLoader::class);
             $container->setDefinition('kcs_serializer.metadata.loader.attributes', $definition);
+            if ($container->has('annotation_reader')) {
+                $definition->addArgument(new Reference('kcs_serializer.metadata.loader.annotations'));
+            }
 
             $loaders[] = new Reference('kcs_serializer.metadata.loader.attributes');
-        }
-
-        if ($container->has('annotation_reader')) {
-            $definition = new Definition(AnnotationLoader::class);
-            $definition->setLazy(true);
-            $definition->addMethodCall('setReader', [new Reference('annotation_reader')]);
-            $container->setDefinition('kcs_serializer.metadata.loader.annotations', $definition);
-
+        } else {
             $loaders[] = new Reference('kcs_serializer.metadata.loader.annotations');
         }
 
