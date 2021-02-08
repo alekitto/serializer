@@ -24,14 +24,6 @@ class TraceableVisitor implements VisitorInterface
     /**
      * {@inheritdoc}
      */
-    public static function getFormat(): string
-    {
-        return 'debug';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function prepare($data)
     {
         $this->logger->debug('Preparing data...', [

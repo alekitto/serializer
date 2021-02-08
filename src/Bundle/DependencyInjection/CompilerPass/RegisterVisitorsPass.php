@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
 use Kcs\Serializer\Debug\TraceableVisitor;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,15 +24,20 @@ class RegisterVisitorsPass implements CompilerPassInterface
         $deserializationVisitors = $definition->getArgument(4);
 
         foreach ($container->findTaggedServiceIds('kcs_serializer.serialization_visitor') as $serviceId => $attributes) {
-            $def = $container->getDefinition($serviceId);
-            $className = $def->getClass();
-
             foreach ($attributes as $attribute) {
+                $format = $attribute['format'] ?? null;
                 $direction = $attribute['direction'] ?? null;
+
+                if ($format === null) {
+                    throw new InvalidConfigurationException('Invalid tag for service "%s": format must be specified');
+                }
+
                 if ($direction === 'serialization') {
-                    $serializationVisitors[$className::getFormat()] = new Reference($serviceId);
+                    $serializationVisitors[$format] = new Reference($serviceId);
                 } elseif ($direction === 'deserialization') {
-                    $deserializationVisitors[$className::getFormat()] = new Reference($serviceId);
+                    $deserializationVisitors[$format] = new Reference($serviceId);
+                } else {
+                    throw new InvalidConfigurationException('Invalid tag for service "%s": direction must be "serialization" or "deserialization"');
                 }
             }
         }
@@ -40,21 +46,25 @@ class RegisterVisitorsPass implements CompilerPassInterface
             foreach ($serializationVisitors as $key => $reference) {
                 $def = new Definition(TraceableVisitor::class, [$reference, new Reference('logger')]);
                 $def->addTag('monolog.logger', [
-                    'name' => 'monolog.logger',
                     'channel' => 'kcs_serializer',
                 ]);
 
-                $serializationVisitors[$key] = $def;
+                $id = '.traceable.'.$reference;
+                $container->setDefinition($id, $def);
+
+                $serializationVisitors[$key] = new Reference($id);
             }
 
             foreach ($deserializationVisitors as $key => $reference) {
                 $def = new Definition(TraceableVisitor::class, [$reference, new Reference('logger')]);
                 $def->addTag('monolog.logger', [
-                    'name' => 'monolog.logger',
                     'channel' => 'kcs_serializer',
                 ]);
 
-                $deserializationVisitors[$key] = $def;
+                $id = '.traceable.'.$reference;
+                $container->setDefinition($id, $def);
+
+                $deserializationVisitors[$key] = new Reference($id);
             }
         }
 

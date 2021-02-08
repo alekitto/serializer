@@ -14,14 +14,6 @@ class YamlSerializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public static function getFormat(): string
-    {
-        return 'yaml';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getResult(): string
     {
         $result = Yaml::dump($this->getRoot(), PHP_INT_MAX);

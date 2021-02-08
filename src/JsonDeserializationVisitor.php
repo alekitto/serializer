@@ -10,14 +10,6 @@ class JsonDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public static function getFormat(): string
-    {
-        return 'json';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function prepare($str)
     {
         try {

@@ -33,14 +33,6 @@ class XmlSerializationVisitor extends AbstractVisitor
     private array $xmlNamespaces = [];
 
     /**
-     * {@inheritdoc}
-     */
-    public static function getFormat(): string
-    {
-        return 'xml';
-    }
-
-    /**
      * Sets the default document encoding.
      */
     public function setDefaultEncoding(string $defaultEncoding): void

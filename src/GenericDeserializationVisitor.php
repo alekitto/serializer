@@ -16,14 +16,6 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public static function getFormat(): string
-    {
-        return 'array';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function visitHash($data, Type $type, Context $context)
     {
         if (! \is_array($data)) {
