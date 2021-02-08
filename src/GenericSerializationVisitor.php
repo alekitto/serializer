@@ -23,6 +23,14 @@ class GenericSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
+    public static function getFormat(): string
+    {
+        return 'array';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
         $this->navigator = $navigator;

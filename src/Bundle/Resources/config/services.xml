@@ -9,19 +9,8 @@
             <argument type="service" id="kcs_serializer.metadata.metadata_factory" />
             <argument type="service" id="kcs_serializer.handler_registry" />
             <argument type="service" id="kcs_serializer.construction.doctrine" />
-            <argument type="collection">
-                <argument key="array" type="service" id="kcs_serializer.serialization_visitor.array" />
-                <argument key="json" type="service" id="kcs_serializer.serialization_visitor.json" />
-                <argument key="yaml" type="service" id="kcs_serializer.serialization_visitor.yaml" />
-                <argument key="xml" type="service" id="kcs_serializer.serialization_visitor.xml" />
-                <argument key="csv" type="service" id="kcs_serializer.serialization_visitor.csv" />
-            </argument>
-            <argument type="collection">
-                <argument key="array" type="service" id="kcs_serializer.deserialization_visitor.array" />
-                <argument key="json" type="service" id="kcs_serializer.deserialization_visitor.json" />
-                <argument key="yaml" type="service" id="kcs_serializer.deserialization_visitor.yaml" />
-                <argument key="xml" type="service" id="kcs_serializer.deserialization_visitor.xml" />
-            </argument>
+            <argument type="collection" /> <!-- serialization visitors -->
+            <argument type="collection" /> <!-- deserialization visitors -->
             <argument type="service" id="event_dispatcher" />
         </service>
 
@@ -98,20 +87,37 @@
             <argument type="service" id="kcs_serializer.naming.strategy" />
         </service>
 
-        <service class="Kcs\Serializer\GenericSerializationVisitor" id="kcs_serializer.serialization_visitor.array" parent="kcs_serialization.visitor.prototype" />
+        <service class="Kcs\Serializer\GenericSerializationVisitor" id="kcs_serializer.serialization_visitor.array" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="serialization" />
+        </service>
         <service class="Kcs\Serializer\XmlSerializationVisitor" id="kcs_serializer.serialization_visitor.xml" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="serialization" />
             <call method="setDefaultEncoding">
                 <argument>%kcs_serializer.xml_default_encoding%</argument>
             </call>
         </service>
-        <service class="Kcs\Serializer\JsonSerializationVisitor" id="kcs_serializer.serialization_visitor.json" parent="kcs_serialization.visitor.prototype" />
-        <service class="Kcs\Serializer\CsvSerializationVisitor" id="kcs_serializer.serialization_visitor.csv" parent="kcs_serialization.visitor.prototype" />
-        <service class="Kcs\Serializer\YamlSerializationVisitor" id="kcs_serializer.serialization_visitor.yaml" parent="kcs_serialization.visitor.prototype" />
+        <service class="Kcs\Serializer\JsonSerializationVisitor" id="kcs_serializer.serialization_visitor.json" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="serialization" />
+        </service>
+        <service class="Kcs\Serializer\CsvSerializationVisitor" id="kcs_serializer.serialization_visitor.csv" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="serialization" />
+        </service>
+        <service class="Kcs\Serializer\YamlSerializationVisitor" id="kcs_serializer.serialization_visitor.yaml" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="serialization" />
+        </service>
 
-        <service class="Kcs\Serializer\GenericDeserializationVisitor" id="kcs_serializer.deserialization_visitor.array" parent="kcs_serialization.visitor.prototype" />
-        <service class="Kcs\Serializer\XmlDeserializationVisitor" id="kcs_serializer.deserialization_visitor.xml" parent="kcs_serialization.visitor.prototype" />
-        <service class="Kcs\Serializer\JsonDeserializationVisitor" id="kcs_serializer.deserialization_visitor.json" parent="kcs_serialization.visitor.prototype" />
-        <service class="Kcs\Serializer\YamlDeserializationVisitor" id="kcs_serializer.deserialization_visitor.yaml" parent="kcs_serialization.visitor.prototype" />
+        <service class="Kcs\Serializer\GenericDeserializationVisitor" id="kcs_serializer.deserialization_visitor.array" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="deserialization" />
+        </service>
+        <service class="Kcs\Serializer\XmlDeserializationVisitor" id="kcs_serializer.deserialization_visitor.xml" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="deserialization" />
+        </service>
+        <service class="Kcs\Serializer\JsonDeserializationVisitor" id="kcs_serializer.deserialization_visitor.json" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="deserialization" />
+        </service>
+        <service class="Kcs\Serializer\YamlDeserializationVisitor" id="kcs_serializer.deserialization_visitor.yaml" parent="kcs_serialization.visitor.prototype">
+            <tag name="kcs_serializer.serialization_visitor" direction="deserialization" />
+        </service>
 
         <service alias="kcs_serializer.serializer" id="kcs_serializer" public="true" />
         <service alias="kcs_serializer.naming.cache_strategy" id="kcs_serializer.naming.strategy" />

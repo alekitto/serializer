@@ -16,6 +16,14 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
+    public static function getFormat(): string
+    {
+        return 'csv';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
     {
         if (null === $this->rootMetadata) {

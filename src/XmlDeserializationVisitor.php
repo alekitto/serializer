@@ -23,6 +23,14 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
+    public static function getFormat(): string
+    {
+        return 'xml';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function prepare($data)
     {
         $previous = \libxml_use_internal_errors(true);

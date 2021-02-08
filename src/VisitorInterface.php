@@ -118,4 +118,9 @@ interface VisitorInterface
      * @return mixed
      */
     public function getResult();
+
+    /**
+     * Gets the format of the visitor (short-string).
+     */
+    public static function getFormat(): string;
 }

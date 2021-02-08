@@ -22,7 +22,15 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
+     */
+    public static function getFormat(): string
+    {
+        return 'debug';
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function prepare($data)
     {
@@ -34,7 +42,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitNull($data, Type $type, Context $context)
     {
@@ -47,7 +55,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitString($data, Type $type, Context $context)
     {
@@ -61,7 +69,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitBoolean($data, Type $type, Context $context)
     {
@@ -75,7 +83,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitDouble($data, Type $type, Context $context)
     {
@@ -89,7 +97,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitInteger($data, Type $type, Context $context)
     {
@@ -103,7 +111,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitArray($data, Type $type, Context $context)
     {
@@ -117,7 +125,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitHash($data, Type $type, Context $context)
     {
@@ -131,7 +139,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
     {
@@ -145,7 +153,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
@@ -171,7 +179,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function startVisiting(&$data, Type $type, Context $context): void
     {
@@ -179,7 +187,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function endVisiting($data, Type $type, Context $context)
     {
@@ -193,7 +201,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
@@ -201,7 +209,7 @@ class TraceableVisitor implements VisitorInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getResult()
     {

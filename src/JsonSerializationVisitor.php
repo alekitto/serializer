@@ -16,6 +16,14 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
+    public static function getFormat(): string
+    {
+        return 'json';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getResult(): string
     {
         try {
