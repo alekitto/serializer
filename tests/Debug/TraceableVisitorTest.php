@@ -51,9 +51,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting null at path {{ path }}',
+                'message' => 'Visiting null at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'type' => [
                         'name' => 'NULL',
                         'params' => [],
@@ -71,9 +71,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting string at path {{ path }}',
+                'message' => 'Visiting string at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => 'foobar',
                     'type' => [
                         'name' => 'string',
@@ -92,9 +92,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting boolean at path {{ path }}',
+                'message' => 'Visiting boolean at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => true,
                     'type' => [
                         'name' => 'bool',
@@ -113,9 +113,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting float/double at path {{ path }}',
+                'message' => 'Visiting float/double at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => .3,
                     'type' => [
                         'name' => 'float',
@@ -134,9 +134,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting integer at path {{ path }}',
+                'message' => 'Visiting integer at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => 42,
                     'type' => [
                         'name' => 'int',
@@ -155,9 +155,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting array at path {{ path }}',
+                'message' => 'Visiting array at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => ['foo', 'bar', 'foobar'],
                     'type' => [
                         'name' => 'array',
@@ -178,9 +178,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Visiting hashmap at path {{ path }}',
+                'message' => 'Visiting hashmap at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => ['foo' => 'bar', 'foobar' => 'bazbaz'],
                     'type' => [
                         'name' => 'array',
@@ -204,9 +204,9 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Start visiting object at path {{ path }}',
+                'message' => 'Start visiting object at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
+                    'path' => '<root>',
                     'data' => $this,
                     'type' => [
                         'name' => __CLASS__,
@@ -228,10 +228,10 @@ class TraceableVisitorTest extends TestCase
         self::assertEquals([
             [
                 'level' => 'debug',
-                'message' => 'Calling custom handler "{{ handler }}" at path {{ path }}',
+                'message' => 'Calling custom handler "{handler}" at path {path}',
                 'context' => [
-                    '{{ path }}' => '<root>',
-                    '{{ handler }}' => $handlerString,
+                    'path' => '<root>',
+                    'handler' => $handlerString,
                     'data' => $this,
                     'type' => [
                         'name' => __CLASS__,

@@ -42,8 +42,10 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 $listType = $type->getParam(0);
 
                 $result = [];
-                foreach ($data as $v) {
+                foreach ($data as $k => $v) {
+                    $context->getMetadataStack()->pushIndexPath((string) $k);
                     $result[] = $context->accept($v, $listType);
+                    $context->getMetadataStack()->popIndexPath();
                 }
 
                 $this->setData($result);
@@ -56,7 +58,9 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
 
                 $result = [];
                 foreach ($data as $k => $v) {
+                    $context->getMetadataStack()->pushIndexPath((string) $k);
                     $result[$context->accept($k, $keyType)] = $context->accept($v, $entryType);
+                    $context->getMetadataStack()->popIndexPath();
                 }
 
                 $this->setData($result);
@@ -80,8 +84,10 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         $listType = $type->getParam(0);
 
         $result = [];
-        foreach ($data as $v) {
+        foreach ($data as $k => $v) {
+            $context->getMetadataStack()->pushIndexPath((string) $k);
             $result[] = $context->accept($v, $listType);
+            $context->getMetadataStack()->popIndexPath();
         }
 
         $this->setData($result);

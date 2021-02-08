@@ -230,7 +230,10 @@ class XmlSerializationVisitor extends AbstractVisitor
             $elementName = ((null === $metadata || $metadata->xmlKeyValuePairs) && $this->isElementNameValid($k)) ? (string) $k : $nodeName;
             $this->currentNodes = [$this->createElement($namespace, $elementName)];
 
+            $context->getMetadataStack()->pushIndexPath((string) $k);
             $context->accept($v, $elementType);
+            $context->getMetadataStack()->popIndexPath();
+
             if (null !== $attributeName) {
                 $this->currentNodes[0]->setAttribute($attributeName, (string) $k);
             }
@@ -261,9 +264,12 @@ class XmlSerializationVisitor extends AbstractVisitor
         /** @var DOMNode[] $nodes */
         $nodes = [];
         $elementType = $this->getElementType($type);
-        foreach ($data as $v) {
+        foreach ($data as $k => $v) {
             $this->currentNodes = [$this->createElement($namespace, $nodeName)];
+
+            $context->getMetadataStack()->pushIndexPath((string) $k);
             $context->accept($v, $elementType);
+            $context->getMetadataStack()->popIndexPath();
 
             $nodes[] = $this->currentNodes[0];
         }

@@ -69,12 +69,14 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             case 0:
                 throw new RuntimeException(\sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
             case 1:
-                foreach ($nodes as $v) {
+                foreach ($nodes as $k => $v) {
+                    $context->getMetadataStack()->pushIndexPath((string) $k);
                     if ($this->isNullNode($v)) {
                         $result[] = $this->visitNull(null, Type::null(), $context);
                     } else {
                         $result[] = $context->accept($v, $type->getParam(0));
                     }
+                    $context->getMetadataStack()->popIndexPath();
                 }
 
                 break;
@@ -86,12 +88,13 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
                 $keyType = $type->getParam(0);
                 $entryType = $type->getParam(1);
-                foreach ($nodes as $v) {
+                foreach ($nodes as $k => $v) {
                     $attrs = $v->attributes();
                     if (! isset($attrs[$currentMetadata->xmlKeyAttribute])) {
                         throw new RuntimeException(\sprintf('The key attribute "%s" must be set for each entry of the map.', $currentMetadata->xmlKeyAttribute));
                     }
 
+                    $context->getMetadataStack()->pushIndexPath((string) $k);
                     $k = $context->accept($attrs[$currentMetadata->xmlKeyAttribute], $keyType);
 
                     if ($this->isNullNode($v)) {
@@ -99,6 +102,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                     } else {
                         $result[$k] = $context->accept($v, $entryType);
                     }
+                    $context->getMetadataStack()->popIndexPath();
                 }
 
                 break;
@@ -124,12 +128,14 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $result = [];
 
         $nodes = null !== $namespace ? $data->children($namespace)->$entryName : $data->$entryName;
-        foreach ($nodes as $v) {
+        foreach ($nodes as $k => $v) {
+            $context->getMetadataStack()->pushIndexPath((string) $k);
             if ($this->isNullNode($v)) {
                 $result[] = $this->visitNull(null, Type::null(), $context);
             } else {
                 $result[] = $context->accept($v, $type->getParam(0));
             }
+            $context->getMetadataStack()->popIndexPath();
         }
 
         $this->setData($result);

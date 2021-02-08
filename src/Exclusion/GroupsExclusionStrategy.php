@@ -92,7 +92,14 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     private function getGroupsFor(Context $navigatorContext): array
     {
         $groups = $this->groups;
-        foreach ($navigatorContext->getMetadataStack()->getPath() as $index => $path) {
+        $metadataPath = \array_values(\array_filter(
+            $navigatorContext->getMetadataStack()->getPath(),
+            static function ($path) {
+                return 0 !== \strpos((string) $path, '[');
+            }
+        ));
+
+        foreach ($metadataPath as $index => $path) {
             if (! \array_key_exists($path, $groups)) {
                 if ($index > 0) {
                     return [self::DEFAULT_GROUP];

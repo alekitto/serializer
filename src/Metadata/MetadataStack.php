@@ -40,6 +40,16 @@ class MetadataStack implements \IteratorAggregate, \Countable
         return $this->currentPath;
     }
 
+    public function pushIndexPath(string $index): void
+    {
+        $this->currentPath[] = '[' . $index . ']';
+    }
+
+    public function popIndexPath(): void
+    {
+        \array_pop($this->currentPath);
+    }
+
     public function getCurrent()
     {
         return $this->stack->isEmpty() ? null : $this->stack->top();

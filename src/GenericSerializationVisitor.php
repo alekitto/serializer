@@ -89,7 +89,9 @@ class GenericSerializationVisitor extends AbstractVisitor
         $isAssociative = ! $onlyValues && \array_keys($data) !== \range(0, \count($data) - 1);
 
         foreach ($data as $k => $v) {
+            $context->getMetadataStack()->pushIndexPath((string) $k);
             $v = $this->navigator->accept($v, $elementType, $context);
+            $context->getMetadataStack()->popIndexPath();
 
             if (null === $v && ! $isAssociative && ! $context->shouldSerializeNull()) {
                 continue;
@@ -114,7 +116,9 @@ class GenericSerializationVisitor extends AbstractVisitor
         $elementType = $this->getElementType($type);
 
         foreach ($data as $k => $v) {
+            $context->getMetadataStack()->pushIndexPath((string) $k);
             $v = $this->navigator->accept($v, $elementType, $context);
+            $context->getMetadataStack()->popIndexPath();
 
             if (null === $v && ! $context->shouldSerializeNull()) {
                 continue;
