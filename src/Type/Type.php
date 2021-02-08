@@ -5,11 +5,17 @@ namespace Kcs\Serializer\Type;
 use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Type\Parser\Parser;
+use JsonSerializable;
+
+use function json_decode;
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Serialized type representation.
  */
-final class Type
+final class Type implements JsonSerializable
 {
     public string $name;
     public ?MetadataInterface $metadata = null;
@@ -124,5 +130,16 @@ final class Type
     public function getParam($index)
     {
         return $this->params[$index];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'params' => json_decode(json_encode($this->params, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR),
+        ];
     }
 }
