@@ -39,6 +39,11 @@ abstract class Context
         $this->attributes = clone $this->attributes;
     }
 
+    /**
+     * Creates a new Context
+     *
+     * @return static
+     */
     public static function create(): self
     {
         return new static();
