@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service class="Kcs\Serializer\Debug\TraceableSerializer" id="kcs.serializer.debug.traceable_serializer" decorates="kcs_serializer.serializer">
+            <argument type="service" id="kcs.serializer.debug.traceable_serializer.inner" />
+            <argument type="service" id="var_dumper.cloner" on-invalid="null" />
+        </service>
+
+        <service class="Kcs\Serializer\Bundle\DataCollector\SerializerDataCollector" id="Kcs\Serializer\Bundle\DataCollector\SerializerDataCollector" public="false">
+            <argument type="service" id="kcs_serializer.serializer" />
+            <tag name="data_collector" id="kcs_serializer" template="@Serializer/Profiler/serializer.html.twig" priority="120" />
+        </service>
+    </services>
+</container>

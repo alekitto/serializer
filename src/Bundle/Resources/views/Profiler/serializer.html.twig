@@ -1,0 +1,131 @@
+{% extends '@WebProfiler/Profiler/layout.html.twig' %}
+
+{% import _self as helper %}
+
+{% block toolbar %}
+    {% if collector.count %}
+        {% set icon %}
+            {{ include('@Serializer/Profiler/icon.svg') }}
+            {% set status_color = collector.errorCount ? 'red' %}
+            <span class="sf-toolbar-value">{{ collector.count }}</span>
+        {% endset %}
+
+        {% set text %}
+            {% if collector.errorCount %}
+                <div class="sf-toolbar-info-piece">
+                    <b>Errors</b>
+                    <span class="sf-toolbar-status sf-toolbar-status-{{ collector.errorCount ? 'red' }}">{{ collector.errorCount|default(0) }}</span>
+                </div>
+            {% endif %}
+
+            <div class="sf-toolbar-info-piece">
+                <b>Serializations</b>
+                <span class="sf-toolbar-status sf-toolbar-status-none">{{ collector.serializations|length }}</span>
+            </div>
+
+            <div class="sf-toolbar-info-piece">
+                <b>Deserializations</b>
+                <span class="sf-toolbar-status sf-toolbar-status-none">{{ collector.deserializations|length }}</span>
+            </div>
+        {% endset %}
+
+        {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: profiler_url, status: status_color }) }}
+    {% endif %}
+{% endblock %}
+
+{% block menu %}
+    <span class="label label-status-{{ collector.errorCount ? 'error' : 'none' }} {{ collector.isEmpty ? 'disabled' }}">
+        <span class="icon">{{ include('@Serializer/Profiler/icon.svg') }}</span>
+        <strong>Serializer</strong>
+        <span class="count">
+            <span>{{ collector.errorCount ?: collector.count }}</span>
+        </span>
+    </span>
+{% endblock %}
+
+
+{% block panel %}
+    <h2>Serialized data</h2>
+
+    {% if collector.serializations is empty %}
+        <div class="empty">
+            <p>No data serialized.</p>
+        </div>
+    {% else %}
+        {{ helper.render_table(collector.serializations, 'serialize') }}
+    {% endif %}
+
+    <h2>Deserialized data</h2>
+
+    {% if collector.deserializations is empty %}
+        <div class="empty">
+            <p>No data deserialized.</p>
+        </div>
+    {% else %}
+        {{ helper.render_table(collector.deserializations, 'deserialize') }}
+    {% endif %}
+{% endblock %}
+
+{% macro render_table(operations, category) %}
+    {% import _self as helper %}
+
+    <table class="logs" data-filters>
+        <thead>
+        <tr>
+            <th data-filter="format">Format</th>
+            <th>Type</th>
+            <th>Context</th>
+            <th style="width: 50%">Data</th>
+            <th>Result</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for operation in operations %}
+            {% set css_class = operation.exception is empty ? '' : 'status-error' %}
+            <tr class="{{ css_class }}" data-filter-format="{{ operation.format|lower }}">
+                <td class="font-normal text-small" nowrap>
+                    <span class="colored text-bold">{{ operation.format }}</span>
+                </td>
+
+                <td class="font-normal text-small" nowrap>
+                    {{ profiler_dump(operation.type) }}
+                </td>
+
+                <td class="font-normal text-small" nowrap>
+                    {{ profiler_dump(operation.context, maxDepth=1) }}
+                </td>
+
+
+                <td class="font-normal text-small" nowrap>
+                    {{ profiler_dump(operation.data) }}
+                </td>
+
+                <td class="font-normal">
+                    {{ helper.render_result(category, loop.index, operation.result, operation.exception) }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% macro render_result(category, index, result, exception) %}
+    {% set has_exception = exception is not empty %}
+
+    <div class="text-small font-normal">
+        {% if has_exception %}
+            <div class="text-small">Exception</div>
+            {{ profiler_dump(exception) }}
+        {% endif %}
+
+        {% if not has_exception %}
+            {% set result_id = 'result-' ~ category ~ '-' ~ index %}
+            <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#{{ result_id }}" data-toggle-alt-content="Hide result">Show result</a>
+
+            <div id="{{ result_id }}" class="context sf-toggle-content sf-toggle-hidden">
+                {{ profiler_dump(result, maxDepth=1) }}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
