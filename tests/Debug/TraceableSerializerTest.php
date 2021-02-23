@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use stdClass;
+use Symfony\Component\VarDumper\Cloner\VarCloner;
 
 class TraceableSerializerTest extends TestCase
 {
@@ -19,11 +20,13 @@ class TraceableSerializerTest extends TestCase
      */
     private ObjectProphecy $serializer;
     private TraceableSerializer $traceableSerializer;
+    private VarCloner $cloner;
 
     protected function setUp(): void
     {
         $this->serializer = $this->prophesize(SerializerInterface::class);
         $this->traceableSerializer = new TraceableSerializer($this->serializer->reveal());
+        $this->cloner = new VarCloner();
     }
 
     public function testSerializeShouldTrackSerializeCall(): void
@@ -38,7 +41,7 @@ class TraceableSerializerTest extends TestCase
 
         self::assertCount(1, $this->traceableSerializer->serializeOperations);
         self::assertEquals('json', $this->traceableSerializer->serializeOperations[0]['format']);
-        self::assertNull($this->traceableSerializer->serializeOperations[0]['type']);
+        self::assertEquals($this->cloner->cloneVar(null), $this->traceableSerializer->serializeOperations[0]['type']);
         self::assertEquals('{}', $this->traceableSerializer->serializeOperations[0]['result']);
         self::assertNull($this->traceableSerializer->serializeOperations[0]['exception']);
     }
@@ -55,7 +58,10 @@ class TraceableSerializerTest extends TestCase
 
         self::assertCount(1, $this->traceableSerializer->deserializeOperations);
         self::assertEquals('json', $this->traceableSerializer->deserializeOperations[0]['format']);
-        self::assertEquals(['name' => 'stdClass', 'params' => []], $this->traceableSerializer->deserializeOperations[0]['type']);
+        self::assertEquals(
+            $this->cloner->cloneVar(['name' => 'stdClass', 'params' => []]),
+            $this->traceableSerializer->deserializeOperations[0]['type']
+        );
         self::assertNull($this->traceableSerializer->deserializeOperations[0]['exception']);
     }
 
@@ -71,8 +77,8 @@ class TraceableSerializerTest extends TestCase
 
         self::assertCount(1, $this->traceableSerializer->serializeOperations);
         self::assertEquals('array', $this->traceableSerializer->serializeOperations[0]['format']);
-        self::assertNull($this->traceableSerializer->serializeOperations[0]['type']);
-        self::assertEquals([], $this->traceableSerializer->serializeOperations[0]['result']);
+        self::assertEquals($this->cloner->cloneVar(null), $this->traceableSerializer->serializeOperations[0]['type']);
+        self::assertEquals($this->cloner->cloneVar([]), $this->traceableSerializer->serializeOperations[0]['result']);
         self::assertNull($this->traceableSerializer->serializeOperations[0]['exception']);
     }
 
@@ -88,7 +94,10 @@ class TraceableSerializerTest extends TestCase
 
         self::assertCount(1, $this->traceableSerializer->deserializeOperations);
         self::assertEquals('array', $this->traceableSerializer->deserializeOperations[0]['format']);
-        self::assertEquals(['name' => 'stdClass', 'params' => []], $this->traceableSerializer->deserializeOperations[0]['type']);
+        self::assertEquals(
+            $this->cloner->cloneVar(['name' => 'stdClass', 'params' => []]),
+            $this->traceableSerializer->deserializeOperations[0]['type']
+        );
         self::assertNull($this->traceableSerializer->deserializeOperations[0]['exception']);
     }
 
@@ -108,7 +117,7 @@ class TraceableSerializerTest extends TestCase
 
         self::assertCount(1, $this->traceableSerializer->serializeOperations);
         self::assertEquals('json', $this->traceableSerializer->serializeOperations[0]['format']);
-        self::assertNull($this->traceableSerializer->serializeOperations[0]['type']);
+        self::assertEquals($this->cloner->cloneVar(null), $this->traceableSerializer->serializeOperations[0]['type']);
         self::assertNull($this->traceableSerializer->serializeOperations[0]['result']);
         self::assertNotNull($this->traceableSerializer->serializeOperations[0]['exception']);
     }
