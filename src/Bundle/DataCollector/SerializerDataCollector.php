@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle\DataCollector;
 
+use Kcs\Serializer\Debug\TraceableHandlerRegistry;
 use Kcs\Serializer\Debug\TraceableSerializer;
+use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,33 +19,41 @@ use function count;
 
 class SerializerDataCollector extends DataCollector
 {
-    private ?SerializerInterface $serializer;
+    private SerializerInterface $serializer;
+    private HandlerRegistryInterface $handlerRegistry;
 
-    public function __construct(SerializerInterface $serializer)
+    public function __construct(SerializerInterface $serializer, HandlerRegistryInterface $handlerRegistry)
     {
         $this->serializer = $serializer;
+        $this->handlerRegistry = $handlerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function collect(Request $request, Response $response, Throwable $exception = null): void
+    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
     {
-        if (! $this->serializer instanceof TraceableSerializer) {
-            return;
+        $handlerCalls = $serialize = $deserialize = [];
+        if ($this->serializer instanceof TraceableSerializer) {
+            $serialize = &$this->serializer->serializeOperations;
+            $deserialize = &$this->serializer->deserializeOperations;
         }
 
-        $serialize = &$this->serializer->serializeOperations;
-        $deserialize = &$this->serializer->deserializeOperations;
+        if ($this->handlerRegistry instanceof TraceableHandlerRegistry) {
+            $handlerCalls = $this->handlerRegistry->calls;
+        }
 
         $errorCount = count(array_filter(array_column($serialize, 'exception'))) + count(array_filter(array_column($deserialize, 'exception')));
-
         $this->data = [
             'count' => count($serialize) + count($deserialize),
             'error_count' => $errorCount,
             'serialize' => $serialize,
             'deserialize' => $deserialize,
+            'handler_calls' => $handlerCalls,
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function getHandlerCalls(): array
+    {
+        return $this->data['handler_calls'] ?? [];
     }
 
     public function getCount(): int
@@ -59,11 +71,13 @@ class SerializerDataCollector extends DataCollector
         return empty($this->data['serialize']) && empty($this->data['deserialize']);
     }
 
+    /** @return array<string, mixed> */
     public function getSerializations(): array
     {
         return $this->data['serialize'];
     }
 
+    /** @return array<string, mixed> */
     public function getDeserializations(): array
     {
         return $this->data['deserialize'];

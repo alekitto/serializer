@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Debug;
 
+use Closure;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\GraphNavigator;
@@ -9,6 +12,14 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Psr\Log\LoggerInterface;
+use ReflectionFunction;
+
+use function array_unshift;
+use function get_debug_type;
+use function implode;
+use function is_array;
+use function is_string;
+use function Safe\sprintf;
 
 class TraceableVisitor implements VisitorInterface
 {
@@ -26,9 +37,10 @@ class TraceableVisitor implements VisitorInterface
      */
     public function prepare($data)
     {
-        $this->logger->debug('Preparing data...', [
-            'data' => $data,
-        ]);
+        $this->logger->debug(
+            'Preparing data...',
+            ['data' => $data]
+        );
 
         return $this->visitor->prepare($data);
     }
@@ -38,10 +50,13 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitNull($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting null at path {path}', [
-            'path' => $this->getPath($context),
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting null at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitNull($data, $type, $context);
     }
@@ -51,11 +66,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitString($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting string at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting string at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitString($data, $type, $context);
     }
@@ -65,11 +83,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitBoolean($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting boolean at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting boolean at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitBoolean($data, $type, $context);
     }
@@ -79,11 +100,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitDouble($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting float/double at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting float/double at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitDouble($data, $type, $context);
     }
@@ -93,11 +117,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitInteger($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting integer at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting integer at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitInteger($data, $type, $context);
     }
@@ -107,11 +134,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitArray($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting array at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting array at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitArray($data, $type, $context);
     }
@@ -121,11 +151,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitHash($data, Type $type, Context $context)
     {
-        $this->logger->debug('Visiting hashmap at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Visiting hashmap at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitHash($data, $type, $context);
     }
@@ -135,11 +168,14 @@ class TraceableVisitor implements VisitorInterface
      */
     public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
     {
-        $this->logger->debug('Start visiting object at path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Start visiting object at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitObject($metadata, $data, $type, $context, $objectConstructor);
     }
@@ -153,19 +189,22 @@ class TraceableVisitor implements VisitorInterface
             $handlerRepresentation = (is_string($handler[0]) ? $handler[0] : get_debug_type($handler[0])) . '::' . $handler[1];
         } elseif (is_string($handler)) {
             $handlerRepresentation = $handler;
-        } elseif ($handler instanceof \Closure) {
-            $reflection = new \ReflectionFunction($handler);
-            $handlerRepresentation = \Safe\sprintf('Closure (file: %s, line: %d)', $reflection->getFileName(), $reflection->getStartLine());
+        } elseif ($handler instanceof Closure) {
+            $reflection = new ReflectionFunction($handler);
+            $handlerRepresentation = sprintf('Closure (file: %s, line: %d)', $reflection->getFileName(), $reflection->getStartLine());
         } else {
             $handlerRepresentation = get_debug_type($handler);
         }
 
-        $this->logger->debug('Calling custom handler "{handler}" at path {path}', [
-            'handler' => $handlerRepresentation,
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'Calling custom handler "{handler}" at path {path}',
+            [
+                'handler' => $handlerRepresentation,
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->visitCustom($handler, $data, $type, $context);
     }
@@ -183,18 +222,18 @@ class TraceableVisitor implements VisitorInterface
      */
     public function endVisiting($data, Type $type, Context $context)
     {
-        $this->logger->debug('End visiting path {path}', [
-            'path' => $this->getPath($context),
-            'data' => $data,
-            'type' => $type->jsonSerialize(),
-        ]);
+        $this->logger->debug(
+            'End visiting path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
 
         return $this->visitor->endVisiting($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
         $this->visitor->setNavigator($navigator);

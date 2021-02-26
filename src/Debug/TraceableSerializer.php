@@ -15,10 +15,12 @@ use Throwable;
 class TraceableSerializer implements SerializerInterface
 {
     private SerializerInterface $serializer;
-
-    public array $serializeOperations = [];
-    public array $deserializeOperations = [];
     private VarCloner $cloner;
+
+    /** @var array<string, mixed> */
+    public array $serializeOperations = [];
+    /** @var array<string, mixed> */
+    public array $deserializeOperations = [];
 
     public function __construct(SerializerInterface $serializer, ?VarCloner $cloner = null)
     {
@@ -39,6 +41,7 @@ class TraceableSerializer implements SerializerInterface
             $debugData['result'] = $this->cloner->cloneVar($result);
         } catch (Throwable $e) {
             $debugData['exception'] = $this->cloner->cloneVar($e);
+
             throw $e;
         }
 
@@ -58,6 +61,7 @@ class TraceableSerializer implements SerializerInterface
             $debugData['result'] = $this->cloner->cloneVar($result);
         } catch (Throwable $e) {
             $debugData['exception'] = $this->cloner->cloneVar($e);
+
             throw $e;
         }
 
@@ -67,7 +71,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, SerializationContext $context = null): array
+    public function normalize($data, ?SerializationContext $context = null): array
     {
         $debugData = $this->prepareDebugData($data, 'array', null, $context);
         $this->serializeOperations[] = &$debugData;
@@ -77,6 +81,7 @@ class TraceableSerializer implements SerializerInterface
             $debugData['result'] = $this->cloner->cloneVar($result);
         } catch (Throwable $e) {
             $debugData['exception'] = $this->cloner->cloneVar($e);
+
             throw $e;
         }
 
@@ -96,6 +101,7 @@ class TraceableSerializer implements SerializerInterface
             $debugData['result'] = $this->cloner->cloneVar($result);
         } catch (Throwable $e) {
             $debugData['exception'] = $this->cloner->cloneVar($e);
+
             throw $e;
         }
 
@@ -108,15 +114,22 @@ class TraceableSerializer implements SerializerInterface
         $this->deserializeOperations = [];
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return array<string, mixed>
+     */
     private function prepareDebugData($data, string $format, ?Type $type, ?Context $context): array
     {
         return [
             'data' => $this->cloner->cloneVar($data),
             'format' => $format,
             'type' => $this->cloner->cloneVar($type !== null ? $type->jsonSerialize() : null),
-            'context' => $this->cloner->cloneVar(null !== $context ? [
-                'attributes' => $context->attributes->all(),
-            ] : null),
+            'context' => $this->cloner->cloneVar(
+                $context !== null ? [
+                    'attributes' => $context->attributes->all(),
+                ] : null
+            ),
             'result' => null,
             'exception' => null,
         ];

@@ -1,7 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Tests\Bundle;
 
+use DateTime;
+use Kcs\Serializer\Debug\TraceableHandlerRegistry;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Tests\Fixtures\Kernel\AppKernel;
 use PhpCollection\Sequence;
@@ -10,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Validator\ConstraintViolation;
+
+use function json_encode;
 
 class SerializerBundleTest extends WebTestCase
 {
@@ -25,6 +31,9 @@ class SerializerBundleTest extends WebTestCase
     {
         $client = self::createClient();
         $registry = $client->getContainer()->get('handler_registry');
+        if ($registry instanceof TraceableHandlerRegistry) {
+            $registry = (fn () => $this->decorated)->bindTo($registry, TraceableHandlerRegistry::class)();
+        }
 
         $handler = $registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'TestObject');
         self::assertEquals([$client->getContainer()->get('test_handler'), 'serialize'], $handler);
@@ -37,7 +46,7 @@ class SerializerBundleTest extends WebTestCase
 
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'ArrayCollection'));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, ConstraintViolation::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, \DateTime::class));
+        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, DateTime::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Form::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Sequence::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PropelCollection'));
@@ -50,7 +59,7 @@ class SerializerBundleTest extends WebTestCase
 
         $client->request('GET', '/json');
         $response = $client->getResponse();
-        self::assertJsonStringEqualsJsonString(\json_encode([
+        self::assertJsonStringEqualsJsonString(json_encode([
             'comments' => [
                 'Foo' => [
                     'comments' => [
@@ -60,7 +69,7 @@ class SerializerBundleTest extends WebTestCase
                     'count' => 2,
                 ],
             ],
-        ]), $response->getContent());
+        ], JSON_THROW_ON_ERROR), $response->getContent());
 
         $client->request('GET', '/xml');
         $response = $client->getResponse();

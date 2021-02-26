@@ -2,7 +2,6 @@
 
 namespace Kcs\Serializer\Bundle\DependencyInjection;
 
-use Kcs\Serializer\Debug\TraceableSerializer;
 use Kcs\Serializer\Handler\DeserializationHandlerInterface;
 use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
@@ -13,7 +12,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Parameter;
-use Symfony\Component\DependencyInjection\Reference;
+
+use function method_exists;
 
 final class SerializerExtension extends Extension
 {
@@ -31,7 +31,7 @@ final class SerializerExtension extends Extension
             $loader->load('services_debug.xml');
         }
 
-        if (\method_exists($container, 'registerForAutoconfiguration')) {
+        if (method_exists($container, 'registerForAutoconfiguration')) {
             $container->registerForAutoconfiguration(SubscribingHandlerInterface::class)
                 ->addTag('kcs_serializer.handler')
             ;
