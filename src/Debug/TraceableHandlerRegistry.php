@@ -91,6 +91,11 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         };
     }
 
+    public function reset(): void
+    {
+        $this->calls = [];
+    }
+
     private function getCallableName(callable $callable): string
     {
         $methodName = null;

@@ -90,11 +90,14 @@ class SerializerDataCollector extends DataCollector
 
     public function reset(): void
     {
-        if (! $this->serializer instanceof TraceableSerializer) {
-            return;
+        if ($this->serializer instanceof TraceableSerializer) {
+            $this->serializer->reset();
+        }
+
+        if ($this->handlerRegistry instanceof TraceableHandlerRegistry) {
+            $this->handlerRegistry->reset();
         }
 
         $this->data = [];
-        $this->serializer->reset();
     }
 }

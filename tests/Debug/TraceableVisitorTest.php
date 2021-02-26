@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Tests\Debug;
 
@@ -14,20 +16,17 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\Test\TestLogger;
+use ReflectionClass;
 
 class TraceableVisitorTest extends TestCase
 {
     use ProphecyTrait;
 
-    /**
-     * @var VisitorInterface|ObjectProphecy
-     */
-    private $innerVisitor;
+    /** @var VisitorInterface|ObjectProphecy */
+    private ObjectProphecy $innerVisitor;
 
-    /**
-     * @var SerializeGraphNavigator|ObjectProphecy
-     */
-    private $navigator;
+    /** @var SerializeGraphNavigator|ObjectProphecy */
+    private ObjectProphecy $navigator;
 
     private TestLogger $logger;
     private TraceableVisitor $visitor;
@@ -196,7 +195,7 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitObject(): void
     {
-        $metadata = new ClassMetadata(new \ReflectionClass($this));
+        $metadata = new ClassMetadata(new ReflectionClass($this));
 
         $this->innerVisitor->visitObject($metadata, $this, Type::from($this), $this->context, null)->shouldBeCalledOnce();
         $this->visitor->visitObject($metadata, $this, Type::from($this), $this->context, null);
@@ -209,7 +208,7 @@ class TraceableVisitorTest extends TestCase
                     'path' => '<root>',
                     'data' => $this,
                     'type' => [
-                        'name' => __CLASS__,
+                        'name' => self::class,
                         'params' => [],
                     ],
                 ],
@@ -234,7 +233,7 @@ class TraceableVisitorTest extends TestCase
                     'handler' => $handlerString,
                     'data' => $this,
                     'type' => [
-                        'name' => __CLASS__,
+                        'name' => self::class,
                         'params' => [],
                     ],
                 ],
@@ -244,10 +243,10 @@ class TraceableVisitorTest extends TestCase
 
     public function provideCustomArgs(): iterable
     {
-        yield [ self::class . '::testVisitCustom', [$this, 'testVisitCustom'] ];
-        yield [ TestObject::class . '::staticFn', [TestObject::class, 'staticFn'] ];
-        yield [ TestObject::class . '::staticFn', TestObject::class.'::staticFn' ];
-        yield [ 'Closure (file: '.__FILE__.', line: '.__LINE__.')', static function () {} ];
+        yield [self::class . '::testVisitCustom', [$this, 'testVisitCustom']];
+        yield [TestObject::class . '::staticFn', [TestObject::class, 'staticFn']];
+        yield [TestObject::class . '::staticFn', TestObject::class . '::staticFn'];
+        yield ['Closure (file: ' . __FILE__ . ', line: ' . __LINE__ . ')', static fn () => null];
     }
 }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Tests\Bundle\DependencyInjection\CompilerPass;
 
@@ -43,12 +45,10 @@ class RegisterVisitorsPassTest extends TestCase
             ->setArguments([null, null, null, [], [], null]);
 
         $container->register(GenericSerializationVisitor::class)
-            ->addTag('kcs_serializer.serialization_visitor', [
-                'direction' => 'serialization'
-            ]);
+            ->addTag('kcs_serializer.serialization_visitor', ['direction' => 'serialization']);
 
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid tag for service "'.GenericSerializationVisitor::class.'": format must be specified');
+        $this->expectExceptionMessage('Invalid tag for service "' . GenericSerializationVisitor::class . '": format must be specified');
         $this->pass->process($container);
     }
 
@@ -65,7 +65,7 @@ class RegisterVisitorsPassTest extends TestCase
             ]);
 
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid tag for service "'.GenericSerializationVisitor::class.'": direction must be "serialization" or "deserialization"');
+        $this->expectExceptionMessage('Invalid tag for service "' . GenericSerializationVisitor::class . '": direction must be "serialization" or "deserialization"');
 
         $this->pass->process($container);
     }
@@ -77,12 +77,10 @@ class RegisterVisitorsPassTest extends TestCase
             ->setArguments([null, null, null, [], [], null]);
 
         $container->register(GenericSerializationVisitor::class)
-            ->addTag('kcs_serializer.serialization_visitor', [
-                'format' => 'array',
-            ]);
+            ->addTag('kcs_serializer.serialization_visitor', ['format' => 'array']);
 
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Invalid tag for service "'.GenericSerializationVisitor::class.'": direction must be "serialization" or "deserialization"');
+        $this->expectExceptionMessage('Invalid tag for service "' . GenericSerializationVisitor::class . '": direction must be "serialization" or "deserialization"');
 
         $this->pass->process($container);
     }
@@ -96,13 +94,13 @@ class RegisterVisitorsPassTest extends TestCase
         $container->register(GenericSerializationVisitor::class)
             ->addTag('kcs_serializer.serialization_visitor', [
                 'format' => 'generic',
-                'direction' => 'serialization'
+                'direction' => 'serialization',
             ]);
 
         $container->register(GenericDeserializationVisitor::class)
             ->addTag('kcs_serializer.serialization_visitor', [
                 'format' => 'generic',
-                'direction' => 'deserialization'
+                'direction' => 'deserialization',
             ]);
 
         $this->pass->process($container);
@@ -110,10 +108,10 @@ class RegisterVisitorsPassTest extends TestCase
         $definition = $container->getDefinition(self::SERVICE_ID);
 
         self::assertEquals([
-            'generic' => new Reference(GenericSerializationVisitor::class)
+            'generic' => new Reference(GenericSerializationVisitor::class),
         ], $definition->getArgument(3));
         self::assertEquals([
-            'generic' => new Reference(GenericDeserializationVisitor::class)
+            'generic' => new Reference(GenericDeserializationVisitor::class),
         ], $definition->getArgument(4));
     }
 
@@ -149,7 +147,7 @@ class RegisterVisitorsPassTest extends TestCase
         self::assertEquals([
             'json' => new Reference(JsonSerializationVisitor::class),
             'xml' => new Reference(XmlSerializationVisitor::class),
-            'generic' => new Reference(GenericSerializationVisitor::class)
+            'generic' => new Reference(GenericSerializationVisitor::class),
         ], $definition->getArgument(3));
     }
 
@@ -162,13 +160,13 @@ class RegisterVisitorsPassTest extends TestCase
         $container->register(GenericSerializationVisitor::class)
             ->addTag('kcs_serializer.serialization_visitor', [
                 'format' => 'generic',
-                'direction' => 'serialization'
+                'direction' => 'serialization',
             ]);
 
         $container->register(GenericDeserializationVisitor::class)
             ->addTag('kcs_serializer.serialization_visitor', [
                 'format' => 'generic',
-                'direction' => 'deserialization'
+                'direction' => 'deserialization',
             ]);
 
         $this->pass->process($container);
@@ -176,11 +174,11 @@ class RegisterVisitorsPassTest extends TestCase
         $definition = $container->getDefinition(self::SERVICE_ID);
 
         self::assertEquals([
-            'generic' => new Reference('.traceable.' . GenericSerializationVisitor::class)
+            'generic' => new Reference('.traceable.' . GenericSerializationVisitor::class),
         ], $definition->getArgument(3));
 
         self::assertEquals([
-            'generic' => new Reference('.traceable.' . GenericDeserializationVisitor::class)
+            'generic' => new Reference('.traceable.' . GenericDeserializationVisitor::class),
         ], $definition->getArgument(4));
 
         $definition = new Definition(TraceableVisitor::class, [

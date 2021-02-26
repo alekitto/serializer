@@ -17,6 +17,8 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 class SerializerBundleTest extends WebTestCase
 {
     /**

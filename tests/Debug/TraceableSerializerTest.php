@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Tests\Debug;
 
@@ -15,9 +17,7 @@ class TraceableSerializerTest extends TestCase
 {
     use ProphecyTrait;
 
-    /**
-     * @var SerializerInterface|ObjectProphecy
-     */
+    /** @var SerializerInterface|ObjectProphecy */
     private ObjectProphecy $serializer;
     private TraceableSerializer $traceableSerializer;
     private VarCloner $cloner;
@@ -34,8 +34,7 @@ class TraceableSerializerTest extends TestCase
         $obj = new stdClass();
         $this->serializer->serialize($obj, 'json', null, null)
             ->shouldBeCalled()
-            ->willReturn('{}')
-        ;
+            ->willReturn('{}');
 
         $this->traceableSerializer->serialize($obj, 'json');
 
@@ -51,8 +50,7 @@ class TraceableSerializerTest extends TestCase
         $type = Type::parse('stdClass');
         $this->serializer->deserialize('{}', $type, 'json', null)
             ->shouldBeCalled()
-            ->willReturn(new stdClass())
-        ;
+            ->willReturn(new stdClass());
 
         $this->traceableSerializer->deserialize('{}', $type, 'json');
 
@@ -70,8 +68,7 @@ class TraceableSerializerTest extends TestCase
         $obj = new stdClass();
         $this->serializer->normalize($obj, null)
             ->shouldBeCalled()
-            ->willReturn([])
-        ;
+            ->willReturn([]);
 
         $this->traceableSerializer->normalize($obj);
 
@@ -87,8 +84,7 @@ class TraceableSerializerTest extends TestCase
         $type = Type::parse('stdClass');
         $this->serializer->denormalize([], $type, null)
             ->shouldBeCalled()
-            ->willReturn(new stdClass())
-        ;
+            ->willReturn(new stdClass());
 
         $this->traceableSerializer->denormalize([], $type);
 
@@ -106,8 +102,7 @@ class TraceableSerializerTest extends TestCase
         $obj = new stdClass();
         $this->serializer->serialize($obj, 'json', null, null)
             ->shouldBeCalled()
-            ->willThrow(new Exception())
-        ;
+            ->willThrow(new Exception());
 
         try {
             $this->traceableSerializer->serialize($obj, 'json');
@@ -123,5 +118,6 @@ class TraceableSerializerTest extends TestCase
     }
 }
 
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 }
