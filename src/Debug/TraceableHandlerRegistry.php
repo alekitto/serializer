@@ -8,6 +8,8 @@ use Closure;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Handler\DeserializationHandlerInterface;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
+use Kcs\Serializer\Handler\InternalDeserializationHandler;
+use Kcs\Serializer\Handler\InternalSerializationHandler;
 use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use ProxyManager\Proxy\ProxyInterface;
@@ -77,7 +79,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
 
         return function () use ($typeName, $direction, $callable) {
             try {
-                call_user_func_array($callable, func_get_args());
+                return call_user_func_array($callable, func_get_args());
             } catch (Throwable $e) {
                 throw $e;
             } finally {
@@ -98,6 +100,14 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
 
     private function getCallableName(callable $callable): string
     {
+        if ($callable instanceof InternalSerializationHandler) {
+            $callable = (fn () => $this->handler)->bindTo($callable, InternalSerializationHandler::class)();
+        }
+
+        if ($callable instanceof InternalDeserializationHandler) {
+            $callable = (fn () => $this->handler)->bindTo($callable, InternalDeserializationHandler::class)();
+        }
+
         $methodName = null;
         if (is_array($callable)) {
             $reflClass = new ReflectionClass($callable[0]);

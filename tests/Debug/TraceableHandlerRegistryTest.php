@@ -72,7 +72,9 @@ class TraceableHandlerRegistryTest extends TestCase
     public function testGetHandlerShouldReturnADecoratedHandler(): void
     {
         $decorated = static function () {
+            return 42;
         };
+
         $this->decorated->getHandler(Direction::DIRECTION_SERIALIZATION, 'type')
             ->shouldBeCalled()
             ->willReturn($decorated);
@@ -82,7 +84,7 @@ class TraceableHandlerRegistryTest extends TestCase
         self::assertNotSame($decorated, $handler);
         self::assertIsCallable($handler);
 
-        $handler();
+        self::assertEquals(42, $handler());
         self::assertCount(1, $this->handlerRegistry->calls);
     }
 }
