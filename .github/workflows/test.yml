@@ -28,7 +28,11 @@ jobs:
             - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
             - run: composer update --with-all-dependencies ${{ matrix.composer_flags }}
 
+            - run: vendor/bin/phpunit
+              if: matrix.php_version != '8.0' || matrix.composer_flags == '--prefer-lowest'
+
             - run: vendor/bin/phpunit --coverage-clover coverage.xml
+              if: matrix.php_version == '8.0' && matrix.composer_flags == ''
               env:
                   XDEBUG_MODE: coverage
 
