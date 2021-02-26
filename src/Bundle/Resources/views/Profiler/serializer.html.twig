@@ -47,23 +47,52 @@
 {% block panel %}
     <h2>Serialized data</h2>
 
-    {% if collector.serializations is empty %}
-        <div class="empty">
-            <p>No data serialized.</p>
-        </div>
-    {% else %}
-        {{ helper.render_table(collector.serializations, 'serialize') }}
-    {% endif %}
+    <div class="sf-tabs">
+        <div class="tab active">
+            <h3 class="tab-title">Serialize <span class="badge status-none">{{ collector.serializations|length }}</span></h3>
+            <p class="text-muted">List of serialization operations.</p>
 
-    <h2>Deserialized data</h2>
-
-    {% if collector.deserializations is empty %}
-        <div class="empty">
-            <p>No data deserialized.</p>
+            <div class="tab-content">
+                {% if collector.serializations is empty %}
+                    <div class="empty">
+                        <p>No data serialized.</p>
+                    </div>
+                {% else %}
+                    {{ helper.render_table(collector.serializations, 'serialize') }}
+                {% endif %}
+            </div>
         </div>
-    {% else %}
-        {{ helper.render_table(collector.deserializations, 'deserialize') }}
-    {% endif %}
+
+        <div class="tab">
+            <h3 class="tab-title">Deserialize <span class="badge status-none">{{ collector.deserializations|length }}</span></h3>
+            <p class="text-muted">List of de-serialization operations.</p>
+
+            <div class="tab-content">
+                {% if collector.deserializations is empty %}
+                    <div class="empty">
+                        <p>No data deserialized.</p>
+                    </div>
+                {% else %}
+                    {{ helper.render_table(collector.deserializations, 'deserialize') }}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tab">
+            <h3 class="tab-title">Serialization handlers <span class="badge status-none">{{ collector.handlerCalls|length }}</span></h3>
+            <p class="text-muted">List of custom serialization handler calls.</p>
+
+            <div class="tab-content">
+                {% if collector.handlerCalls is empty %}
+                    <div class="empty">
+                        <p>No handler calls logged.</p>
+                    </div>
+                {% else %}
+                    {{ helper.render_handler_calls(collector.handlerCalls) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% macro render_table(operations, category) %}
@@ -128,4 +157,47 @@
             </div>
         {% endif %}
     </div>
+{% endmacro %}
+
+{% macro render_handler_calls(operations) %}
+    {% import _self as helper %}
+
+    <table class="logs" data-filters>
+        <thead>
+        <tr>
+            <th class="full-width">Handler</th>
+            <th data-filter="direction">Direction</th>
+            <th data-filter="type">Type</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for operation in operations %}
+            {% set has_exception = operation.exception is not empty %}
+            {% set css_class = has_exception ? 'status-error' : '' %}
+            <tr class="{{ css_class }}" data-filter-direction="{{ operation.direction|lower }}" data-filter-type="{{ operation.type|lower }}">
+                <td class="font-normal text-small" nowrap>
+                    <pre class="colored text-bold">{{ operation.handler }}</pre>
+
+                    {% if has_exception %}
+                        {% set result_id = 'result-handlers-' ~ loop.index %}
+                        <a class="btn btn-link text-small sf-toggle" data-toggle-selector="#{{ result_id }}" data-toggle-alt-content="Hide exception">Show exception</a>
+
+                        <div id="{{ result_id }}" class="context sf-toggle-content sf-toggle-hidden">
+                            {{ profiler_dump(operation.exception, maxDepth=1) }}
+                        </div>
+                    {% endif %}
+                </td>
+
+                <td class="font-normal text-small" nowrap>
+                    <pre>{{ operation.direction }}</pre>
+                </td>
+
+                <td class="font-normal text-small" nowrap>
+                    <pre>{{ operation.type }}</pre>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endmacro %}
