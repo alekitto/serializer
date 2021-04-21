@@ -6,6 +6,7 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
+use ReflectionNamedType;
 
 class ReflectionLoader implements LoaderInterface
 {
@@ -53,7 +54,12 @@ class ReflectionLoader implements LoaderInterface
                 continue;
             }
 
-            $propertyMetadata->setType($reflectionProperty->getType()->getName());
+            $type = $reflectionProperty->getType();
+            if (! $type instanceof ReflectionNamedType) {
+                continue;
+            }
+
+            $propertyMetadata->setType($type->getName());
         }
 
         return true;

@@ -7,18 +7,13 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Tests\Fixtures\Entity_74_Proxy;
+use Kcs\Serializer\Tests\Fixtures\Entity_UnionType;
 use Kcs\Serializer\Type\Type;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @requires PHP 7.4
- */
 class ReflectionLoaderTest extends TestCase
 {
-    /**
-     * @var ReflectionLoader
-     */
-    private $loader;
+    private ReflectionLoader $loader;
 
     protected function setUp(): void
     {
@@ -35,5 +30,16 @@ class ReflectionLoaderTest extends TestCase
         self::assertEquals(Type::from('string'), $m->getAttributeMetadata('notUnset')->type);
         self::assertEquals(Type::from('string'), $m->getAttributeMetadata('nullableString')->type);
         self::assertEquals(Type::from('string'), $m->getAttributeMetadata('virtualProperty')->type);
+    }
+
+    /**
+     * @requires PHP 8.0
+     */
+    public function testShouldNotLoadTypesFromTypedPropertiesWithUnionType(): void
+    {
+        $m = new ClassMetadata(new \ReflectionClass(Entity_UnionType::class));
+        $this->loader->loadClassMetadata($m);
+
+        self::assertNull($m->getAttributeMetadata('uninitialized')->type);
     }
 }
