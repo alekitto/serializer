@@ -10,6 +10,7 @@ use function array_merge;
 
 class StaticPropertyMetadata extends PropertyMetadata
 {
+    /** @var mixed */
     private $value;
 
     /**

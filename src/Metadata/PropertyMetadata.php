@@ -86,6 +86,11 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->setter = $setter;
     }
 
+    /**
+     * @param mixed $obj
+     *
+     * @return mixed
+     */
     public function getValue($obj)
     {
         if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
@@ -121,6 +126,10 @@ class PropertyMetadata extends BasePropertyMetadata
         return $obj->{$this->getter}();
     }
 
+    /**
+     * @param mixed $obj
+     * @param mixed $value
+     */
     public function setValue($obj, $value): void
     {
         if ($this->readOnly) {
@@ -181,6 +190,7 @@ class PropertyMetadata extends BasePropertyMetadata
             }
         } catch (ReflectionException $e) {
             // Property does not exist.
+            // @ignoreException
         }
 
         throw new RuntimeException(sprintf('There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.', implode('" or "', $methods), $this->class, $this->name));
@@ -188,7 +198,8 @@ class PropertyMetadata extends BasePropertyMetadata
 
     protected function initializeSetterAccessor(): void
     {
-        if ($this->checkMethod($setter = 'set' . ucfirst($this->name))) {
+        $setter = 'set' . ucfirst($this->name);
+        if ($this->checkMethod($setter)) {
             $this->setter = $setter;
 
             return;

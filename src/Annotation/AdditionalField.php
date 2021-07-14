@@ -27,6 +27,10 @@ final class AdditionalField
     /** @var array<mixed> */
     public array $attributes = [];
 
+    /**
+     * @param array<string, mixed>|string $name
+     * @phpstan-param array{name?: string, value?: string, attributes?: object[]|array{string, string}[]}|string $name
+     */
     public function __construct($name, ?array $attributes = null)
     {
         if (is_string($name)) {

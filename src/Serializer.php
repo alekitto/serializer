@@ -14,7 +14,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 use function get_debug_type;
 use function is_array;
-use function sprintf;
+use function Safe\sprintf;
 
 class Serializer implements SerializerInterface
 {
@@ -31,6 +31,10 @@ class Serializer implements SerializerInterface
     private ObjectConstructorInterface $objectConstructor;
     private ?EventDispatcherInterface $dispatcher;
 
+    /**
+     * @param VisitorInterface[] $serializationVisitors
+     * @param VisitorInterface[] $deserializationVisitors
+     */
     public function __construct(
         MetadataFactoryInterface $factory,
         HandlerRegistryInterface $handlerRegistry,
@@ -60,7 +64,7 @@ class Serializer implements SerializerInterface
         }
 
         if (! isset($this->serializationVisitors[$format])) {
-            throw new UnsupportedFormatException("The format \"$format\" is not supported for serialization");
+            throw new UnsupportedFormatException(sprintf('The format "%s" is not supported for serialization', $format));
         }
 
         return $this->visit($this->serializationVisitors[$format], $context, $data, $format, $type);
@@ -78,7 +82,7 @@ class Serializer implements SerializerInterface
         }
 
         if (! isset($this->deserializationVisitors[$format])) {
-            throw new UnsupportedFormatException("The format \"$format\" is not supported for deserialization");
+            throw new UnsupportedFormatException(sprintf('The format "%s" is not supported for deserialization', $format));
         }
 
         return $this->visit($this->deserializationVisitors[$format], $context, $data, $format, $type);
@@ -111,7 +115,12 @@ class Serializer implements SerializerInterface
         return $this->factory;
     }
 
-    private function visit(VisitorInterface $visitor, Context $context, $data, $format, ?Type $type)
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
+    private function visit(VisitorInterface $visitor, Context $context, $data, string $format, ?Type $type)
     {
         $data = $visitor->prepare($data);
         $context->initialize($format, $visitor, $this->navigator, $this->factory);

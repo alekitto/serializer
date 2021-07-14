@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Kcs\Serializer;
 
 use DOMAttr;
+use DOMCdataSection;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use DOMText;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
@@ -15,6 +17,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use SplStack;
+use Stringable;
 
 use function array_merge;
 use function array_search;
@@ -65,6 +68,11 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = [$node];
     }
 
+    /**
+     * @param string|Stringable $data
+     *
+     * @return DOMNode[]
+     */
     public function visitSimpleString($data): array
     {
         return $this->currentNodes = [$this->createTextNode((string) $data)];
@@ -140,6 +148,11 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = array_merge(...$nodes ?: [[]]);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $v = $metadata->getValue($data);
@@ -220,9 +233,10 @@ class XmlSerializationVisitor extends AbstractVisitor
             $this->createRootNode();
         }
 
-        /** @var PropertyMetadata $metadata */
         $nodeName = 'entry';
-        if (($metadata = $context->getMetadataStack()->getCurrent()) && ! empty($metadata->xmlEntryName)) {
+        $metadata = $context->getMetadataStack()->getCurrent();
+        if ($metadata !== null && ! empty($metadata->xmlEntryName)) {
+            assert($metadata instanceof PropertyMetadata);
             $nodeName = $metadata->xmlEntryName;
         }
 
@@ -259,9 +273,10 @@ class XmlSerializationVisitor extends AbstractVisitor
             $this->createRootNode();
         }
 
-        /** @var PropertyMetadata $metadata */
         $nodeName = 'entry';
-        if (($metadata = $context->getMetadataStack()->getCurrent()) && ! empty($metadata->xmlEntryName)) {
+        $metadata = $context->getMetadataStack()->getCurrent();
+        if ($metadata !== null && ! empty($metadata->xmlEntryName)) {
+            assert($metadata instanceof PropertyMetadata);
             $nodeName = $metadata->xmlEntryName;
         }
 
@@ -337,6 +352,11 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->document->saveXML();
     }
 
+    /**
+     * @param string|Stringable $data
+     *
+     * @return DOMCdataSection|DOMText
+     */
     private function createTextNode($data, bool $cdata = false)
     {
         $data = (string) $data;
@@ -373,12 +393,17 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     /**
      * Checks that the name is a valid XML element name.
+     *
+     * @param string|Stringable $name
      */
     private function isElementNameValid($name): bool
     {
         return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
+    /**
+     * @param PropertyMetadata[] $properties
+     */
     private function validateObjectProperties(ClassMetadata $metadata, array $properties): void
     {
         $hasXmlValue = false;
@@ -403,7 +428,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function createAttributeNode(PropertyMetadata $metadata, string $attributeName): DOMAttr
     {
-        if ($namespace = (string) $metadata->xmlNamespace) {
+        $namespace = (string) $metadata->xmlNamespace;
+        if ($namespace !== '') {
             $prefix = $this->lookupPrefix($namespace);
             $node = $this->document->createAttributeNS($namespace, $prefix . ':' . $attributeName);
         } else {
@@ -415,7 +441,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function createElement(?string $namespace, ?string $elementName): DOMElement
     {
-        if ($namespace !== null && $prefix = $this->lookupPrefix($namespace)) {
+        $prefix = $namespace !== null ? $this->lookupPrefix($namespace) : '';
+        if ($prefix !== '') {
             $node = $this->document->createElement($prefix . ':' . $elementName);
         } else {
             $node = $this->document->createElement($elementName);
@@ -426,7 +453,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     private function lookupPrefix(string $namespace): string
     {
-        if (($prefix = array_search($namespace, $this->xmlNamespaces)) !== false) {
+        $prefix = array_search($namespace, $this->xmlNamespaces, true);
+        if ($prefix !== false) {
             return $prefix;
         }
 
@@ -439,7 +467,8 @@ class XmlSerializationVisitor extends AbstractVisitor
     private function createRootNode(?ClassMetadata $metadata = null): void
     {
         $rootName = $metadata !== null && $metadata->xmlRootName ? $metadata->xmlRootName : 'result';
-        if ($metadata !== null && ($rootNamespace = $metadata->xmlRootNamespace)) {
+        $rootNamespace = $metadata !== null ? $metadata->xmlRootNamespace : null;
+        if ($rootNamespace !== null) {
             $rootNode = $this->document->createElementNS($rootNamespace, $rootName);
         } else {
             $rootNode = $this->document->createElement($rootName);

@@ -47,6 +47,11 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
+    /**
+     * @param Collection<mixed> $collection
+     *
+     * @return mixed
+     */
     public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
     {
         if ($type->countParams() === 1) {
@@ -56,6 +61,11 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         return $visitor->visitHash($collection->toArray(), $type, $context);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return Collection<mixed>
+     */
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
     {
         if ($type->countParams() === 1) {

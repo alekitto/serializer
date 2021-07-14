@@ -27,6 +27,10 @@ final class ExclusionPolicy
     /** @Required */
     public string $policy;
 
+    /**
+     * @param array<string, mixed>|string $policy
+     * @phpstan-param array{policy?: string, value?: string}|string $policy
+     */
     public function __construct($policy)
     {
         if (is_string($policy)) {

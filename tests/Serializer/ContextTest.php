@@ -88,12 +88,6 @@ class ContextTest extends TestCase
 
         $context->setSerializeNull(true);
         self::assertTrue($context->shouldSerializeNull());
-
-        $context->setSerializeNull('foo');
-        self::assertTrue($context->shouldSerializeNull());
-
-        $context->setSerializeNull('0');
-        self::assertFalse($context->shouldSerializeNull());
     }
 
     public function testContextShouldBeCloneable(): void

@@ -16,6 +16,10 @@ abstract class Version
     /** @Required */
     public string $version;
 
+    /**
+     * @param array<string, mixed>|string $version
+     * @phpstan-param array{version?: string, value?: string}|string $version
+     */
     public function __construct($version)
     {
         if (is_string($version)) {

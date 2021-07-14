@@ -19,7 +19,7 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function ksort;
-use function sprintf;
+use function Safe\sprintf;
 use function uksort;
 use function var_export;
 
@@ -38,7 +38,6 @@ class ClassMetadata extends BaseClassMetadata
     public ?string $xmlRootName = null;
     public ?string $xmlRootNamespace = null;
     public ?string $xmlEncoding = null;
-    public array $xmlNamespaces = [];
     public string $csvDelimiter = ',';
     public string $csvEnclosure = '"';
     public string $csvEscapeChar = '\\';
@@ -47,14 +46,27 @@ class ClassMetadata extends BaseClassMetadata
     public bool $csvNoHeaders = false;
     public bool $csvOutputBom = false;
     public ?string $accessorOrder = null;
-    public ?array $customOrder = null;
     public bool $discriminatorDisabled = false;
     public ?string $discriminatorBaseClass = null;
     public ?string $discriminatorFieldName = null;
     public ?string $discriminatorValue = null;
+
+    /** @var string[] */
+    public array $xmlNamespaces = [];
+
+    /** @var string[]|null */
+    public ?array $customOrder = null;
+
+    /** @var array<string, string> */
     public array $discriminatorMap = [];
+
+    /** @var string[] */
     public array $discriminatorGroups = [];
 
+    /**
+     * @param array<string, string> $map
+     * @param string[] $groups
+     */
     public function setDiscriminator(string $fieldName, array $map, array $groups): void
     {
         if (empty($fieldName)) {
@@ -74,8 +86,9 @@ class ClassMetadata extends BaseClassMetadata
     /**
      * Sets the order of properties in the class.
      *
-     * @throws InvalidArgumentException When the accessor order is not valid
-     * @throws InvalidArgumentException When the custom order is not valid
+     * @param string[] $customOrder
+     *
+     * @throws InvalidArgumentException When the accessor order is not valid or when the custom order is not valid.
      */
     public function setAccessorOrder(string $order, array $customOrder = []): void
     {
@@ -144,6 +157,9 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
+    /**
+     * @param array<string, string>|object $data
+     */
     public function getSubtype($data): string
     {
         if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
@@ -151,11 +167,11 @@ class ClassMetadata extends BaseClassMetadata
         } elseif (isset($data->{$this->discriminatorFieldName})) {
             $typeValue = (string) $data->{$this->discriminatorFieldName};
         } else {
-            throw new LogicException("The discriminator field name '{$this->discriminatorFieldName}' for " . "base-class '{$this->getName()}' was not found in input data.");
+            throw new LogicException(sprintf("The discriminator field name '%s' for base-class '%s' was not found in input data.", $this->discriminatorFieldName, $this->getName()));
         }
 
         if (! isset($this->discriminatorMap[$typeValue])) {
-            throw new LogicException("The type value '$typeValue' does not exist in the discriminator map of class '{$this->getName()}'. Available types: " . implode(', ', array_keys($this->discriminatorMap)));
+            throw new LogicException(sprintf("The type value '%s' does not exist in the discriminator map of class '%s'. Available types: %s", $typeValue, $this->getName(), implode(', ', array_keys($this->discriminatorMap))));
         }
 
         return $this->discriminatorMap[$typeValue];
@@ -199,7 +215,8 @@ class ClassMetadata extends BaseClassMetadata
             return;
         }
 
-        if (false === $typeValue = array_search($this->getName(), $object->discriminatorMap, true)) {
+        $typeValue = array_search($this->getName(), $object->discriminatorMap, true);
+        if ($typeValue === false) {
             throw new LogicException('The sub-class "' . $this->getName() . '" is not listed in the discriminator of the base class "' . $this->discriminatorBaseClass);
         }
 

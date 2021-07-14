@@ -39,17 +39,17 @@ class SerializationContext extends Context
         return $obj;
     }
 
-    public function startVisiting($object): void
+    public function startVisiting(object $object): void
     {
         $this->visitingSet->attach($object);
     }
 
-    public function stopVisiting($object): void
+    public function stopVisiting(object $object): void
     {
         $this->visitingSet->detach($object);
     }
 
-    public function isVisiting($object): bool
+    public function isVisiting(object $object): bool
     {
         return $this->visitingSet->contains($object);
     }

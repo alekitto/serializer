@@ -9,6 +9,9 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Throwable;
 
+use function assert;
+use function Safe\sprintf;
+
 /**
  * This class decorates any other driver. If the inner driver does not provide a
  * a property type, the decorator will guess based on Doctrine 2 metadata.
@@ -22,7 +25,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool
     {
-        /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+        assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);
 
         return $propertyMetadata->name === 'lazyPropertiesDefaults'
             || $doctrineMetadata->parentMapping === $propertyMetadata->name
@@ -31,9 +34,11 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
-        /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+        assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);
+
         $propertyName = $propertyMetadata->name;
-        if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
+        $fieldType = $doctrineMetadata->hasField($propertyName) ? $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName)) : null;
+        if ($fieldType !== null) {
             $field = $doctrineMetadata->getFieldMapping($propertyName);
             if (! empty($field['multivalue'])) {
                 $fieldType = 'array';
@@ -52,7 +57,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
             }
 
             if (! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
-                $targetEntity = "ArrayCollection<{$targetEntity}>";
+                $targetEntity = sprintf('ArrayCollection<%s>', $targetEntity);
             }
 
             $propertyMetadata->setType($targetEntity);

@@ -20,10 +20,6 @@ final class SerializedNameAnnotationStrategy implements PropertyNamingStrategyIn
 
     public function translateName(PropertyMetadata $property): string
     {
-        if (null !== $name = $property->serializedName) {
-            return $name;
-        }
-
-        return $this->delegate->translateName($property);
+        return $property->serializedName ?: $this->delegate->translateName($property);
     }
 }

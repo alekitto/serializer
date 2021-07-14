@@ -26,6 +26,10 @@ final class OnExclude
 
     public string $policy = self::NULL;
 
+    /**
+     * @param array<string, mixed>|string $policy
+     * @phpstan-param array{policy?: string, value?: string}|string $policy
+     */
     public function __construct($policy)
     {
         if (is_string($policy)) {

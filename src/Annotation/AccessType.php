@@ -26,6 +26,10 @@ final class AccessType
     /** @Required */
     public string $type;
 
+    /**
+     * @param array<string, mixed>|string $type
+     * @phpstan-param array{type?: string, value?: string}|string $type
+     */
     public function __construct($type)
     {
         if (is_string($type)) {

@@ -23,6 +23,10 @@ final class XmlNamespace
     public string $uri;
     public string $prefix = '';
 
+    /**
+     * @param array<string, mixed>|string $uri
+     * @phpstan-param array{uri?: string, value?: string, prefix?: string}|string $uri
+     */
     public function __construct($uri, ?string $prefix = null)
     {
         if (is_string($uri)) {

@@ -40,9 +40,7 @@ class AnnotationLoader implements LoaderInterface
             throw new LogicException('wrong metadata class');
         }
 
-        /** @var ClassMetadata $classMetadata */
         $class = $classMetadata->getReflectionClass();
-
         if ($this->isExcluded($class)) {
             return true;
         }
@@ -112,13 +110,15 @@ class AnnotationLoader implements LoaderInterface
         $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
     }
 
+    /**
+     * @param object[] $annotations
+     */
     private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata): void
     {
         $metadata->readOnly = $metadata->readOnly || $classMetadata->readOnly;
         $accessType = $classMetadata->defaultAccessType;
 
         $accessor = [null, null];
-
         foreach ($annotations as $annotation) {
             $this->processor->process($annotation, $metadata);
 

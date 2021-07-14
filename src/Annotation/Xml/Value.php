@@ -21,6 +21,10 @@ final class Value
 {
     public bool $cdata = true;
 
+    /**
+     * @param array<string, mixed>|bool $cdata
+     * @phpstan-param array{cdata?: bool, value?: bool}|bool $depth
+     */
     public function __construct($cdata = null)
     {
         if (is_bool($cdata)) {

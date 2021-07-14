@@ -15,6 +15,8 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 
+use function assert;
+
 /**
  * This class decorates any other driver. If the inner driver does not provide a
  * a property type, the decorator will guess based on Doctrine 2 metadata.
@@ -59,11 +61,12 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
-        /** @var ClassMetadata $classMetadata */
+        assert($classMetadata instanceof ClassMetadata);
         $this->delegate->loadClassMetadata($classMetadata);
 
         // Abort if the given class is not a mapped entity
-        if (! $doctrineMetadata = $this->tryLoadingDoctrineMetadata($classMetadata->getName())) {
+        $doctrineMetadata = $this->tryLoadingDoctrineMetadata($classMetadata->getName());
+        if ($doctrineMetadata === null) {
             return true;
         }
 
@@ -108,7 +111,8 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     protected function tryLoadingDoctrineMetadata(string $className): ?DoctrineClassMetadata
     {
-        if (! $manager = $this->registry->getManagerForClass($className)) {
+        $manager = $this->registry->getManagerForClass($className);
+        if ($manager === null) {
             return null;
         }
 
@@ -119,8 +123,8 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         return $manager->getClassMetadata($className);
     }
 
-    protected function normalizeFieldType($type): ?string
+    protected function normalizeFieldType(string $type): ?string
     {
-        return static::FIELD_MAPPING[$type] ?? null;
+        return self::FIELD_MAPPING[$type] ?? null;
     }
 }

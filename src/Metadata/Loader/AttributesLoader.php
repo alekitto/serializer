@@ -39,6 +39,9 @@ class AttributesLoader extends AnnotationLoader
         return count($class->getAttributes(Annotation\Exclude::class)) !== 0;
     }
 
+    /**
+     * @return object[]
+     */
     protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         $attributes = $this->decorated ? $this->decorated->getClassAnnotations($classMetadata) : [];
@@ -49,6 +52,9 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
+    /**
+     * @return object[]
+     */
     protected function getMethodAnnotations(ReflectionMethod $method): array
     {
         $attributes = $this->decorated ? $this->decorated->getMethodAnnotations($method) : [];
@@ -59,6 +65,9 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
+    /**
+     * @return object[]
+     */
     protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
         $attributes = $this->decorated ? $this->decorated->getPropertyAnnotations($property) : [];

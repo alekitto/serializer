@@ -154,14 +154,14 @@ class SerializerBuilder
         return $this;
     }
 
-    public function setSerializationVisitor($format, VisitorInterface $visitor): self
+    public function setSerializationVisitor(string $format, VisitorInterface $visitor): self
     {
         $this->serializationVisitors[$format] = $visitor;
 
         return $this;
     }
 
-    public function setDeserializationVisitor($format, VisitorInterface $visitor): self
+    public function setDeserializationVisitor(string $format, VisitorInterface $visitor): self
     {
         $this->deserializationVisitors[$format] = $visitor;
 

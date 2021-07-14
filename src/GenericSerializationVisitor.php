@@ -23,8 +23,10 @@ use function sprintf;
 class GenericSerializationVisitor extends AbstractVisitor
 {
     private ?GraphNavigator $navigator = null;
-    private $root;
     private SplStack $dataStack;
+
+    /** @var array<string, mixed>|ArrayObject<string, mixed> */
+    private $root;
 
     /** @var mixed */
     private $data;
@@ -183,13 +185,16 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = parent::visitCustom($handler, $data, $type, $context);
     }
 
+    /**
+     * @return array<string, mixed>|ArrayObject<string, mixed>
+     */
     public function getRoot()
     {
         return $this->root;
     }
 
     /**
-     * @param array|ArrayObject $data the passed data must be understood by whatever encoding function is applied later
+     * @param array<string, mixed>|ArrayObject<string, mixed> $data the passed data must be understood by whatever encoding function is applied later
      */
     public function setRoot($data): void
     {
@@ -205,13 +210,15 @@ class GenericSerializationVisitor extends AbstractVisitor
     }
 
     /**
+     * @param mixed $data
+     *
      * @return mixed
      */
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
         $v = $data !== null ? $this->navigator->accept($metadata->getValue($data), $metadata->type, $context) : null;
         if ($v === null && ! $context->shouldSerializeNull()) {
-            return;
+            return null;
         }
 
         $k = $this->namingStrategy->translateName($metadata);
@@ -223,6 +230,8 @@ class GenericSerializationVisitor extends AbstractVisitor
         } else {
             $this->data[$k] = $v;
         }
+
+        return null;
     }
 
     /**
@@ -240,6 +249,9 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->data[$key] = $value;
     }
 
+    /**
+     * @param mixed $data
+     */
     protected function setData($data): void
     {
         $this->data = $data;
@@ -247,6 +259,8 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     /**
      * @internal
+     *
+     * @return mixed
      */
     protected function getData()
     {

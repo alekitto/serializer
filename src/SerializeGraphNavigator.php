@@ -53,6 +53,8 @@ class SerializeGraphNavigator extends GraphNavigator
      * Calls serialization visitors.
      *
      * @param mixed $data
+     *
+     * @return mixed
      */
     private function serialize($data, Type $type, SerializationContext $context)
     {

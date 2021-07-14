@@ -47,11 +47,17 @@ class PropelCollectionHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeCollection(VisitorInterface $visitor, PropelCollection $collection, Type $type, Context $context)
     {
         return $visitor->visitArray($collection->getData(), $type, $context);
     }
 
+    /**
+     * @param mixed $data
+     */
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): PropelCollection
     {
         $collection = new PropelCollection();

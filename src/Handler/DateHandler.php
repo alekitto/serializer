@@ -83,7 +83,7 @@ class DateHandler implements SubscribingHandlerInterface
     }
 
     public function __construct(
-        string $defaultFormat = DateTime::ATOM,
+        string $defaultFormat = DateTimeInterface::ATOM,
         string $defaultTimezone = 'UTC',
         bool $xmlCData = true
     ) {
@@ -92,6 +92,9 @@ class DateHandler implements SubscribingHandlerInterface
         $this->xmlCData = $xmlCData;
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeDateTime(VisitorInterface $visitor, DateTimeInterface $date, Type $type, Context $context)
     {
         $format = $this->getFormat($type);
@@ -102,11 +105,17 @@ class DateHandler implements SubscribingHandlerInterface
         return $this->serialize($visitor, $date->format($this->getFormat($type)), $type, $context);
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeDateInterval(VisitorInterface $visitor, DateInterval $date, Type $type, Context $context)
     {
         return $this->serialize($visitor, $this->formatInterval($date), $type, $context);
     }
 
+    /**
+     * @param mixed $value
+     */
     public function deserializeDateInterval(VisitorInterface $visitor, $value): DateInterval
     {
         $negative = false;
@@ -123,19 +132,29 @@ class DateHandler implements SubscribingHandlerInterface
         return $interval;
     }
 
+    /**
+     * @param mixed $data
+     */
     public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type): ?DateTimeInterface
     {
         return $this->deserializeDateTimeInterface(DateTime::class, $data, $type);
     }
 
+    /**
+     * @param mixed $data
+     */
     public function deserializeDateTimeImmutable(VisitorInterface $visitor, $data, Type $type): ?DateTimeInterface
     {
         return $this->deserializeDateTimeInterface(DateTimeImmutable::class, $data, $type);
     }
 
+    /**
+     * @param mixed $date
+     */
     public function deserializeChronos(VisitorInterface $visitor, $date, Type $type): ?Chronos
     {
-        if (($date = $this->deserializeDateTimeImmutable($visitor, $date, $type)) === null) {
+        $date = $this->deserializeDateTimeImmutable($visitor, $date, $type);
+        if ($date === null) {
             return null;
         }
 
@@ -162,6 +181,9 @@ class DateHandler implements SubscribingHandlerInterface
         return $formatted;
     }
 
+    /**
+     * @param mixed $data
+     */
     private function deserializeDateTimeInterface(string $class, $data, Type $type): ?DateTimeInterface
     {
         if ($data === null) {
@@ -179,6 +201,11 @@ class DateHandler implements SubscribingHandlerInterface
         return $datetime;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     private function serialize(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
         if ($visitor instanceof XmlSerializationVisitor && $this->xmlCData === false) {

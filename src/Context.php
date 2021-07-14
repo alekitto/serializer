@@ -183,9 +183,9 @@ abstract class Context
         return $this;
     }
 
-    public function setSerializeNull($bool): self
+    public function setSerializeNull(bool $bool): self
     {
-        $this->serializeNull = (bool) $bool;
+        $this->serializeNull = $bool;
 
         return $this;
     }

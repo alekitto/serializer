@@ -181,7 +181,7 @@ class YamlLoader extends AnnotationLoader
     /**
      * @phpstan-param class-string $class
      *
-     * @retrun array<string, mixed>
+     * @return array<string, mixed>
      */
     private function getClassConfig(string $class): array
     {

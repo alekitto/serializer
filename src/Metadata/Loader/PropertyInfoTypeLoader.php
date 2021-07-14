@@ -14,8 +14,10 @@ use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Symfony\Component\PropertyInfo\Type as SymfonyType;
 
+use function assert;
 use function count;
 use function implode;
+use function method_exists;
 use function reset;
 
 /**
@@ -35,7 +37,7 @@ class PropertyInfoTypeLoader implements LoaderInterface
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
-        /** @var ClassMetadata $classMetadata */
+        assert($classMetadata instanceof ClassMetadata);
         $this->delegate->loadClassMetadata($classMetadata);
 
         // We base our scan on the internal driver's property list so that we

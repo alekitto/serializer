@@ -26,6 +26,9 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     private array $groups;
     private bool $nestedGroups;
 
+    /**
+     * @param string[]|array<string, mixed> $groups
+     */
     public function __construct(array $groups)
     {
         if (empty($groups)) {
@@ -95,6 +98,9 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
         return ! empty($property->groups);
     }
 
+    /**
+     * @return string[]
+     */
     private function getGroupsFor(Context $navigatorContext): array
     {
         $groups = $this->groups;

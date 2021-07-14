@@ -19,7 +19,7 @@ use function var_export;
 
 trait LoaderTrait
 {
-    private function createAnnotationObject(string $name)
+    private function createAnnotationObject(string $name): object
     {
         switch ($className = Inflector::getInstance()->classify($name)) {
             case 'XmlList':
@@ -41,7 +41,7 @@ trait LoaderTrait
         return $reflectionClass->newInstanceWithoutConstructor();
     }
 
-    private function getDefaultPropertyName($annotation): ?string
+    private function getDefaultPropertyName(object $annotation): ?string
     {
         $reflectionAnnotation = new ReflectionClass($annotation);
         $properties = $reflectionAnnotation->getProperties();
@@ -49,6 +49,11 @@ trait LoaderTrait
         return isset($properties[0]) ? $properties[0]->name : null;
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
     private function convertValue(object $annotation, ?string $property, $value)
     {
         $reflectionProperty = new ReflectionProperty($annotation, $property);

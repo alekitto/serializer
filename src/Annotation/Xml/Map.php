@@ -17,6 +17,10 @@ final class Map extends Collection
 {
     public string $keyAttribute = '_key';
 
+    /**
+     * @param array<string, mixed>|string $entry
+     * @phpstan-param array{entry?: string, value?: string, inline?: bool, namespace?: string, keyAttribute?: string}|string $entry
+     */
     public function __construct($entry = 'entry', ?bool $inline = null, ?string $namespace = null, ?string $keyAttribute = null)
     {
         $data = [];

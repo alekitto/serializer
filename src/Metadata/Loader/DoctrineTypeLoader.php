@@ -8,6 +8,9 @@ use Doctrine\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
+use function assert;
+use function Safe\sprintf;
+
 /**
  * This class decorates any other driver. If the inner driver does not provide a
  * a property type, the decorator will guess based on Doctrine 2 metadata.
@@ -21,7 +24,8 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void
     {
-        /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
+        assert($doctrineMetadata instanceof \Doctrine\ORM\Mapping\ClassMetadata);
+
         if (
             ! empty($classMetadata->discriminatorMap) || $classMetadata->discriminatorDisabled
             || empty($doctrineMetadata->discriminatorMap) || ! $doctrineMetadata->isRootEntity()
@@ -38,14 +42,16 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
-        /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
+        assert($doctrineMetadata instanceof \Doctrine\ORM\Mapping\ClassMetadata);
+
         $propertyName = $propertyMetadata->name;
-        if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
+        $fieldType = $doctrineMetadata->hasField($propertyName) ? $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName)) : null;
+        if ($fieldType) {
             $propertyMetadata->setType($fieldType);
         } elseif ($doctrineMetadata->hasAssociation($propertyName)) {
             $targetEntity = $doctrineMetadata->getAssociationTargetClass($propertyName);
-
-            if (null === $targetMetadata = $this->tryLoadingDoctrineMetadata($targetEntity)) {
+            $targetMetadata = $this->tryLoadingDoctrineMetadata($targetEntity);
+            if ($targetMetadata === null) {
                 return;
             }
 
@@ -57,7 +63,7 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
             }
 
             if (! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
-                $targetEntity = "ArrayCollection<{$targetEntity}>";
+                $targetEntity = sprintf('ArrayCollection<%s>', $targetEntity);
             }
 
             $propertyMetadata->setType($targetEntity);

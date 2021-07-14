@@ -6,6 +6,7 @@ namespace Kcs\Serializer\Exception;
 
 use Exception;
 
+use function Safe\sprintf;
 use function strlen;
 
 class SyntaxErrorException extends Exception
@@ -16,6 +17,6 @@ class SyntaxErrorException extends Exception
             $position = strlen($original);
         }
 
-        parent::__construct("Syntax Error while parsing '$original': Unexpected $value at position $position");
+        parent::__construct(sprintf('Syntax Error while parsing \'%s\': Unexpected %s at position %d', $original, $value, $position));
     }
 }

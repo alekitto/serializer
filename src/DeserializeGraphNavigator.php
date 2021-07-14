@@ -41,6 +41,11 @@ class DeserializeGraphNavigator extends GraphNavigator
         return $this->deserialize($data, $type, $context);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     private function deserialize($data, Type $type, DeserializationContext $context)
     {
         $context->increaseDepth();
@@ -68,6 +73,9 @@ class DeserializeGraphNavigator extends GraphNavigator
         return $rs;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context)
     {
         return $context->visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);

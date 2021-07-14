@@ -17,7 +17,7 @@ use function Safe\sprintf;
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-#[Attribute(Attribute::TARGET_PROPERTY, Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 final class Groups
 {
     /**
@@ -26,6 +26,10 @@ final class Groups
      */
     public array $groups;
 
+    /**
+     * @param array<string, mixed>|string $groups
+     * @phpstan-param array{groups?: string[]|array<string, mixed>, value?: string[]|array<string, mixed>}|array<string, mixed>|string $groups
+     */
     public function __construct($groups)
     {
         if (is_string($groups)) {

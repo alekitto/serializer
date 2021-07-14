@@ -22,11 +22,19 @@ abstract class AbstractVisitor implements VisitorInterface
         return $this->namingStrategy;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     public function prepare($data)
     {
         return $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function visitCustom(callable $handler, $data, Type $type, Context $context)
     {
         return $handler($this, $data, $type, $context);

@@ -17,6 +17,10 @@ abstract class Collection
     public bool $inline = false;
     public ?string $namespace = null;
 
+    /**
+     * @param array<string, mixed>|string $entry
+     * @phpstan-param array{entry?: string, value?: string, inline?: bool, namespace?: string}|string $entry
+     */
     public function __construct($entry = 'entry', ?bool $inline = null, ?string $namespace = null)
     {
         if (is_string($entry)) {

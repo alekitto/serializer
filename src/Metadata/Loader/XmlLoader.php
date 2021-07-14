@@ -16,6 +16,7 @@ use ReflectionProperty;
 use SimpleXMLElement;
 
 use function array_merge;
+use function array_push;
 use function explode;
 use function in_array;
 use function is_string;
@@ -32,13 +33,13 @@ class XmlLoader extends AnnotationLoader
 
     private SimpleXMLElement $document;
 
-    public function __construct($filePath)
+    public function __construct(string $filePath)
     {
         parent::__construct();
-        $file_content = $this->loadFile($filePath);
+        $fileContent = $this->loadFile($filePath);
 
         $previous = libxml_use_internal_errors(true);
-        $elem = simplexml_load_string($file_content);
+        $elem = simplexml_load_string($fileContent);
         libxml_use_internal_errors($previous);
 
         if ($elem === false) {
@@ -143,14 +144,18 @@ class XmlLoader extends AnnotationLoader
         $annotations = [];
         $methodName = $method->name;
 
-        if ($pElems = $element->xpath("./virtual-property[@method = '" . $methodName . "']")) {
+        $pElems = $element->xpath("./virtual-property[@method = '" . $methodName . "']");
+        if (! empty($pElems)) {
             $annotations[] = new Annotations\VirtualProperty();
             $annotations = array_merge($annotations, $this->loadComplex(reset($pElems), ['method']));
         }
 
-        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "pre-serialize[@method = '" . $methodName . "']"));
-        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "post-serialize[@method = '" . $methodName . "']"));
-        $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, "post-deserialize[@method = '" . $methodName . "']"));
+        array_push(
+            $annotations,
+            ...$this->getAnnotationFromElement($element, "pre-serialize[@method = '" . $methodName . "']"),
+            ...$this->getAnnotationFromElement($element, "post-serialize[@method = '" . $methodName . "']"),
+            ...$this->getAnnotationFromElement($element, "post-deserialize[@method = '" . $methodName . "']")
+        );
 
         return $annotations;
     }
@@ -168,7 +173,8 @@ class XmlLoader extends AnnotationLoader
         $annotations = [];
         $propertyName = $property->name;
 
-        if ($pElems = $element->xpath("./property[@name = '" . $propertyName . "']")) {
+        $pElems = $element->xpath("./property[@name = '" . $propertyName . "']");
+        if (! empty($pElems)) {
             $annotations = $this->loadComplex(reset($pElems));
         }
 
@@ -192,21 +198,29 @@ class XmlLoader extends AnnotationLoader
         return $pElem && $pElem->attributes()->exclude !== null;
     }
 
+    /**
+     * @param string[] $excludedAttributes
+     * @param string[] $excludedChildren
+     *
+     * @return object[]
+     */
     private function loadComplex(SimpleXMLElement $element, array $excludedAttributes = ['name'], array $excludedChildren = []): array
     {
         $annotations = $this->getAnnotationsFromAttributes($element, $excludedAttributes);
-
         foreach ($element->children() as $name => $child) {
             if (in_array($name, $excludedChildren, true)) {
                 continue;
             }
 
-            $annotations = array_merge($annotations, $this->getAnnotationFromElement($element, $name));
+            array_push($annotations, ...$this->getAnnotationFromElement($element, $name));
         }
 
         return $annotations;
     }
 
+    /**
+     * @return object[]
+     */
     private function getAnnotationFromElement(SimpleXMLElement $element, string $name): array
     {
         $annotations = [];
@@ -214,9 +228,9 @@ class XmlLoader extends AnnotationLoader
         foreach ($element->xpath('./' . $name) as $elem) {
             $annotation = $this->createAnnotationObject($name);
 
-            if ($value = (string) $elem) {
+            $value = (string) $elem;
+            if ($value) {
                 $property = $this->getDefaultPropertyName($annotation);
-
                 $annotation->{$property} = $value;
             }
 
@@ -230,15 +244,24 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
+    /**
+     * @return false|SimpleXMLElement
+     */
     private function getClassElement(string $class)
     {
-        if (! $elems = $this->document->xpath("./class[@name = '" . $class . "']")) {
+        $elems = $this->document->xpath("./class[@name = '" . $class . "']");
+        if (empty($elems)) {
             return false;
         }
 
         return reset($elems);
     }
 
+    /**
+     * @param string[] $excludeAttributes
+     *
+     * @return object[]
+     */
     private function getAnnotationsFromAttributes(SimpleXMLElement $element, array $excludeAttributes = []): array
     {
         $annotations = [];
@@ -251,7 +274,8 @@ class XmlLoader extends AnnotationLoader
             $annotation = $this->createAnnotationObject($attrName);
             $annotations[] = $annotation;
 
-            if (! $property = $this->getDefaultPropertyName($annotation)) {
+            $property = $this->getDefaultPropertyName($annotation);
+            if (empty($property)) {
                 continue;
             }
 
@@ -262,7 +286,7 @@ class XmlLoader extends AnnotationLoader
     }
 
     /**
-     * @return iterable
+     * @return iterable<string, mixed>
      */
     private function loadAnnotationProperties(SimpleXMLElement $elem): iterable
     {

@@ -30,8 +30,8 @@ class MappingLoaderPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $mappingPath = 'Resources/config/serializer';
-        $xml_paths = [];
-        $yaml_paths = [];
+        $xmlPaths = [];
+        $yamlPaths = [];
 
         $xmlDefinition = $container->getDefinition('kcs_serializer.metadata.loader.xml');
         $yamlDefinition = $container->getDefinition('kcs_serializer.metadata.loader.yaml');
@@ -41,16 +41,16 @@ class MappingLoaderPass implements CompilerPassInterface
             new Reference('kcs_serializer.metadata.loader.xml'),
         ];
 
-        $loadPath = static function (string $path) use (&$xml_paths, &$yaml_paths): void {
+        $loadPath = static function (string $path) use (&$xmlPaths, &$yamlPaths): void {
             try {
                 $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
                 foreach ($iterator as $fileInfo) {
                     assert($fileInfo instanceof SplFileInfo);
                     $extension = $fileInfo->getExtension();
                     if ($extension === 'xml') {
-                        $xml_paths[] = $fileInfo->getPathname();
+                        $xmlPaths[] = $fileInfo->getPathname();
                     } elseif ($extension === 'yaml' || $extension === 'yml') {
-                        $yaml_paths[] = $fileInfo->getPathname();
+                        $yamlPaths[] = $fileInfo->getPathname();
                     }
                 }
             } catch (UnexpectedValueException $e) {
@@ -65,8 +65,8 @@ class MappingLoaderPass implements CompilerPassInterface
 
         $loadPath($container->getParameter('kernel.project_dir') . '/config/serializer');
 
-        $xmlDefinition->replaceArgument(0, $xml_paths);
-        $yamlDefinition->replaceArgument(0, $yaml_paths);
+        $xmlDefinition->replaceArgument(0, $xmlPaths);
+        $yamlDefinition->replaceArgument(0, $yamlPaths);
 
         if ($container->has('annotation_reader')) {
             $definition = new Definition(AnnotationLoader::class);

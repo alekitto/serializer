@@ -16,6 +16,9 @@ interface SubscribingHandlerInterface
      *      ];
      *
      * The direction and method keys can be omitted.
+     *
+     * @return iterable<string, mixed>
+     * @phpstan-return iterable{direction: int, type: string, method: string}
      */
     public static function getSubscribingMethods(): iterable;
 }

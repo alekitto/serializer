@@ -21,7 +21,7 @@ final class Discriminator
 {
     /**
      * @Required
-     * @var array<string>
+     * @var array<string, string>
      */
     public array $map;
 
@@ -32,7 +32,11 @@ final class Discriminator
     /** @var array<string> */
     public ?array $groups = null;
 
-    public function __construct($map, ?string $field = null, ?bool $disabled = null, ?array $groups = null)
+    /**
+     * @param array<string, mixed> $map
+     * @phpstan-param array{map?: array<string, mixed>, value?: array<string, mixed>, field?: string, disabled?: string, groups?: string}|array<string, mixed> $map
+     */
+    public function __construct(array $map, ?string $field = null, ?bool $disabled = null, ?array $groups = null)
     {
         if (! is_array($map)) {
             throw new TypeError(sprintf('Argument #1 passed to %s must be an array. %s passed', __METHOD__, get_debug_type($map)));

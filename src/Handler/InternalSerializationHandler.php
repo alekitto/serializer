@@ -25,11 +25,16 @@ final class InternalSerializationHandler
     /** @var callable */
     private $handler;
 
-    public function __construct($handler)
+    public function __construct(callable $handler)
     {
         $this->handler = $handler;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     public function __invoke(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
         if (is_array($this->handler) && $this->handler[0] instanceof Closure) {
@@ -43,6 +48,11 @@ final class InternalSerializationHandler
         return $this->callVisitor(($this->handler)($data), $context);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     private function callVisitor($data, SerializationContext $context)
     {
         $visitor = $context->visitor;

@@ -22,7 +22,8 @@ final class HandlerRegistry implements HandlerRegistryInterface
 
     public static function getDefaultMethod(int $direction, string $type): string
     {
-        if (false !== $pos = strrpos($type, '\\')) {
+        $pos = strrpos($type, '\\');
+        if ($pos !== false) {
             $type = substr($type, $pos + 1);
         }
 
@@ -38,6 +39,9 @@ final class HandlerRegistry implements HandlerRegistryInterface
         }
     }
 
+    /**
+     * @param SubscribingHandlerInterface[] $handlers
+     */
     public function __construct(array $handlers = [])
     {
         $this->handlers = $handlers;

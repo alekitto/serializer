@@ -28,7 +28,7 @@ class MetadataStack implements IteratorAggregate, Countable
         $this->currentPath[] = $metadata->name;
     }
 
-    public function pop()
+    public function pop(): ?PropertyMetadata
     {
         $metadata = $this->stack->pop();
         array_pop($this->currentPath);
@@ -56,7 +56,7 @@ class MetadataStack implements IteratorAggregate, Countable
         array_pop($this->currentPath);
     }
 
-    public function getCurrent()
+    public function getCurrent(): ?PropertyMetadata
     {
         return $this->stack->isEmpty() ? null : $this->stack->top();
     }

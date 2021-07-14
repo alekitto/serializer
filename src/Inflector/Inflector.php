@@ -41,6 +41,7 @@ if (! class_exists(InflectorFactory::class)) {
         }
     }
 } else {
+    // phpcs:ignore
     class Inflector
     {
         private static ?self $instance = null;

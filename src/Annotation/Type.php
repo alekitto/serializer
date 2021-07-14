@@ -22,6 +22,10 @@ final class Type
     /** @Required */
     public string $name;
 
+    /**
+     * @param array<string, mixed>|string $name
+     * @phpstan-param array{name?: string, value?: string}|string $name
+     */
     public function __construct($name)
     {
         if (is_string($name)) {

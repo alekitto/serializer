@@ -23,11 +23,16 @@ final class InternalDeserializationHandler
     /** @var callable */
     private $handler;
 
-    public function __construct($handler)
+    public function __construct(callable $handler)
     {
         $this->handler = $handler;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     public function __invoke(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
         if (is_array($this->handler) && $this->handler[0] instanceof Closure) {

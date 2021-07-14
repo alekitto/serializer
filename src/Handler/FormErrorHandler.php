@@ -22,7 +22,7 @@ use function sprintf;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
-    /** @var LegacyTranslatorInterface|TranslatorInterface */
+    /** @var LegacyTranslatorInterface|TranslatorInterface|null */
     private $translator;
 
     /**
@@ -44,6 +44,9 @@ class FormErrorHandler implements SubscribingHandlerInterface
         ];
     }
 
+    /**
+     * @param LegacyTranslatorInterface|TranslatorInterface|null $translator
+     */
     public function __construct($translator = null)
     {
         if (
@@ -56,6 +59,9 @@ class FormErrorHandler implements SubscribingHandlerInterface
         $this->translator = $translator;
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeForm(VisitorInterface $visitor, Form $form, Type $type, Context $context)
     {
         $serializableForm = new SerializableForm($form);
@@ -64,6 +70,9 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return $visitor->visitObject($metadata, $serializableForm, $type, $context);
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeFormError(VisitorInterface $visitor, FormError $formError, Type $type, Context $context)
     {
         return $visitor->visitString($this->getErrorMessage($formError), $type, $context);

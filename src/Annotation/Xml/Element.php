@@ -22,6 +22,10 @@ final class Element
     public bool $cdata = true;
     public ?string $namespace = null;
 
+    /**
+     * @param array<string, mixed>|bool $cdata
+     * @phpstan-param array{cdata?: bool, value?: bool, namespace?: string}|bool $cdata
+     */
     public function __construct($cdata = true, ?string $namespace = null)
     {
         if (is_bool($cdata)) {
