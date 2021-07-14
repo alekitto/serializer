@@ -1,10 +1,19 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
+use Closure;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\RuntimeException;
+
+use function get_class;
+use function is_array;
+use function sprintf;
+use function strrpos;
+use function substr;
 
 final class HandlerRegistry implements HandlerRegistryInterface
 {
@@ -13,19 +22,19 @@ final class HandlerRegistry implements HandlerRegistryInterface
 
     public static function getDefaultMethod(int $direction, string $type): string
     {
-        if (false !== $pos = \strrpos($type, '\\')) {
-            $type = \substr($type, $pos + 1);
+        if (false !== $pos = strrpos($type, '\\')) {
+            $type = substr($type, $pos + 1);
         }
 
         switch ($direction) {
             case Direction::DIRECTION_DESERIALIZATION:
-                return 'deserialize'.$type;
+                return 'deserialize' . $type;
 
             case Direction::DIRECTION_SERIALIZATION:
-                return 'serialize'.$type;
+                return 'serialize' . $type;
 
             default:
-                throw new LogicException(\sprintf('The direction %u does not exist; see GraphNavigator constants.', $direction));
+                throw new LogicException(sprintf('The direction %u does not exist; see GraphNavigator constants.', $direction));
         }
     }
 
@@ -34,14 +43,11 @@ final class HandlerRegistry implements HandlerRegistryInterface
         $this->handlers = $handlers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerSubscribingHandler(SubscribingHandlerInterface $handler): self
     {
         foreach ($handler->getSubscribingMethods() as $methodData) {
             if (! isset($methodData['type'])) {
-                throw new RuntimeException(\sprintf('For each subscribing method a "type" attribute must be given for %s.', \get_class($handler)));
+                throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', get_class($handler)));
             }
 
             $directions = [Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION];
@@ -68,25 +74,16 @@ final class HandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerSerializationHandler(SerializationHandlerInterface $handler): HandlerRegistryInterface
     {
         return $this->registerHandler(Direction::DIRECTION_SERIALIZATION, $handler::getType(), new InternalSerializationHandler([$handler, 'serialize']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerDeserializationHandler(DeserializationHandlerInterface $handler): HandlerRegistryInterface
     {
         return $this->registerHandler(Direction::DIRECTION_DESERIALIZATION, $handler::getType(), new InternalDeserializationHandler([$handler, 'deserialize']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getHandler(int $direction, string $typeName): ?callable
     {
         if (! isset($this->handlers[$direction][$typeName])) {
@@ -94,7 +91,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
         }
 
         $v = &$this->handlers[$direction][$typeName];
-        if (\is_array($v) && isset($v[0]) && $v[0] instanceof \Closure) {
+        if (is_array($v) && isset($v[0]) && $v[0] instanceof Closure) {
             $v[0] = $v[0]();
         }
 

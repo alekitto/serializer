@@ -1,18 +1,19 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
 use Kcs\Serializer\Annotation\Csv;
 use Kcs\Serializer\Metadata\ClassMetadata;
 
+use function assert;
+
 class CsvProcessor extends ClassMetadataProcessor
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected static function doProcess($annotation, ClassMetadata $metadata): void
+    protected static function doProcess(object $annotation, ClassMetadata $metadata): void
     {
-        \assert($annotation instanceof Csv);
+        assert($annotation instanceof Csv);
 
         $metadata->csvDelimiter = $annotation->delimiter ?? ',';
         $metadata->csvEnclosure = $annotation->enclosure ?? '"';

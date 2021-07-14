@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
@@ -32,7 +34,7 @@ abstract class AbstractVisitor implements VisitorInterface
 
     protected function getElementType(Type $type): ?Type
     {
-        if (0 === $type->countParams()) {
+        if ($type->countParams() === 0) {
             return null;
         }
 

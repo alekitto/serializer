@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -23,7 +28,7 @@ final class Accessor
             $data = ['getter' => $getter];
         } elseif (is_array($getter)) {
             $data = $getter;
-        } elseif (null !== $getter) {
+        } elseif ($getter !== null) {
             throw new TypeError(sprintf('Argument #1 passed to %s must be a string. %s passed', __METHOD__, get_debug_type($getter)));
         }
 

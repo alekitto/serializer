@@ -1,9 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
 use JsonException;
 use Kcs\Serializer\Exception\RuntimeException;
+
+use function json_decode;
+
+use const JSON_THROW_ON_ERROR;
 
 class JsonDeserializationVisitor extends GenericDeserializationVisitor
 {
@@ -13,9 +19,9 @@ class JsonDeserializationVisitor extends GenericDeserializationVisitor
     public function prepare($str)
     {
         try {
-            return \json_decode($str, true, 512, JSON_THROW_ON_ERROR);
+            return json_decode($str, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new RuntimeException('Could not decode JSON: '.$exception->getMessage(), 0, $exception);
+            throw new RuntimeException('Could not decode JSON: ' . $exception->getMessage(), 0, $exception);
         }
     }
 }

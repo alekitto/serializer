@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
@@ -6,6 +8,9 @@ use Attribute;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -21,14 +26,10 @@ final class AccessorOrder
     public const ALPHABETICAL = ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL;
     public const CUSTOM = ClassMetadata::ACCESSOR_ORDER_CUSTOM;
 
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $order;
 
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     public array $custom = [];
 
     public function __construct($order, ?array $custom = null)

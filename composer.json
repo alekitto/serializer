@@ -39,7 +39,6 @@
         "doctrine/orm": "^2.3",
         "doctrine/persistence": "^2.0",
         "doctrine/phpcr-odm": "^1.0",
-        "friendsofphp/php-cs-fixer": "^2.16",
         "jackalope/jackalope-doctrine-dbal": "^1.0",
         "nikic/php-parser": "^4.10.0",
         "ocramius/proxy-manager": "^2.6",
@@ -64,7 +63,6 @@
         "symfony/framework-bundle": "^4.4|^5.0",
         "symfony/http-kernel": "^4.4|^5.0",
         "symfony/property-info": "^4.4|^5.0",
-        "symfony/proxy-manager-bridge": "^4.4|^5.0",
         "symfony/serializer": "^4.4|^5.0",
         "symfony/translation": "^4.4|^5.0",
         "symfony/validator": "^4.4|^5.0",
@@ -85,6 +83,11 @@
         "files": [
             "compat/doctrine_common_2.php"
         ]
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse src/ -c vendor/solido/php-coding-standards/phpstan.neon --level=8 --no-progress -vvv --memory-limit=2048M",
+        "cscheck": "vendor/bin/phpcs --standard=Solido src/",
+        "csfix": "vendor/bin/phpcbf --standard=Solido src/"
     },
     "config": {
         "sort-packages": true

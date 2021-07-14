@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\EventDispatcher;
 
@@ -53,9 +55,6 @@ class Event implements StoppableEventInterface
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isPropagationStopped(): bool
     {
         return $this->propagationStopped;

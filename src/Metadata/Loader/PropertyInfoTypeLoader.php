@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -11,6 +13,10 @@ use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Symfony\Component\PropertyInfo\Type as SymfonyType;
+
+use function count;
+use function implode;
+use function reset;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
@@ -29,7 +35,7 @@ class PropertyInfoTypeLoader implements LoaderInterface
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
-        /* @var $classMetadata ClassMetadata */
+        /** @var ClassMetadata $classMetadata */
         $this->delegate->loadClassMetadata($classMetadata);
 
         // We base our scan on the internal driver's property list so that we
@@ -40,7 +46,7 @@ class PropertyInfoTypeLoader implements LoaderInterface
             }
 
             // If the inner driver provides a type, don't guess anymore.
-            if (null !== $propertyMetadata->type) {
+            if ($propertyMetadata->type !== null) {
                 continue;
             }
 
@@ -54,26 +60,36 @@ class PropertyInfoTypeLoader implements LoaderInterface
             }
 
             $types = $this->propertyInfoExtractor->getTypes($classMetadata->name, $propertyMetadata->name);
-            if (null === $types || 1 !== \count($types)) {
+            if ($types === null || count($types) !== 1) {
                 continue;
             }
 
-            $type = \reset($types);
+            $type = reset($types);
             if ($type->isCollection()) {
                 $params = [];
 
-                $keyType = $type->getCollectionKeyType();
-                if (null !== $keyType && SymfonyType::BUILTIN_TYPE_INT !== $keyType->getBuiltinType()) {
+                if (method_exists($type, 'getCollectionKeyTypes')) {
+                    $keyType = $type->getCollectionKeyTypes()[0] ?? null;
+                } else {
+                    $keyType = $type->getCollectionKeyType();
+                }
+
+                if ($keyType !== null && $keyType->getBuiltinType() !== SymfonyType::BUILTIN_TYPE_INT) {
                     $params[] = $keyType->getClassName() ?? $keyType->getBuiltinType();
                 }
 
-                $valueType = $type->getCollectionValueType();
-                if (null !== $valueType) {
+                if (method_exists($type, 'getCollectionValueTypes')) {
+                    $valueType = $type->getCollectionValueTypes()[0] ?? null;
+                } else {
+                    $valueType = $type->getCollectionValueType();
+                }
+
+                if ($valueType !== null) {
                     $params[] = $valueType->getClassName() ?? $valueType->getBuiltinType();
                 }
 
                 $type = $type->getClassName() ?? $type->getBuiltinType();
-                $type .= $params ? '<'.\implode(',', $params).'>' : '';
+                $type .= $params ? '<' . implode(',', $params) . '>' : '';
             } else {
                 $type = $type->getClassName() ?? $type->getBuiltinType();
             }

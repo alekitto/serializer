@@ -1,8 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
 use Cake\Chronos\Chronos;
+use DateInterval;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
@@ -10,6 +16,11 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlSerializationVisitor;
+
+use function preg_replace;
+use function sprintf;
+use function str_replace;
+use function substr;
 
 class DateHandler implements SubscribingHandlerInterface
 {
@@ -25,12 +36,12 @@ class DateHandler implements SubscribingHandlerInterface
     public static function getSubscribingMethods(): iterable
     {
         yield [
-            'type' => \DateTime::class,
+            'type' => DateTime::class,
             'direction' => Direction::DIRECTION_DESERIALIZATION,
             'method' => 'deserializeDateTime',
         ];
 
-        foreach ([\DateTimeImmutable::class, \DateTimeInterface::class] as $class) {
+        foreach ([DateTimeImmutable::class, DateTimeInterface::class] as $class) {
             yield [
                 'type' => $class,
                 'direction' => Direction::DIRECTION_DESERIALIZATION,
@@ -38,7 +49,7 @@ class DateHandler implements SubscribingHandlerInterface
             ];
         }
 
-        foreach ([\DateTime::class, \DateTimeImmutable::class, \DateTimeInterface::class, \Safe\DateTime::class, \Safe\DateTimeImmutable::class] as $class) {
+        foreach ([DateTime::class, DateTimeImmutable::class, DateTimeInterface::class, \Safe\DateTime::class, \Safe\DateTimeImmutable::class] as $class) {
             yield [
                 'type' => $class,
                 'direction' => Direction::DIRECTION_SERIALIZATION,
@@ -47,13 +58,13 @@ class DateHandler implements SubscribingHandlerInterface
         }
 
         yield [
-            'type' => \DateInterval::class,
+            'type' => DateInterval::class,
             'direction' => Direction::DIRECTION_SERIALIZATION,
             'method' => 'serializeDateInterval',
         ];
 
         yield [
-            'type' => \DateInterval::class,
+            'type' => DateInterval::class,
             'direction' => Direction::DIRECTION_DESERIALIZATION,
             'method' => 'deserializeDateInterval',
         ];
@@ -72,7 +83,7 @@ class DateHandler implements SubscribingHandlerInterface
     }
 
     public function __construct(
-        string $defaultFormat = \DateTime::ATOM,
+        string $defaultFormat = DateTime::ATOM,
         string $defaultTimezone = 'UTC',
         bool $xmlCData = true
     ) {
@@ -81,30 +92,30 @@ class DateHandler implements SubscribingHandlerInterface
         $this->xmlCData = $xmlCData;
     }
 
-    public function serializeDateTime(VisitorInterface $visitor, \DateTimeInterface $date, Type $type, Context $context)
+    public function serializeDateTime(VisitorInterface $visitor, DateTimeInterface $date, Type $type, Context $context)
     {
         $format = $this->getFormat($type);
-        if ('U' === $format) {
+        if ($format === 'U') {
             return $visitor->visitInteger($date->getTimestamp(), $type, $context);
         }
 
         return $this->serialize($visitor, $date->format($this->getFormat($type)), $type, $context);
     }
 
-    public function serializeDateInterval(VisitorInterface $visitor, \DateInterval $date, Type $type, Context $context)
+    public function serializeDateInterval(VisitorInterface $visitor, DateInterval $date, Type $type, Context $context)
     {
         return $this->serialize($visitor, $this->formatInterval($date), $type, $context);
     }
 
-    public function deserializeDateInterval(VisitorInterface $visitor, $value): \DateInterval
+    public function deserializeDateInterval(VisitorInterface $visitor, $value): DateInterval
     {
         $negative = false;
-        if (isset($value[0]) && ('+' === $value[0] || '-' === $value[0])) {
-            $negative = '-' === $value[0];
-            $value = \substr($value, 1);
+        if (isset($value[0]) && ($value[0] === '+' || $value[0] === '-')) {
+            $negative = $value[0] === '-';
+            $value = substr($value, 1);
         }
 
-        $interval = new \DateInterval($value);
+        $interval = new DateInterval($value);
         if ($negative) {
             $interval->invert = 1;
         }
@@ -112,19 +123,19 @@ class DateHandler implements SubscribingHandlerInterface
         return $interval;
     }
 
-    public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type): ?\DateTimeInterface
+    public function deserializeDateTime(VisitorInterface $visitor, $data, Type $type): ?DateTimeInterface
     {
-        return $this->deserializeDateTimeInterface(\DateTime::class, $data, $type);
+        return $this->deserializeDateTimeInterface(DateTime::class, $data, $type);
     }
 
-    public function deserializeDateTimeImmutable(VisitorInterface $visitor, $data, Type $type): ?\DateTimeInterface
+    public function deserializeDateTimeImmutable(VisitorInterface $visitor, $data, Type $type): ?DateTimeInterface
     {
-        return $this->deserializeDateTimeInterface(\DateTimeImmutable::class, $data, $type);
+        return $this->deserializeDateTimeInterface(DateTimeImmutable::class, $data, $type);
     }
 
     public function deserializeChronos(VisitorInterface $visitor, $date, Type $type): ?Chronos
     {
-        if (null === ($date = $this->deserializeDateTimeImmutable($visitor, $date, $type))) {
+        if (($date = $this->deserializeDateTimeImmutable($visitor, $date, $type)) === null) {
             return null;
         }
 
@@ -134,26 +145,26 @@ class DateHandler implements SubscribingHandlerInterface
     /**
      * @internal
      */
-    public function formatInterval(\DateInterval $dateInterval): string
+    public function formatInterval(DateInterval $dateInterval): string
     {
         $formatted = $dateInterval->format(self::DATEINTERVAL_FORMAT);
-        $formatted = \preg_replace('/(?<=\D)0[A-Z]/', '', $formatted);
-        $formatted = \str_replace('+', '', $formatted);
+        $formatted = preg_replace('/(?<=\D)0[A-Z]/', '', $formatted);
+        $formatted = str_replace('+', '', $formatted);
 
-        if ('PT' === $formatted) {
+        if ($formatted === 'PT') {
             $formatted = 'PT0S';
         }
 
-        if ('T' === \substr($formatted, -1)) {
-            $formatted = \substr($formatted, 0, -1);
+        if (substr($formatted, -1) === 'T') {
+            $formatted = substr($formatted, 0, -1);
         }
 
         return $formatted;
     }
 
-    private function deserializeDateTimeInterface(string $class, $data, Type $type): ?\DateTimeInterface
+    private function deserializeDateTimeInterface(string $class, $data, Type $type): ?DateTimeInterface
     {
-        if (null === $data) {
+        if ($data === null) {
             return null;
         }
 
@@ -161,8 +172,8 @@ class DateHandler implements SubscribingHandlerInterface
         $format = $this->getFormat($type);
         $datetime = $class::createFromFormat($format, (string) $data, $timezone);
 
-        if (false === $datetime) {
-            throw new RuntimeException(\sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
+        if ($datetime === false) {
+            throw new RuntimeException(sprintf('Invalid datetime "%s", expected format %s.', $data, $format));
         }
 
         return $datetime;
@@ -170,7 +181,7 @@ class DateHandler implements SubscribingHandlerInterface
 
     private function serialize(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
-        if ($visitor instanceof XmlSerializationVisitor && false === $this->xmlCData) {
+        if ($visitor instanceof XmlSerializationVisitor && $this->xmlCData === false) {
             return $visitor->visitSimpleString($data);
         }
 

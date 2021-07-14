@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Exclusion;
 
@@ -8,17 +10,11 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 class DepthExclusionStrategy implements ExclusionStrategyInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function shouldSkipClass(ClassMetadata $metadata, Context $context): bool
     {
         return $this->isTooDeep($context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shouldSkipProperty(PropertyMetadata $property, Context $context): bool
     {
         return false;
@@ -33,7 +29,7 @@ class DepthExclusionStrategy implements ExclusionStrategyInterface
         foreach ($metadataStack as $metadata) {
             $relativeDepth = $depth - ++$nthProperty;
 
-            if (null !== $metadata->maxDepth && $relativeDepth > $metadata->maxDepth) {
+            if ($metadata->maxDepth !== null && $relativeDepth > $metadata->maxDepth) {
                 return true;
             }
         }

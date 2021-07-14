@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Util;
 
@@ -23,9 +25,7 @@ final class SerializableConstraintViolation
     #[Xml\Attribute()]
     private string $propertyPath;
 
-    /**
-     * @Type("string")
-     */
+    /** @Type("string") */
     #[Type('string')]
     private string $message;
 

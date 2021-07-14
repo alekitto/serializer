@@ -1,8 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Exception;
 
 use LibXMLError;
+
+use function sprintf;
+
+use const LIBXML_ERR_ERROR;
+use const LIBXML_ERR_FATAL;
+use const LIBXML_ERR_WARNING;
 
 class XmlErrorException extends RuntimeException
 {
@@ -27,7 +35,7 @@ class XmlErrorException extends RuntimeException
                 $level = 'UNKNOWN';
         }
 
-        parent::__construct(\sprintf('[%s] %s in %s (line: %d, column: %d)', $level, $error->message, $error->file, $error->line, $error->column));
+        parent::__construct(sprintf('[%s] %s in %s (line: %d, column: %d)', $level, $error->message, $error->file, $error->line, $error->column));
 
         $this->xmlError = $error;
     }

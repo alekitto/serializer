@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata;
 
@@ -15,7 +17,7 @@ class AdditionalPropertyMetadata extends PropertyMetadata
         $this->name = $name;
         $this->readOnly = true;
 
-        $this->setType($class.'::'.$name);
+        $this->setType($class . '::' . $name);
     }
 
     /**
@@ -34,16 +36,10 @@ class AdditionalPropertyMetadata extends PropertyMetadata
         throw new LogicException('AdditionalPropertyMetadata is immutable.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __wakeup(): void
     {
     }

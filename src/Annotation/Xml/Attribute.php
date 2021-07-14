@@ -1,9 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation\Xml;
 
 use Attribute as PhpAttribute;
 use TypeError;
+
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -21,7 +27,7 @@ final class Attribute
             $data = ['namespace' => $namespace];
         } elseif (is_array($namespace)) {
             $data = $namespace;
-        } elseif (null !== $namespace) {
+        } elseif ($namespace !== null) {
             throw new TypeError(sprintf('Argument #1 passed to %s must be a string or null. %s passed', __METHOD__, get_debug_type($namespace)));
         }
 

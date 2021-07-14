@@ -1,8 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata;
 
 use LogicException;
+
+use function lcfirst;
+use function strpos;
+use function substr;
 
 class VirtualPropertyMetadata extends PropertyMetadata
 {
@@ -11,8 +17,8 @@ class VirtualPropertyMetadata extends PropertyMetadata
      */
     public function __construct(string $class, string $methodName)
     {
-        if (0 === \strpos($methodName, 'get')) {
-            $fieldName = \lcfirst(\substr($methodName, 3));
+        if (strpos($methodName, 'get') === 0) {
+            $fieldName = lcfirst(substr($methodName, 3));
         } else {
             $fieldName = $methodName;
         }
@@ -31,16 +37,10 @@ class VirtualPropertyMetadata extends PropertyMetadata
         throw new LogicException('VirtualPropertyMetadata is immutable.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __wakeup(): void
     {
     }

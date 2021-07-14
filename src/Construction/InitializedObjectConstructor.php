@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Construction;
 
@@ -25,7 +27,7 @@ class InitializedObjectConstructor implements ObjectConstructorInterface
      */
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
     {
-        if (1 === $context->getDepth() && $context->attributes->has('target')) {
+        if ($context->getDepth() === 1 && $context->attributes->has('target')) {
             return $context->attributes->get('target');
         }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -47,7 +49,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
     {
-        if (1 === $type->countParams()) {
+        if ($type->countParams() === 1) {
             return $visitor->visitArray($collection->toArray(), $type, $context);
         }
 
@@ -56,7 +58,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
     {
-        if (1 === $type->countParams()) {
+        if ($type->countParams() === 1) {
             return new ArrayCollection($visitor->visitArray($data, $type, $context));
         }
 

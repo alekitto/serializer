@@ -1,9 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Type\Parser;
 
 use Kcs\Serializer\Exception\SyntaxErrorException;
 use Kcs\Serializer\Type\Type;
+
+use const PHP_INT_MAX;
 
 /**
  * Parses a serializer type.
@@ -72,7 +76,7 @@ final class Parser
             } else {
                 $this->syntaxError();
             }
-        } while (null !== $this->lexer->lookahead && Lexer::T_COMMA === $this->lexer->lookahead['type'] && $this->lexer->moveNext());
+        } while ($this->lexer->lookahead !== null && $this->lexer->lookahead['type'] === Lexer::T_COMMA && $this->lexer->moveNext());
 
         $this->match(Lexer::T_CLOSED_BRACKET);
 
@@ -88,7 +92,7 @@ final class Parser
     {
         $value = null;
         $position = null;
-        if (null !== $this->lexer->lookahead) {
+        if ($this->lexer->lookahead !== null) {
             $value = $this->lexer->lookahead['value'];
             $position = (int) $this->lexer->lookahead['position'];
         }

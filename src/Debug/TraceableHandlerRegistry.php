@@ -39,7 +39,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         $this->cloner = $cloner ?? new VarCloner();
     }
 
-    public function registerSubscribingHandler(SubscribingHandlerInterface $handler): HandlerRegistryInterface
+    public function registerSubscribingHandler(SubscribingHandlerInterface $handler): self
     {
         $this->decorated->registerSubscribingHandler($handler);
 

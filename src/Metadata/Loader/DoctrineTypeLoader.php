@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -12,34 +14,28 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void
     {
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */
-        if (empty($classMetadata->discriminatorMap) && ! $classMetadata->discriminatorDisabled
-            && ! empty($doctrineMetadata->discriminatorMap) && $doctrineMetadata->isRootEntity()
+        if (
+            ! empty($classMetadata->discriminatorMap) || $classMetadata->discriminatorDisabled
+            || empty($doctrineMetadata->discriminatorMap) || ! $doctrineMetadata->isRootEntity()
         ) {
-            $classMetadata->setDiscriminator(
-                $doctrineMetadata->discriminatorColumn['name'],
-                $doctrineMetadata->discriminatorMap,
-                []
-            );
+            return;
         }
+
+        $classMetadata->setDiscriminator(
+            $doctrineMetadata->discriminatorColumn['name'],
+            $doctrineMetadata->discriminatorMap,
+            []
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $doctrineMetadata */

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -11,12 +13,16 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use TypeError;
+
+use function get_class;
+use function gettype;
+use function is_object;
+use function sprintf;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
-    /**
-     * @var LegacyTranslatorInterface|TranslatorInterface
-     */
+    /** @var LegacyTranslatorInterface|TranslatorInterface */
     private $translator;
 
     /**
@@ -41,10 +47,10 @@ class FormErrorHandler implements SubscribingHandlerInterface
     public function __construct($translator = null)
     {
         if (
-            null !== $translator &&
+            $translator !== null &&
             ! $translator instanceof LegacyTranslatorInterface && ! $translator instanceof TranslatorInterface
         ) {
-            throw new \TypeError(\sprintf('Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed', __CLASS__, LegacyTranslatorInterface::class, TranslatorInterface::class, \is_object($translator) ? \get_class($translator) : \gettype($translator)));
+            throw new TypeError(sprintf('Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed', self::class, LegacyTranslatorInterface::class, TranslatorInterface::class, is_object($translator) ? get_class($translator) : gettype($translator)));
         }
 
         $this->translator = $translator;
@@ -65,11 +71,11 @@ class FormErrorHandler implements SubscribingHandlerInterface
 
     private function getErrorMessage(FormError $error): string
     {
-        if (null === $this->translator) {
+        if ($this->translator === null) {
             return $error->getMessage();
         }
 
-        if (null !== $error->getMessagePluralization()) {
+        if ($error->getMessagePluralization() !== null) {
             if ($this->translator instanceof TranslatorInterface) {
                 return $this->translator->trans(
                     $error->getMessageTemplate(),

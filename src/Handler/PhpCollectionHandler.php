@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -10,6 +12,8 @@ use PhpCollection\Map;
 use PhpCollection\MapInterface;
 use PhpCollection\Sequence;
 use PhpCollection\SequenceInterface;
+
+use function iterator_to_array;
 
 class PhpCollectionHandler implements SubscribingHandlerInterface
 {
@@ -28,13 +32,13 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
             $methods[] = [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => $type,
-                'method' => 'serialize'.$shortName,
+                'method' => 'serialize' . $shortName,
             ];
 
             $methods[] = [
                 'direction' => Direction::DIRECTION_DESERIALIZATION,
                 'type' => $type,
-                'method' => 'deserialize'.$shortName,
+                'method' => 'deserialize' . $shortName,
             ];
         }
 
@@ -43,7 +47,7 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
     public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context)
     {
-        return $visitor->visitHash(\iterator_to_array($map), $type, $context);
+        return $visitor->visitHash(iterator_to_array($map), $type, $context);
     }
 
     public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context): MapInterface

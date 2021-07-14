@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
@@ -9,6 +11,10 @@ use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function get_debug_type;
+use function is_array;
+use function sprintf;
 
 class Serializer implements SerializerInterface
 {
@@ -49,7 +55,7 @@ class Serializer implements SerializerInterface
     {
         $this->navigator = new SerializeGraphNavigator($this->factory, $this->handlerRegistry, $this->dispatcher);
 
-        if (null === $context) {
+        if ($context === null) {
             $context = new SerializationContext();
         }
 
@@ -67,7 +73,7 @@ class Serializer implements SerializerInterface
     {
         $this->navigator = new DeserializeGraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
 
-        if (null === $context) {
+        if ($context === null) {
             $context = new DeserializationContext();
         }
 
@@ -81,12 +87,12 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, SerializationContext $context = null): array
+    public function normalize($data, ?SerializationContext $context = null): array
     {
         $result = $this->serialize($data, 'array', $context);
 
-        if (! \is_array($result)) {
-            throw new RuntimeException(\sprintf('The input data of type "%s" did not convert to an array, but got a result of type "%s".', \get_debug_type($data), \get_debug_type($result)));
+        if (! is_array($result)) {
+            throw new RuntimeException(sprintf('The input data of type "%s" did not convert to an array, but got a result of type "%s".', get_debug_type($data), get_debug_type($result)));
         }
 
         return $result;

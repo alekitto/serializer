@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle\DependencyInjection;
 
@@ -13,6 +15,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Parameter;
 
+use function class_exists;
 use function method_exists;
 
 final class SerializerExtension extends Extension
@@ -24,7 +27,7 @@ final class SerializerExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.xml');
 
         if ($container->getParameter('kernel.debug')) {
@@ -33,8 +36,7 @@ final class SerializerExtension extends Extension
 
         if (method_exists($container, 'registerForAutoconfiguration')) {
             $container->registerForAutoconfiguration(SubscribingHandlerInterface::class)
-                ->addTag('kcs_serializer.handler')
-            ;
+                ->addTag('kcs_serializer.handler');
 
             $container->registerForAutoconfiguration(SerializationHandlerInterface::class)->addTag('kcs_serializer.serialization_handler');
             $container->registerForAutoconfiguration(DeserializationHandlerInterface::class)->addTag('kcs_serializer.deserialization_handler');
@@ -43,14 +45,13 @@ final class SerializerExtension extends Extension
         $container->setParameter('kcs_serializer.xml_default_encoding', $config['xml_default_encoding'] ?? 'UTF-8');
         $container->setParameter('kcs_serializer.naming_strategy', $config['naming_strategy'] ?? 'underscore');
 
-        if (! $container->getParameter('kernel.debug') && \class_exists(AbstractAdapter::class)) {
+        if (! $container->getParameter('kernel.debug') && class_exists(AbstractAdapter::class)) {
             $container->register('kcs_serializer.metadata.cache', AdapterInterface::class)
-                ->setFactory(AbstractAdapter::class.'::createSystemCache')
+                ->setFactory(AbstractAdapter::class . '::createSystemCache')
                 ->addArgument('')
                 ->addArgument(0)
                 ->addArgument(new Parameter('container.build_id'))
-                ->addArgument('%kernel.cache_dir%/kcs_serializer')
-            ;
+                ->addArgument('%kernel.cache_dir%/kcs_serializer');
         }
 
         $container->setParameter('kcs_serializer.metadata_loader.property_info.enabled', $config['metadata']['property_info'] ?? false);

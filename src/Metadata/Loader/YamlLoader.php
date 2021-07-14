@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -6,7 +8,18 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoaderTrait;
 use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 use Symfony\Component\Yaml\Yaml;
+
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_push;
+use function array_values;
+use function in_array;
+use function is_array;
 
 class YamlLoader extends AnnotationLoader
 {
@@ -23,14 +36,11 @@ class YamlLoader extends AnnotationLoader
         $this->config = (array) Yaml::parse($this->loadFile($filePath));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata): bool
+    protected function isPropertyExcluded(ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
         $config = $this->getClassConfig($classMetadata->getName());
-        if (Annotations\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
-            if (\array_key_exists($property->name, $config['properties']) && null === $config['properties'][$property->name]) {
+        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
+            if (array_key_exists($property->name, $config['properties']) && $config['properties'][$property->name] === null) {
                 return false;
             }
 
@@ -40,9 +50,6 @@ class YamlLoader extends AnnotationLoader
         return isset($config['properties'][$property->name]['exclude']) && $config['properties'][$property->name]['exclude'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $this->hasClassConfig($classMetadata->getName())) {
@@ -52,14 +59,11 @@ class YamlLoader extends AnnotationLoader
         return parent::loadClassMetadata($classMetadata);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function isExcluded(\ReflectionClass $class): bool
+    protected function isExcluded(ReflectionClass $class): bool
     {
         $config = $this->getClassConfig($class->name);
 
-        return isset($config['exclude']) ? (bool) $config['exclude'] : false;
+        return isset($config['exclude']) && $config['exclude'];
     }
 
     /**
@@ -71,9 +75,9 @@ class YamlLoader extends AnnotationLoader
 
         $annotations = [];
         foreach ($config as $key => $value) {
-            if ('static_fields' === $key) {
+            if ($key === 'static_fields') {
                 foreach ($value as $property => $item) {
-                    if (! \is_array($item)) {
+                    if (! is_array($item)) {
                         $item = ['value' => $item];
                     }
 
@@ -87,7 +91,7 @@ class YamlLoader extends AnnotationLoader
                 continue;
             }
 
-            if ('additional_fields' === $key) {
+            if ($key === 'additional_fields') {
                 foreach ($value as $property => $item) {
                     $annotation = new Annotations\AdditionalField($property, $this->loadProperty($item));
                     $annotations[] = $annotation;
@@ -96,11 +100,11 @@ class YamlLoader extends AnnotationLoader
                 continue;
             }
 
-            if (\in_array($key, ['properties', 'virtual_properties'])) {
+            if (in_array($key, ['properties', 'virtual_properties'])) {
                 continue;
             }
 
-            \array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
+            array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
         }
 
         return $annotations;
@@ -109,17 +113,17 @@ class YamlLoader extends AnnotationLoader
     /**
      * {@inheritdoc}
      */
-    protected function getMethodAnnotations(\ReflectionMethod $method): array
+    protected function getMethodAnnotations(ReflectionMethod $method): array
     {
         $annotations = [];
         $methodName = $method->name;
         $config = $this->getClassConfig($method->class);
 
-        if (\array_key_exists($methodName, $config['virtual_properties'])) {
+        if (array_key_exists($methodName, $config['virtual_properties'])) {
             $annotations[] = new Annotations\VirtualProperty();
 
             $methodConfig = $config['virtual_properties'][$methodName] ?: [];
-            \array_push($annotations, ...$this->loadProperty($methodConfig));
+            array_push($annotations, ...$this->loadProperty($methodConfig));
         }
 
         return $annotations;
@@ -128,7 +132,7 @@ class YamlLoader extends AnnotationLoader
     /**
      * {@inheritdoc}
      */
-    protected function getPropertyAnnotations(\ReflectionProperty $property): array
+    protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
         $config = $this->getClassConfig($property->class);
         $propertyName = $property->name;
@@ -141,43 +145,64 @@ class YamlLoader extends AnnotationLoader
     }
 
     /**
-     * {@inheritdoc}
+     * Whether the passed array is associative or not.
+     *
+     * @param array<string|int, mixed> $value
      */
     private static function isAssocArray(array $value): bool
     {
-        return \array_keys($value) !== \array_keys(\array_values($value));
+        return array_keys($value) !== array_keys(array_values($value));
     }
 
+    /**
+     * @param array<string, mixed> $config
+     *
+     * @return object[]
+     */
     private function loadProperty(array $config): array
     {
         $annotations = [];
 
         foreach ($config as $key => $value) {
-            \array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
+            array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
         }
 
         return $annotations;
     }
 
-    private function hasClassConfig($class): bool
+    /**
+     * @phpstan-param class-string $class
+     */
+    private function hasClassConfig(string $class): bool
     {
         return isset($this->config[$class]);
     }
 
-    private function getClassConfig($class): array
+    /**
+     * @phpstan-param class-string $class
+     *
+     * @retrun array<string, mixed>
+     */
+    private function getClassConfig(string $class): array
     {
-        return \array_merge([
+        return array_merge([
             'virtual_properties' => [],
         ], $this->config[$class] ?? []);
     }
 
+    /**
+     * @param array<string, mixed>|mixed[]|mixed $value
+     *
+     * @return object[]
+     */
     private function createAnnotationsForArray($value, string $key): array
     {
         $annotations = [];
 
-        if (! \is_array($value)) {
+        if (! is_array($value)) {
             $annotation = $this->createAnnotationObject($key);
-            if ($property = $this->getDefaultPropertyName($annotation)) {
+            $property = $this->getDefaultPropertyName($annotation);
+            if (! empty($property)) {
                 $annotation->{$property} = $this->convertValue($annotation, $property, $value);
             }
 
@@ -189,11 +214,11 @@ class YamlLoader extends AnnotationLoader
             }
 
             $annotations[] = $annotation;
-        } elseif ('groups' === $key) {
+        } elseif ($key === 'groups') {
             $annotations[] = new Annotations\Groups($value);
         } else {
             foreach ($value as $annotValue) {
-                \array_push($annotations, ...$this->createAnnotationsForArray($annotValue, $key));
+                array_push($annotations, ...$this->createAnnotationsForArray($annotValue, $key));
             }
         }
 

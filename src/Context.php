@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
@@ -13,6 +15,10 @@ use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use LogicException;
+use Stringable;
+
+use function array_filter;
+use function is_array;
 
 /**
  * @property int $direction
@@ -49,6 +55,9 @@ abstract class Context
         return new static();
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function createChildContext(array $attributes = []): self
     {
         if (! $this->initialized) {
@@ -97,6 +106,11 @@ abstract class Context
         $this->addGroupsExclusionStrategy();
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     public function accept($data, ?Type $type = null)
     {
         return $this->navigator->accept($data, $type, $this);
@@ -117,6 +131,9 @@ abstract class Context
         return $this->exclusionStrategy;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function setAttribute(string $key, $value): self
     {
         $this->assertMutable();
@@ -133,6 +150,9 @@ abstract class Context
         return $this;
     }
 
+    /**
+     * @param string|Stringable $version
+     */
     public function setVersion($version): self
     {
         $this->setAttribute('version', $version);
@@ -140,11 +160,14 @@ abstract class Context
         return $this;
     }
 
+    /**
+     * @param mixed $groups
+     */
     public function setGroups($groups): self
     {
         if (empty($groups)) {
             $groups = null;
-        } elseif (! \is_array($groups)) {
+        } elseif (! is_array($groups)) {
             $groups = (array) $groups;
         }
 
@@ -184,7 +207,7 @@ abstract class Context
 
     public function isPropertyExcluded(PropertyMetadata $metadata): bool
     {
-        if (null === $this->exclusionStrategy) {
+        if ($this->exclusionStrategy === null) {
             return false;
         }
 
@@ -203,7 +226,7 @@ abstract class Context
         /** @var PropertyMetadata[] $properties */
         $properties = $metadata->getAttributesMetadata();
 
-        return \array_filter($properties, [$this, 'filterPropertyMetadata']);
+        return array_filter($properties, [$this, 'filterPropertyMetadata']);
     }
 
     abstract public function getDepth(): int;
@@ -233,12 +256,10 @@ abstract class Context
 
     /**
      * Set or add exclusion strategy.
-     *
-     * @param ExclusionStrategyInterface $strategy
      */
-    private function _addExclusionStrategy(ExclusionStrategyInterface $strategy): void
+    private function _addExclusionStrategy(ExclusionStrategyInterface $strategy): void // phpcs:ignore
     {
-        if (null === $this->exclusionStrategy) {
+        if ($this->exclusionStrategy === null) {
             $this->exclusionStrategy = $strategy;
 
             return;
@@ -258,7 +279,8 @@ abstract class Context
 
     private function addVersionExclusionStrategy(): void
     {
-        if (null === ($version = $this->attributes->get('version'))) {
+        $version = $this->attributes->get('version');
+        if ($version === null) {
             return;
         }
 
@@ -267,7 +289,8 @@ abstract class Context
 
     private function addGroupsExclusionStrategy(): void
     {
-        if (null === ($groups = $this->attributes->get('groups'))) {
+        $groups = $this->attributes->get('groups');
+        if ($groups === null) {
             return;
         }
 

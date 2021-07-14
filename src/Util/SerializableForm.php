@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Util;
 
@@ -15,7 +17,6 @@ final class SerializableForm
 {
     /**
      * @Type("array<Symfony\Component\Form\FormError>")
-     *
      * @var FormError[]
      */
     #[Type('array<Symfony\Component\Form\FormError>')]
@@ -24,7 +25,6 @@ final class SerializableForm
     /**
      * @Type("array<Kcs\Serializer\Util\SerializableForm>")
      * @Xml\XmlList(entry="form", inline=true)
-     *
      * @var static[]
      */
     #[Type('array<Kcs\Serializer\Util\SerializableForm>')]

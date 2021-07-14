@@ -1,10 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata;
 
+use Countable;
+use IteratorAggregate;
 use SplStack;
 
-class MetadataStack implements \IteratorAggregate, \Countable
+use function array_pop;
+
+class MetadataStack implements IteratorAggregate, Countable
 {
     /** @var string[] */
     private array $currentPath;
@@ -25,7 +31,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
     public function pop()
     {
         $metadata = $this->stack->pop();
-        \array_pop($this->currentPath);
+        array_pop($this->currentPath);
 
         return $metadata;
     }
@@ -47,7 +53,7 @@ class MetadataStack implements \IteratorAggregate, \Countable
 
     public function popIndexPath(): void
     {
-        \array_pop($this->currentPath);
+        array_pop($this->currentPath);
     }
 
     public function getCurrent()
@@ -63,9 +69,6 @@ class MetadataStack implements \IteratorAggregate, \Countable
         return $this->stack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function count(): int
     {
         return $this->stack->count();

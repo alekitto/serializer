@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -21,8 +23,6 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 {
     /**
      * Map of doctrine 2 field types to Kcs\Serializer types.
-     *
-     * @var string[]
      */
     protected const FIELD_MAPPING = [
         'string' => 'string',
@@ -59,7 +59,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
-        /* @var $classMetadata ClassMetadata */
+        /** @var ClassMetadata $classMetadata */
         $this->delegate->loadClassMetadata($classMetadata);
 
         // Abort if the given class is not a mapped entity
@@ -77,7 +77,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
             }
 
             // If the inner driver provides a type, don't guess anymore.
-            if (null !== $propertyMetadata->type) {
+            if ($propertyMetadata->type !== null) {
                 continue;
             }
 
@@ -100,32 +100,13 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         return true;
     }
 
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param ClassMetadata         $classMetadata
-     */
     abstract protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void;
 
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata      $propertyMetadata
-     *
-     * @return bool
-     */
     abstract protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool;
 
-    /**
-     * @param DoctrineClassMetadata $doctrineMetadata
-     * @param PropertyMetadata      $propertyMetadata
-     */
     abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void;
 
-    /**
-     * @param string $className
-     *
-     * @return DoctrineClassMetadata|null
-     */
-    protected function tryLoadingDoctrineMetadata($className): ?DoctrineClassMetadata
+    protected function tryLoadingDoctrineMetadata(string $className): ?DoctrineClassMetadata
     {
         if (! $manager = $this->registry->getManagerForClass($className)) {
             return null;
@@ -140,10 +121,6 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     protected function normalizeFieldType($type): ?string
     {
-        if (! isset(static::FIELD_MAPPING[$type])) {
-            return null;
-        }
-
-        return static::FIELD_MAPPING[$type];
+        return static::FIELD_MAPPING[$type] ?? null;
     }
 }

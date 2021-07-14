@@ -1,10 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
 
+use function array_intersect_key;
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -16,7 +22,6 @@ final class Groups
 {
     /**
      * @Required
-     *
      * @var array<string>
      */
     public array $groups;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
@@ -6,12 +8,14 @@ use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 
+use function array_key_exists;
+use function get_class;
+use function is_object;
+
 class AnnotationProcessor
 {
-    /**
-     * @var ProcessorInterface[]
-     */
-    protected static $processor = [
+    /** @var ProcessorInterface[] */
+    protected static array $processor = [
         Annotations\AccessType::class => AccessTypeProcessor::class,
         Annotations\ReadOnly::class => ReadOnlyProcessor::class,
 
@@ -52,12 +56,12 @@ class AnnotationProcessor
 
     public function process($annotation, MetadataInterface $metadata): void
     {
-        if (! \is_object($annotation)) {
+        if (! is_object($annotation)) {
             throw new InvalidArgumentException('You must pass an annotation object as first parameter of process');
         }
 
-        $class = \get_class($annotation);
-        if (! \array_key_exists($class, static::$processor)) {
+        $class = get_class($annotation);
+        if (! array_key_exists($class, static::$processor)) {
             return;
         }
 

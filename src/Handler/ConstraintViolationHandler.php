@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -23,7 +25,8 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => ConstraintViolationList::class,
                 'method' => 'serializeList',
-            ], [
+            ],
+            [
                 'direction' => Direction::DIRECTION_SERIALIZATION,
                 'type' => ConstraintViolation::class,
                 'method' => 'serializeViolation',

@@ -1,12 +1,19 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Type;
 
+use JsonSerializable;
 use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Type\Parser\Parser;
-use JsonSerializable;
 
+use function count;
+use function get_class;
+use function gettype;
+use function is_object;
+use function is_string;
 use function json_decode;
 use function json_encode;
 
@@ -24,8 +31,6 @@ final class Type implements JsonSerializable
     private array $params;
 
     /**
-     * Type constructor.
-     *
      * @param array<string|int, mixed> $params
      */
     public function __construct(string $name, array $params = [])
@@ -40,7 +45,7 @@ final class Type implements JsonSerializable
     public static function parse(string $type): self
     {
         static $parser = null;
-        if (null === $parser) {
+        if ($parser === null) {
             $parser = new Parser();
         }
 
@@ -58,12 +63,12 @@ final class Type implements JsonSerializable
             return $object;
         }
 
-        if (\is_object($object)) {
-            $object = \get_class($object);
+        if (is_object($object)) {
+            $object = get_class($object);
         }
 
-        if (! \is_string($object)) {
-            throw new InvalidArgumentException('Cannot create a type from '.\gettype($object));
+        if (! is_string($object)) {
+            throw new InvalidArgumentException('Cannot create a type from ' . gettype($object));
         }
 
         return new self($object);
@@ -72,7 +77,7 @@ final class Type implements JsonSerializable
     public static function null(): self
     {
         static $nullType = null;
-        if (null === $nullType) {
+        if ($nullType === null) {
             $nullType = new self('NULL');
         }
 
@@ -99,7 +104,7 @@ final class Type implements JsonSerializable
 
     public function countParams(): int
     {
-        return \count($this->params);
+        return count($this->params);
     }
 
     /**

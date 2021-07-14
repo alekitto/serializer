@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
@@ -7,13 +9,12 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 
 class AccessTypeProcessor implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function process($annotation, MetadataInterface $metadata): void
+    public static function process(object $annotation, MetadataInterface $metadata): void
     {
-        if ($metadata instanceof ClassMetadata) {
-            $metadata->defaultAccessType = $annotation->type;
+        if (! ($metadata instanceof ClassMetadata)) {
+            return;
         }
+
+        $metadata->defaultAccessType = $annotation->type;
     }
 }

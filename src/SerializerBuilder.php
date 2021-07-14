@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
+use Closure;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
-use Kcs\Metadata\Loader\ChainLoader;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
@@ -29,6 +31,8 @@ use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
+
+use const PHP_VERSION_ID;
 
 /**
  * Builder for serializer instances.
@@ -109,7 +113,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function configureHandlers(\Closure $closure): self
+    public function configureHandlers(Closure $closure): self
     {
         $this->handlersConfigured = true;
         $closure($this->handlerRegistry);
@@ -128,7 +132,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function configureListeners(\Closure $closure): self
+    public function configureListeners(Closure $closure): self
     {
         $this->listenersConfigured = true;
         $closure($this->eventDispatcher);
@@ -196,7 +200,7 @@ class SerializerBuilder
     public function build(): SerializerInterface
     {
         $metadataLoader = $this->metadataLoader;
-        if (null === $metadataLoader) {
+        if ($metadataLoader === null) {
             $annotationReader = $this->annotationReader ?: new AnnotationReader();
 
             $metadataLoader = new AnnotationLoader();
@@ -235,7 +239,7 @@ class SerializerBuilder
 
     private function initializePropertyNamingStrategy(): void
     {
-        if (null !== $this->propertyNamingStrategy) {
+        if ($this->propertyNamingStrategy !== null) {
             return;
         }
 

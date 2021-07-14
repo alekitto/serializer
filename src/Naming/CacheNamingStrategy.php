@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Naming;
 
@@ -16,9 +18,6 @@ final class CacheNamingStrategy implements PropertyNamingStrategyInterface
         $this->cache = new SplObjectStorage();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function translateName(PropertyMetadata $property): string
     {
         if (isset($this->cache[$property])) {

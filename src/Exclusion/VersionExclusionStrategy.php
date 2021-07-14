@@ -1,10 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Exclusion;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+
+use function version_compare;
 
 class VersionExclusionStrategy implements ExclusionStrategyInterface
 {
@@ -15,27 +19,17 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
         $this->version = (string) $version;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shouldSkipClass(ClassMetadata $metadata, Context $navigatorContext): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shouldSkipProperty(PropertyMetadata $property, Context $navigatorContext): bool
     {
-        if ((null !== $version = $property->sinceVersion) && \version_compare($this->version, $version, '<')) {
+        if ((null !== $version = $property->sinceVersion) && version_compare($this->version, $version, '<')) {
             return true;
         }
 
-        if ((null !== $version = $property->untilVersion) && \version_compare($this->version, $version, '>')) {
-            return true;
-        }
-
-        return false;
+        return (null !== $version = $property->untilVersion) && version_compare($this->version, $version, '>');
     }
 }

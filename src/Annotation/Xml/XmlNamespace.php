@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation\Xml;
 
 use Attribute;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -14,9 +19,7 @@ use function Safe\sprintf;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class XmlNamespace
 {
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $uri;
     public string $prefix = '';
 

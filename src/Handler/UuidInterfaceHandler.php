@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -56,7 +58,7 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
      */
     public function serialize(VisitorInterface $visitor, ?UuidInterface $uuid, Type $type, Context $context)
     {
-        if (null === $uuid) {
+        if ($uuid === null) {
             return $visitor->visitNull(null, Type::null(), $context);
         }
 

@@ -1,9 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation\Xml;
 
 use Attribute;
 use TypeError;
+
+use function get_debug_type;
+use function is_array;
+use function is_bool;
 use function Safe\sprintf;
 
 /**
@@ -22,7 +28,7 @@ final class Element
             $data = ['cdata' => $cdata];
         } elseif (is_array($cdata)) {
             $data = $cdata;
-        } elseif (null !== $cdata) {
+        } elseif ($cdata !== null) {
             throw new TypeError(sprintf('Argument #1 passed to %s must be a bool. %s passed', __METHOD__, get_debug_type($namespace)));
         }
 

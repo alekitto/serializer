@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle;
 
@@ -14,9 +16,6 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 final class SerializerBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
     public function build(ContainerBuilder $container): void
     {
         $container
@@ -24,8 +23,7 @@ final class SerializerBundle extends Bundle
             ->addCompilerPass(new NamingStrategyPass())
             ->addCompilerPass(new RegisterHandlersPass())
             ->addCompilerPass(new MappingLoaderPass())
-            ->addCompilerPass(new DoctrineConstructorPass())
-        ;
+            ->addCompilerPass(new DoctrineConstructorPass());
     }
 
     public function getContainerExtension(): ExtensionInterface
