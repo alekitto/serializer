@@ -14,6 +14,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function assert;
 use function is_scalar;
 
 class DeserializeGraphNavigator extends GraphNavigator
@@ -56,9 +57,13 @@ class DeserializeGraphNavigator extends GraphNavigator
         }
 
         $metadata = $this->getMetadataForType($type);
+
+        // @phpstan-ignore-next-line
         if ($metadata !== null && ! empty($metadata->discriminatorMap) && $type->is($metadata->discriminatorBaseClass)) {
             $metadata = $this->metadataFactory->getMetadataFor($metadata->getSubtype($data));
         }
+
+        assert($metadata === null || $metadata instanceof ClassMetadata);
 
         $context->visitor->startVisiting($data, $type, $context);
         $rs = $this->callVisitor($data, $type, $context, $metadata);

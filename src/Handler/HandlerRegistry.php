@@ -9,15 +9,17 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\RuntimeException;
 
+use function assert;
 use function get_class;
 use function is_array;
-use function sprintf;
+use function is_callable;
+use function Safe\sprintf;
+use function Safe\substr;
 use function strrpos;
-use function substr;
 
 final class HandlerRegistry implements HandlerRegistryInterface
 {
-    /** @var SubscribingHandlerInterface[] */
+    /** @var array<string, array<string, SubscribingHandlerInterface>> */
     private array $handlers;
 
     public static function getDefaultMethod(int $direction, string $type): string
@@ -61,7 +63,10 @@ final class HandlerRegistry implements HandlerRegistryInterface
 
             foreach ($directions as $direction) {
                 $method = $methodData['method'] ?? self::getDefaultMethod($direction, $methodData['type']);
-                $this->registerHandler($direction, $methodData['type'], [$handler, $method]);
+                $inner = [$handler, $method];
+                assert(is_callable($inner));
+
+                $this->registerHandler($direction, $methodData['type'], $inner);
             }
         }
 

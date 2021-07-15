@@ -13,7 +13,7 @@ use Kcs\Serializer\VisitorInterface;
 use function get_debug_type;
 use function is_array;
 use function is_callable;
-use function sprintf;
+use function Safe\sprintf;
 
 /**
  * @internal

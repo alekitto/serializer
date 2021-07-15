@@ -12,10 +12,11 @@ use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 
+use function assert;
 use function get_debug_type;
 use function is_array;
 use function is_callable;
-use function sprintf;
+use function Safe\sprintf;
 
 /**
  * @internal
@@ -37,6 +38,7 @@ final class InternalSerializationHandler
      */
     public function __invoke(VisitorInterface $visitor, $data, Type $type, Context $context)
     {
+        assert($context instanceof SerializationContext);
         if (is_array($this->handler) && $this->handler[0] instanceof Closure) {
             $this->handler[0] = $this->handler[0]();
         }

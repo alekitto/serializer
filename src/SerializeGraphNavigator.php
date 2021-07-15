@@ -11,6 +11,7 @@ use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 
+use function assert;
 use function get_class;
 use function is_array;
 use function is_object;
@@ -40,6 +41,7 @@ class SerializeGraphNavigator extends GraphNavigator
     protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context)
     {
         if ($data instanceof SerializationGroupProviderInterface) {
+            assert($context instanceof SerializationContext);
             $childGroups = $data->getSerializationGroups($context);
             $context = $context->createChildContext([
                 'groups' => ! is_array($childGroups) ? iterator_to_array($childGroups, false) : $childGroups,

@@ -12,9 +12,9 @@ use RuntimeException;
 use function explode;
 use function is_bool;
 use function is_string;
-use function sprintf;
+use function Safe\sprintf;
+use function Safe\substr;
 use function strpos;
-use function substr;
 use function var_export;
 
 trait LoaderTrait
@@ -35,6 +35,7 @@ trait LoaderTrait
                 break;
         }
 
+        /** @phpstan-var class-string $annotationClass */
         $annotationClass = 'Kcs\\Serializer\\Annotation\\' . $className;
         $reflectionClass = new ReflectionClass($annotationClass);
 
@@ -54,7 +55,7 @@ trait LoaderTrait
      *
      * @return mixed
      */
-    private function convertValue(object $annotation, ?string $property, $value)
+    private function convertValue(object $annotation, string $property, $value)
     {
         $reflectionProperty = new ReflectionProperty($annotation, $property);
         $type = (string) $reflectionProperty->getType();

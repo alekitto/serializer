@@ -18,7 +18,7 @@ use TypeError;
 use function get_class;
 use function gettype;
 use function is_object;
-use function sprintf;
+use function Safe\sprintf;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {

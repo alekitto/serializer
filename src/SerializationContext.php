@@ -8,6 +8,7 @@ use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
 use SplObjectStorage;
 
+use function assert;
 use function get_class;
 use function gettype;
 use function is_object;
@@ -31,9 +32,11 @@ class SerializationContext extends Context
     /**
      * {@inheritdoc}
      */
-    public function createChildContext(array $attributes = []): Context
+    public function createChildContext(array $attributes = []): self
     {
         $obj = parent::createChildContext($attributes);
+        assert($obj instanceof self);
+
         $obj->visitingSet = $this->visitingSet;
 
         return $obj;

@@ -7,8 +7,8 @@ namespace Kcs\Serializer\Metadata;
 use LogicException;
 
 use function lcfirst;
+use function Safe\substr;
 use function strpos;
-use function substr;
 
 class VirtualPropertyMetadata extends PropertyMetadata
 {

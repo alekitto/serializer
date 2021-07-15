@@ -18,14 +18,14 @@ use function assert;
 use function count;
 use function is_array;
 use function range;
-use function sprintf;
+use function Safe\sprintf;
 
 class GenericSerializationVisitor extends AbstractVisitor
 {
-    private ?GraphNavigator $navigator = null;
+    private GraphNavigator $navigator;
     private SplStack $dataStack;
 
-    /** @var array<string, mixed>|ArrayObject<string, mixed> */
+    /** @var array<string, mixed>|ArrayObject<string, mixed>|null */
     private $root;
 
     /** @var mixed */
@@ -33,7 +33,12 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
-        $this->navigator = $navigator;
+        if ($navigator === null) {
+            unset($this->navigator);
+        } else {
+            $this->navigator = $navigator;
+        }
+
         $this->root = null;
         $this->dataStack = new SplStack();
     }
@@ -186,7 +191,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * @return array<string, mixed>|ArrayObject<string, mixed>
+     * @return array<string, mixed>|ArrayObject<string, mixed>|null
      */
     public function getRoot()
     {

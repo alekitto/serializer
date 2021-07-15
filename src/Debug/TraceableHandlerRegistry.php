@@ -16,6 +16,7 @@ use ProxyManager\Proxy\ProxyInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Throwable;
 
@@ -30,7 +31,10 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
     private HandlerRegistryInterface $decorated;
     private VarCloner $cloner;
 
-    /** @var array<string, mixed> */
+    /**
+     * @var array<int, mixed>
+     * @phpstan-var array{type: string, direction: string, handler: string, exception: Data|null}[]
+     */
     public array $calls = [];
 
     public function __construct(HandlerRegistryInterface $decorated, ?VarCloner $cloner = null)
@@ -101,10 +105,12 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
     private function getCallableName(callable $callable): string
     {
         if ($callable instanceof InternalSerializationHandler) {
+            // @phpstan-ignore-next-line
             $callable = (fn () => $this->handler)->bindTo($callable, InternalSerializationHandler::class)();
         }
 
         if ($callable instanceof InternalDeserializationHandler) {
+            // @phpstan-ignore-next-line
             $callable = (fn () => $this->handler)->bindTo($callable, InternalDeserializationHandler::class)();
         }
 

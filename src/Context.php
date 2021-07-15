@@ -35,7 +35,7 @@ abstract class Context
     private bool $initialized = false;
     private MetadataStack $metadataStack;
 
-    public function __construct()
+    final public function __construct()
     {
         $this->attributes = new AttributesMap();
     }
@@ -64,7 +64,7 @@ abstract class Context
             throw new LogicException('Cannot create a child context of an uninitialized context.');
         }
 
-        $obj = new static();
+        $obj = static::create();
 
         $obj->attributes = clone $this->attributes;
         foreach ($attributes as $key => $value) {

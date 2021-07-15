@@ -6,7 +6,7 @@ namespace Kcs\Serializer;
 
 use Kcs\Serializer\Exception\InvalidArgumentException;
 
-use function sprintf;
+use function Safe\sprintf;
 use function strtolower;
 
 final class Direction

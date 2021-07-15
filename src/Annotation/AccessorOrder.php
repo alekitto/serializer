@@ -29,12 +29,12 @@ final class AccessorOrder
     /** @Required */
     public string $order;
 
-    /** @var string[] */
-    public array $custom = [];
+    /** @var string|string[] */
+    public $custom = [];
 
     /**
      * @param array<string, mixed>|string $order
-     * @phpstan-param array{order?: string, value?: string, custom?: string[]}|string $order
+     * @phpstan-param array{order?: string, value?: string, custom?: string|string[]}|string $order
      */
     public function __construct($order, ?array $custom = null)
     {

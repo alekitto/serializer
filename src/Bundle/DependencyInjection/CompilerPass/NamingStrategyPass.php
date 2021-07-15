@@ -10,13 +10,17 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use function class_exists;
-use function sprintf;
+use function is_string;
+use function Safe\sprintf;
 
 class NamingStrategyPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
         $namingStrategy = $container->getParameter('kcs_serializer.naming_strategy');
+        if ($namingStrategy === null || ! is_string($namingStrategy)) {
+            $namingStrategy = 'underscore';
+        }
 
         if ($container->hasDefinition($namingStrategy)) {
             $container->setAlias('kcs_serializer.naming_strategy', new Alias($namingStrategy));

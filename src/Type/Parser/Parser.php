@@ -7,6 +7,8 @@ namespace Kcs\Serializer\Type\Parser;
 use Kcs\Serializer\Exception\SyntaxErrorException;
 use Kcs\Serializer\Type\Type;
 
+use function assert;
+
 use const PHP_INT_MAX;
 
 /**
@@ -47,6 +49,7 @@ final class Parser
             $this->syntaxError();
         }
 
+        assert(isset($this->lexer->lookahead['value']));
         $value = $this->lexer->lookahead['value'];
         $this->lexer->moveNext();
 

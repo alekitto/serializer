@@ -23,8 +23,8 @@ final class Accessor
     public ?string $setter = null;
 
     /**
-     * @param array<string, mixed>|string $getter
-     * @phpstan-param array{getter?: string, value?: string, setter?: string}|string $getter
+     * @param array<string, mixed>|string|null $getter
+     * @phpstan-param array{getter?: string, value?: string, setter?: string}|string|null $getter
      */
     public function __construct($getter = null, ?string $setter = null)
     {

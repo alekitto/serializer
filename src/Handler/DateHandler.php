@@ -17,10 +17,10 @@ use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlSerializationVisitor;
 
-use function preg_replace;
-use function sprintf;
+use function Safe\preg_replace;
+use function Safe\sprintf;
+use function Safe\substr;
 use function str_replace;
-use function substr;
 
 class DateHandler implements SubscribingHandlerInterface
 {

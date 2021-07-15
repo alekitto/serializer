@@ -23,7 +23,7 @@ class AdditionalPropertyMetadata extends PropertyMetadata
     /**
      * {@inheritdoc}
      */
-    public function getValue($obj)
+    public function getValue(object $obj)
     {
         return $obj;
     }

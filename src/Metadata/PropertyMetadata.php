@@ -14,10 +14,8 @@ use ReflectionException;
 use function call_user_func;
 use function implode;
 use function method_exists;
-use function sprintf;
+use function Safe\sprintf;
 use function ucfirst;
-
-use const PHP_VERSION_ID;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
@@ -87,15 +85,13 @@ class PropertyMetadata extends BasePropertyMetadata
     }
 
     /**
-     * @param mixed $obj
-     *
      * @return mixed
      */
-    public function getValue($obj)
+    public function getValue(object $obj)
     {
         if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
             $reflector = $this->getReflection();
-            if (PHP_VERSION_ID >= 70400 && $reflector->hasType() && ! $reflector->isInitialized($obj)) {
+            if ($reflector->hasType() && ! $reflector->isInitialized($obj)) {
                 // There is no way to check if a property has been unset or if it is uninitialized.
                 // When trying to access an uninitialized property, __get method is triggered.
 
@@ -217,6 +213,7 @@ class PropertyMetadata extends BasePropertyMetadata
             }
         } catch (ReflectionException $e) {
             // Property does not exist.
+            // @ignoreException
         }
 
         throw new RuntimeException(sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set' . ucfirst($this->name), $this->class, $this->name));

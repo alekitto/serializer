@@ -18,7 +18,8 @@
         "doctrine/lexer": "^1.0",
         "kcs/metadata": "^2.0 | ^3.0 | ^4.0",
         "psr/event-dispatcher": "^1.0",
-        "symfony/polyfill-php80": "^1.15"
+        "symfony/polyfill-php80": "^1.15",
+        "thecodingmachine/safe": "^1.1"
     },
     "conflict": {
         "twig/twig": "<1.12",
@@ -68,7 +69,6 @@
         "symfony/validator": "^4.4|^5.0",
         "symfony/web-profiler-bundle": "^4.4|^5.0",
         "symfony/yaml": "^4.4|^5.0",
-        "thecodingmachine/safe": "^1.1",
         "twig/twig": "^1.12|^2.0|^3.0"
     },
     "autoload": {
@@ -85,7 +85,7 @@
         ]
     },
     "scripts": {
-        "phpstan": "phpstan analyse src/ -c vendor/solido/php-coding-standards/phpstan.neon --level=8 --no-progress -vvv --memory-limit=2048M",
+        "phpstan": "phpstan analyse src/ -c phpstan.neon --level=8 --no-progress -vvv --memory-limit=2048M",
         "cscheck": "vendor/bin/phpcs --standard=Solido src/",
         "csfix": "vendor/bin/phpcbf --standard=Solido src/"
     },

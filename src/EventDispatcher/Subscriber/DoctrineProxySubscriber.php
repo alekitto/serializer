@@ -27,6 +27,6 @@ class DoctrineProxySubscriber
             return;
         }
 
-        $type->name = get_parent_class($object);
+        $type->name = get_parent_class($object); // @phpstan-ignore-line
     }
 }

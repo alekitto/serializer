@@ -9,6 +9,8 @@ use Kcs\Serializer\Annotation\Xml;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 
+use function assert;
+
 /**
  * @Xml\Root(name="form")
  */
@@ -43,7 +45,8 @@ final class SerializableForm
     {
         $this->name = $form->getName();
 
-        foreach ($form->getErrors() as $error) {
+        foreach ($form->getErrors(false) as $error) {
+            assert($error instanceof FormError);
             $this->errors[] = $error;
         }
 

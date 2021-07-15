@@ -6,7 +6,7 @@ namespace Kcs\Serializer;
 
 use Symfony\Component\Yaml\Yaml;
 
-use function substr;
+use function Safe\substr;
 
 use const PHP_INT_MAX;
 

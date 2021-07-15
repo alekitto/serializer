@@ -7,7 +7,7 @@ namespace Kcs\Serializer\Exception;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 use function count;
-use function sprintf;
+use function Safe\sprintf;
 
 class ValidationFailedException extends RuntimeException
 {

@@ -35,9 +35,10 @@ final class StaticField
 
     /**
      * @param array<string, mixed>|string $name
-     * @param object[]|mixed $attributes
+     * @param array|null $attributes
      * @param mixed $value
-     * @phpstan-param array{entry?: string, value?: string, attributes?: object[], value?: mixed}|string $name
+     * @phpstan-param array<int, object|mixed>|null $attributes
+     * @phpstan-param array{name?: string, value?: mixed, attributes?: object[]}|string $name
      */
     public function __construct($name, ?array $attributes = null, $value = null)
     {

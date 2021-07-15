@@ -49,6 +49,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
             try {
                 $targetEntity = $doctrineMetadata->getAssociationTargetClass($propertyName);
             } catch (Throwable $e) {
+                // @ignoreException
                 return;
             }
 

@@ -7,8 +7,8 @@ namespace Kcs\Serializer\Type\Parser;
 use Doctrine\Common\Lexer\AbstractLexer;
 
 use function ctype_alpha;
+use function Safe\substr;
 use function str_replace;
-use function substr;
 
 final class Lexer extends AbstractLexer
 {

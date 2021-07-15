@@ -24,10 +24,10 @@ use function array_search;
 use function assert;
 use function is_object;
 use function iterator_to_array;
-use function preg_match;
+use function Safe\preg_match;
+use function Safe\sprintf;
+use function Safe\substr;
 use function sha1;
-use function sprintf;
-use function substr;
 
 /**
  * XmlSerializationVisitor.
@@ -84,7 +84,6 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function visitString($data, Type $type, Context $context)
     {
         $metadata = $context->getMetadataStack()->getCurrent();
-        assert($metadata === null || $metadata instanceof PropertyMetadata);
 
         return $this->currentNodes = [$this->createTextNode($data, $metadata->xmlElementCData ?? true)];
     }
@@ -155,6 +154,7 @@ class XmlSerializationVisitor extends AbstractVisitor
      */
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
+        assert($context instanceof SerializationContext);
         $v = $metadata->getValue($data);
 
         if ($v === null && ! $context->shouldSerializeNull()) {
@@ -445,7 +445,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         if ($prefix !== '') {
             $node = $this->document->createElement($prefix . ':' . $elementName);
         } else {
-            $node = $this->document->createElement($elementName);
+            $node = $this->document->createElement($elementName ?? '');
         }
 
         return $node;
@@ -455,7 +455,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     {
         $prefix = array_search($namespace, $this->xmlNamespaces, true);
         if ($prefix !== false) {
-            return $prefix;
+            return (string) $prefix;
         }
 
         $prefix = 'ns-' . substr(sha1($namespace), 0, 8);

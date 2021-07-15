@@ -14,7 +14,7 @@ use function array_key_exists;
 use function assert;
 use function gettype;
 use function is_array;
-use function sprintf;
+use function Safe\sprintf;
 use function var_export;
 
 /**
@@ -106,6 +106,8 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
     ) {
+        assert($objectConstructor !== null);
+        assert($context instanceof DeserializationContext);
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
 
         foreach ($context->getNonSkippedProperties($metadata) as $propertyMetadata) {

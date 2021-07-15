@@ -10,17 +10,18 @@ use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use LogicException;
 
-use function array_flip;
 use function array_keys;
 use function array_merge;
 use function array_search;
+use function assert;
 use function implode;
 use function in_array;
 use function is_array;
 use function is_string;
-use function ksort;
+use function Safe\array_flip;
+use function Safe\ksort;
 use function Safe\sprintf;
-use function uksort;
+use function Safe\uksort;
 use function var_export;
 
 /**
@@ -57,7 +58,7 @@ class ClassMetadata extends BaseClassMetadata
     /** @var string[]|null */
     public ?array $customOrder = null;
 
-    /** @var array<string, string> */
+    /** @var array<string, class-string> */
     public array $discriminatorMap = [];
 
     /** @var string[] */
@@ -159,6 +160,8 @@ class ClassMetadata extends BaseClassMetadata
 
     /**
      * @param array<string, string>|object $data
+     *
+     * @phpstan-return class-string
      */
     public function getSubtype($data): string
     {
@@ -223,6 +226,8 @@ class ClassMetadata extends BaseClassMetadata
         $this->discriminatorValue = $typeValue;
         $this->discriminatorFieldName = $object->discriminatorFieldName;
         $this->discriminatorGroups = $object->discriminatorGroups;
+
+        assert($this->discriminatorFieldName !== null);
 
         $discriminatorProperty = new StaticPropertyMetadata($this->getName(), $this->discriminatorFieldName, $typeValue);
         $discriminatorProperty->groups = $this->discriminatorGroups;

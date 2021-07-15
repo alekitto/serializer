@@ -22,8 +22,8 @@ final class Attribute
     public ?string $namespace = null;
 
     /**
-     * @param array<string, mixed>|string $namespace
-     * @phpstan-param array{namespace?: string, value?: string}|string $namespace
+     * @param array<string, mixed>|string|null $namespace
+     * @phpstan-param array{namespace?: string, value?: string}|string|null $namespace
      */
     public function __construct($namespace = null)
     {

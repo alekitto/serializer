@@ -109,6 +109,9 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void;
 
+    /**
+     * @phpstan-param class-string<object> $className
+     */
     protected function tryLoadingDoctrineMetadata(string $className): ?DoctrineClassMetadata
     {
         $manager = $this->registry->getManagerForClass($className);

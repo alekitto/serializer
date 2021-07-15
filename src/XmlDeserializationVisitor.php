@@ -12,19 +12,20 @@ use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use Safe\Exceptions\SimplexmlException;
 use SimpleXMLElement;
 
 use function array_key_exists;
 use function in_array;
-use function libxml_get_last_error;
 use function libxml_use_internal_errors;
-use function preg_replace;
 use function reset;
-use function simplexml_load_string;
-use function sprintf;
+use function Safe\libxml_get_last_error;
+use function Safe\preg_replace;
+use function Safe\simplexml_load_string;
+use function Safe\sprintf;
+use function Safe\substr;
 use function str_replace;
 use function stripos;
-use function substr;
 use function uniqid;
 use function var_export;
 
@@ -49,11 +50,12 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             }
         }
 
-        $doc = simplexml_load_string($data);
-        libxml_use_internal_errors($previous);
-
-        if ($doc === false) {
-            throw new XmlErrorException(libxml_get_last_error());
+        try {
+            $doc = simplexml_load_string($data);
+        } catch (SimplexmlException $e) {
+            throw new XmlErrorException(libxml_get_last_error(), $e);
+        } finally {
+            libxml_use_internal_errors($previous);
         }
 
         $this->docNamespaces = $doc->getDocNamespaces(true);
@@ -119,7 +121,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
                 break;
 
             default:
-                throw new LogicException(sprintf('The array type does not support more than 2 parameters, but got %s.', var_export($type['params'], true)));
+                throw new LogicException(sprintf('The array type does not support more than 2 parameters, but got %s.', var_export($type->getParams(), true)));
         }
 
         $this->setData($result);
@@ -344,7 +346,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             --$braces;
         } while ($braces > 0);
 
-        $internalSubset = substr($data, $startPos, $endPos - $startPos);
+        $internalSubset = substr($data, $startPos ?: 0, $endPos - $startPos);
         $internalSubset = str_replace(["\n", "\r"], '', $internalSubset);
         $internalSubset = preg_replace('/\s{2,}/', ' ', $internalSubset);
         $internalSubset = str_replace(['[ <!', '> ]>'], ['[<!', '>]>'], $internalSubset);

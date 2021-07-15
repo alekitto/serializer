@@ -29,12 +29,12 @@ final class Discriminator
 
     public bool $disabled = false;
 
-    /** @var array<string> */
-    public ?array $groups = null;
+    /** @var string|string[] */
+    public $groups;
 
     /**
      * @param array<string, mixed> $map
-     * @phpstan-param array{map?: array<string, mixed>, value?: array<string, mixed>, field?: string, disabled?: string, groups?: string}|array<string, mixed> $map
+     * @phpstan-param array{map?: array<string, mixed>, value?: array<string, mixed>, field?: string, disabled?: string, groups?: string|string[]}|array<string, mixed> $map
      */
     public function __construct(array $map, ?string $field = null, ?bool $disabled = null, ?array $groups = null)
     {

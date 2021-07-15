@@ -1,0 +1,8 @@
+includes:
+    - vendor/solido/php-coding-standards/phpstan.neon
+
+parameters:
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - message: "#Offset '.*' does not exist on array.+#"
+          path: src/Annotation/*

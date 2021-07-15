@@ -117,6 +117,8 @@ class YamlLoader extends AnnotationLoader
     {
         $annotations = [];
         $methodName = $method->name;
+
+        // @phpstan-ignore-next-line
         $config = $this->getClassConfig($method->class);
 
         if (array_key_exists($methodName, $config['virtual_properties'])) {
@@ -134,6 +136,7 @@ class YamlLoader extends AnnotationLoader
      */
     protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
+        // @phpstan-ignore-next-line
         $config = $this->getClassConfig($property->class);
         $propertyName = $property->name;
 

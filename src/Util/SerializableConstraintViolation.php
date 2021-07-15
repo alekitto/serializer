@@ -32,7 +32,7 @@ final class SerializableConstraintViolation
     public function __construct(ConstraintViolationInterface $violation)
     {
         $this->propertyPath = $violation->getPropertyPath();
-        $this->message = $violation->getMessage();
+        $this->message = (string) $violation->getMessage();
     }
 
     public function getPropertyPath(): string

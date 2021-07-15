@@ -6,7 +6,7 @@ namespace Kcs\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-use function preg_replace;
+use function Safe\preg_replace;
 use function strtolower;
 
 /**

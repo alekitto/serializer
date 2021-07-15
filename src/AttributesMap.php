@@ -14,7 +14,7 @@ class AttributesMap implements ArrayAccess
     /**
      * Returns an attribute by name.
      *
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -26,7 +26,7 @@ class AttributesMap implements ArrayAccess
     /**
      * Set an attribute into the map.
      *
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -54,7 +54,7 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
      */
     public function offsetExists($offset): bool
     {
@@ -62,7 +62,9 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     *
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -70,7 +72,10 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     * @param mixed $value
+     *
+     * @return mixed
      */
     public function offsetSet($offset, $value)
     {
@@ -78,7 +83,7 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
      */
     public function offsetUnset($offset): void
     {

@@ -8,7 +8,6 @@ use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
-use function array_combine;
 use function array_fill;
 use function array_filter;
 use function array_key_exists;
@@ -16,18 +15,19 @@ use function array_values;
 use function count;
 use function in_array;
 use function is_array;
+use function Safe\array_combine;
 use function strpos;
 
 class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
     public const DEFAULT_GROUP = 'Default';
 
-    /** @var string[] */
+    /** @var array<string, mixed> */
     private array $groups;
     private bool $nestedGroups;
 
     /**
-     * @param string[]|array<string, mixed> $groups
+     * @param array<string|int, mixed> $groups
      */
     public function __construct(array $groups)
     {
@@ -46,7 +46,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
         })();
 
         if ($this->nestedGroups) {
-            $this->groups = $groups;
+            $this->groups = $groups; // @phpstan-ignore-line
         } else {
             $this->groups = array_combine($groups, array_fill(0, count($groups), true));
         }

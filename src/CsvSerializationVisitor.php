@@ -11,23 +11,23 @@ use Kcs\Serializer\Type\Type;
 
 use function array_fill_keys;
 use function array_filter;
-use function array_flip;
 use function array_keys;
 use function array_map;
-use function array_replace;
 use function array_values;
 use function count;
-use function fclose;
-use function fopen;
-use function fputcsv;
 use function in_array;
 use function is_array;
 use function is_iterable;
 use function iterator_to_array;
-use function preg_match;
-use function rewind;
+use function Safe\array_flip;
+use function Safe\array_replace;
+use function Safe\fclose;
+use function Safe\fopen;
+use function Safe\fputcsv;
+use function Safe\preg_match;
+use function Safe\rewind;
+use function Safe\stream_get_contents;
 use function str_replace;
-use function stream_get_contents;
 
 class CsvSerializationVisitor extends GenericSerializationVisitor
 {
@@ -56,10 +56,8 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     /**
      * @param resource $handle
      * @param mixed[] $data
-     *
-     * @return false|int
      */
-    private static function fputcsv($handle, array $data, string $delimiter, string $enclosure, string $escapeChar)
+    private static function fputcsv($handle, array $data, string $delimiter, string $enclosure, string $escapeChar): int
     {
         $data = array_map(static fn (?string $value) => null === $value ? $value : str_replace($enclosure, $escapeChar . $enclosure, $value), $data);
 

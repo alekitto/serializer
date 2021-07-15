@@ -54,7 +54,7 @@ class SerializerBuilder
     /** @var VisitorInterface[] */
     private array $deserializationVisitors;
 
-    private ?PropertyNamingStrategyInterface $propertyNamingStrategy = null;
+    private PropertyNamingStrategyInterface $propertyNamingStrategy;
     private ?CacheItemPoolInterface $cache = null;
     private ?Reader $annotationReader = null;
     private ?LoaderInterface $metadataLoader = null;
@@ -64,7 +64,7 @@ class SerializerBuilder
         return new static();
     }
 
-    public function __construct()
+    final public function __construct()
     {
         $this->handlerRegistry = new HandlerRegistry();
         $this->serializationVisitors = [];
@@ -239,7 +239,7 @@ class SerializerBuilder
 
     private function initializePropertyNamingStrategy(): void
     {
-        if ($this->propertyNamingStrategy !== null) {
+        if (isset($this->propertyNamingStrategy)) {
             return;
         }
 

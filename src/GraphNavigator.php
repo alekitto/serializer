@@ -11,6 +11,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
+use function assert;
 use function class_exists;
 use function interface_exists;
 use function method_exists;
@@ -135,6 +136,8 @@ abstract class GraphNavigator
     {
         $metadata = $type->metadata;
         if ($metadata !== null) {
+            assert($metadata instanceof ClassMetadata);
+
             return $metadata;
         }
 
@@ -144,6 +147,7 @@ abstract class GraphNavigator
         }
 
         $metadata = $this->metadataFactory->getMetadataFor($name);
+        assert($metadata instanceof ClassMetadata);
 
         return $type->metadata = $metadata;
     }

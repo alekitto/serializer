@@ -19,6 +19,8 @@ final class Serializer implements SymfonySerializerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @phpstan-param string $format
      */
     public function serialize($data, $format, array $context = [])
     {
@@ -27,6 +29,9 @@ final class Serializer implements SymfonySerializerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @phpstan-param string $type
+     * @phpstan-param string $format
      */
     public function deserialize($data, $type, $format, array $context = [])
     {

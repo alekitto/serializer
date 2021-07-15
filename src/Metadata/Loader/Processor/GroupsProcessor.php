@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
+use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 use function array_map;
+use function assert;
 use function explode;
 use function implode;
 use function is_string;
-use function sprintf;
+use function Safe\sprintf;
+use function Safe\substr;
 use function strpos;
-use function substr;
 
 class GroupsProcessor extends PropertyMetadataProcessor
 {
     protected static function doProcess(object $annotation, PropertyMetadata $metadata): void
     {
+        assert($annotation instanceof Groups);
+
         if (is_string($annotation->groups)) {
             $annotation->groups = explode(',', $annotation->groups);
         }

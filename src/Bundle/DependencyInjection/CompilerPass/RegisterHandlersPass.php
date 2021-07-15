@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 use function is_subclass_of;
-use function sprintf;
+use function Safe\sprintf;
 
 class RegisterHandlersPass implements CompilerPassInterface
 {
@@ -32,7 +32,7 @@ class RegisterHandlersPass implements CompilerPassInterface
             $definition = $container->findDefinition($serviceId);
 
             $class = $definition->getClass();
-            if (! is_subclass_of($class, SubscribingHandlerInterface::class, true)) {
+            if ($class === null || ! is_subclass_of($class, SubscribingHandlerInterface::class, true)) {
                 throw new RuntimeException(sprintf('%s is not implementing %s, but is tagged as kcs_serializer.handler', $serviceId, SubscribingHandlerInterface::class));
             }
 
@@ -56,7 +56,7 @@ class RegisterHandlersPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('kcs_serializer.serialization_handler') as $serviceId => $unused) {
             $definition = $container->findDefinition($serviceId);
             $class = $definition->getClass();
-            if (! is_subclass_of($class, SerializationHandlerInterface::class, true)) {
+            if ($class === null || ! is_subclass_of($class, SerializationHandlerInterface::class, true)) {
                 throw new RuntimeException(sprintf('%s is not implementing %s, but is tagged as kcs_serializer.serialization_handler', $serviceId, SerializationHandlerInterface::class));
             }
 
@@ -67,7 +67,7 @@ class RegisterHandlersPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds('kcs_serializer.deserialization_handler') as $serviceId => $unused) {
             $definition = $container->findDefinition($serviceId);
             $class = $definition->getClass();
-            if (! is_subclass_of($class, DeserializationHandlerInterface::class, true)) {
+            if ($class === null || ! is_subclass_of($class, DeserializationHandlerInterface::class, true)) {
                 throw new RuntimeException(sprintf('%s is not implementing %s, but is tagged as kcs_serializer.deserialization_handler', $serviceId, DeserializationHandlerInterface::class));
             }
 
