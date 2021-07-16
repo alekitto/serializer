@@ -49,9 +49,6 @@
         <service class="Kcs\Serializer\Handler\ArrayCollectionHandler" id="kcs_serializer.handler.array_collection">
             <tag name="kcs_serializer.handler" />
         </service>
-        <service class="Kcs\Serializer\Handler\PropelCollectionHandler" id="kcs_serializer.handler.propel_collection">
-            <tag name="kcs_serializer.handler" />
-        </service>
         <service class="Kcs\Serializer\Handler\UuidInterfaceHandler" id="kcs_serializer.handler.uuid">
             <tag name="kcs_serializer.handler" />
         </service>

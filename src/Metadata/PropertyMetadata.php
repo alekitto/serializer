@@ -11,7 +11,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 use ReflectionException;
 
-use function call_user_func;
+use function assert;
 use function implode;
 use function method_exists;
 use function Safe\sprintf;
@@ -116,7 +116,10 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->getter instanceof Closure) {
-            return call_user_func($this->getter->bindTo($obj));
+            $bound = $this->getter->bindTo($obj);
+            assert($bound !== null);
+
+            return $bound();
         }
 
         return $obj->{$this->getter}();
@@ -144,7 +147,9 @@ class PropertyMetadata extends BasePropertyMetadata
         }
 
         if ($this->setter instanceof Closure) {
-            call_user_func($this->setter->bindTo($obj), $value);
+            $bound = $this->setter->bindTo($obj);
+            assert($bound !== null);
+            $bound($value);
 
             return;
         }

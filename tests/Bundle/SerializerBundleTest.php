@@ -51,7 +51,6 @@ class SerializerBundleTest extends WebTestCase
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, DateTime::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Form::class));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Sequence::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'PropelCollection'));
         self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, UuidInterface::class));
     }
 

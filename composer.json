@@ -48,7 +48,6 @@
         "phpdocumentor/type-resolver": ">=0.1.8,<1.0|^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.4",
-        "propel/propel1": "^1.7",
         "psr/log": "^1.1",
         "ramsey/uuid": "^4.0|^3.6",
         "roave/security-advisories": "dev-master",
