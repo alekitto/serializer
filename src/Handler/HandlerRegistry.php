@@ -19,7 +19,7 @@ use function strrpos;
 
 final class HandlerRegistry implements HandlerRegistryInterface
 {
-    /** @var array<string, array<string, SubscribingHandlerInterface>> */
+    /** @var array<int, mixed> */
     private array $handlers;
 
     public static function getDefaultMethod(int $direction, string $type): string
@@ -42,7 +42,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
     }
 
     /**
-     * @param SubscribingHandlerInterface[] $handlers
+     * @param array<int, mixed> $handlers
      */
     public function __construct(array $handlers = [])
     {

@@ -48,8 +48,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
         } elseif ($doctrineMetadata->hasAssociation($propertyName)) {
             try {
                 $targetEntity = $doctrineMetadata->getAssociationTargetClass($propertyName);
-            } catch (Throwable $e) {
-                // @ignoreException
+            } catch (Throwable $e) { // @phpstan-ignore-line
                 return;
             }
 

@@ -10,9 +10,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 
 use function array_map;
 use function assert;
-use function explode;
 use function implode;
-use function is_string;
 use function Safe\sprintf;
 use function Safe\substr;
 use function strpos;
@@ -22,10 +20,6 @@ class GroupsProcessor extends PropertyMetadataProcessor
     protected static function doProcess(object $annotation, PropertyMetadata $metadata): void
     {
         assert($annotation instanceof Groups);
-
-        if (is_string($annotation->groups)) {
-            $annotation->groups = explode(',', $annotation->groups);
-        }
 
         $groups = $excludeGroups = [];
         $annotation->groups = array_map('trim', (array) $annotation->groups);

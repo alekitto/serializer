@@ -84,6 +84,7 @@ class AnnotationLoader implements LoaderInterface
 
     private function processMethodAnnotations(ReflectionMethod $method, ClassMetadata $classMetadata): void
     {
+        /** @phpstan-var class-string $class */
         $class = $method->class;
 
         $methodAnnotations = $this->getMethodAnnotations($method);
@@ -99,6 +100,7 @@ class AnnotationLoader implements LoaderInterface
 
     private function processPropertyAnnotations(ReflectionProperty $property, ClassMetadata $classMetadata): void
     {
+        /** @phpstan-var class-string $class */
         $class = $property->class;
 
         if ($this->isPropertyExcluded($property, $classMetadata)) {

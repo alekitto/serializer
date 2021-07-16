@@ -2,6 +2,14 @@ includes:
     - vendor/solido/php-coding-standards/phpstan.neon
 
 parameters:
+    scanFiles:
+        - stubs/LegacyDoctrineInflector.stub
+        - stubs/LegacyTranslatorInterface.stub
+        - stubs/LocaleAwareInterface.stub
+    stubFiles:
+        - stubs/LegacyDoctrineInflector.stub
+        - stubs/LegacyTranslatorInterface.stub
+        - stubs/LocaleAwareInterface.stub
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
         - message: "#Offset '.*' does not exist on array.+#"

@@ -182,6 +182,8 @@ class XmlSerializationVisitor extends AbstractVisitor
             $context->accept($v, $metadata->type);
 
             $node = $this->currentNodes[0]->childNodes->item(0);
+            assert($node !== null);
+
             $this->currentNodes[0]->removeChild($node);
 
             return $this->currentNodes = [$node];
@@ -339,6 +341,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     public function getResult()
     {
         $this->attachNullNS();
+        assert($this->document->documentElement !== null);
 
         foreach ($this->xmlNamespaces as $prefix => $uri) {
             $attribute = 'xmlns';
@@ -384,6 +387,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             return;
         }
 
+        assert($this->document->documentElement !== null);
         $this->document->documentElement->setAttributeNS(
             'http://www.w3.org/2000/xmlns/',
             'xmlns:xsi',

@@ -26,7 +26,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
             'ArrayCollection',
             ArrayCollection::class,
             PersistentCollection::class,
-            MongoDBPersistentCollection::class,
+            MongoDBPersistentCollection::class, // @phpstan-ignore-line
             PHPCRPersistentCollection::class,
         ];
 

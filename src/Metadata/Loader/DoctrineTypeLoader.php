@@ -45,7 +45,8 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
         assert($doctrineMetadata instanceof \Doctrine\ORM\Mapping\ClassMetadata);
 
         $propertyName = $propertyMetadata->name;
-        $fieldType = $doctrineMetadata->hasField($propertyName) ? $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName)) : null;
+        $typeOfField = $doctrineMetadata->hasField($propertyName) ? $doctrineMetadata->getTypeOfField($propertyName) : null;
+        $fieldType = $typeOfField !== null ? $this->normalizeFieldType($typeOfField) : null;
         if ($fieldType) {
             $propertyMetadata->setType($fieldType);
         } elseif ($doctrineMetadata->hasAssociation($propertyName)) {
@@ -58,7 +59,7 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
             // For inheritance schemes, we cannot add any type as we would only add the super-type of the hierarchy.
             // On serialization, this would lead to only the supertype being serialized, and properties of subtypes
             // being ignored.
-            if ($targetMetadata instanceof DoctrineClassMetadata && ! $targetMetadata->isInheritanceTypeNone()) {
+            if (! $targetMetadata->isInheritanceTypeNone()) { // @phpstan-ignore-line
                 return;
             }
 

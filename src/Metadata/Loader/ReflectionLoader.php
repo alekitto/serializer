@@ -12,6 +12,9 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionNamedType;
 
+use function assert;
+use function is_string;
+
 use const PHP_VERSION_ID;
 
 class ReflectionLoader implements LoaderInterface
@@ -71,6 +74,7 @@ class ReflectionLoader implements LoaderInterface
     private function loadVirtualProperty(VirtualPropertyMetadata $propertyMetadata): void
     {
         try {
+            assert(is_string($propertyMetadata->getter));
             $reflection = new ReflectionMethod($propertyMetadata->class, $propertyMetadata->getter);
         } catch (ReflectionException $e) {
             return;
@@ -81,7 +85,7 @@ class ReflectionLoader implements LoaderInterface
         }
 
         $type = $reflection->getReturnType();
-        if ($type === null || $type->getName() === 'void') {
+        if (! $type instanceof ReflectionNamedType || $type->getName() === 'void') {
             return;
         }
 

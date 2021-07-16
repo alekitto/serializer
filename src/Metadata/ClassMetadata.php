@@ -65,7 +65,7 @@ class ClassMetadata extends BaseClassMetadata
     public array $discriminatorGroups = [];
 
     /**
-     * @param array<string, string> $map
+     * @param array<string, class-string> $map
      * @param string[] $groups
      */
     public function setDiscriminator(string $fieldName, array $map, array $groups): void

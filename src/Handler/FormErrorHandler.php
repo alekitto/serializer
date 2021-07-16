@@ -6,6 +6,7 @@ namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableForm;
 use Kcs\Serializer\VisitorInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterfa
 use Symfony\Contracts\Translation\TranslatorInterface;
 use TypeError;
 
+use function assert;
 use function get_class;
 use function gettype;
 use function is_object;
@@ -66,6 +68,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
     {
         $serializableForm = new SerializableForm($form);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableForm);
+        assert($metadata instanceof ClassMetadata);
 
         return $visitor->visitObject($metadata, $serializableForm, $type, $context);
     }

@@ -18,6 +18,7 @@ use SimpleXMLElement;
 
 use function array_merge;
 use function array_push;
+use function assert;
 use function explode;
 use function in_array;
 use function is_string;
@@ -63,8 +64,18 @@ class XmlLoader extends AnnotationLoader
     protected function isExcluded(ReflectionClass $class): bool
     {
         $element = $this->getClassElement($class->name);
+        if ($element === false) {
+            return false;
+        }
 
-        return $element && ($exclude = $element->attributes()->exclude) && strtolower($exclude) === 'true';
+        $attributes = $element->attributes();
+        if ($attributes === null) {
+            return false;
+        }
+
+        $exclude = $attributes->exclude;
+
+        return strtolower((string) $exclude) === 'true';
     }
 
     /**
@@ -102,10 +113,14 @@ class XmlLoader extends AnnotationLoader
 
             $map = [];
             foreach ($discriminatorElement->xpath('./map') as $item) {
-                $v = (string) $item->attributes()->value;
+                $attr = $item->attributes();
+                assert($attr !== null);
+
+                $v = (string) $attr->value;
                 $map[$v] = (string) $item;
             }
 
+            /** @phpstan-var array<string, class-string> $map */
             $discriminator->map = $map;
             $annotations[] = $discriminator;
         }
@@ -191,13 +206,13 @@ class XmlLoader extends AnnotationLoader
         }
 
         $pElems = $element->xpath("./property[@name = '" . $property->name . "']");
-        $pElem = reset($pElems);
+        $pElem = $pElems === false ? null : reset($pElems);
 
         if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
-            return ! $pElem || $pElem->attributes()->expose === null;
+            return ! $pElem || $pElem->attributes()->expose === null; // @phpstan-ignore-line
         }
 
-        return $pElem && $pElem->attributes()->exclude !== null;
+        return $pElem && $pElem->attributes()->exclude !== null; // @phpstan-ignore-line
     }
 
     /**
@@ -227,7 +242,7 @@ class XmlLoader extends AnnotationLoader
     {
         $annotations = [];
 
-        foreach ($element->xpath('./' . $name) as $elem) {
+        foreach (($element->xpath('./' . $name) ?: []) as $elem) {
             $annotation = $this->createAnnotationObject($name);
 
             $value = (string) $elem;
@@ -292,7 +307,7 @@ class XmlLoader extends AnnotationLoader
      */
     private function loadAnnotationProperties(SimpleXMLElement $elem): iterable
     {
-        foreach ($elem->attributes() as $attrName => $value) {
+        foreach (($elem->attributes() ?: []) as $attrName => $value) {
             $value = (string) $value;
 
             if ($value === 'true') {

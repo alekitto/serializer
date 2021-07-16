@@ -21,7 +21,7 @@ final class Discriminator
 {
     /**
      * @Required
-     * @var array<string, string>
+     * @var array<string, class-string>
      */
     public array $map;
 
