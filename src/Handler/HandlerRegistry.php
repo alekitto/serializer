@@ -8,11 +8,15 @@ use Closure;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Exception\LogicException;
 use Kcs\Serializer\Exception\RuntimeException;
+use ReflectionClass;
 
 use function assert;
+use function class_exists;
 use function get_class;
+use function interface_exists;
 use function is_array;
 use function is_callable;
+use function Safe\preg_match;
 use function Safe\sprintf;
 use function Safe\substr;
 use function strrpos;
@@ -29,6 +33,14 @@ final class HandlerRegistry implements HandlerRegistryInterface
             $type = substr($type, $pos + 1);
         }
 
+        if (class_exists($type) || interface_exists($type)) {
+            $type = (new ReflectionClass($type))->getShortName();
+        }
+
+        if (! preg_match('/^[a-zA-Z0-9_\x80-\xff]*$/', $type)) {
+            throw new LogicException(sprintf('Cannot derive a valid method name for type "%s". Please define the method name manually', $type));
+        }
+
         switch ($direction) {
             case Direction::DIRECTION_DESERIALIZATION:
                 return 'deserialize' . $type;
@@ -37,7 +49,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
                 return 'serialize' . $type;
 
             default:
-                throw new LogicException(sprintf('The direction %u does not exist; see GraphNavigator constants.', $direction));
+                throw new LogicException(sprintf('The direction %d does not exist; see Direction constants.', $direction));
         }
     }
 

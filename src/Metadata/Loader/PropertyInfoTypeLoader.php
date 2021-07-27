@@ -73,7 +73,9 @@ class PropertyInfoTypeLoader implements LoaderInterface
                 if (method_exists($type, 'getCollectionKeyTypes')) {
                     $keyType = $type->getCollectionKeyTypes()[0] ?? null;
                 } else {
+                    // @codeCoverageIgnoreStart
                     $keyType = $type->getCollectionKeyType();
+                    // @codeCoverageIgnoreEnd
                 }
 
                 if ($keyType !== null && $keyType->getBuiltinType() !== SymfonyType::BUILTIN_TYPE_INT) {
@@ -83,7 +85,9 @@ class PropertyInfoTypeLoader implements LoaderInterface
                 if (method_exists($type, 'getCollectionValueTypes')) {
                     $valueType = $type->getCollectionValueTypes()[0] ?? null;
                 } else {
+                    // @codeCoverageIgnoreStart
                     $valueType = $type->getCollectionValueType();
+                    // @codeCoverageIgnoreEnd
                 }
 
                 if ($valueType !== null) {

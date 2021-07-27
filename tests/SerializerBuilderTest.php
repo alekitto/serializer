@@ -8,7 +8,10 @@ use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\SerializerBuilder;
 use Kcs\Serializer\Type\Type;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SerializerBuilderTest extends TestCase
 {
@@ -54,6 +57,23 @@ class SerializerBuilderTest extends TestCase
         );
 
         $this->builder->build()->serialize('foo', 'xml');
+    }
+
+    public function testConfigureListenersShouldBeCalled(): void
+    {
+        $called = false;
+        $this->builder->setEventDispatcher($dispatcher = new EventDispatcher());
+        $this->builder->configureListeners(static function () use (&$called) {
+            $args = func_get_args();
+            Assert::assertInstanceOf(EventDispatcherInterface::class, $args[0] ?? null);
+
+            $called = true;
+        });
+
+        self::assertTrue($called);
+
+        $this->builder->build();
+        self::assertEmpty($dispatcher->getListeners());
     }
 
     protected function setUp(): void

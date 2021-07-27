@@ -13,7 +13,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
-use Safe\Exceptions\XmlException;
+use Safe\Exceptions\SimplexmlException;
 use SimpleXMLElement;
 
 use function array_merge;
@@ -43,7 +43,7 @@ class XmlLoader extends AnnotationLoader
         $previous = libxml_use_internal_errors(true);
         try {
             $elem = simplexml_load_string($fileContent);
-        } catch (XmlException $e) {
+        } catch (SimplexmlException $e) {
             throw new XmlErrorException(libxml_get_last_error(), $e);
         } finally {
             libxml_use_internal_errors($previous);
