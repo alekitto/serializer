@@ -11,6 +11,8 @@ jobs:
         name: Static analysis
         steps:
             -   uses: actions/checkout@v2
+                with:
+                    fetch-depth: 0
 
             -   name: Install PHP
                 uses: shivammathur/setup-php@v2
@@ -19,19 +21,12 @@ jobs:
                     php-version: "8.0"
                     tools: cs2pr
 
-            -   name: Cache dependencies installed with composer
-                uses: actions/cache@v1
-                with:
-                    path: "~/.composer/cache"
-                    key: php-${{ matrix.php-version }}-composer-locked-${{ hashFiles('composer.lock') }}
-                    restore-keys: php-${{ matrix.php-version }}-composer-locked-
-
             -   name: Install dependencies with composer
-                run: composer update --no-progress --no-suggest --no-interaction --prefer-dist
+                run: composer update --no-progress --no-interaction --prefer-dist
 
             -   if: ${{ github.base_ref == '' }}
                 run: composer phpstan
 
             -   name: Run a static analysis with phpstan/phpstan
                 if: ${{ github.base_ref != '' }}
-                run: composer phpstan --error-format=checkstyle | cs2pr
+                run: composer phpstan -- --error-format=checkstyle | cs2pr
