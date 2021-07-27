@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
@@ -8,6 +10,11 @@ use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
+
+use function assert;
+use function class_exists;
+use function interface_exists;
+use function method_exists;
 
 /**
  * Handles traversal along the object graph.
@@ -55,12 +62,20 @@ abstract class GraphNavigator
      */
     abstract public function accept($data, ?Type $type, Context $context);
 
-    protected function callVisitor($data, Type $type, Context $context, ClassMetadata $metadata = null)
+    /**
+     * Call serialization visitor.
+     *
+     * @param mixed $data
+     *
+     * @return mixed
+     */
+    protected function callVisitor($data, Type $type, Context $context, ?ClassMetadata $metadata = null)
     {
         $visitor = $context->visitor;
 
         // First, try whether a custom handler exists for the given type
-        if (null !== $handler = $this->handlerRegistry->getHandler($context->direction, $type->name)) {
+        $handler = $this->handlerRegistry->getHandler($context->direction, $type->name);
+        if ($handler !== null) {
             return $visitor->visitCustom($handler, $data, $type, $context);
         }
 
@@ -84,8 +99,8 @@ abstract class GraphNavigator
                 return $visitor->visitDouble($data, $type, $context);
 
             case 'array':
-                if (\method_exists($visitor, 'visitHash')) {
-                    if (1 === $type->countParams()) {
+                if (method_exists($visitor, 'visitHash')) {
+                    if ($type->countParams() === 1) {
                         return $visitor->visitArray($data, $type, $context);
                     }
 
@@ -96,15 +111,17 @@ abstract class GraphNavigator
 
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';
+
                 throw new RuntimeException($msg);
+
             default:
-                if (null === $metadata) {
+                if ($metadata === null) {
                     // Missing handler for custom type
                     return null;
                 }
 
                 $exclusionStrategy = $context->getExclusionStrategy();
-                if (null !== $exclusionStrategy && $exclusionStrategy->shouldSkipClass($metadata, $context)) {
+                if ($exclusionStrategy !== null && $exclusionStrategy->shouldSkipClass($metadata, $context)) {
                     return null;
                 }
 
@@ -117,19 +134,28 @@ abstract class GraphNavigator
      */
     protected function getMetadataForType(Type $type): ?ClassMetadata
     {
-        if ($metadata = $type->metadata) {
+        $metadata = $type->metadata;
+        if ($metadata !== null) {
+            assert($metadata instanceof ClassMetadata);
+
             return $metadata;
         }
 
         $name = $type->name;
-        if (isset(self::BUILTIN_TYPES[$name]) || (! \class_exists($name) && ! \interface_exists($name))) {
+        if (isset(self::BUILTIN_TYPES[$name]) || (! class_exists($name) && ! interface_exists($name))) {
             return null;
         }
 
         $metadata = $this->metadataFactory->getMetadataFor($name);
+        assert($metadata instanceof ClassMetadata);
 
         return $type->metadata = $metadata;
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     abstract protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context);
 }

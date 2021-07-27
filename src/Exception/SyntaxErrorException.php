@@ -1,15 +1,22 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Exception;
 
-class SyntaxErrorException extends \Exception
+use Exception;
+
+use function Safe\sprintf;
+use function strlen;
+
+class SyntaxErrorException extends Exception
 {
     public function __construct(string $original, string $value, ?int $position)
     {
         if (! $position) {
-            $position = \strlen($original);
+            $position = strlen($original);
         }
 
-        parent::__construct("Syntax Error while parsing '$original': Unexpected $value at position $position");
+        parent::__construct(sprintf('Syntax Error while parsing \'%s\': Unexpected %s at position %d', $original, $value, $position));
     }
 }

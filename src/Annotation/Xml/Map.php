@@ -1,9 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation\Xml;
 
 use Attribute;
-use function Safe\sprintf;
+
+use function is_array;
 
 /**
  * @Annotation
@@ -14,7 +17,11 @@ final class Map extends Collection
 {
     public string $keyAttribute = '_key';
 
-    public function __construct($entry = 'entry', bool $inline = null, ?string $namespace = null, ?string $keyAttribute = null)
+    /**
+     * @param array<string, mixed>|string $entry
+     * @phpstan-param array{entry?: string, value?: string, inline?: bool, namespace?: string, keyAttribute?: string}|string $entry
+     */
+    public function __construct($entry = 'entry', ?bool $inline = null, ?string $namespace = null, ?string $keyAttribute = null)
     {
         $data = [];
         if (is_array($entry)) {

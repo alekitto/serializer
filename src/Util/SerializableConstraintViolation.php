@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Util;
 
@@ -23,16 +25,14 @@ final class SerializableConstraintViolation
     #[Xml\Attribute()]
     private string $propertyPath;
 
-    /**
-     * @Type("string")
-     */
+    /** @Type("string") */
     #[Type('string')]
     private string $message;
 
     public function __construct(ConstraintViolationInterface $violation)
     {
         $this->propertyPath = $violation->getPropertyPath();
-        $this->message = $violation->getMessage();
+        $this->message = (string) $violation->getMessage();
     }
 
     public function getPropertyPath(): string

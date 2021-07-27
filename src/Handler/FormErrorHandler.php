@@ -1,9 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\Util\SerializableForm;
 use Kcs\Serializer\VisitorInterface;
@@ -11,12 +14,17 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use TypeError;
+
+use function assert;
+use function get_class;
+use function gettype;
+use function is_object;
+use function Safe\sprintf;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
-    /**
-     * @var LegacyTranslatorInterface|TranslatorInterface
-     */
+    /** @var LegacyTranslatorInterface|TranslatorInterface|null */
     private $translator;
 
     /**
@@ -38,26 +46,36 @@ class FormErrorHandler implements SubscribingHandlerInterface
         ];
     }
 
+    /**
+     * @param LegacyTranslatorInterface|TranslatorInterface|null $translator
+     */
     public function __construct($translator = null)
     {
         if (
-            null !== $translator &&
+            $translator !== null &&
             ! $translator instanceof LegacyTranslatorInterface && ! $translator instanceof TranslatorInterface
         ) {
-            throw new \TypeError(\sprintf('Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed', __CLASS__, LegacyTranslatorInterface::class, TranslatorInterface::class, \is_object($translator) ? \get_class($translator) : \gettype($translator)));
+            throw new TypeError(sprintf('Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed', self::class, LegacyTranslatorInterface::class, TranslatorInterface::class, is_object($translator) ? get_class($translator) : gettype($translator)));
         }
 
         $this->translator = $translator;
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeForm(VisitorInterface $visitor, Form $form, Type $type, Context $context)
     {
         $serializableForm = new SerializableForm($form);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableForm);
+        assert($metadata instanceof ClassMetadata);
 
         return $visitor->visitObject($metadata, $serializableForm, $type, $context);
     }
 
+    /**
+     * @return mixed
+     */
     public function serializeFormError(VisitorInterface $visitor, FormError $formError, Type $type, Context $context)
     {
         return $visitor->visitString($this->getErrorMessage($formError), $type, $context);
@@ -65,11 +83,11 @@ class FormErrorHandler implements SubscribingHandlerInterface
 
     private function getErrorMessage(FormError $error): string
     {
-        if (null === $this->translator) {
+        if ($this->translator === null) {
             return $error->getMessage();
         }
 
-        if (null !== $error->getMessagePluralization()) {
+        if ($error->getMessagePluralization() !== null) {
             if ($this->translator instanceof TranslatorInterface) {
                 return $this->translator->trans(
                     $error->getMessageTemplate(),

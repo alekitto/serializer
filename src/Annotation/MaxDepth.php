@@ -1,9 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
+
+use function get_debug_type;
+use function is_array;
+use function is_int;
 use function Safe\sprintf;
 
 /**
@@ -13,11 +19,13 @@ use function Safe\sprintf;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 final class MaxDepth
 {
-    /**
-     * @Required
-     */
+    /** @Required */
     public int $depth;
 
+    /**
+     * @param array<string, mixed>|int $depth
+     * @phpstan-param array{depth?: int, value?: int}|int $depth
+     */
     public function __construct($depth)
     {
         if (is_int($depth)) {

@@ -1,9 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
+
+use function array_map;
+use function get_debug_type;
+use function is_array;
+use function is_object;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -13,23 +21,25 @@ use function Safe\sprintf;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class StaticField
 {
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $name;
 
-    /**
-     * @var mixed[]
-     */
+    /** @var mixed[] */
     public array $attributes = [];
 
     /**
      * @Required
-     *
      * @var mixed
      */
     public $value;
 
+    /**
+     * @param array<string, mixed>|string $name
+     * @param array|null $attributes
+     * @param mixed $value
+     * @phpstan-param array<int, object|mixed>|null $attributes
+     * @phpstan-param array{name?: string, value?: mixed, attributes?: object[]}|string $name
+     */
     public function __construct($name, ?array $attributes = null, $value = null)
     {
         if (is_string($name)) {

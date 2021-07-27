@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -10,6 +12,8 @@ use ReflectionProperty;
 use RuntimeException;
 
 use function count;
+
+use const PHP_VERSION_ID;
 
 class AttributesLoader extends AnnotationLoader
 {
@@ -28,13 +32,16 @@ class AttributesLoader extends AnnotationLoader
 
     protected function isExcluded(ReflectionClass $class): bool
     {
-        if (null !== $this->decorated && $this->decorated->isExcluded($class)) {
+        if ($this->decorated !== null && $this->decorated->isExcluded($class)) {
             return true;
         }
 
-        return 0 !== count($class->getAttributes(Annotation\Exclude::class));
+        return count($class->getAttributes(Annotation\Exclude::class)) !== 0;
     }
 
+    /**
+     * @return object[]
+     */
     protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         $attributes = $this->decorated ? $this->decorated->getClassAnnotations($classMetadata) : [];
@@ -45,6 +52,9 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
+    /**
+     * @return object[]
+     */
     protected function getMethodAnnotations(ReflectionMethod $method): array
     {
         $attributes = $this->decorated ? $this->decorated->getMethodAnnotations($method) : [];
@@ -55,6 +65,9 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
+    /**
+     * @return object[]
+     */
     protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
         $attributes = $this->decorated ? $this->decorated->getPropertyAnnotations($property) : [];
@@ -67,14 +80,14 @@ class AttributesLoader extends AnnotationLoader
 
     protected function isPropertyExcluded(ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
-        if (null !== $this->decorated && $this->decorated->isPropertyExcluded($property, $classMetadata)) {
+        if ($this->decorated !== null && $this->decorated->isPropertyExcluded($property, $classMetadata)) {
             return true;
         }
 
-        if (Annotation\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
-            return 0 === count($property->getAttributes(Annotation\Expose::class));
+        if ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::ALL) {
+            return count($property->getAttributes(Annotation\Expose::class)) === 0;
         }
 
-        return 0 !== count($property->getAttributes(Annotation\Exclude::class));
+        return count($property->getAttributes(Annotation\Exclude::class)) !== 0;
     }
 }

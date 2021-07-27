@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Util;
 
@@ -15,7 +17,6 @@ final class SerializableConstraintViolationList
      * @Xml\XmlList(entry="violation", inline=true)
      * @Inline()
      * @ReadOnly()
-     *
      * @var SerializableConstraintViolation[]
      */
     #[Type('array<Kcs\Serializer\Util\SerializableConstraintViolation>')]

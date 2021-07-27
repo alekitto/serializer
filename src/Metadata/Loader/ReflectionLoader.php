@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -6,7 +8,14 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
+use ReflectionException;
+use ReflectionMethod;
 use ReflectionNamedType;
+
+use function assert;
+use function is_string;
+
+use const PHP_VERSION_ID;
 
 class ReflectionLoader implements LoaderInterface
 {
@@ -17,9 +26,6 @@ class ReflectionLoader implements LoaderInterface
         $this->delegate = $delegate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         $ret = $this->delegate->loadClassMetadata($classMetadata);
@@ -35,7 +41,7 @@ class ReflectionLoader implements LoaderInterface
             }
 
             // If the inner driver provides a type, don't guess anymore.
-            if (null !== $propertyMetadata->type) {
+            if ($propertyMetadata->type !== null) {
                 continue;
             }
 
@@ -46,7 +52,7 @@ class ReflectionLoader implements LoaderInterface
 
             try {
                 $reflectionProperty = $propertyMetadata->getReflection();
-            } catch (\ReflectionException $e) {
+            } catch (ReflectionException $e) {
                 continue;
             }
 
@@ -68,8 +74,9 @@ class ReflectionLoader implements LoaderInterface
     private function loadVirtualProperty(VirtualPropertyMetadata $propertyMetadata): void
     {
         try {
-            $reflection = new \ReflectionMethod($propertyMetadata->class, $propertyMetadata->getter);
-        } catch (\ReflectionException $e) {
+            assert(is_string($propertyMetadata->getter));
+            $reflection = new ReflectionMethod($propertyMetadata->class, $propertyMetadata->getter);
+        } catch (ReflectionException $e) {
             return;
         }
 
@@ -78,7 +85,7 @@ class ReflectionLoader implements LoaderInterface
         }
 
         $type = $reflection->getReturnType();
-        if (null === $type || 'void' === $type->getName()) {
+        if (! $type instanceof ReflectionNamedType || $type->getName() === 'void') {
             return;
         }
 

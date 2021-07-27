@@ -1,19 +1,26 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata;
 
 use LogicException;
 
+use function array_merge;
+
 class StaticPropertyMetadata extends PropertyMetadata
 {
+    /** @var mixed */
     private $value;
 
     /**
      * {@inheritdoc}
+     *
+     * @param mixed $fieldValue
      */
-    public function __construct(string $className, string $fieldName, $fieldValue)
+    public function __construct(string $class, string $fieldName, $fieldValue)
     {
-        $this->class = $className;
+        $this->class = $class;
         $this->name = $fieldName;
         $this->value = $fieldValue;
         $this->readOnly = true;
@@ -22,7 +29,7 @@ class StaticPropertyMetadata extends PropertyMetadata
     /**
      * {@inheritdoc}
      */
-    public function getValue($obj)
+    public function getValue(object $obj)
     {
         return $this->value;
     }
@@ -35,16 +42,10 @@ class StaticPropertyMetadata extends PropertyMetadata
         throw new LogicException('StaticPropertyMetadata is immutable.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __wakeup(): void
     {
     }
@@ -54,8 +55,6 @@ class StaticPropertyMetadata extends PropertyMetadata
      */
     public function __sleep(): array
     {
-        return \array_merge(parent::__sleep(), [
-            'value',
-        ]);
+        return array_merge(parent::__sleep(), ['value']);
     }
 }

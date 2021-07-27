@@ -1,19 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
-class AttributesMap implements \ArrayAccess
+use ArrayAccess;
+
+class AttributesMap implements ArrayAccess
 {
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     private array $map = [];
 
     /**
      * Returns an attribute by name.
      *
-     * @param string $key
-     * @param mixed  $default
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -25,8 +26,7 @@ class AttributesMap implements \ArrayAccess
     /**
      * Set an attribute into the map.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -37,10 +37,6 @@ class AttributesMap implements \ArrayAccess
 
     /**
      * Returns TRUE if attribute is set.
-     *
-     * @param string $key
-     *
-     * @return bool
      */
     public function has(string $key): bool
     {
@@ -58,7 +54,7 @@ class AttributesMap implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
      */
     public function offsetExists($offset): bool
     {
@@ -66,7 +62,9 @@ class AttributesMap implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     *
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -74,7 +72,10 @@ class AttributesMap implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     * @param mixed $value
+     *
+     * @return mixed
      */
     public function offsetSet($offset, $value)
     {
@@ -82,7 +83,7 @@ class AttributesMap implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
      */
     public function offsetUnset($offset): void
     {

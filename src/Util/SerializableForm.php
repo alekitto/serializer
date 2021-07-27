@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Util;
 
@@ -6,6 +8,8 @@ use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+
+use function assert;
 
 /**
  * @Xml\Root(name="form")
@@ -15,7 +19,6 @@ final class SerializableForm
 {
     /**
      * @Type("array<Symfony\Component\Form\FormError>")
-     *
      * @var FormError[]
      */
     #[Type('array<Symfony\Component\Form\FormError>')]
@@ -24,7 +27,6 @@ final class SerializableForm
     /**
      * @Type("array<Kcs\Serializer\Util\SerializableForm>")
      * @Xml\XmlList(entry="form", inline=true)
-     *
      * @var static[]
      */
     #[Type('array<Kcs\Serializer\Util\SerializableForm>')]
@@ -43,7 +45,8 @@ final class SerializableForm
     {
         $this->name = $form->getName();
 
-        foreach ($form->getErrors() as $error) {
+        foreach ($form->getErrors(false) as $error) {
+            assert($error instanceof FormError);
             $this->errors[] = $error;
         }
 

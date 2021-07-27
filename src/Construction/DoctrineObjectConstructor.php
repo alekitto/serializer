@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Construction;
 
@@ -10,20 +12,20 @@ use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use SplObjectStorage;
 
+use function array_key_exists;
+use function count;
+use function is_array;
+
 /**
  * Doctrine object constructor for new (or existing) objects during deserialization.
  */
 class DoctrineObjectConstructor implements ObjectConstructorInterface
 {
-    /**
-     * @var SplObjectStorage<ManagerRegistry>
-     */
+    /** @var SplObjectStorage<ManagerRegistry> */
     private SplObjectStorage $managerRegistryCollection;
     private ObjectConstructorInterface $fallbackConstructor;
 
     /**
-     * Constructor.
-     *
      * @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor
      */
     public function __construct(ObjectConstructorInterface $fallbackConstructor)
@@ -59,7 +61,8 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     protected function getObjectManager(ClassMetadata $metadata): ?ObjectManager
     {
         foreach ($this->managerRegistryCollection as $managerRegistry) {
-            if ($objectManager = $managerRegistry->getManagerForClass($metadata->getName())) {
+            $objectManager = $managerRegistry->getManagerForClass($metadata->getName());
+            if ($objectManager !== null) {
                 return $objectManager;
             }
         }
@@ -75,7 +78,8 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     protected function loadFromObjectManager(ClassMetadata $metadata, $data): ?object
     {
         // Locate possible ObjectManager
-        if (null === $objectManager = $this->getObjectManager($metadata)) {
+        $objectManager = $this->getObjectManager($metadata);
+        if ($objectManager === null) {
             return null;
         }
 
@@ -87,7 +91,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
             return null;
         }
 
-        if (! \is_array($data)) {
+        if (! is_array($data)) {
             // Single identifier, load
             return $objectManager->find($metadata->getName(), $data);
         }
@@ -97,14 +101,14 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         $identifierList = [];
 
         foreach ($classMetadata->getIdentifierFieldNames() as $name) {
-            if (! \array_key_exists($name, $data)) {
+            if (! array_key_exists($name, $data)) {
                 continue;
             }
 
             $identifierList[$name] = $data[$name];
         }
 
-        if (0 === \count($identifierList)) {
+        if (count($identifierList) === 0) {
             return null;
         }
 

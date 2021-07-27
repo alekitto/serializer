@@ -1,0 +1,32 @@
+name: Check CS
+
+on:
+    push:
+    pull_request:
+        types: [opened]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        name: Check code style
+        steps:
+            -   uses: actions/checkout@v2
+                with:
+                    fetch-depth: 0
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: none
+                    php-version: "7.4"
+                    tools: cs2pr
+
+            -   name: Install dependencies with composer
+                run: composer update --no-progress --no-interaction --prefer-dist
+
+            -   if: ${{ github.base_ref == '' }}
+                run: composer cscheck
+
+            -   name: Run diff-sniffer
+                if: ${{ github.base_ref != '' }}
+                run: composer cscheck -- --report=checkstyle | cs2pr

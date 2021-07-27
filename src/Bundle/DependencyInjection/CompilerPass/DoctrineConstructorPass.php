@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
@@ -8,9 +10,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class DoctrineConstructorPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         $constructorDef = $container->findDefinition('kcs_serializer.construction.doctrine');
@@ -23,8 +22,10 @@ class DoctrineConstructorPass implements CompilerPassInterface
             $constructorDef->addMethodCall('addManagerRegistry', [new Reference('doctrine_mongodb')]);
         }
 
-        if ($container->has('doctrine_phpcr')) {
-            $constructorDef->addMethodCall('addManagerRegistry', [new Reference('doctrine_phpcr')]);
+        if (! $container->has('doctrine_phpcr')) {
+            return;
         }
+
+        $constructorDef->addMethodCall('addManagerRegistry', [new Reference('doctrine_phpcr')]);
     }
 }

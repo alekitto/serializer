@@ -1,17 +1,22 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
 use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Annotation as Annotations;
-use Kcs\Serializer\Exception\InvalidArgumentException;
+
+use function array_key_exists;
+use function get_class;
 
 class AnnotationProcessor
 {
     /**
-     * @var ProcessorInterface[]
+     * @var array<string, string>
+     * @phpstan-var array<class-string, class-string>
      */
-    protected static $processor = [
+    protected static array $processor = [
         Annotations\AccessType::class => AccessTypeProcessor::class,
         Annotations\ReadOnly::class => ReadOnlyProcessor::class,
 
@@ -19,8 +24,6 @@ class AnnotationProcessor
         Annotations\AccessorOrder::class => AccessorOrderProcessor::class,
         Annotations\Discriminator::class => DiscriminatorProcessor::class,
         Annotations\ExclusionPolicy::class => ExclusionPolicyProcessor::class,
-        Annotations\XmlNamespace::class => XmlNamespaceProcessor::class,
-        Annotations\XmlRoot::class => XmlRootProcessor::class,
         Annotations\Xml\XmlNamespace::class => XmlNamespaceProcessor::class,
         Annotations\Xml\Root::class => XmlRootProcessor::class,
 
@@ -29,13 +32,6 @@ class AnnotationProcessor
         Annotations\Until::class => UntilProcessor::class,
         Annotations\SerializedName::class => SerializedNameProcessor::class,
         Annotations\Type::class => TypeProcessor::class,
-        Annotations\XmlElement::class => XmlElementProcessor::class,
-        Annotations\XmlList::class => XmlCollectionProcessor::class,
-        Annotations\XmlMap::class => XmlCollectionProcessor::class,
-        Annotations\XmlKeyValuePairs::class => XmlKeyValuePairsProcessor::class,
-        Annotations\XmlAttribute::class => XmlAttributeProcessor::class,
-        Annotations\XmlAttributeMap::class => XmlAttributeMapProcessor::class,
-        Annotations\XmlValue::class => XmlValueProcessor::class,
         Annotations\Xml\Element::class => XmlElementProcessor::class,
         Annotations\Xml\XmlList::class => XmlCollectionProcessor::class,
         Annotations\Xml\Map::class => XmlCollectionProcessor::class,
@@ -50,14 +46,10 @@ class AnnotationProcessor
         Annotations\OnExclude::class => OnExcludeProcessor::class,
     ];
 
-    public function process($annotation, MetadataInterface $metadata): void
+    public function process(object $annotation, MetadataInterface $metadata): void
     {
-        if (! \is_object($annotation)) {
-            throw new InvalidArgumentException('You must pass an annotation object as first parameter of process');
-        }
-
-        $class = \get_class($annotation);
-        if (! \array_key_exists($class, static::$processor)) {
+        $class = get_class($annotation);
+        if (! array_key_exists($class, static::$processor)) {
             return;
         }
 

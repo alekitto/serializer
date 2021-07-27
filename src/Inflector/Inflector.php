@@ -1,11 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Inflector;
 
 use Doctrine\Inflector\Inflector as DoctrineInflector;
 use Doctrine\Inflector\InflectorFactory;
 
-if (! class_exists(\Doctrine\Inflector\InflectorFactory::class)) {
+use function class_exists;
+
+if (! class_exists(InflectorFactory::class)) {
     class Inflector
     {
         private static ?self $instance = null;
@@ -29,7 +33,7 @@ if (! class_exists(\Doctrine\Inflector\InflectorFactory::class)) {
 
         public static function getInstance(): self
         {
-            if (null === self::$instance) {
+            if (self::$instance === null) {
                 self::$instance = new self();
             }
 
@@ -37,6 +41,7 @@ if (! class_exists(\Doctrine\Inflector\InflectorFactory::class)) {
         }
     }
 } else {
+    // phpcs:ignore
     class Inflector
     {
         private static ?self $instance = null;
@@ -62,7 +67,7 @@ if (! class_exists(\Doctrine\Inflector\InflectorFactory::class)) {
 
         public static function getInstance(): self
         {
-            if (null === self::$instance) {
+            if (self::$instance === null) {
                 self::$instance = new self();
             }
 

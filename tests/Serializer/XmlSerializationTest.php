@@ -5,6 +5,7 @@ namespace Kcs\Serializer\Tests\Serializer;
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\SerializationContext;
@@ -102,6 +103,15 @@ class XmlSerializationTest extends BaseSerializationTest
             <result>
                 &foo;
             </result>', 'stdClass');
+    }
+
+    public function testInvalidDocument(): void
+    {
+        $this->expectException(XmlErrorException::class);
+        $this->expectExceptionMessage('[FATAL]');
+
+        $this->deserialize('<?xml version="1.0"?>
+            <result>test', 'stdClass');
     }
 
     public function testDocumentTypesAreNotAllowed(): void

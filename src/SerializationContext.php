@@ -1,10 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Type\Type;
 use SplObjectStorage;
+
+use function assert;
+use function get_class;
+use function gettype;
+use function is_object;
 
 class SerializationContext extends Context
 {
@@ -22,32 +29,34 @@ class SerializationContext extends Context
         $this->visitingSet = new SplObjectStorage();
     }
 
-    public function createChildContext(array $attributes = []): Context
+    /**
+     * {@inheritdoc}
+     */
+    public function createChildContext(array $attributes = []): self
     {
         $obj = parent::createChildContext($attributes);
+        assert($obj instanceof self);
+
         $obj->visitingSet = $this->visitingSet;
 
         return $obj;
     }
 
-    public function startVisiting($object): void
+    public function startVisiting(object $object): void
     {
         $this->visitingSet->attach($object);
     }
 
-    public function stopVisiting($object): void
+    public function stopVisiting(object $object): void
     {
         $this->visitingSet->detach($object);
     }
 
-    public function isVisiting($object): bool
+    public function isVisiting(object $object): bool
     {
         return $this->visitingSet->contains($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDepth(): int
     {
         return $this->visitingSet->count();
@@ -60,10 +69,10 @@ class SerializationContext extends Context
      */
     public function guessType($data): Type
     {
-        if (null === $data) {
+        if ($data === null) {
             return Type::null();
         }
 
-        return new Type(\is_object($data) ? \get_class($data) : \gettype($data));
+        return new Type(is_object($data) ? get_class($data) : gettype($data));
     }
 }

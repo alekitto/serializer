@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
+use Closure;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
-use Kcs\Metadata\Loader\ChainLoader;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
@@ -17,7 +19,6 @@ use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\FormErrorHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
-use Kcs\Serializer\Handler\PropelCollectionHandler;
 use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\AttributesLoader;
@@ -29,6 +30,8 @@ use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
+
+use const PHP_VERSION_ID;
 
 /**
  * Builder for serializer instances.
@@ -50,7 +53,7 @@ class SerializerBuilder
     /** @var VisitorInterface[] */
     private array $deserializationVisitors;
 
-    private ?PropertyNamingStrategyInterface $propertyNamingStrategy = null;
+    private PropertyNamingStrategyInterface $propertyNamingStrategy;
     private ?CacheItemPoolInterface $cache = null;
     private ?Reader $annotationReader = null;
     private ?LoaderInterface $metadataLoader = null;
@@ -60,7 +63,7 @@ class SerializerBuilder
         return new static();
     }
 
-    public function __construct()
+    final public function __construct()
     {
         $this->handlerRegistry = new HandlerRegistry();
         $this->serializationVisitors = [];
@@ -103,13 +106,12 @@ class SerializerBuilder
         $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler());
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
-        $this->handlerRegistry->registerSubscribingHandler(new PropelCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new UuidInterfaceHandler());
 
         return $this;
     }
 
-    public function configureHandlers(\Closure $closure): self
+    public function configureHandlers(Closure $closure): self
     {
         $this->handlersConfigured = true;
         $closure($this->handlerRegistry);
@@ -128,7 +130,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function configureListeners(\Closure $closure): self
+    public function configureListeners(Closure $closure): self
     {
         $this->listenersConfigured = true;
         $closure($this->eventDispatcher);
@@ -150,14 +152,14 @@ class SerializerBuilder
         return $this;
     }
 
-    public function setSerializationVisitor($format, VisitorInterface $visitor): self
+    public function setSerializationVisitor(string $format, VisitorInterface $visitor): self
     {
         $this->serializationVisitors[$format] = $visitor;
 
         return $this;
     }
 
-    public function setDeserializationVisitor($format, VisitorInterface $visitor): self
+    public function setDeserializationVisitor(string $format, VisitorInterface $visitor): self
     {
         $this->deserializationVisitors[$format] = $visitor;
 
@@ -196,7 +198,7 @@ class SerializerBuilder
     public function build(): SerializerInterface
     {
         $metadataLoader = $this->metadataLoader;
-        if (null === $metadataLoader) {
+        if ($metadataLoader === null) {
             $annotationReader = $this->annotationReader ?: new AnnotationReader();
 
             $metadataLoader = new AnnotationLoader();
@@ -235,7 +237,7 @@ class SerializerBuilder
 
     private function initializePropertyNamingStrategy(): void
     {
-        if (null !== $this->propertyNamingStrategy) {
+        if (isset($this->propertyNamingStrategy)) {
             return;
         }
 

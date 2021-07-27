@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata;
 
@@ -7,8 +9,13 @@ use Error;
 use Kcs\Metadata\PropertyMetadata as BasePropertyMetadata;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
-use const PHP_VERSION_ID;
 use ReflectionException;
+
+use function assert;
+use function implode;
+use function method_exists;
+use function Safe\sprintf;
+use function ucfirst;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
@@ -63,9 +70,6 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->getReflection()->setAccessible(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __wakeup(): void
     {
         parent::__wakeup();
@@ -80,17 +84,20 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->setter = $setter;
     }
 
-    public function getValue($obj)
+    /**
+     * @return mixed
+     */
+    public function getValue(object $obj)
     {
-        if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
+        if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
             $reflector = $this->getReflection();
-            if (PHP_VERSION_ID >= 70400 && $reflector->hasType() && ! $reflector->isInitialized($obj)) {
+            if ($reflector->hasType() && ! $reflector->isInitialized($obj)) {
                 // There is no way to check if a property has been unset or if it is uninitialized.
                 // When trying to access an uninitialized property, __get method is triggered.
 
                 // If __get method is not present, no fallback is possible
                 // Otherwise we need to catch an Error in case we are trying to access an uninitialized but set property.
-                if (! \method_exists($obj, '__get')) {
+                if (! method_exists($obj, '__get')) {
                     return null;
                 }
 
@@ -104,36 +111,45 @@ class PropertyMetadata extends BasePropertyMetadata
             return $reflector->getValue($obj);
         }
 
-        if (null === $this->getter) {
+        if ($this->getter === null) {
             $this->initializeGetterAccessor();
         }
 
         if ($this->getter instanceof Closure) {
-            return \call_user_func($this->getter->bindTo($obj));
+            $bound = $this->getter->bindTo($obj);
+            assert($bound !== null);
+
+            return $bound();
         }
 
         return $obj->{$this->getter}();
     }
 
+    /**
+     * @param mixed $obj
+     * @param mixed $value
+     */
     public function setValue($obj, $value): void
     {
         if ($this->readOnly) {
             return;
         }
 
-        if (self::ACCESS_TYPE_PROPERTY === $this->accessorType) {
+        if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
             $reflector = $this->getReflection();
             $reflector->setValue($obj, $value);
 
             return;
         }
 
-        if (null === $this->setter) {
+        if ($this->setter === null) {
             $this->initializeSetterAccessor();
         }
 
         if ($this->setter instanceof Closure) {
-            \call_user_func($this->setter->bindTo($obj), $value);
+            $bound = $this->setter->bindTo($obj);
+            assert($bound !== null);
+            $bound($value);
 
             return;
         }
@@ -149,9 +165,9 @@ class PropertyMetadata extends BasePropertyMetadata
     protected function initializeGetterAccessor(): void
     {
         $methods = [
-            'get'.\ucfirst($this->name),
-            'is'.\ucfirst($this->name),
-            'has'.\ucfirst($this->name),
+            'get' . ucfirst($this->name),
+            'is' . ucfirst($this->name),
+            'has' . ucfirst($this->name),
             $this->name,
         ];
 
@@ -175,14 +191,16 @@ class PropertyMetadata extends BasePropertyMetadata
             }
         } catch (ReflectionException $e) {
             // Property does not exist.
+            // @ignoreException
         }
 
-        throw new RuntimeException(\sprintf('There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.', \implode('" or "', $methods), $this->class, $this->name));
+        throw new RuntimeException(sprintf('There is no public method named "%s" in class %s. Please specify which public method should be used for retrieving the value of the property %s.', implode('" or "', $methods), $this->class, $this->name));
     }
 
     protected function initializeSetterAccessor(): void
     {
-        if ($this->checkMethod($setter = 'set'.\ucfirst($this->name))) {
+        $setter = 'set' . ucfirst($this->name);
+        if ($this->checkMethod($setter)) {
             $this->setter = $setter;
 
             return;
@@ -192,7 +210,7 @@ class PropertyMetadata extends BasePropertyMetadata
             $reflector = $this->getReflection();
             if ($reflector->isPublic()) {
                 $name = $this->name;
-                $this->setter = function ($value) use ($name) {
+                $this->setter = function ($value) use ($name): void {
                     $this->$name = $value;
                 };
 
@@ -200,9 +218,10 @@ class PropertyMetadata extends BasePropertyMetadata
             }
         } catch (ReflectionException $e) {
             // Property does not exist.
+            // @ignoreException
         }
 
-        throw new RuntimeException(\sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set'.\ucfirst($this->name), $this->class, $this->name));
+        throw new RuntimeException(sprintf('There is no public %s method in class %s. Please specify which public method should be used for setting the value of the property %s.', 'set' . ucfirst($this->name), $this->class, $this->name));
     }
 
     private function checkMethod(string $name): bool

@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
 
+use function array_intersect_key;
+use function get_debug_type;
+use function is_array;
 use function Safe\sprintf;
 
 /**
@@ -16,36 +21,31 @@ final class Discriminator
 {
     /**
      * @Required
-     *
-     * @var array<string>
+     * @var array<string, class-string>
      */
     public array $map;
 
-    /**
-     * @var string
-     */
     public string $field = 'type';
 
-    /**
-     * @var bool
-     */
     public bool $disabled = false;
 
-    /**
-     * @var array<string>
-     */
-    public ?array $groups = null;
+    /** @var string|string[] */
+    public $groups;
 
-    public function __construct($map, ?string $field = null, ?bool $disabled = null, ?array $groups = null)
+    /**
+     * @param array<string, mixed> $map
+     * @phpstan-param array{map?: array<string, mixed>, value?: array<string, mixed>, field?: string, disabled?: string, groups?: string|string[]}|array<string, mixed> $map
+     */
+    public function __construct(array $map, ?string $field = null, ?bool $disabled = null, ?array $groups = null)
     {
-        if (is_array($map)) {
-            if (! empty(array_intersect_key($map, ['value' => true, 'map' => true, 'field' => true, 'disabled' => true, 'groups' => true]))) {
-                $data = $map;
-            } else {
-                $data = ['map' => $map];
-            }
-        } else {
+        if (! is_array($map)) {
             throw new TypeError(sprintf('Argument #1 passed to %s must be an array. %s passed', __METHOD__, get_debug_type($map)));
+        }
+
+        if (! empty(array_intersect_key($map, ['value' => true, 'map' => true, 'field' => true, 'disabled' => true, 'groups' => true]))) {
+            $data = $map;
+        } else {
+            $data = ['map' => $map];
         }
 
         $this->map = $data['map'] ?? $data['value'];

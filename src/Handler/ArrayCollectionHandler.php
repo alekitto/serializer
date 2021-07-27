@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -24,7 +26,7 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
             'ArrayCollection',
             ArrayCollection::class,
             PersistentCollection::class,
-            MongoDBPersistentCollection::class,
+            MongoDBPersistentCollection::class, // @phpstan-ignore-line
             PHPCRPersistentCollection::class,
         ];
 
@@ -45,18 +47,28 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
+    /**
+     * @param Collection<mixed> $collection
+     *
+     * @return mixed
+     */
     public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
     {
-        if (1 === $type->countParams()) {
+        if ($type->countParams() === 1) {
             return $visitor->visitArray($collection->toArray(), $type, $context);
         }
 
         return $visitor->visitHash($collection->toArray(), $type, $context);
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return Collection<mixed>
+     */
     public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
     {
-        if (1 === $type->countParams()) {
+        if ($type->countParams() === 1) {
             return new ArrayCollection($visitor->visitArray($data, $type, $context));
         }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
@@ -6,7 +8,11 @@ use Attribute;
 use Kcs\Serializer\Exception\RuntimeException;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
+use function strtolower;
 
 /**
  * @Annotation
@@ -18,11 +24,12 @@ final class OnExclude
     public const NULL = 'null';
     public const SKIP = 'skip';
 
-    /**
-     * @var string
-     */
     public string $policy = self::NULL;
 
+    /**
+     * @param array<string, mixed>|string $policy
+     * @phpstan-param array{policy?: string, value?: string}|string $policy
+     */
     public function __construct($policy)
     {
         if (is_string($policy)) {
@@ -34,9 +41,9 @@ final class OnExclude
         }
 
         $policy = $data['policy'] ?? $data['value'];
-        $this->policy = \strtolower($policy);
+        $this->policy = strtolower($policy);
 
-        if (self::NULL !== $this->policy && self::SKIP !== $this->policy) {
+        if ($this->policy !== self::NULL && $this->policy !== self::SKIP) {
             throw new RuntimeException('OnExclude policy must either be "null", or "skip".');
         }
     }

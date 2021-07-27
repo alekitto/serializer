@@ -1,8 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
 use Symfony\Component\Yaml\Yaml;
+
+use function Safe\substr;
+
+use const PHP_INT_MAX;
 
 /**
  * Serialization Visitor for the YAML format.
@@ -11,13 +17,10 @@ use Symfony\Component\Yaml\Yaml;
  */
 class YamlSerializationVisitor extends GenericSerializationVisitor
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getResult(): string
     {
         $result = Yaml::dump($this->getRoot(), PHP_INT_MAX);
-        if ("\n" !== \substr($result, -1)) {
+        if (substr($result, -1) !== "\n") {
             $result .= "\n";
         }
 

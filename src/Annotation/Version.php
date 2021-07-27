@@ -1,18 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 abstract class Version
 {
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $version;
 
+    /**
+     * @param array<string, mixed>|string $version
+     * @phpstan-param array{version?: string, value?: string}|string $version
+     */
     public function __construct($version)
     {
         if (is_string($version)) {

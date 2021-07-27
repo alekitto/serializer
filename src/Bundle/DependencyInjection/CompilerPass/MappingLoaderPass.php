@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
@@ -8,21 +10,29 @@ use Kcs\Serializer\Metadata\Loader\DoctrinePHPCRTypeLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrineTypeLoader;
 use Kcs\Serializer\Metadata\Loader\PropertyInfoTypeLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
+use SplFileInfo;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use UnexpectedValueException;
+
+use function assert;
+use function dirname;
+use function is_string;
+
+use const PHP_VERSION_ID;
 
 class MappingLoaderPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         $mappingPath = 'Resources/config/serializer';
-        $xml_paths = [];
-        $yaml_paths = [];
+        $xmlPaths = [];
+        $yamlPaths = [];
 
         $xmlDefinition = $container->getDefinition('kcs_serializer.metadata.loader.xml');
         $yamlDefinition = $container->getDefinition('kcs_serializer.metadata.loader.yaml');
@@ -32,32 +42,42 @@ class MappingLoaderPass implements CompilerPassInterface
             new Reference('kcs_serializer.metadata.loader.xml'),
         ];
 
-        $loadPath = static function (string $path) use (&$xml_paths, &$yaml_paths) {
+        $loadPath = static function (string $path) use (&$xmlPaths, &$yamlPaths): void {
             try {
-                $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-                /** @var \SplFileInfo $fileInfo */
+                $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
                 foreach ($iterator as $fileInfo) {
+                    assert($fileInfo instanceof SplFileInfo);
                     $extension = $fileInfo->getExtension();
-                    if ('xml' === $extension) {
-                        $xml_paths[] = $fileInfo->getPathname();
-                    } elseif ('yaml' === $extension || 'yml' === $extension) {
-                        $yaml_paths[] = $fileInfo->getPathname();
+                    if ($extension === 'xml') {
+                        $xmlPaths[] = $fileInfo->getPathname();
+                    } elseif ($extension === 'yaml' || $extension === 'yml') {
+                        $yamlPaths[] = $fileInfo->getPathname();
                     }
                 }
-            } catch (\UnexpectedValueException $e) {
+            } catch (UnexpectedValueException $e) {
                 // Directory not found or not a dir.
+                // @ignoreException
             }
         };
 
-        foreach ($container->getParameter('kernel.bundles') as $bundle) {
-            $reflection = new \ReflectionClass($bundle);
-            $loadPath(\dirname($reflection->getFileName()).'/'.$mappingPath);
+        /** @phpstan-var array<string, class-string> $bundles */
+        $bundles = $container->getParameter('kernel.bundles');
+        foreach ($bundles as $bundle) {
+            $reflection = new ReflectionClass($bundle);
+            $filename = $reflection->getFileName();
+            if ($filename === false) {
+                continue;
+            }
+
+            $loadPath(dirname($filename) . '/' . $mappingPath);
         }
 
-        $loadPath($container->getParameter('kernel.project_dir').'/config/serializer');
+        $projectDir = $container->getParameter('kernel.project_dir');
+        assert(is_string($projectDir));
+        $loadPath($projectDir . '/config/serializer');
 
-        $xmlDefinition->replaceArgument(0, $xml_paths);
-        $yamlDefinition->replaceArgument(0, $yaml_paths);
+        $xmlDefinition->replaceArgument(0, $xmlPaths);
+        $yamlDefinition->replaceArgument(0, $yamlPaths);
 
         if ($container->has('annotation_reader')) {
             $definition = new Definition(AnnotationLoader::class);
@@ -79,16 +99,14 @@ class MappingLoaderPass implements CompilerPassInterface
         }
 
         $container->getDefinition('kcs_serializer.metadata.loader')
-            ->replaceArgument(0, $loaders)
-        ;
+            ->replaceArgument(0, $loaders);
 
         if (PHP_VERSION_ID >= 70400) {
             $container->register('.kcs_serializer.reflection.metadata.loader')
                 ->setPublic(false)
                 ->setClass(ReflectionLoader::class)
                 ->setDecoratedService('kcs_serializer.metadata.loader')
-                ->addArgument(new Reference('.kcs_serializer.reflection.metadata.loader.inner'))
-            ;
+                ->addArgument(new Reference('.kcs_serializer.reflection.metadata.loader.inner'));
         }
 
         if ($container->hasDefinition('property_info') && $container->getParameter('kcs_serializer.metadata_loader.property_info.enabled')) {
@@ -98,8 +116,7 @@ class MappingLoaderPass implements CompilerPassInterface
                 ->setClass(PropertyInfoTypeLoader::class)
                 ->setDecoratedService('kcs_serializer.metadata.loader')
                 ->addArgument(new Reference('.kcs_serializer.property_info.metadata.loader.inner'))
-                ->addArgument(new Reference('property_info'))
-            ;
+                ->addArgument(new Reference('property_info'));
         }
 
         if ($container->hasDefinition('doctrine_phpcr') && $container->getParameter('kcs_serializer.metadata_loader.doctrine_phpcr.enabled')) {
@@ -109,19 +126,19 @@ class MappingLoaderPass implements CompilerPassInterface
                 ->setClass(DoctrinePHPCRTypeLoader::class)
                 ->setDecoratedService('kcs_serializer.metadata.loader')
                 ->addArgument(new Reference('.kcs_serializer.doctrine_phpcr.metadata.loader.inner'))
-                ->addArgument(new Reference('doctrine_phpcr'))
-            ;
+                ->addArgument(new Reference('doctrine_phpcr'));
         }
 
-        if ($container->hasDefinition('doctrine') && $container->getParameter('kcs_serializer.metadata_loader.doctrine_orm.enabled')) {
-            $container->register('.kcs_serializer.doctrine.metadata.loader')
-                ->setPublic(false)
-                ->setLazy(true)
-                ->setClass(DoctrineTypeLoader::class)
-                ->setDecoratedService('kcs_serializer.metadata.loader')
-                ->addArgument(new Reference('.kcs_serializer.doctrine.metadata.loader.inner'))
-                ->addArgument(new Reference('doctrine'))
-            ;
+        if (! $container->hasDefinition('doctrine') || ! $container->getParameter('kcs_serializer.metadata_loader.doctrine_orm.enabled')) {
+            return;
         }
+
+        $container->register('.kcs_serializer.doctrine.metadata.loader')
+            ->setPublic(false)
+            ->setLazy(true)
+            ->setClass(DoctrineTypeLoader::class)
+            ->setDecoratedService('kcs_serializer.metadata.loader')
+            ->addArgument(new Reference('.kcs_serializer.doctrine.metadata.loader.inner'))
+            ->addArgument(new Reference('doctrine'));
     }
 }

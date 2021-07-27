@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -7,10 +9,7 @@ namespace Kcs\Serializer\Handler;
  */
 interface HandlerRegistryInterface
 {
-    /**
-     * @param SubscribingHandlerInterface $handler
-     */
-    public function registerSubscribingHandler(SubscribingHandlerInterface $handler);
+    public function registerSubscribingHandler(SubscribingHandlerInterface $handler): self;
 
     /**
      * Registers a handler in the registry.
@@ -20,7 +19,7 @@ interface HandlerRegistryInterface
      *
      * @return $this
      */
-    public function registerHandler(int $direction, string $typeName, $handler): self;
+    public function registerHandler(int $direction, string $typeName, callable $handler): self;
 
     /**
      * Register a serialization handler.
@@ -34,8 +33,6 @@ interface HandlerRegistryInterface
 
     /**
      * @param int $direction one of the GraphNavigator::DIRECTION_??? constants
-     *
-     * @return callable|null
      */
     public function getHandler(int $direction, string $typeName): ?callable;
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle\DependencyInjection\CompilerPass;
 
@@ -11,15 +13,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-use function sprintf;
+use function Safe\sprintf;
 
 class RegisterVisitorsPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 
-    /**
-     * @inheritDoc
-     */
     public function process(ContainerBuilder $container): void
     {
         if (! $container->has('kcs_serializer.serializer')) {
@@ -56,11 +55,9 @@ class RegisterVisitorsPass implements CompilerPassInterface
             $processVisitor = static function (array &$visitors) use ($container): void {
                 foreach ($visitors as $key => $reference) {
                     $def = new Definition(TraceableVisitor::class, [$reference, new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE)]);
-                    $def->addTag('monolog.logger', [
-                        'channel' => 'kcs_serializer',
-                    ]);
+                    $def->addTag('monolog.logger', ['channel' => 'kcs_serializer']);
 
-                    $id = '.traceable.'.$reference;
+                    $id = '.traceable.' . $reference;
                     $container->setDefinition($id, $def);
 
                     $visitors[$key] = new Reference($id);

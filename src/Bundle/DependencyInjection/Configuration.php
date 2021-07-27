@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Bundle\DependencyInjection;
 
@@ -8,16 +10,16 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 
+use function class_exists;
+
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('kcs_serializer');
         $rootNode = $treeBuilder->getRootNode();
 
+        // @phpstan-ignore-next-line
         $rootNode
             ->canBeDisabled()
             ->addDefaultsIfNotSet()
@@ -27,13 +29,12 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('metadata')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('property_info')->defaultValue(\class_exists(PropertyInfoExtractor::class))->end()
-                        ->booleanNode('doctrine_orm')->defaultValue(\class_exists(EntityManager::class))->end()
-                        ->booleanNode('doctrine_phpcr')->defaultValue(\class_exists(PHPCRDocumentManager::class))->end()
+                        ->booleanNode('property_info')->defaultValue(class_exists(PropertyInfoExtractor::class))->end()
+                        ->booleanNode('doctrine_orm')->defaultValue(class_exists(EntityManager::class))->end()
+                        ->booleanNode('doctrine_phpcr')->defaultValue(class_exists(PHPCRDocumentManager::class))->end()
                     ->end()
                 ->end()
-            ->end()
-        ;
+            ->end();
 
         return $treeBuilder;
     }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
@@ -33,7 +35,7 @@ interface SerializerInterface
      *
      * @return array<mixed, mixed>
      */
-    public function normalize($data, SerializationContext $context = null): array;
+    public function normalize($data, ?SerializationContext $context = null): array;
 
     /**
      * Restores objects from an array structure.

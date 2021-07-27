@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
@@ -53,10 +55,12 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
 
     /**
      * Serializes an Uuid object into a string.
+     *
+     * @return mixed
      */
     public function serialize(VisitorInterface $visitor, ?UuidInterface $uuid, Type $type, Context $context)
     {
-        if (null === $uuid) {
+        if ($uuid === null) {
             return $visitor->visitNull(null, Type::null(), $context);
         }
 
@@ -65,6 +69,8 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
 
     /**
      * Converts a string representation into an Uuid object.
+     *
+     * @param mixed $data
      */
     public function deserialize(VisitorInterface $visitor, $data, Type $type, Context $context): ?UuidInterface
     {

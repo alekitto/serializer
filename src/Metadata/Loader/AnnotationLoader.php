@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
@@ -12,6 +14,10 @@ use Kcs\Serializer\Metadata\Loader\Processor\AnnotationProcessor;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
+use LogicException;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 
 class AnnotationLoader implements LoaderInterface
 {
@@ -23,26 +29,18 @@ class AnnotationLoader implements LoaderInterface
         $this->processor = new AnnotationProcessor();
     }
 
-    /**
-     * @param Reader $reader
-     */
     public function setReader(Reader $reader): void
     {
         $this->reader = $reader;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         if (! $classMetadata instanceof ClassMetadata) {
-            throw new \LogicException('wrong metadata class');
+            throw new LogicException('wrong metadata class');
         }
 
-        /** @var ClassMetadata $classMetadata */
         $class = $classMetadata->getReflectionClass();
-
         if ($this->isExcluded($class)) {
             return true;
         }
@@ -68,9 +66,6 @@ class AnnotationLoader implements LoaderInterface
         return true;
     }
 
-    /**
-     * @param ClassMetadata $classMetadata
-     */
     private function processClassAnnotations(ClassMetadata $classMetadata): void
     {
         $annotations = $this->getClassAnnotations($classMetadata);
@@ -87,21 +82,25 @@ class AnnotationLoader implements LoaderInterface
         }
     }
 
-    private function processMethodAnnotations(\ReflectionMethod $method, ClassMetadata $classMetadata): void
+    private function processMethodAnnotations(ReflectionMethod $method, ClassMetadata $classMetadata): void
     {
+        /** @phpstan-var class-string $class */
         $class = $method->class;
 
         $methodAnnotations = $this->getMethodAnnotations($method);
         foreach ($methodAnnotations as $annotation) {
-            if ($annotation instanceof Annotation\VirtualProperty) {
-                $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
-                $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
+            if (! ($annotation instanceof Annotation\VirtualProperty)) {
+                continue;
             }
+
+            $virtualPropertyMetadata = new VirtualPropertyMetadata($class, $method->name);
+            $this->loadExposedAttribute($virtualPropertyMetadata, $methodAnnotations, $classMetadata);
         }
     }
 
-    private function processPropertyAnnotations(\ReflectionProperty $property, ClassMetadata $classMetadata): void
+    private function processPropertyAnnotations(ReflectionProperty $property, ClassMetadata $classMetadata): void
     {
+        /** @phpstan-var class-string $class */
         $class = $property->class;
 
         if ($this->isPropertyExcluded($property, $classMetadata)) {
@@ -113,13 +112,15 @@ class AnnotationLoader implements LoaderInterface
         $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
     }
 
+    /**
+     * @param object[] $annotations
+     */
     private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata): void
     {
         $metadata->readOnly = $metadata->readOnly || $classMetadata->readOnly;
         $accessType = $classMetadata->defaultAccessType;
 
         $accessor = [null, null];
-
         foreach ($annotations as $annotation) {
             $this->processor->process($annotation, $metadata);
 
@@ -134,32 +135,53 @@ class AnnotationLoader implements LoaderInterface
         $classMetadata->addAttributeMetadata($metadata);
     }
 
-    protected function isExcluded(\ReflectionClass $class): bool
+    /**
+     * Whether the class is excluded from serialization/deserialization.
+     */
+    protected function isExcluded(ReflectionClass $class): bool
     {
-        return null !== $this->reader->getClassAnnotation($class, Annotation\Exclude::class);
+        return $this->reader->getClassAnnotation($class, Annotation\Exclude::class) !== null;
     }
 
+    /**
+     * Loads annotations/attributes for the given class.
+     *
+     * @return object[]
+     */
     protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         return $this->reader->getClassAnnotations($classMetadata->getReflectionClass());
     }
 
-    protected function getMethodAnnotations(\ReflectionMethod $method): array
+    /**
+     * Loads annotations/attributes for the given class method.
+     *
+     * @return object[]
+     */
+    protected function getMethodAnnotations(ReflectionMethod $method): array
     {
         return $this->reader->getMethodAnnotations($method);
     }
 
-    protected function getPropertyAnnotations(\ReflectionProperty $property): array
+    /**
+     * Loads annotations/attributes for the given property.
+     *
+     * @return object[]
+     */
+    protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
         return $this->reader->getPropertyAnnotations($property);
     }
 
-    protected function isPropertyExcluded(\ReflectionProperty $property, ClassMetadata $classMetadata): bool
+    /**
+     * Is $property *always* excluded from serialization?
+     */
+    protected function isPropertyExcluded(ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
-        if (Annotation\ExclusionPolicy::ALL === $classMetadata->exclusionPolicy) {
-            return null === $this->reader->getPropertyAnnotation($property, Annotation\Expose::class);
+        if ($classMetadata->exclusionPolicy === Annotation\ExclusionPolicy::ALL) {
+            return $this->reader->getPropertyAnnotation($property, Annotation\Expose::class) === null;
         }
 
-        return null !== $this->reader->getPropertyAnnotation($property, Annotation\Exclude::class);
+        return $this->reader->getPropertyAnnotation($property, Annotation\Exclude::class) !== null;
     }
 }

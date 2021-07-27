@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
@@ -7,6 +9,13 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+
+use function array_key_exists;
+use function assert;
+use function gettype;
+use function is_array;
+use function Safe\sprintf;
+use function var_export;
 
 /**
  * Generic Deserialization Visitor.
@@ -18,8 +27,8 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
      */
     public function visitHash($data, Type $type, Context $context)
     {
-        if (! \is_array($data)) {
-            throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \var_export($data, true)));
+        if (! is_array($data)) {
+            throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), var_export($data, true)));
         }
 
         // If no further parameters were given, keys/values are just passed as is.
@@ -60,7 +69,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
                 return $result;
 
             default:
-                throw new RuntimeException(\sprintf('Array type cannot have more than 2 parameters, but got %s.', \var_export($type->getParams(), true)));
+                throw new RuntimeException(sprintf('Array type cannot have more than 2 parameters, but got %s.', var_export($type->getParams(), true)));
         }
     }
 
@@ -69,8 +78,8 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
      */
     public function visitArray($data, Type $type, Context $context)
     {
-        if (! \is_array($data)) {
-            throw new RuntimeException(\sprintf('Expected array, but got %s: %s', \gettype($data), \var_export($data, true)));
+        if (! is_array($data)) {
+            throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), var_export($data, true)));
         }
 
         $listType = $type->getParam(0);
@@ -97,10 +106,12 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
     ) {
+        assert($objectConstructor !== null);
+        assert($context instanceof DeserializationContext);
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
 
-        /** @var PropertyMetadata $propertyMetadata */
         foreach ($context->getNonSkippedProperties($metadata) as $propertyMetadata) {
+            assert($propertyMetadata instanceof PropertyMetadata);
             $context->getMetadataStack()->push($propertyMetadata);
             $v = $this->visitProperty($propertyMetadata, $data, $context);
             $context->getMetadataStack()->pop();
@@ -120,15 +131,15 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     {
         $name = $this->namingStrategy->translateName($metadata);
 
-        if (null === $data || ! \array_key_exists($name, $data)) {
+        if ($data === null || ! array_key_exists($name, $data)) {
             return null;
         }
 
-        if (null === $metadata->type) {
-            throw new RuntimeException(\sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
+        if ($metadata->type === null) {
+            throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
         }
 
-        $v = null !== $data[$name] ? $context->accept($data[$name], $metadata->type) : null;
+        $v = $data[$name] !== null ? $context->accept($data[$name], $metadata->type) : null;
         $this->addData($name, $v);
 
         return $v;

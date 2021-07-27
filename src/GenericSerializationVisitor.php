@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
+use ArrayObject;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
@@ -9,23 +12,33 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use SplStack;
 
+use function array_keys;
+use function array_merge;
+use function assert;
+use function count;
+use function is_array;
+use function range;
+use function Safe\sprintf;
+
 class GenericSerializationVisitor extends AbstractVisitor
 {
-    private ?GraphNavigator $navigator = null;
-    private $root;
+    private GraphNavigator $navigator;
     private SplStack $dataStack;
 
-    /**
-     * @var mixed
-     */
+    /** @var array<string, mixed>|ArrayObject<string, mixed>|null */
+    private $root;
+
+    /** @var mixed */
     private $data;
 
-    /**
-     * {@inheritdoc}
-     */
     public function setNavigator(?GraphNavigator $navigator = null): void
     {
-        $this->navigator = $navigator;
+        if ($navigator === null) {
+            unset($this->navigator);
+        } else {
+            $this->navigator = $navigator;
+        }
+
         $this->root = null;
         $this->dataStack = new SplStack();
     }
@@ -78,14 +91,14 @@ class GenericSerializationVisitor extends AbstractVisitor
         $rs = [];
         $elementType = $this->getElementType($type);
         $onlyValues = $type->hasParam(0) && ! $type->hasParam(1);
-        $isAssociative = ! $onlyValues && \array_keys($data) !== \range(0, \count($data) - 1);
+        $isAssociative = ! $onlyValues && array_keys($data) !== range(0, count($data) - 1);
 
         foreach ($data as $k => $v) {
             $context->getMetadataStack()->pushIndexPath((string) $k);
             $v = $this->navigator->accept($v, $elementType, $context);
             $context->getMetadataStack()->popIndexPath();
 
-            if (null === $v && ! $isAssociative && ! $context->shouldSerializeNull()) {
+            if ($v === null && ! $isAssociative && ! $context->shouldSerializeNull()) {
                 continue;
             }
 
@@ -112,7 +125,7 @@ class GenericSerializationVisitor extends AbstractVisitor
             $v = $this->navigator->accept($v, $elementType, $context);
             $context->getMetadataStack()->popIndexPath();
 
-            if (null === $v && ! $context->shouldSerializeNull()) {
+            if ($v === null && ! $context->shouldSerializeNull()) {
                 continue;
             }
 
@@ -125,15 +138,15 @@ class GenericSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ObjectConstructorInterface $objectConstructor = null)
+    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
     {
         $this->data = [];
         $metadataStack = $context->getMetadataStack();
 
-        /** @var PropertyMetadata $propertyMetadata */
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+            assert($propertyMetadata instanceof PropertyMetadata);
             $excluded = $context->isPropertyExcluded($propertyMetadata);
-            if ($excluded && PropertyMetadata::ON_EXCLUDE_SKIP === $propertyMetadata->onExclude) {
+            if ($excluded && $propertyMetadata->onExclude === PropertyMetadata::ON_EXCLUDE_SKIP) {
                 continue;
             }
 
@@ -162,7 +175,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         $rs = $this->data;
         $this->data = $this->dataStack->pop();
 
-        if (null === $this->root && 0 === $this->dataStack->count()) {
+        if ($this->root === null && $this->dataStack->count() === 0) {
             $this->root = $rs;
         }
 
@@ -177,13 +190,16 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = parent::visitCustom($handler, $data, $type, $context);
     }
 
+    /**
+     * @return array<string, mixed>|ArrayObject<string, mixed>|null
+     */
     public function getRoot()
     {
         return $this->root;
     }
 
     /**
-     * @param array|\ArrayObject $data the passed data must be understood by whatever encoding function is applied later
+     * @param array<string, mixed>|ArrayObject<string, mixed> $data the passed data must be understood by whatever encoding function is applied later
      */
     public function setRoot($data): void
     {
@@ -198,40 +214,49 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->getRoot();
     }
 
+    /**
+     * @param mixed $data
+     *
+     * @return mixed
+     */
     protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
     {
-        $v = null !== $data ? $this->navigator->accept($metadata->getValue($data), $metadata->type, $context) : null;
-        if (null === $v && ! $context->shouldSerializeNull()) {
-            return;
+        $v = $data !== null ? $this->navigator->accept($metadata->getValue($data), $metadata->type, $context) : null;
+        if ($v === null && ! $context->shouldSerializeNull()) {
+            return null;
         }
 
         $k = $this->namingStrategy->translateName($metadata);
 
         if ($metadata->inline) {
-            if (\is_array($v)) {
-                $this->data = \array_merge($this->data, $v);
+            if (is_array($v)) {
+                $this->data = array_merge($this->data, $v);
             }
         } else {
             $this->data[$k] = $v;
         }
+
+        return null;
     }
 
     /**
      * Allows you to add additional data to the current object/root element.
      *
-     * @param string $key
-     * @param mixed  $value This value must either be a regular scalar, or an array.
-     *                      It must not contain any objects anymore.
+     * @param mixed $value This value must either be a regular scalar, or an array.
+     *                     It must not contain any objects anymore.
      */
-    protected function addData($key, $value): void
+    protected function addData(string $key, $value): void
     {
         if (isset($this->data[$key])) {
-            throw new InvalidArgumentException(\sprintf('There is already data for "%s".', $key));
+            throw new InvalidArgumentException(sprintf('There is already data for "%s".', $key));
         }
 
         $this->data[$key] = $value;
     }
 
+    /**
+     * @param mixed $data
+     */
     protected function setData($data): void
     {
         $this->data = $data;
@@ -239,6 +264,8 @@ class GenericSerializationVisitor extends AbstractVisitor
 
     /**
      * @internal
+     *
+     * @return mixed
      */
     protected function getData()
     {

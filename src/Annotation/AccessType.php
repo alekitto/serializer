@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
@@ -6,6 +8,9 @@ use Attribute;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -18,11 +23,13 @@ final class AccessType
     public const PROPERTY = PropertyMetadata::ACCESS_TYPE_PROPERTY;
     public const PUBLIC_METHOD = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
 
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $type;
 
+    /**
+     * @param array<string, mixed>|string $type
+     * @phpstan-param array{type?: string, value?: string}|string $type
+     */
     public function __construct($type)
     {
         if (is_string($type)) {

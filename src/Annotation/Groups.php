@@ -1,26 +1,35 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
 
+use function array_intersect_key;
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
  * @Annotation
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
-#[Attribute(Attribute::TARGET_PROPERTY, Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 final class Groups
 {
     /**
      * @Required
-     *
      * @var array<string>
      */
     public array $groups;
 
+    /**
+     * @param array<string, mixed>|string $groups
+     * @phpstan-param array{groups?: string[]|array<string, mixed>, value?: string[]|array<string, mixed>}|array<string, mixed>|string $groups
+     */
     public function __construct($groups)
     {
         if (is_string($groups)) {

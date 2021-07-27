@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation\Xml;
 
 use Attribute;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -14,13 +19,15 @@ use function Safe\sprintf;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class Root
 {
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $name;
     public ?string $namespace = null;
     public ?string $encoding = null;
 
+    /**
+     * @param array<string, mixed>|string $name
+     * @phpstan-param array{name?: string, value?: string, namespace?: string, encoding?: string}|string $name
+     */
     public function __construct($name, ?string $namespace = null, ?string $encoding = null)
     {
         if (is_string($name)) {

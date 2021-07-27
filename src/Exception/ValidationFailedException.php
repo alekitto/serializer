@@ -1,8 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Exception;
 
 use Symfony\Component\Validator\ConstraintViolationList;
+
+use function count;
+use function Safe\sprintf;
 
 class ValidationFailedException extends RuntimeException
 {
@@ -10,7 +15,7 @@ class ValidationFailedException extends RuntimeException
 
     public function __construct(ConstraintViolationList $list)
     {
-        parent::__construct(\sprintf('Validation failed with %d error(s).', \count($list)));
+        parent::__construct(sprintf('Validation failed with %d error(s).', count($list)));
 
         $this->list = $list;
     }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Construction;
 
@@ -12,6 +14,9 @@ class UnserializeObjectConstructor implements ObjectConstructorInterface
 {
     private ?Instantiator $instantiator = null;
 
+    /**
+     * {@inheritdoc}
+     */
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
     {
         return $this->getInstantiator()->instantiate($metadata->getName());
@@ -22,7 +27,7 @@ class UnserializeObjectConstructor implements ObjectConstructorInterface
      */
     private function getInstantiator(): Instantiator
     {
-        if (null === $this->instantiator) {
+        if ($this->instantiator === null) {
             $this->instantiator = new Instantiator();
         }
 

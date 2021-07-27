@@ -1,10 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Exclusion;
 
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+
+use function assert;
 
 /**
  * Disjunct Exclusion Strategy.
@@ -29,13 +33,10 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
         $this->delegates[] = $strategy;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shouldSkipClass(ClassMetadata $metadata, Context $context): bool
     {
         foreach ($this->delegates as $delegate) {
-            /** @var $delegate ExclusionStrategyInterface */
+            assert($delegate instanceof ExclusionStrategyInterface);
             if ($delegate->shouldSkipClass($metadata, $context)) {
                 return true;
             }
@@ -44,9 +45,6 @@ class DisjunctExclusionStrategy implements ExclusionStrategyInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function shouldSkipProperty(PropertyMetadata $property, Context $context): bool
     {
         foreach ($this->delegates as $delegate) {

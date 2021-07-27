@@ -1,34 +1,48 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
 use Kcs\Serializer\Inflector\Inflector;
 use ReflectionClass;
+use ReflectionProperty;
+use RuntimeException;
+
+use function explode;
+use function is_bool;
+use function is_string;
+use function Safe\sprintf;
+use function Safe\substr;
+use function strpos;
+use function var_export;
 
 trait LoaderTrait
 {
-    private function createAnnotationObject(string $name)
+    private function createAnnotationObject(string $name): object
     {
         switch ($className = Inflector::getInstance()->classify($name)) {
             case 'XmlList':
             case 'XmlNamespace':
-                $className = 'Xml\\'.$className;
+                $className = 'Xml\\' . $className;
                 break;
 
             default:
-                if (0 === \strpos($className, 'Xml')) {
-                    $className = 'Xml\\'.\substr($className, 3);
+                if (strpos($className, 'Xml') === 0) {
+                    $className = 'Xml\\' . substr($className, 3);
                 }
+
                 break;
         }
 
-        $annotationClass = 'Kcs\\Serializer\\Annotation\\'.$className;
+        /** @phpstan-var class-string $annotationClass */
+        $annotationClass = 'Kcs\\Serializer\\Annotation\\' . $className;
         $reflectionClass = new ReflectionClass($annotationClass);
 
         return $reflectionClass->newInstanceWithoutConstructor();
     }
 
-    private function getDefaultPropertyName($annotation): ?string
+    private function getDefaultPropertyName(object $annotation): ?string
     {
         $reflectionAnnotation = new ReflectionClass($annotation);
         $properties = $reflectionAnnotation->getProperties();
@@ -36,13 +50,18 @@ trait LoaderTrait
         return isset($properties[0]) ? $properties[0]->name : null;
     }
 
-    private function convertValue(object $annotation, ?string $property, $value)
+    /**
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function convertValue(object $annotation, string $property, $value)
     {
-        $reflectionProperty = new \ReflectionProperty($annotation, $property);
+        $reflectionProperty = new ReflectionProperty($annotation, $property);
         $type = (string) $reflectionProperty->getType();
         switch ($type) {
             case 'int':
-                $value = (int)$value;
+                $value = (int) $value;
                 break;
 
             case '?array':
@@ -50,10 +69,11 @@ trait LoaderTrait
                 if (is_string($value)) {
                     $value = explode(',', $value);
                 }
+
                 break;
 
             case 'bool':
-                $value = (bool)$value;
+                $value = (bool) $value;
                 break;
 
             case '?string':
@@ -61,14 +81,16 @@ trait LoaderTrait
                 if (is_bool($value)) {
                     $value = '';
                 }
+
                 break;
 
             case '':
                 break;
 
             default:
-                throw new \RuntimeException(\sprintf('Cannot convert mapping value %s to %s', \var_export($value, true), $type));
+                throw new RuntimeException(sprintf('Cannot convert mapping value %s to %s', var_export($value, true), $type));
         }
+
         return $value;
     }
 }

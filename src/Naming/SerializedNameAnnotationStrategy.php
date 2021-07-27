@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Naming;
 
@@ -16,15 +18,8 @@ final class SerializedNameAnnotationStrategy implements PropertyNamingStrategyIn
         $this->delegate = $namingStrategy;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function translateName(PropertyMetadata $property): string
     {
-        if (null !== $name = $property->serializedName) {
-            return $name;
-        }
-
-        return $this->delegate->translateName($property);
+        return $property->serializedName ?: $this->delegate->translateName($property);
     }
 }

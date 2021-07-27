@@ -1,0 +1,32 @@
+name: PHPStan
+
+on:
+    push:
+    pull_request:
+        types: [opened]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        name: Static analysis
+        steps:
+            -   uses: actions/checkout@v2
+                with:
+                    fetch-depth: 0
+
+            -   name: Install PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    coverage: none
+                    php-version: "8.0"
+                    tools: cs2pr
+
+            -   name: Install dependencies with composer
+                run: composer update --no-progress --no-interaction --prefer-dist
+
+            -   if: ${{ github.base_ref == '' }}
+                run: composer phpstan
+
+            -   name: Run a static analysis with phpstan/phpstan
+                if: ${{ github.base_ref != '' }}
+                run: composer phpstan -- --error-format=checkstyle | cs2pr

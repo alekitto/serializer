@@ -1,10 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
 
 /**
@@ -16,6 +21,10 @@ final class SerializedName
 {
     public string $name;
 
+    /**
+     * @param array<string, mixed>|string $name
+     * @phpstan-param array{name?: string, value?: string}|string $name
+     */
     public function __construct($name)
     {
         if (is_string($name)) {

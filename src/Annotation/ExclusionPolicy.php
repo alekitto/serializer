@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Annotation;
 
@@ -6,7 +8,11 @@ use Attribute;
 use Kcs\Serializer\Exception\RuntimeException;
 use TypeError;
 
+use function get_debug_type;
+use function is_array;
+use function is_string;
 use function Safe\sprintf;
+use function strtoupper;
 
 /**
  * @Annotation
@@ -18,11 +24,13 @@ final class ExclusionPolicy
     public const NONE = 'NONE';
     public const ALL = 'ALL';
 
-    /**
-     * @Required
-     */
+    /** @Required */
     public string $policy;
 
+    /**
+     * @param array<string, mixed>|string $policy
+     * @phpstan-param array{policy?: string, value?: string}|string $policy
+     */
     public function __construct($policy)
     {
         if (is_string($policy)) {
@@ -34,9 +42,9 @@ final class ExclusionPolicy
         }
 
         $policy = $data['policy'] ?? $data['value'];
-        $this->policy = \strtoupper($policy);
+        $this->policy = strtoupper($policy);
 
-        if (self::NONE !== $this->policy && self::ALL !== $this->policy) {
+        if ($this->policy !== self::NONE && $this->policy !== self::ALL) {
             throw new RuntimeException('Exclusion policy must either be "ALL", or "NONE".');
         }
     }

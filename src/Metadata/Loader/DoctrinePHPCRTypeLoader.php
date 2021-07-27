@@ -1,11 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader;
 
 use Doctrine\Persistence\Mapping\ClassMetadata as DoctrineClassMetadata;
-use Exception;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Throwable;
+
+use function assert;
+use function Safe\sprintf;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
@@ -13,34 +18,27 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
  */
 class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void
     {
         // Do nothing
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool
     {
-        /* @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+        assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);
 
-        return 'lazyPropertiesDefaults' === $propertyMetadata->name
+        return $propertyMetadata->name === 'lazyPropertiesDefaults'
             || $doctrineMetadata->parentMapping === $propertyMetadata->name
             || $doctrineMetadata->node === $propertyMetadata->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
-        /** @var \Doctrine\ODM\PHPCR\Mapping\ClassMetadata $doctrineMetadata */
+        assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);
+
         $propertyName = $propertyMetadata->name;
-        if ($doctrineMetadata->hasField($propertyName) && $fieldType = $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName))) {
+        $fieldType = $doctrineMetadata->hasField($propertyName) ? $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName)) : null;
+        if ($fieldType !== null) {
             $field = $doctrineMetadata->getFieldMapping($propertyName);
             if (! empty($field['multivalue'])) {
                 $fieldType = 'array';
@@ -50,16 +48,16 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
         } elseif ($doctrineMetadata->hasAssociation($propertyName)) {
             try {
                 $targetEntity = $doctrineMetadata->getAssociationTargetClass($propertyName);
-            } catch (Exception $e) {
+            } catch (Throwable $e) { // @phpstan-ignore-line
                 return;
             }
 
-            if (null === $this->tryLoadingDoctrineMetadata($targetEntity)) {
+            if ($this->tryLoadingDoctrineMetadata($targetEntity) === null) {
                 return;
             }
 
             if (! $doctrineMetadata->isSingleValuedAssociation($propertyName)) {
-                $targetEntity = "ArrayCollection<{$targetEntity}>";
+                $targetEntity = sprintf('ArrayCollection<%s>', $targetEntity);
             }
 
             $propertyMetadata->setType($targetEntity);

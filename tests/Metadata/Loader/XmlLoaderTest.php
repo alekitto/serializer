@@ -5,6 +5,7 @@ namespace Kcs\Serializer\Tests\Metadata\Driver;
 use Kcs\Metadata\Loader\FilesLoader;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Metadata\Loader\Locator\IteratorFileLocator;
+use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Loader\XmlLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
@@ -15,6 +16,15 @@ use Kcs\Serializer\Type\Type;
 
 class XmlLoaderTest extends BaseLoaderTest
 {
+    public function testInvalidMappingFiles(): void
+    {
+        $this->expectException(XmlErrorException::class);
+        $this->expectExceptionMessage('[FATAL]');
+
+        $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
+        $this->getLoader('invalid')->loadClassMetadata($m);
+    }
+
     public function testBlogPostExcludeAllStrategy(): void
     {
         $m = new ClassMetadata(new \ReflectionClass(BlogPost::class));
