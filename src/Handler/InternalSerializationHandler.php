@@ -26,8 +26,17 @@ final class InternalSerializationHandler
     /** @var callable */
     private $handler;
 
-    public function __construct(callable $handler)
+    /**
+     * @param mixed[] | callable $handler
+     * @phpstan-param array{0: callable, 1: string} | callable $handler
+     */
+    public function __construct($handler)
     {
+        if (is_array($handler) && is_callable($handler[0])) {
+            $handler[0] = $handler[0]();
+        }
+
+        assert(is_callable($handler));
         $this->handler = $handler;
     }
 

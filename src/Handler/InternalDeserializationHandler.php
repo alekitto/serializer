@@ -10,6 +10,7 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 
+use function assert;
 use function get_debug_type;
 use function is_array;
 use function is_callable;
@@ -23,8 +24,17 @@ final class InternalDeserializationHandler
     /** @var callable */
     private $handler;
 
-    public function __construct(callable $handler)
+    /**
+     * @param mixed[] | callable $handler
+     * @phpstan-param array{0: callable, 1: string} | callable $handler
+     */
+    public function __construct($handler)
     {
+        if (is_array($handler) && is_callable($handler[0])) {
+            $handler[0] = $handler[0]();
+        }
+
+        assert(is_callable($handler));
         $this->handler = $handler;
     }
 
