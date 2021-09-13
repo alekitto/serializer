@@ -6,6 +6,7 @@ namespace Kcs\Serializer\Metadata\Loader;
 
 use Kcs\Serializer\Inflector\Inflector;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -58,7 +59,8 @@ trait LoaderTrait
     private function convertValue(object $annotation, string $property, $value)
     {
         $reflectionProperty = new ReflectionProperty($annotation, $property);
-        $type = (string) $reflectionProperty->getType();
+        $type = $reflectionProperty->getType();
+        $type = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
         switch ($type) {
             case 'int':
                 $value = (int) $value;

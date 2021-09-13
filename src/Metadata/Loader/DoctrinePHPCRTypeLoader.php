@@ -37,7 +37,8 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
         assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);
 
         $propertyName = $propertyMetadata->name;
-        $fieldType = $doctrineMetadata->hasField($propertyName) ? $this->normalizeFieldType($doctrineMetadata->getTypeOfField($propertyName)) : null;
+        $typeName = $doctrineMetadata->hasField($propertyName) ? $doctrineMetadata->getTypeOfField($propertyName) : null;
+        $fieldType = $typeName !== null ? $this->normalizeFieldType($typeName) : null;
         if ($fieldType !== null) {
             $field = $doctrineMetadata->getFieldMapping($propertyName);
             if (! empty($field['multivalue'])) {
@@ -52,7 +53,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
                 return;
             }
 
-            if ($this->tryLoadingDoctrineMetadata($targetEntity) === null) {
+            if ($targetEntity === null || $this->tryLoadingDoctrineMetadata($targetEntity) === null) {
                 return;
             }
 
