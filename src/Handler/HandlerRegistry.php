@@ -12,7 +12,6 @@ use ReflectionClass;
 
 use function assert;
 use function class_exists;
-use function get_class;
 use function interface_exists;
 use function is_array;
 use function is_callable;
@@ -65,7 +64,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
     {
         foreach ($handler->getSubscribingMethods() as $methodData) {
             if (! isset($methodData['type'])) {
-                throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', get_class($handler)));
+                throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', $handler::class));
             }
 
             $directions = [Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION];

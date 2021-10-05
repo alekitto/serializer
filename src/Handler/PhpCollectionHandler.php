@@ -45,34 +45,22 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
         return $methods;
     }
 
-    /**
-     * @return mixed
-     */
-    public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context)
+    public function serializeMap(VisitorInterface $visitor, Map $map, Type $type, Context $context): mixed
     {
         return $visitor->visitHash(iterator_to_array($map), $type, $context);
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function deserializeMap(VisitorInterface $visitor, $data, Type $type, Context $context): MapInterface
+    public function deserializeMap(VisitorInterface $visitor, mixed $data, Type $type, Context $context): MapInterface
     {
         return new Map($visitor->visitHash($data, $type, $context));
     }
 
-    /**
-     * @return mixed
-     */
-    public function serializeSequence(VisitorInterface $visitor, Sequence $sequence, Type $type, Context $context)
+    public function serializeSequence(VisitorInterface $visitor, Sequence $sequence, Type $type, Context $context): mixed
     {
         return $visitor->visitArray($sequence->all(), $type, $context);
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function deserializeSequence(VisitorInterface $visitor, $data, Type $type, Context $context): SequenceInterface
+    public function deserializeSequence(VisitorInterface $visitor, mixed $data, Type $type, Context $context): SequenceInterface
     {
         return new Sequence($visitor->visitArray($data, $type, $context));
     }

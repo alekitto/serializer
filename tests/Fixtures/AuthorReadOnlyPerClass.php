@@ -3,19 +3,19 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\Accessor;
-use Kcs\Serializer\Annotation\ReadOnly;
+use Kcs\Serializer\Annotation\Immutable;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml\Root;
 
 /**
  * @Root("author")
- * @ReadOnly
+ * @Immutable
  */
 class AuthorReadOnlyPerClass
 {
     /**
-     * @ReadOnly
+     * @Immutable
      * @SerializedName("id")
      */
     private $id;
@@ -24,7 +24,7 @@ class AuthorReadOnlyPerClass
      * @Type("string")
      * @SerializedName("full_name")
      * @Accessor("getName")
-     * @ReadOnly(false)
+     * @Immutable(false)
      */
     private $name;
 

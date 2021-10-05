@@ -25,7 +25,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitHash($data, Type $type, Context $context)
+    public function visitHash(mixed $data, Type $type, Context $context): array
     {
         if (! is_array($data)) {
             throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), var_export($data, true)));
@@ -76,7 +76,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitArray(mixed $data, Type $type, Context $context): array
     {
         if (! is_array($data)) {
             throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), var_export($data, true)));
@@ -101,11 +101,11 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
      */
     public function visitObject(
         ClassMetadata $metadata,
-        $data,
+        mixed $data,
         Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
-    ) {
+    ): object {
         assert($objectConstructor !== null);
         assert($context instanceof DeserializationContext);
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
@@ -127,7 +127,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
         $name = $this->namingStrategy->translateName($metadata);
 

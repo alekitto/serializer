@@ -8,6 +8,7 @@ use Kcs\Serializer\Inflector\Inflector;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
+use ReflectionUnionType;
 use RuntimeException;
 
 use function explode;
@@ -51,15 +52,14 @@ trait LoaderTrait
         return isset($properties[0]) ? $properties[0]->name : null;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    private function convertValue(object $annotation, string $property, $value)
+    private function convertValue(object $annotation, string $property, mixed $value): mixed
     {
         $reflectionProperty = new ReflectionProperty($annotation, $property);
         $type = $reflectionProperty->getType();
+        if ($type instanceof ReflectionUnionType) {
+            return $value;
+        }
+
         $type = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
         switch ($type) {
             case 'int':

@@ -10,8 +10,7 @@ use function array_merge;
 
 class StaticPropertyMetadata extends PropertyMetadata
 {
-    /** @var mixed */
-    private $value;
+    private mixed $value;
 
     /**
      * {@inheritdoc}
@@ -23,21 +22,15 @@ class StaticPropertyMetadata extends PropertyMetadata
         $this->class = $class;
         $this->name = $fieldName;
         $this->value = $fieldValue;
-        $this->readOnly = true;
+        $this->immutable = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(object $obj)
+    public function getValue(object $obj): mixed
     {
         return $this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setValue($obj, $value): void
+    public function setValue(object $obj, mixed $value): void
     {
         throw new LogicException('StaticPropertyMetadata is immutable.');
     }

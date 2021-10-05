@@ -30,7 +30,7 @@ final class AccessType
      * @param array<string, mixed>|string $type
      * @phpstan-param array{type?: string, value?: string}|string $type
      */
-    public function __construct($type)
+    public function __construct(array|string $type)
     {
         if (is_string($type)) {
             $data = ['type' => $type];

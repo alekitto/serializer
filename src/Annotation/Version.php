@@ -20,7 +20,7 @@ abstract class Version
      * @param array<string, mixed>|string $version
      * @phpstan-param array{version?: string, value?: string}|string $version
      */
-    public function __construct($version)
+    public function __construct(array|string $version)
     {
         if (is_string($version)) {
             $data = ['version' => $version];

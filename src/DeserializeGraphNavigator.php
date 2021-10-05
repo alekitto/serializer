@@ -33,7 +33,7 @@ class DeserializeGraphNavigator extends GraphNavigator
      *
      * @param DeserializationContext $context
      */
-    public function accept($data, ?Type $type, Context $context)
+    public function accept(mixed $data, ?Type $type, Context $context): mixed
     {
         if ($type === null) {
             throw new RuntimeException('The type must be given for all properties when deserializing.');
@@ -42,12 +42,7 @@ class DeserializeGraphNavigator extends GraphNavigator
         return $this->deserialize($data, $type, $context);
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    private function deserialize($data, Type $type, DeserializationContext $context)
+    private function deserialize(mixed $data, Type $type, DeserializationContext $context): mixed
     {
         $context->increaseDepth();
 
@@ -81,7 +76,7 @@ class DeserializeGraphNavigator extends GraphNavigator
     /**
      * {@inheritdoc}
      */
-    protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context)
+    protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
         return $context->visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
     }

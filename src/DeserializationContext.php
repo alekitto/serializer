@@ -33,7 +33,7 @@ class DeserializationContext extends Context
 
     protected function filterPropertyMetadata(PropertyMetadata $propertyMetadata): bool
     {
-        if ($propertyMetadata->readOnly) {
+        if ($propertyMetadata->immutable) {
             return false;
         }
 

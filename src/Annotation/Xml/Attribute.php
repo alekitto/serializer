@@ -25,7 +25,7 @@ final class Attribute
      * @param array<string, mixed>|string|null $namespace
      * @phpstan-param array{namespace?: string, value?: string}|string|null $namespace
      */
-    public function __construct($namespace = null)
+    public function __construct(array|string|null $namespace = null)
     {
         if (is_string($namespace)) {
             $data = ['namespace' => $namespace];

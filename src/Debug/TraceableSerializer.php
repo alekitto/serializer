@@ -31,7 +31,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null)
+    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
         $this->serializeOperations[] = &$debugData;
@@ -51,7 +51,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null)
+    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
         $this->deserializeOperations[] = &$debugData;
@@ -91,7 +91,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null)
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null): mixed
     {
         $debugData = $this->prepareDebugData($data, 'array', $type, $context);
         $this->deserializeOperations[] = &$debugData;
@@ -115,11 +115,9 @@ class TraceableSerializer implements SerializerInterface
     }
 
     /**
-     * @param mixed $data
-     *
      * @return array<string, mixed>
      */
-    private function prepareDebugData($data, string $format, ?Type $type, ?Context $context): array
+    private function prepareDebugData(mixed $data, string $format, ?Type $type, ?Context $context): array
     {
         return [
             'data' => $this->cloner->cloneVar($data),

@@ -274,6 +274,15 @@ No arguments.
 objects with this attribute. Also, AccessorOrder will be using the name of the property
 to determine the order.
 
+Immutable
+--------
+This attribute can be defined on a property or a class to indicate that the data of the property
+is read only and cannot be set during deserialization.
+
+A property can be marked as non-immutable with `Immutable(false)` attribute (useful when a class is marked as immutable).
+
+No arguments.
+
 MaxDepth
 --------
 This attribute can be defined on a property to limit the depth to which the
@@ -298,15 +307,6 @@ Arguments:
 | name             | type   | required | description                        |
 | ---------------- | ------ | -------- | ---------------------------------- |
 | policy (default) | string | yes      | The behavior to apply on exclusion |
-
-ReadOnly
---------
-This attribute can be defined on a property or a class to indicate that the data of the property
-is read only and cannot be set during deserialization.
-
-A property can be marked as non read only with `ReadOnly(false)` attribute (useful when a class is marked as read only).
-
-No arguments.
 
 SerializedName
 --------------

@@ -55,7 +55,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null)
+    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $this->navigator = new SerializeGraphNavigator($this->factory, $this->handlerRegistry, $this->dispatcher);
 
@@ -73,7 +73,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null)
+    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $this->navigator = new DeserializeGraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
 
@@ -105,7 +105,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null)
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null): mixed
     {
         return $this->deserialize($data, $type, 'array', $context);
     }
@@ -115,12 +115,7 @@ class Serializer implements SerializerInterface
         return $this->factory;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    private function visit(VisitorInterface $visitor, Context $context, $data, string $format, ?Type $type)
+    private function visit(VisitorInterface $visitor, Context $context, mixed $data, string $format, ?Type $type): mixed
     {
         $data = $visitor->prepare($data);
         $context->initialize($format, $visitor, $this->navigator, $this->factory);

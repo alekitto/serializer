@@ -27,20 +27,16 @@ final class StaticField
     /** @var mixed[] */
     public array $attributes = [];
 
-    /**
-     * @Required
-     * @var mixed
-     */
-    public $value;
+    /** @Required */
+    public mixed $value;
 
     /**
      * @param array<string, mixed>|string $name
      * @param array|null $attributes
-     * @param mixed $value
      * @phpstan-param array<int, object|mixed>|null $attributes
      * @phpstan-param array{name?: string, value?: mixed, attributes?: object[]}|string $name
      */
-    public function __construct($name, ?array $attributes = null, $value = null)
+    public function __construct(array|string $name, ?array $attributes = null, mixed $value = null)
     {
         if (is_string($name)) {
             $data = ['name' => $name];

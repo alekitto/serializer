@@ -16,10 +16,6 @@ interface DeserializationHandlerInterface
 
     /**
      * Deserializes the data.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    public function deserialize($data);
+    public function deserialize(mixed $data): mixed;
 }

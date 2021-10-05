@@ -35,7 +35,7 @@ class ClassMetadata extends BaseClassMetadata
 
     public string $exclusionPolicy = ExclusionPolicy::NONE;
     public string $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
-    public bool $readOnly = false;
+    public bool $immutable = false;
     public ?string $xmlRootName = null;
     public ?string $xmlRootNamespace = null;
     public ?string $xmlEncoding = null;
@@ -163,7 +163,7 @@ class ClassMetadata extends BaseClassMetadata
      *
      * @phpstan-return class-string
      */
-    public function getSubtype($data): string
+    public function getSubtype(array|object $data): string
     {
         if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
             $typeValue = (string) $data[$this->discriminatorFieldName];

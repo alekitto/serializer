@@ -3,10 +3,10 @@ Kcs\Serializer\Tests\Fixtures\AuthorReadOnly:
         name: author
     properties:
         id:
-            read_only: true
+            immutable: true
         name:
             serialized_name:  full_name
             access_type:      public_method
             accessor:
                 getter: getName
-            read_only:        true
+            immutable:        true

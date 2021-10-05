@@ -40,7 +40,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function prepare($data)
+    public function prepare(mixed $data): SimpleXMLElement
     {
         $previous = libxml_use_internal_errors(true);
         if (stripos($data, '<!doctype') !== false) {
@@ -66,7 +66,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitHash($data, Type $type, Context $context)
+    public function visitHash(mixed $data, Type $type, Context $context): array
     {
         $currentMetadata = $context->getMetadataStack()->getCurrent();
 
@@ -132,7 +132,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitArray(mixed $data, Type $type, Context $context): array
     {
         $currentMetadata = $context->getMetadataStack()->getCurrent();
 
@@ -160,7 +160,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
         $name = $this->namingStrategy->translateName($metadata);
 
@@ -226,7 +226,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitBoolean($data, Type $type, Context $context)
+    public function visitBoolean(mixed $data, Type $type, Context $context): bool
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -248,7 +248,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitCustom(callable $handler, $data, Type $type, Context $context)
+    public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -262,11 +262,11 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function visitObject(
         ClassMetadata $metadata,
-        $data,
+        mixed $data,
         Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
-    ) {
+    ): object {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
         }
@@ -277,7 +277,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitString($data, Type $type, Context $context)
+    public function visitString(mixed $data, Type $type, Context $context): ?string
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -289,7 +289,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitInteger($data, Type $type, Context $context)
+    public function visitInteger(mixed $data, Type $type, Context $context): ?int
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -301,7 +301,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitDouble($data, Type $type, Context $context)
+    public function visitDouble(mixed $data, Type $type, Context $context): ?float
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);

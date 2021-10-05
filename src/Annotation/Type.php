@@ -26,7 +26,7 @@ final class Type
      * @param array<string, mixed>|string $name
      * @phpstan-param array{name?: string, value?: string}|string $name
      */
-    public function __construct($name)
+    public function __construct(array|string $name)
     {
         if (is_string($name)) {
             $data = ['name' => $name];

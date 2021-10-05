@@ -28,7 +28,7 @@ final class Root
      * @param array<string, mixed>|string $name
      * @phpstan-param array{name?: string, value?: string, namespace?: string, encoding?: string}|string $name
      */
-    public function __construct($name, ?string $namespace = null, ?string $encoding = null)
+    public function __construct(array|string $name, ?string $namespace = null, ?string $encoding = null)
     {
         if (is_string($name)) {
             $data = ['name' => $name];

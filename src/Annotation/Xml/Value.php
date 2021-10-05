@@ -25,7 +25,7 @@ final class Value
      * @param array<string, mixed>|bool|null $cdata
      * @phpstan-param array{cdata?: bool, value?: bool}|bool|null $cdata
      */
-    public function __construct($cdata = null)
+    public function __construct(array|bool|null $cdata = null)
     {
         if (is_bool($cdata)) {
             $data = ['cdata' => $cdata];

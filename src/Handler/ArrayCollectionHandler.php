@@ -49,10 +49,8 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
     /**
      * @param Collection<mixed> $collection
-     *
-     * @return mixed
      */
-    public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context)
+    public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context): mixed
     {
         if ($type->countParams() === 1) {
             return $visitor->visitArray($collection->toArray(), $type, $context);
@@ -62,11 +60,9 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
     }
 
     /**
-     * @param mixed $data
-     *
      * @return Collection<mixed>
      */
-    public function deserializeCollection(VisitorInterface $visitor, $data, Type $type, Context $context): Collection
+    public function deserializeCollection(VisitorInterface $visitor, mixed $data, Type $type, Context $context): Collection
     {
         if ($type->countParams() === 1) {
             return new ArrayCollection($visitor->visitArray($data, $type, $context));

@@ -72,10 +72,8 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
     /**
      * Try to load an object from doctrine.
-     *
-     * @param mixed $data
      */
-    protected function loadFromObjectManager(ClassMetadata $metadata, $data): ?object
+    protected function loadFromObjectManager(ClassMetadata $metadata, mixed $data): ?object
     {
         // Locate possible ObjectManager
         $objectManager = $this->getObjectManager($metadata);

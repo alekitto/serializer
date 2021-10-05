@@ -9,7 +9,7 @@ For additional information of attributes and elements, see [PHP attributes refer
 <?xml version="1.0" encoding="UTF-8" ?>
 <serializer>
     <class name="Fully\Qualified\ClassName" exclusion-policy="ALL" exclude="true"
-        access-type="public_method" read-only="false">
+        access-type="public_method" immutable="false">
         <accessor-order order="custom" custom="propertyName1,propertyName2,...,propertyNameN"/>
         <xml-root name="foo-bar" namespace="http://foo.bar/2016/ns" />
         <xml-namespace prefix="atom" uri="http://www.w3.org/2005/Atom" />
@@ -29,7 +29,7 @@ For additional information of attributes and elements, see [PHP attributes refer
                   accessor-getter="getSomeProperty"
                   accessor-setter="setSomeProperty"
                   inline="true"
-                  read-only="true"
+                  immutable="true"
                   groups="foo,bar"
                   xml-key-value-pairs="true"
                   xml-attribute-map="true"

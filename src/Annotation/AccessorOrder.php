@@ -30,13 +30,13 @@ final class AccessorOrder
     public string $order;
 
     /** @var string|string[] */
-    public $custom = [];
+    public string|array $custom = [];
 
     /**
      * @param array<string, mixed>|string $order
      * @phpstan-param array{order?: string, value?: string, custom?: string|string[]}|string $order
      */
-    public function __construct($order, ?array $custom = null)
+    public function __construct(array|string $order, ?array $custom = null)
     {
         if (is_string($order)) {
             $data = ['order' => $order];

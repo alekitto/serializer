@@ -31,7 +31,7 @@ final class Csv
      * @param array<string, mixed>|string $delimiter
      * @phpstan-param array{delimiter?: string, value?: string, enclosure?: string, escapeChar?: string, escapeFormulas?: bool, keySeparator?: string, printHeaders?: bool, outputBom?: bool}|string $delimiter
      */
-    public function __construct($delimiter, ?string $enclosure = null, ?string $escapeChar = null, ?bool $escapeFormulas = null, ?string $keySeparator = null, ?bool $printHeaders = null, ?bool $outputBom = null)
+    public function __construct(array|string $delimiter, ?string $enclosure = null, ?string $escapeChar = null, ?bool $escapeFormulas = null, ?string $keySeparator = null, ?bool $printHeaders = null, ?bool $outputBom = null)
     {
         if (is_string($delimiter)) {
             $data = ['delimiter' => $delimiter];

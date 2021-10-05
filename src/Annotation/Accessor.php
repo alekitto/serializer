@@ -26,7 +26,7 @@ final class Accessor
      * @param array<string, mixed>|string|null $getter
      * @phpstan-param array{getter?: string, value?: string, setter?: string}|string|null $getter
      */
-    public function __construct($getter = null, ?string $setter = null)
+    public function __construct(array|string|null $getter = null, ?string $setter = null)
     {
         if (is_string($getter)) {
             $data = ['getter' => $getter];

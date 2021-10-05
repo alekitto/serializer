@@ -825,17 +825,17 @@ abstract class BaseSerializationTest extends TestCase
     {
         self::assertEquals(
             $this->getContent('virtual_properties_low'),
-            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion(2))
+            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion((string) 2))
         );
 
         self::assertEquals(
             $this->getContent('virtual_properties_all'),
-            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion(7))
+            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion((string) 7))
         );
 
         self::assertEquals(
             $this->getContent('virtual_properties_high'),
-            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion(9))
+            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion((string) 9))
         );
     }
 
@@ -864,7 +864,7 @@ abstract class BaseSerializationTest extends TestCase
                 return CustomDeserializationObject::class;
             }
 
-            public function serialize($data)
+            public function serialize(mixed $data): array
             {
                 return ['some_property' => $data->someProperty];
             }
@@ -888,7 +888,7 @@ abstract class BaseSerializationTest extends TestCase
                 return CustomDeserializationObject::class;
             }
 
-            public function deserialize($data)
+            public function deserialize(mixed $data): mixed
             {
                 return new CustomDeserializationObject('customly_unserialized_value');
             }

@@ -29,8 +29,8 @@ final class Discriminator
 
     public bool $disabled = false;
 
-    /** @var string|string[] */
-    public $groups;
+    /** @var string|string[]|null */
+    public string|array|null $groups;
 
     /**
      * @param array<string, mixed> $map

@@ -261,10 +261,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    /**
-     * @return false|SimpleXMLElement
-     */
-    private function getClassElement(string $class)
+    private function getClassElement(string $class): false|SimpleXMLElement
     {
         $elems = $this->document->xpath("./class[@name = '" . $class . "']");
         if (empty($elems)) {

@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\ReadOnly;
+use Kcs\Serializer\Annotation\Immutable;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml\Element;
@@ -12,11 +12,11 @@ use Kcs\Serializer\Annotation\Xml\Root;
 /**
  * @Root("publisher")
  * @XmlNamespace(uri="http://example.com/namespace2", prefix="ns2")
- * @ReadOnly()
+ * @Immutable()
  */
 #[Root('publisher')]
 #[XmlNamespace(uri: 'http://example.com/namespace2', prefix: 'ns2')]
-#[ReadOnly()]
+#[Immutable]
 class Publisher
 {
     /**

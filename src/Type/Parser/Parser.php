@@ -39,11 +39,9 @@ final class Parser
     /**
      * Match a token in the lexer.
      *
-     * @return mixed
-     *
      * @throws SyntaxErrorException
      */
-    private function match(int $type)
+    private function match(int $type): mixed
     {
         if (! $this->lexer->isNextToken($type)) {
             $this->syntaxError();

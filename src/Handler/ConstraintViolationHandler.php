@@ -37,10 +37,7 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
         ];
     }
 
-    /**
-     * @return mixed
-     */
-    public function serializeList(VisitorInterface $visitor, ConstraintViolationList $list, Type $type, Context $context)
+    public function serializeList(VisitorInterface $visitor, ConstraintViolationList $list, Type $type, Context $context): mixed
     {
         $serializableList = new SerializableConstraintViolationList($list);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableList);
@@ -49,10 +46,7 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
         return $visitor->visitObject($metadata, $serializableList, $type, $context);
     }
 
-    /**
-     * @return mixed
-     */
-    public function serializeViolation(VisitorInterface $visitor, ConstraintViolation $violation, Type $type, Context $context)
+    public function serializeViolation(VisitorInterface $visitor, ConstraintViolation $violation, Type $type, Context $context): mixed
     {
         $serializableViolation = new SerializableConstraintViolation($violation);
         $metadata = $context->getMetadataFactory()->getMetadataFor($serializableViolation);
