@@ -35,9 +35,6 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     private const UTF8_BOM = "\xEF\xBB\xBF";
     private ?ClassMetadata $rootMetadata = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
     {
         if ($this->rootMetadata === null) {

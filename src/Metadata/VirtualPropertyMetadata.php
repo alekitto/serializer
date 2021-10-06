@@ -29,9 +29,6 @@ class VirtualPropertyMetadata extends PropertyMetadata
         $this->immutable = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setValue(object $obj, mixed $value): void
     {
         throw new LogicException('VirtualPropertyMetadata is immutable.');

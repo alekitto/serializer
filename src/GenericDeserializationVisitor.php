@@ -96,9 +96,6 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitObject(
         ClassMetadata $metadata,
         mixed $data,
@@ -124,9 +121,6 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $object;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
         $name = $this->namingStrategy->translateName($metadata);

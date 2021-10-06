@@ -37,9 +37,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     /** @var string[] */
     private array $docNamespaces = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepare(mixed $data): SimpleXMLElement
     {
         $previous = libxml_use_internal_errors(true);
@@ -157,9 +154,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
         $name = $this->namingStrategy->translateName($metadata);
@@ -223,9 +217,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return $context->accept($node, $metadata->type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitBoolean(mixed $data, Type $type, Context $context): bool
     {
         if ($this->isNullNode($data)) {
@@ -245,9 +236,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitBoolean($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         if ($this->isNullNode($data)) {
@@ -257,9 +245,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitCustom($handler, $data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitObject(
         ClassMetadata $metadata,
         mixed $data,
@@ -274,9 +259,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitString(mixed $data, Type $type, Context $context): ?string
     {
         if ($this->isNullNode($data)) {
@@ -286,9 +268,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitString($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitInteger(mixed $data, Type $type, Context $context): ?int
     {
         if ($this->isNullNode($data)) {
@@ -298,9 +277,6 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitInteger($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitDouble(mixed $data, Type $type, Context $context): ?float
     {
         if ($this->isNullNode($data)) {

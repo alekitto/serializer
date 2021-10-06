@@ -24,7 +24,7 @@ final class Immutable
     /**
      * @param array<string, mixed>|bool $immutable
      */
-    public function __construct($immutable = true)
+    public function __construct(array|bool $immutable = true)
     {
         if (is_bool($immutable)) {
             $data = ['immutable' => $immutable];

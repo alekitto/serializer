@@ -26,6 +26,7 @@ use function array_search;
 use function assert;
 use function is_object;
 use function iterator_to_array;
+use function libxml_use_internal_errors;
 use function Safe\libxml_get_last_error;
 use function Safe\preg_match;
 use function Safe\sprintf;
@@ -306,15 +307,12 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function startVisiting(&$data, Type $type, Context $context): void
+    public function startVisiting(mixed &$data, Type $type, Context $context): void
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function endVisiting(mixed $data, Type $type, Context $context): mixed
     {
         $nodes = $this->currentNodes ?: [];
@@ -333,9 +331,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResult(): string | bool
     {
         $this->attachNullNS();

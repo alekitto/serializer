@@ -7,6 +7,7 @@ namespace Kcs\Serializer\Metadata;
 use Countable;
 use IteratorAggregate;
 use SplStack;
+use Traversable;
 
 use function array_pop;
 
@@ -61,10 +62,7 @@ class MetadataStack implements IteratorAggregate, Countable
         return $this->stack->isEmpty() ? null : $this->stack->top();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         return $this->stack;
     }

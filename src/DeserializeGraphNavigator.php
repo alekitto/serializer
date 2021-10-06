@@ -73,9 +73,6 @@ class DeserializeGraphNavigator extends GraphNavigator
         return $rs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
         return $context->visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);

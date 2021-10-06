@@ -11,8 +11,8 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use SplStack;
-
 use TypeError;
+
 use function array_keys;
 use function array_merge;
 use function assert;
@@ -42,49 +42,31 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->dataStack = new SplStack();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitNull(mixed $data, Type $type, Context $context): mixed
     {
         return $this->data = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitString(mixed $data, Type $type, Context $context): ?string
     {
         return $this->data = (string) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitBoolean(mixed $data, Type $type, Context $context): bool
     {
         return $this->data = (bool) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitInteger(mixed $data, Type $type, Context $context): ?int
     {
         return $this->data = (int) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitDouble(mixed $data, Type $type, Context $context): ?float
     {
         return $this->data = (float) $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitHash(mixed $data, Type $type, Context $context): mixed
     {
         $rs = [];
@@ -134,9 +116,6 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = $rs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
     {
         $this->data = [];
@@ -166,9 +145,6 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->data = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function endVisiting(mixed $data, Type $type, Context $context): mixed
     {
         $rs = $this->data;
@@ -184,7 +160,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitCustom(callable $handler, $data, Type $type, Context $context): mixed
+    public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         return $this->data = parent::visitCustom($handler, $data, $type, $context);
     }
@@ -203,14 +179,12 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function setRoot(mixed $data): void
     {
         if ($data === null) {
-            throw new TypeError(sprintf("Argument #1 passed to %s cannot be null", __METHOD__));
+            throw new TypeError(sprintf('Argument #1 passed to %s cannot be null', __METHOD__));
         }
+
         $this->root = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResult(): mixed
     {
         return $this->getRoot();

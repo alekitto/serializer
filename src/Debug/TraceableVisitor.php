@@ -32,9 +32,6 @@ class TraceableVisitor implements VisitorInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepare(mixed $data): mixed
     {
         $this->logger->debug(
@@ -45,9 +42,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->prepare($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitNull(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -61,9 +55,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitNull($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitString(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -78,9 +69,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitString($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitBoolean(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -95,9 +83,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitBoolean($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitDouble(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -112,9 +97,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitDouble($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitInteger(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -129,9 +111,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitInteger($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitArray(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -146,9 +125,6 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitArray($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitHash(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -166,7 +142,7 @@ class TraceableVisitor implements VisitorInterface
     /**
      * {@inheritdoc}
      */
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
     {
         $this->logger->debug(
             'Start visiting object at path {path}',
@@ -183,7 +159,7 @@ class TraceableVisitor implements VisitorInterface
     /**
      * {@inheritdoc}
      */
-    public function visitCustom(callable $handler, $data, Type $type, Context $context): mixed
+    public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         if (is_array($handler)) {
             $handlerRepresentation = (is_string($handler[0]) ? $handler[0] : get_debug_type($handler[0])) . '::' . $handler[1];
@@ -217,9 +193,6 @@ class TraceableVisitor implements VisitorInterface
         $this->visitor->startVisiting($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function endVisiting(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
@@ -239,9 +212,6 @@ class TraceableVisitor implements VisitorInterface
         $this->visitor->setNavigator($navigator);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getResult(): mixed
     {
         return $this->visitor->getResult();

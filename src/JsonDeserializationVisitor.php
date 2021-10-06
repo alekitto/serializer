@@ -13,9 +13,6 @@ use const JSON_THROW_ON_ERROR;
 
 class JsonDeserializationVisitor extends GenericDeserializationVisitor
 {
-    /**
-     * {@inheritdoc}
-     */
     public function prepare(mixed $data): mixed
     {
         try {

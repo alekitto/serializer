@@ -23,8 +23,6 @@ use function Safe\sprintf;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {
-    private LegacyTranslatorInterface|TranslatorInterface|null $translator = null;
-
     /**
      * {@inheritdoc}
      */
@@ -44,16 +42,8 @@ class FormErrorHandler implements SubscribingHandlerInterface
         ];
     }
 
-    public function __construct(LegacyTranslatorInterface|TranslatorInterface|null $translator = null)
+    public function __construct(private LegacyTranslatorInterface | TranslatorInterface | null $translator = null)
     {
-        if (
-            $translator !== null &&
-            ! $translator instanceof LegacyTranslatorInterface && ! $translator instanceof TranslatorInterface
-        ) {
-            throw new TypeError(sprintf('Argument 1 passed to %s constructor should be an instance of %s or %s, %s passed', self::class, LegacyTranslatorInterface::class, TranslatorInterface::class, is_object($translator) ? $translator::class : gettype($translator)));
-        }
-
-        $this->translator = $translator;
     }
 
     public function serializeForm(VisitorInterface $visitor, Form $form, Type $type, Context $context): mixed

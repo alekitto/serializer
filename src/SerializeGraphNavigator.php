@@ -37,7 +37,7 @@ class SerializeGraphNavigator extends GraphNavigator
     /**
      * {@inheritdoc}
      */
-    protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context): mixed
+    protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
         if ($data instanceof SerializationGroupProviderInterface) {
             assert($context instanceof SerializationContext);

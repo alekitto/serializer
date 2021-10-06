@@ -14,7 +14,6 @@ use Throwable;
 
 class TraceableSerializer implements SerializerInterface
 {
-    private SerializerInterface $serializer;
     private VarCloner $cloner;
 
     /** @var array<string, mixed> */
@@ -22,16 +21,15 @@ class TraceableSerializer implements SerializerInterface
     /** @var array<string, mixed> */
     public array $deserializeOperations = [];
 
-    public function __construct(SerializerInterface $serializer, ?VarCloner $cloner = null)
+    public function __construct(private SerializerInterface $serializer, ?VarCloner $cloner = null)
     {
-        $this->serializer = $serializer;
         $this->cloner = $cloner ?? new VarCloner();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
+    public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
         $this->serializeOperations[] = &$debugData;
@@ -51,7 +49,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null): mixed
+    public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
         $this->deserializeOperations[] = &$debugData;
@@ -71,7 +69,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, ?SerializationContext $context = null): array
+    public function normalize(mixed $data, ?SerializationContext $context = null): array
     {
         $debugData = $this->prepareDebugData($data, 'array', null, $context);
         $this->serializeOperations[] = &$debugData;

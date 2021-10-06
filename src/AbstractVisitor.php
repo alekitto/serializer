@@ -27,10 +27,7 @@ abstract class AbstractVisitor implements VisitorInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitCustom(callable $handler, $data, Type $type, Context $context): mixed
+    public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         return $handler($this, $data, $type, $context);
     }
