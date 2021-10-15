@@ -22,13 +22,13 @@ final class Groups
 {
     /**
      * @Required
-     * @var array<string>
+     * @var array<int | string, mixed>
      */
     public array $groups;
 
     /**
-     * @param array<string, mixed>|string $groups
-     * @phpstan-param array{groups?: string[]|array<string, mixed>, value?: string[]|array<string, mixed>}|array<string, mixed>|string $groups
+     * @param array<string, mixed>|string[]|string $groups
+     * @phpstan-param array{groups?: string[]|array<string, mixed>, value?: string[]|array<string, mixed>}|array<string, mixed>|string[]|string $groups
      */
     public function __construct($groups)
     {
