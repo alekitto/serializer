@@ -1172,11 +1172,8 @@ abstract class BaseSerializationTest extends TestCase
     {
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
-        if (PHP_VERSION_ID >= 80000) {
-            $loader = new AttributesLoader($loader);
-        }
 
-        $loader = new ReflectionLoader($loader);
+        $loader = new ReflectionLoader(new AttributesLoader($loader));
         $this->factory = new MetadataFactory($loader);
 
         $this->handlerRegistry = new HandlerRegistry();

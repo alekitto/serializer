@@ -21,10 +21,6 @@ class AttributesLoader extends AnnotationLoader
 
     public function __construct(?AnnotationLoader $annotationLoader = null)
     {
-        if (PHP_VERSION_ID < 80000) {
-            throw new RuntimeException('Attributes loader can only be used with PHP >= 8.0');
-        }
-
         parent::__construct();
 
         $this->decorated = $annotationLoader;

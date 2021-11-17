@@ -203,10 +203,7 @@ class SerializerBuilder
 
             $metadataLoader = new AnnotationLoader();
             $metadataLoader->setReader($annotationReader);
-
-            if (PHP_VERSION_ID >= 80000) {
-                $metadataLoader = new AttributesLoader($metadataLoader);
-            }
+            $metadataLoader = new AttributesLoader($metadataLoader);
         }
 
         $metadataLoader = new ReflectionLoader($metadataLoader);

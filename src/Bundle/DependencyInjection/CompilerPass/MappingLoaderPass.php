@@ -86,28 +86,22 @@ class MappingLoaderPass implements CompilerPassInterface
             $container->setDefinition('kcs_serializer.metadata.loader.annotations', $definition);
         }
 
-        if (PHP_VERSION_ID >= 80000) {
-            $definition = new Definition(AttributesLoader::class);
-            $container->setDefinition('kcs_serializer.metadata.loader.attributes', $definition);
-            if ($container->has('annotation_reader')) {
-                $definition->addArgument(new Reference('kcs_serializer.metadata.loader.annotations'));
-            }
-
-            $loaders[] = new Reference('kcs_serializer.metadata.loader.attributes');
-        } else {
-            $loaders[] = new Reference('kcs_serializer.metadata.loader.annotations');
+        $definition = new Definition(AttributesLoader::class);
+        $container->setDefinition('kcs_serializer.metadata.loader.attributes', $definition);
+        if ($container->has('annotation_reader')) {
+            $definition->addArgument(new Reference('kcs_serializer.metadata.loader.annotations'));
         }
+
+        $loaders[] = new Reference('kcs_serializer.metadata.loader.attributes');
 
         $container->getDefinition('kcs_serializer.metadata.loader')
             ->replaceArgument(0, $loaders);
 
-        if (PHP_VERSION_ID >= 70400) {
-            $container->register('.kcs_serializer.reflection.metadata.loader')
-                ->setPublic(false)
-                ->setClass(ReflectionLoader::class)
-                ->setDecoratedService('kcs_serializer.metadata.loader')
-                ->addArgument(new Reference('.kcs_serializer.reflection.metadata.loader.inner'));
-        }
+        $container->register('.kcs_serializer.reflection.metadata.loader')
+            ->setPublic(false)
+            ->setClass(ReflectionLoader::class)
+            ->setDecoratedService('kcs_serializer.metadata.loader')
+            ->addArgument(new Reference('.kcs_serializer.reflection.metadata.loader.inner'));
 
         if ($container->hasDefinition('property_info') && $container->getParameter('kcs_serializer.metadata_loader.property_info.enabled')) {
             $container->register('.kcs_serializer.property_info.metadata.loader')
