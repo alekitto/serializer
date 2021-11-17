@@ -10,6 +10,7 @@ use Kcs\Serializer\Exclusion\SerializationGroupProviderInterface;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
+use UnitEnum;
 
 use function assert;
 use function is_array;
@@ -17,6 +18,7 @@ use function is_object;
 use function is_scalar;
 use function is_subclass_of;
 use function iterator_to_array;
+use function method_exists;
 
 class SerializeGraphNavigator extends GraphNavigator
 {
@@ -34,11 +36,13 @@ class SerializeGraphNavigator extends GraphNavigator
         return $this->serialize($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
+        $visitor = $context->visitor;
+        if ($data instanceof UnitEnum && method_exists($visitor, 'visitEnum')) {
+            return $context->visitor->visitEnum($metadata, $data, $type, $context);
+        }
+
         if ($data instanceof SerializationGroupProviderInterface) {
             assert($context instanceof SerializationContext);
             $childGroups = $data->getSerializationGroups($context);
@@ -47,7 +51,7 @@ class SerializeGraphNavigator extends GraphNavigator
             ]);
         }
 
-        return $context->visitor->visitObject($metadata, $data, $type, $context);
+        return $visitor->visitObject($metadata, $data, $type, $context);
     }
 
     /**

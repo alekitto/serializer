@@ -46,7 +46,7 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritDoc}
+     * @phpstan-ignore-next-line
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -54,7 +54,7 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritDoc}
+     * @phpstan-ignore-next-line
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -62,7 +62,7 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritDoc}
+     * @phpstan-ignore-next-line
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -70,7 +70,7 @@ class AttributesMap implements ArrayAccess
     }
 
     /**
-     * {@inheritDoc}
+     * @phpstan-ignore-next-line
      */
     public function offsetUnset(mixed $offset): void
     {

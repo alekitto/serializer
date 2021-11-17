@@ -30,6 +30,8 @@ use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
+use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
@@ -69,6 +71,7 @@ use Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject;
 use Kcs\Serializer\Tests\Fixtures\NamedDateTimeInterfaceArraysObject;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithEmptyHash;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithEnums;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithNullProperty;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVersionedVirtualProperties;
@@ -1124,6 +1127,25 @@ abstract class BaseSerializationTest extends TestCase
         self::assertStringContainsString($uuid->toString(), $this->serialize($uuid));
     }
 
+    public function testCanSerializeObjectWithEnumProperties(): void
+    {
+        $obj = new ObjectWithEnums();
+        self::assertEquals(
+            $this->getContent('object_with_enums'),
+            $this->serialize($obj)
+        );
+
+        if ($this->hasDeserializer()) {
+            self::assertEquals(
+                $obj,
+                $this->deserialize(
+                    $this->getContent('object_with_enums'),
+                    ObjectWithEnums::class
+                )
+            );
+        }
+    }
+
     abstract protected function getContent(string $key): string;
 
     abstract protected function getFormat(): string;
@@ -1150,6 +1172,11 @@ abstract class BaseSerializationTest extends TestCase
     {
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
+        if (PHP_VERSION_ID >= 80000) {
+            $loader = new AttributesLoader($loader);
+        }
+
+        $loader = new ReflectionLoader($loader);
         $this->factory = new MetadataFactory($loader);
 
         $this->handlerRegistry = new HandlerRegistry();

@@ -14,12 +14,8 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use TypeError;
 
 use function assert;
-use function gettype;
-use function is_object;
-use function Safe\sprintf;
 
 class FormErrorHandler implements SubscribingHandlerInterface
 {

@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace Kcs\Serializer\Annotation\Xml;
 
 use Attribute as PhpAttribute;
-use TypeError;
 
-use function get_debug_type;
 use function is_array;
 use function is_string;
-use function Safe\sprintf;
 
 /**
  * @Annotation

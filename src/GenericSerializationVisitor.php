@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Kcs\Serializer;
 
 use ArrayObject;
+use BackedEnum;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use ReflectionEnum;
 use SplStack;
 use TypeError;
 
@@ -116,6 +118,17 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = $rs;
     }
 
+    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
+    {
+        $reflection = new ReflectionEnum($metadata->getName());
+        $backingType = $reflection->getBackingType();
+        if ($backingType !== null && (string) $backingType === 'int') {
+            return $this->visitInteger($data->value, $type, $context);
+        }
+
+        return $this->visitString($data instanceof BackedEnum ? $data->value : $data->name, $type, $context);
+    }
+
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
     {
         $this->data = [];
@@ -136,9 +149,6 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function startVisiting(mixed &$data, Type $type, Context $context): void
     {
         $this->dataStack->push($this->data);
@@ -157,9 +167,6 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $rs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         return $this->data = parent::visitCustom($handler, $data, $type, $context);

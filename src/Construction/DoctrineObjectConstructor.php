@@ -32,9 +32,6 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
         $this->managerRegistryCollection = new SplObjectStorage();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function construct(VisitorInterface $visitor, ClassMetadata $metadata, mixed $data, Type $type, DeserializationContext $context): object
     {
         $object = $this->loadFromObjectManager($metadata, $data);

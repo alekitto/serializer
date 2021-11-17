@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
+use BackedEnum;
 use DOMAttr;
 use DOMCdataSection;
 use DOMDocument;
@@ -117,6 +118,14 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
+    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): array
+    {
+        return $this->visitSimpleString($data instanceof BackedEnum ? (string) $data->value : $data->name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): array
     {
         $properties = $context->getNonSkippedProperties($metadata);
@@ -149,6 +158,9 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = array_merge(...$nodes ?: [[]]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): ?array
     {
         assert($context instanceof SerializationContext);
@@ -304,9 +316,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->attachNullNamespace = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function startVisiting(mixed &$data, Type $type, Context $context): void
     {
         $this->nodeStack->push($this->currentNodes);

@@ -34,6 +34,8 @@ interface VisitorInterface
 
     public function visitArray(mixed $data, Type $type, Context $context): mixed;
 
+    // public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed;
+
     public function visitHash(mixed $data, Type $type, Context $context): mixed;
 
     public function visitObject(

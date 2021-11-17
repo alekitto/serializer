@@ -13,9 +13,11 @@ use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use UnitEnum;
 
 use function assert;
 use function is_scalar;
+use function method_exists;
 
 class DeserializeGraphNavigator extends GraphNavigator
 {
@@ -75,6 +77,12 @@ class DeserializeGraphNavigator extends GraphNavigator
 
     protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
-        return $context->visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
+        $visitor = $context->visitor;
+        $reflection = $metadata->getReflectionClass();
+        if ($reflection->implementsInterface(UnitEnum::class) && method_exists($visitor, 'visitEnum')) {
+            return $visitor->visitEnum($metadata, $data, $type, $context);
+        }
+
+        return $visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
     }
 }

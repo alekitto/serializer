@@ -86,6 +86,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['groups_provider'] = '{"foo":"foo","obj":{"virt":"virt_2","foo":"foo","foobar":"foobar","baz":"baz"}}';
             $outputs['uuid'] = '"a3b5af04-42c7-5838-acd8-a963607eaafb"';
             $outputs['custom_serialization_handler'] = '{"some_property":"sometext"}';
+            $outputs['object_with_enums'] = '{"post_type":"text","object_type":2,"non_typed_object_type":"OBJECT_FIRST_NT"}';
         }
 
         if (PHP_VERSION_ID >= 70000) {

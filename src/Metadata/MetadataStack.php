@@ -62,6 +62,9 @@ class MetadataStack implements IteratorAggregate, Countable
         return $this->stack->isEmpty() ? null : $this->stack->top();
     }
 
+    /**
+     * @return Traversable<PropertyMetadata>
+     */
     public function getIterator(): Traversable
     {
         return $this->stack;

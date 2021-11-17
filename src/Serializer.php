@@ -34,9 +34,6 @@ class Serializer implements SerializerInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $this->navigator = new SerializeGraphNavigator($this->factory, $this->handlerRegistry, $this->dispatcher);
@@ -52,9 +49,6 @@ class Serializer implements SerializerInterface
         return $this->visit($this->serializationVisitors[$format], $context, $data, $format, $type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $this->navigator = new DeserializeGraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);

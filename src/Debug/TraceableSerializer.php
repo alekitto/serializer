@@ -26,9 +26,6 @@ class TraceableSerializer implements SerializerInterface
         $this->cloner = $cloner ?? new VarCloner();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
@@ -46,9 +43,6 @@ class TraceableSerializer implements SerializerInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);

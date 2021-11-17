@@ -12,8 +12,10 @@ use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use ReflectionEnum;
 use Safe\Exceptions\SimplexmlException;
 use SimpleXMLElement;
+use UnitEnum;
 
 use function array_key_exists;
 use function in_array;
@@ -243,6 +245,19 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         }
 
         return parent::visitCustom($handler, $data, $type, $context);
+    }
+
+    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): ?UnitEnum
+    {
+        $data = (string) $data;
+
+        $reflection = new ReflectionEnum($metadata->getName());
+        $backingType = $reflection->getBackingType();
+        if ($backingType !== null && (string) $backingType === 'int') {
+            $data = (int) $data;
+        }
+
+        return parent::visitEnum($metadata, $data, $type, $context);
     }
 
     public function visitObject(
