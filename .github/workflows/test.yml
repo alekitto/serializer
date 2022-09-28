@@ -25,7 +25,7 @@ jobs:
                   extensions: :opcache, mongodb
 
             - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
-            - run: composer update --with-all-dependencies --ignore-platform-reqs
+            - run: composer update --with-all-dependencies
 
             - run: vendor/bin/phpunit
               if: matrix.php_version != '8.1'
