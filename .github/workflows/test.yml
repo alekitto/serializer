@@ -1,8 +1,9 @@
 name: Tests
 on:
     push:
-    pull_request:
-        types: [opened]
+        branches:
+            - master
+    pull_request_target:
 
 jobs:
     build:
