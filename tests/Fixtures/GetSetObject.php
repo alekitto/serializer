@@ -3,7 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\ReadOnly;
+use Kcs\Serializer\Annotation\Immutable;
 use Kcs\Serializer\Annotation\Type;
 
 /** @AccessType("public_method") */
@@ -16,7 +16,7 @@ class GetSetObject
     private $name = 'Foo';
 
     /**
-     * @ReadOnly
+     * @Immutable
      */
     private $readOnlyProperty = 42;
 

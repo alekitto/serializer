@@ -16,10 +16,6 @@ interface SerializationHandlerInterface
 
     /**
      * Serializes the data.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    public function serialize($data);
+    public function serialize(mixed $data): mixed;
 }

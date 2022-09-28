@@ -55,7 +55,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public $setter;
 
     public bool $inline = false;
-    public bool $readOnly = false;
+    public bool $immutable = false;
     public bool $xmlAttributeMap = false;
     public ?int $maxDepth = null;
     public string $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
@@ -84,10 +84,7 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->setter = $setter;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue(object $obj)
+    public function getValue(object $obj): mixed
     {
         if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
             $reflector = $this->getReflection();
@@ -125,13 +122,9 @@ class PropertyMetadata extends BasePropertyMetadata
         return $obj->{$this->getter}();
     }
 
-    /**
-     * @param mixed $obj
-     * @param mixed $value
-     */
-    public function setValue($obj, $value): void
+    public function setValue(object $obj, mixed $value): void
     {
-        if ($this->readOnly) {
+        if ($this->immutable) {
             return;
         }
 

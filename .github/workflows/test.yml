@@ -10,13 +10,8 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                composer_flags:
-                    - ''
-                    - '--prefer-lowest'
-
                 php_version:
-                    - '7.4'
-                    - '8.0'
+                    - '8.1'
 
         name: PHP ${{ matrix.php_version }}
         steps:
@@ -30,13 +25,13 @@ jobs:
                   extensions: :opcache, mongodb
 
             - run: composer remove --no-update --dev roave/security-advisories solido/php-coding-standards
-            - run: composer update --with-all-dependencies ${{ matrix.composer_flags }}
+            - run: composer update --with-all-dependencies
 
             - run: vendor/bin/phpunit
-              if: matrix.php_version != '8.0' || matrix.composer_flags == '--prefer-lowest'
+              if: matrix.php_version != '8.1'
 
             - run: vendor/bin/phpunit --coverage-clover coverage.xml
-              if: matrix.php_version == '8.0' && matrix.composer_flags == ''
+              if: matrix.php_version == '8.1'
               env:
                   XDEBUG_MODE: coverage
 

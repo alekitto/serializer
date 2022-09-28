@@ -9,29 +9,25 @@ use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Throwable;
 
 class TraceableSerializer implements SerializerInterface
 {
-    private SerializerInterface $serializer;
     private VarCloner $cloner;
 
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     public array $serializeOperations = [];
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     public array $deserializeOperations = [];
 
-    public function __construct(SerializerInterface $serializer, ?VarCloner $cloner = null)
+    public function __construct(private SerializerInterface $serializer, ?VarCloner $cloner = null)
     {
-        $this->serializer = $serializer;
         $this->cloner = $cloner ?? new VarCloner();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null)
+    public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
         $this->serializeOperations[] = &$debugData;
@@ -48,10 +44,7 @@ class TraceableSerializer implements SerializerInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null)
+    public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $debugData = $this->prepareDebugData($data, $format, $type, $context);
         $this->deserializeOperations[] = &$debugData;
@@ -71,7 +64,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, ?SerializationContext $context = null): array
+    public function normalize(mixed $data, ?SerializationContext $context = null): array
     {
         $debugData = $this->prepareDebugData($data, 'array', null, $context);
         $this->serializeOperations[] = &$debugData;
@@ -91,7 +84,7 @@ class TraceableSerializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null)
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null): mixed
     {
         $debugData = $this->prepareDebugData($data, 'array', $type, $context);
         $this->deserializeOperations[] = &$debugData;
@@ -115,16 +108,15 @@ class TraceableSerializer implements SerializerInterface
     }
 
     /**
-     * @param mixed $data
-     *
      * @return array<string, mixed>
+     * @phpstan-return array{data: Data, format: string, type: Data, context: Data, result: Data|null, exception: Data|null}
      */
-    private function prepareDebugData($data, string $format, ?Type $type, ?Context $context): array
+    private function prepareDebugData(mixed $data, string $format, ?Type $type, ?Context $context): array
     {
         return [
             'data' => $this->cloner->cloneVar($data),
             'format' => $format,
-            'type' => $this->cloner->cloneVar($type !== null ? $type->jsonSerialize() : null),
+            'type' => $this->cloner->cloneVar($type?->jsonSerialize()),
             'context' => $this->cloner->cloneVar(
                 $context !== null ? [
                     'attributes' => $context->attributes->all(),

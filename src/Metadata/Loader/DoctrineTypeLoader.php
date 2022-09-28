@@ -33,9 +33,10 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
             return;
         }
 
+        assert(isset($doctrineMetadata->discriminatorColumn));
         $classMetadata->setDiscriminator(
             $doctrineMetadata->discriminatorColumn['name'],
-            $doctrineMetadata->discriminatorMap,
+            $doctrineMetadata->discriminatorMap, // @phpstan-ignore-line
             []
         );
     }

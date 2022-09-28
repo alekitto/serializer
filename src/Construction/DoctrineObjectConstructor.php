@@ -23,21 +23,16 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 {
     /** @var SplObjectStorage<ManagerRegistry> */
     private SplObjectStorage $managerRegistryCollection;
-    private ObjectConstructorInterface $fallbackConstructor;
 
     /**
      * @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor
      */
-    public function __construct(ObjectConstructorInterface $fallbackConstructor)
+    public function __construct(private ObjectConstructorInterface $fallbackConstructor)
     {
-        $this->fallbackConstructor = $fallbackConstructor;
         $this->managerRegistryCollection = new SplObjectStorage();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, mixed $data, Type $type, DeserializationContext $context): object
     {
         $object = $this->loadFromObjectManager($metadata, $data);
 
@@ -72,10 +67,8 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
 
     /**
      * Try to load an object from doctrine.
-     *
-     * @param mixed $data
      */
-    protected function loadFromObjectManager(ClassMetadata $metadata, $data): ?object
+    protected function loadFromObjectManager(ClassMetadata $metadata, mixed $data): ?object
     {
         // Locate possible ObjectManager
         $objectManager = $this->getObjectManager($metadata);

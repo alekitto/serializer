@@ -28,7 +28,7 @@ final class InternalDeserializationHandler
      * @param mixed[] | callable $handler
      * @phpstan-param array{0: callable, 1: string} | callable $handler
      */
-    public function __construct($handler)
+    public function __construct(array|callable $handler)
     {
         if (is_array($handler) && is_callable($handler[0])) {
             $handler[0] = $handler[0]();
@@ -38,12 +38,7 @@ final class InternalDeserializationHandler
         $this->handler = $handler;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    public function __invoke(VisitorInterface $visitor, $data, Type $type, Context $context)
+    public function __invoke(VisitorInterface $visitor, mixed $data, Type $type, Context $context): mixed
     {
         if (is_array($this->handler) && $this->handler[0] instanceof Closure) {
             $this->handler[0] = $this->handler[0]();

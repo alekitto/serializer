@@ -18,44 +18,23 @@ use function Safe\sprintf;
 
 class Serializer implements SerializerInterface
 {
-    private MetadataFactoryInterface $factory;
-
-    /** @var VisitorInterface[] */
-    private array $serializationVisitors;
-
-    /** @var VisitorInterface[] */
-    private array $deserializationVisitors;
-
     private GraphNavigator $navigator;
-    private HandlerRegistryInterface $handlerRegistry;
-    private ObjectConstructorInterface $objectConstructor;
-    private ?EventDispatcherInterface $dispatcher;
 
     /**
      * @param VisitorInterface[] $serializationVisitors
      * @param VisitorInterface[] $deserializationVisitors
      */
     public function __construct(
-        MetadataFactoryInterface $factory,
-        HandlerRegistryInterface $handlerRegistry,
-        ObjectConstructorInterface $objectConstructor,
-        array $serializationVisitors,
-        array $deserializationVisitors,
-        ?EventDispatcherInterface $dispatcher = null
+        private MetadataFactoryInterface $factory,
+        private HandlerRegistryInterface $handlerRegistry,
+        private ObjectConstructorInterface $objectConstructor,
+        private array $serializationVisitors,
+        private array $deserializationVisitors,
+        private ?EventDispatcherInterface $dispatcher = null
     ) {
-        $this->factory = $factory;
-        $this->serializationVisitors = $serializationVisitors;
-        $this->deserializationVisitors = $deserializationVisitors;
-
-        $this->handlerRegistry = $handlerRegistry;
-        $this->objectConstructor = $objectConstructor;
-        $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null)
+    public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
     {
         $this->navigator = new SerializeGraphNavigator($this->factory, $this->handlerRegistry, $this->dispatcher);
 
@@ -70,10 +49,7 @@ class Serializer implements SerializerInterface
         return $this->visit($this->serializationVisitors[$format], $context, $data, $format, $type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null)
+    public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed
     {
         $this->navigator = new DeserializeGraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
 
@@ -105,7 +81,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null)
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null): mixed
     {
         return $this->deserialize($data, $type, 'array', $context);
     }
@@ -115,12 +91,7 @@ class Serializer implements SerializerInterface
         return $this->factory;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    private function visit(VisitorInterface $visitor, Context $context, $data, string $format, ?Type $type)
+    private function visit(VisitorInterface $visitor, Context $context, mixed $data, string $format, ?Type $type): mixed
     {
         $data = $visitor->prepare($data);
         $context->initialize($format, $visitor, $this->navigator, $this->factory);

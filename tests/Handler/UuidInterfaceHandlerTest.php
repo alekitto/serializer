@@ -32,7 +32,7 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
 
     public function testDeserializeShouldHandleNullValue(): void
     {
-        $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled();
+        $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled()->willReturn(null);
         $this->handler->deserialize($this->visitor->reveal(), null, Type::parse(UuidInterface::class), $this->context->reveal());
     }
 

@@ -35,10 +35,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     private const UTF8_BOM = "\xEF\xBB\xBF";
     private ?ClassMetadata $rootMetadata = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
     {
         if ($this->rootMetadata === null) {
             $this->rootMetadata = $metadata;
@@ -99,13 +96,11 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     /**
      * Prepares the data to be written as csv (or other tabular format).
      *
-     * @param mixed $data
-     *
      * @phpstan-return array{0: (int|string)[], 1: array<string, mixed>[]}
      *
      * @retrun mixed[]
      */
-    final protected function prepareData($data, string $keySeparator, bool $escapeFormulas): array
+    final protected function prepareData(mixed $data, string $keySeparator, bool $escapeFormulas): array
     {
         if (! is_iterable($data)) {
             $data = [[$data]];

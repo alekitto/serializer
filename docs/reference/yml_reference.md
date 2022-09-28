@@ -14,7 +14,7 @@ Vendor\MyBundle\Model\ClassName:
         name: foobar
         namespace: http://your.default.namespace
     exclude: true
-    read_only: false
+    immutable: false
     access_type: public_method # defaults to property
     accessor_order:
         order: custom
@@ -57,7 +57,7 @@ Vendor\MyBundle\Model\ClassName:
                 namespace: http://www.w3.org/2005/Atom
             xml_value: true
             inline: true
-            read_only: true
+            immutable: true
             xml_key_value_pairs: true
             xml_list:
                 inline: true

@@ -10,14 +10,15 @@ use Kcs\Serializer\Exclusion\SerializationGroupProviderInterface;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
+use UnitEnum;
 
 use function assert;
-use function get_class;
 use function is_array;
 use function is_object;
 use function is_scalar;
 use function is_subclass_of;
 use function iterator_to_array;
+use function method_exists;
 
 class SerializeGraphNavigator extends GraphNavigator
 {
@@ -26,7 +27,7 @@ class SerializeGraphNavigator extends GraphNavigator
      *
      * @param SerializationContext $context
      */
-    public function accept($data, ?Type $type, Context $context)
+    public function accept($data, ?Type $type, Context $context): mixed
     {
         if ($type === null) {
             $type = $context->guessType($data);
@@ -35,11 +36,13 @@ class SerializeGraphNavigator extends GraphNavigator
         return $this->serialize($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context)
+    protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
+        $visitor = $context->visitor;
+        if ($data instanceof UnitEnum && method_exists($visitor, 'visitEnum')) {
+            return $visitor->visitEnum($data, $type, $context);
+        }
+
         if ($data instanceof SerializationGroupProviderInterface) {
             assert($context instanceof SerializationContext);
             $childGroups = $data->getSerializationGroups($context);
@@ -48,17 +51,13 @@ class SerializeGraphNavigator extends GraphNavigator
             ]);
         }
 
-        return $context->visitor->visitObject($metadata, $data, $type, $context);
+        return $visitor->visitObject($metadata, $data, $type, $context);
     }
 
     /**
      * Calls serialization visitors.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    private function serialize($data, Type $type, SerializationContext $context)
+    private function serialize(mixed $data, Type $type, SerializationContext $context): mixed
     {
         if ($data === null) {
             $type = Type::null();
@@ -76,7 +75,7 @@ class SerializeGraphNavigator extends GraphNavigator
         // If we're serializing a polymorphic type, then we'll be interested in the
         // metadata for the actual type of the object, not the base class.
         if (is_object($data) && is_subclass_of($data, $type->name, false)) {
-            $type = new Type(get_class($data), $type->getParams());
+            $type = new Type($data::class, $type->getParams());
         }
 
         if ($this->dispatcher !== null && ! is_scalar($data)) {

@@ -31,8 +31,6 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
 
-use const PHP_VERSION_ID;
-
 /**
  * Builder for serializer instances.
  *
@@ -203,10 +201,7 @@ class SerializerBuilder
 
             $metadataLoader = new AnnotationLoader();
             $metadataLoader->setReader($annotationReader);
-
-            if (PHP_VERSION_ID >= 80000) {
-                $metadataLoader = new AttributesLoader($metadataLoader);
-            }
+            $metadataLoader = new AttributesLoader($metadataLoader);
         }
 
         $metadataLoader = new ReflectionLoader($metadataLoader);

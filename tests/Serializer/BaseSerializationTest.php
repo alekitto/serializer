@@ -30,6 +30,8 @@ use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\JsonSerializationVisitor;
 use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
+use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
@@ -69,6 +71,7 @@ use Kcs\Serializer\Tests\Fixtures\NamedDateTimeArraysObject;
 use Kcs\Serializer\Tests\Fixtures\NamedDateTimeInterfaceArraysObject;
 use Kcs\Serializer\Tests\Fixtures\Node;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithEmptyHash;
+use Kcs\Serializer\Tests\Fixtures\ObjectWithEnums;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithIntListAndIntMap;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithNullProperty;
 use Kcs\Serializer\Tests\Fixtures\ObjectWithVersionedVirtualProperties;
@@ -825,17 +828,17 @@ abstract class BaseSerializationTest extends TestCase
     {
         self::assertEquals(
             $this->getContent('virtual_properties_low'),
-            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion(2))
+            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion((string) 2))
         );
 
         self::assertEquals(
             $this->getContent('virtual_properties_all'),
-            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion(7))
+            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion((string) 7))
         );
 
         self::assertEquals(
             $this->getContent('virtual_properties_high'),
-            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion(9))
+            $this->serialize(new ObjectWithVersionedVirtualProperties(), SerializationContext::create()->setVersion((string) 9))
         );
     }
 
@@ -864,7 +867,7 @@ abstract class BaseSerializationTest extends TestCase
                 return CustomDeserializationObject::class;
             }
 
-            public function serialize($data)
+            public function serialize(mixed $data): array
             {
                 return ['some_property' => $data->someProperty];
             }
@@ -888,7 +891,7 @@ abstract class BaseSerializationTest extends TestCase
                 return CustomDeserializationObject::class;
             }
 
-            public function deserialize($data)
+            public function deserialize(mixed $data): mixed
             {
                 return new CustomDeserializationObject('customly_unserialized_value');
             }
@@ -1124,6 +1127,25 @@ abstract class BaseSerializationTest extends TestCase
         self::assertStringContainsString($uuid->toString(), $this->serialize($uuid));
     }
 
+    public function testCanSerializeObjectWithEnumProperties(): void
+    {
+        $obj = new ObjectWithEnums();
+        self::assertEquals(
+            $this->getContent('object_with_enums'),
+            $this->serialize($obj)
+        );
+
+        if ($this->hasDeserializer()) {
+            self::assertEquals(
+                $obj,
+                $this->deserialize(
+                    $this->getContent('object_with_enums'),
+                    ObjectWithEnums::class
+                )
+            );
+        }
+    }
+
     abstract protected function getContent(string $key): string;
 
     abstract protected function getFormat(): string;
@@ -1150,6 +1172,8 @@ abstract class BaseSerializationTest extends TestCase
     {
         $loader = new AnnotationLoader();
         $loader->setReader(new AnnotationReader());
+
+        $loader = new ReflectionLoader(new AttributesLoader($loader));
         $this->factory = new MetadataFactory($loader);
 
         $this->handlerRegistry = new HandlerRegistry();

@@ -106,12 +106,7 @@ abstract class Context
         $this->addGroupsExclusionStrategy();
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    public function accept($data, ?Type $type = null)
+    public function accept(mixed $data, ?Type $type = null): mixed
     {
         return $this->navigator->accept($data, $type, $this);
     }
@@ -131,10 +126,7 @@ abstract class Context
         return $this->exclusionStrategy;
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function setAttribute(string $key, $value): self
+    public function setAttribute(string $key, mixed $value): self
     {
         $this->assertMutable();
         $this->attributes->set($key, $value);
@@ -150,20 +142,14 @@ abstract class Context
         return $this;
     }
 
-    /**
-     * @param string|Stringable $version
-     */
-    public function setVersion($version): self
+    public function setVersion(string|Stringable $version): self
     {
         $this->setAttribute('version', $version);
 
         return $this;
     }
 
-    /**
-     * @param mixed $groups
-     */
-    public function setGroups($groups): self
+    public function setGroups(mixed $groups): self
     {
         if (empty($groups)) {
             $groups = null;

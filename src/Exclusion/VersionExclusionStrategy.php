@@ -15,10 +15,7 @@ class VersionExclusionStrategy implements ExclusionStrategyInterface
 {
     private string $version;
 
-    /**
-     * @param string|Stringable $version
-     */
-    public function __construct($version)
+    public function __construct(string|Stringable $version)
     {
         $this->version = (string) $version;
     }

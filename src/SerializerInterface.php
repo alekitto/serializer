@@ -10,21 +10,13 @@ interface SerializerInterface
 {
     /**
      * Serializes the given data to the specified output format.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    public function serialize($data, string $format, ?SerializationContext $context = null, ?Type $type = null);
+    public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed;
 
     /**
      * Deserializes the given data to the specified type.
-     *
-     * @param string|mixed $data
-     *
-     * @return mixed
      */
-    public function deserialize($data, Type $type, string $format, ?DeserializationContext $context = null);
+    public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed;
 
     /**
      * Converts objects to an array structure.
@@ -35,7 +27,7 @@ interface SerializerInterface
      *
      * @return array<mixed, mixed>
      */
-    public function normalize($data, ?SerializationContext $context = null): array;
+    public function normalize(mixed $data, ?SerializationContext $context = null): array;
 
     /**
      * Restores objects from an array structure.
@@ -44,5 +36,5 @@ interface SerializerInterface
      *
      * @return mixed this returns whatever the passed type is, typically an object or an array of objects
      */
-    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null);
+    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null): mixed;
 }

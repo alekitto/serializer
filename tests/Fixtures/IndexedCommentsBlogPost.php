@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\Accessor;
 use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\ReadOnly;
+use Kcs\Serializer\Annotation\Immutable;
 use Kcs\Serializer\Annotation\Xml;
 
 /** @Xml\Root("post") */
@@ -13,7 +13,7 @@ class IndexedCommentsBlogPost
     /**
      * @Xml\Map(keyAttribute="author-name", inline=true, entry="comments")
      * @Accessor(getter="getCommentsIndexedByAuthor")
-     * @ReadOnly()
+     * @Immutable()
      */
     private $comments = [];
 

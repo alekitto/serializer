@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
+use BackedEnum;
 use DOMAttr;
 use DOMCdataSection;
 use DOMDocument;
@@ -12,10 +13,12 @@ use DOMNode;
 use DOMText;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use Safe\Exceptions\SimplexmlException;
 use SplStack;
 use Stringable;
 
@@ -24,6 +27,8 @@ use function array_search;
 use function assert;
 use function is_object;
 use function iterator_to_array;
+use function libxml_use_internal_errors;
+use function Safe\libxml_get_last_error;
 use function Safe\preg_match;
 use function Safe\sprintf;
 use function Safe\substr;
@@ -58,7 +63,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitNull($data, Type $type, Context $context)
+    public function visitNull(mixed $data, Type $type, Context $context): array
     {
         $this->attachNullNamespace = true;
 
@@ -69,11 +74,9 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * @param string|Stringable $data
-     *
      * @return DOMNode[]
      */
-    public function visitSimpleString($data): array
+    public function visitSimpleString(string | Stringable $data): array
     {
         return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
@@ -81,25 +84,25 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitString($data, Type $type, Context $context)
+    public function visitString(mixed $data, Type $type, Context $context): array
     {
         $metadata = $context->getMetadataStack()->getCurrent();
 
-        return $this->currentNodes = [$this->createTextNode($data, $metadata->xmlElementCData ?? true)];
+        return $this->currentNodes = [$this->createTextNode((string) $data, $metadata->xmlElementCData ?? true)];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function visitInteger($data, Type $type, Context $context)
+    public function visitInteger(mixed $data, Type $type, Context $context): array
     {
-        return $this->currentNodes = [$this->createTextNode($data)];
+        return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function visitBoolean($data, Type $type, Context $context)
+    public function visitBoolean(mixed $data, Type $type, Context $context): array
     {
         return $this->currentNodes = [$this->createTextNode($data ? 'true' : 'false')];
     }
@@ -107,15 +110,23 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitDouble($data, Type $type, Context $context)
+    public function visitDouble(mixed $data, Type $type, Context $context): array
     {
-        return $this->currentNodes = [$this->createTextNode($data)];
+        return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
+    public function visitEnum(mixed $data, Type $type, Context $context): array
+    {
+        return $this->visitSimpleString($data instanceof BackedEnum ? (string) $data->value : $data->name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): array
     {
         $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
@@ -148,11 +159,9 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): ?array
     {
         assert($context instanceof SerializationContext);
         $v = $metadata->getValue($data);
@@ -229,7 +238,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitHash($data, Type $type, Context $context)
+    public function visitHash(mixed $data, Type $type, Context $context): array
     {
         if ($this->document->documentElement === null && $this->nodeStack->count() === 1) {
             $this->createRootNode();
@@ -242,14 +251,14 @@ class XmlSerializationVisitor extends AbstractVisitor
             $nodeName = $metadata->xmlEntryName;
         }
 
-        $attributeName = $metadata !== null ? $metadata->xmlKeyAttribute : null;
-        $namespace = $metadata !== null ? $metadata->xmlEntryNamespace : null;
+        $attributeName = $metadata?->xmlKeyAttribute;
+        $namespace = $metadata?->xmlEntryNamespace;
 
         /** @var DOMNode[] $nodes */
         $nodes = [];
         $elementType = $this->getElementType($type);
         foreach ($data as $k => $v) {
-            $elementName = ($metadata === null || $metadata->xmlKeyValuePairs) && $this->isElementNameValid($k) ? (string) $k : $nodeName;
+            $elementName = ($metadata === null || $metadata->xmlKeyValuePairs) && $this->isElementNameValid((string) $k) ? (string) $k : $nodeName;
             $this->currentNodes = [$this->createElement($namespace, $elementName)];
 
             $context->getMetadataStack()->pushIndexPath((string) $k);
@@ -269,7 +278,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitArray(mixed $data, Type $type, Context $context): array
     {
         if ($this->document->documentElement === null && $this->nodeStack->count() === 1) {
             $this->createRootNode();
@@ -282,7 +291,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             $nodeName = $metadata->xmlEntryName;
         }
 
-        $namespace = $metadata !== null ? $metadata->xmlEntryNamespace : null;
+        $namespace = $metadata?->xmlEntryNamespace;
 
         /** @var DOMNode[] $nodes */
         $nodes = [];
@@ -307,19 +316,13 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->attachNullNamespace = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function startVisiting(&$data, Type $type, Context $context): void
+    public function startVisiting(mixed &$data, Type $type, Context $context): void
     {
         $this->nodeStack->push($this->currentNodes);
         $this->currentNodes = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endVisiting($data, Type $type, Context $context)
+    public function endVisiting(mixed $data, Type $type, Context $context): mixed
     {
         $nodes = $this->currentNodes ?: [];
         $this->currentNodes = $this->nodeStack->pop();
@@ -333,12 +336,11 @@ class XmlSerializationVisitor extends AbstractVisitor
         foreach ($nodes as $node) {
             $this->currentNodes[0]->appendChild($node);
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResult()
+    public function getResult(): string | bool
     {
         $this->attachNullNS();
         assert($this->document->documentElement !== null);
@@ -352,15 +354,23 @@ class XmlSerializationVisitor extends AbstractVisitor
             $this->document->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', $attribute, $uri);
         }
 
-        return $this->document->saveXML();
+        $previous = libxml_use_internal_errors(true);
+        try {
+            $xml = $this->document->saveXML();
+        } catch (SimplexmlException $e) {
+            throw new XmlErrorException(libxml_get_last_error(), $e);
+        } finally {
+            libxml_use_internal_errors($previous);
+        }
+
+        if ($xml === false) {
+            throw new XmlErrorException(libxml_get_last_error());
+        }
+
+        return $xml;
     }
 
-    /**
-     * @param string|Stringable $data
-     *
-     * @return DOMCdataSection|DOMText
-     */
-    private function createTextNode($data, bool $cdata = false)
+    private function createTextNode(string | Stringable $data, bool $cdata = false): DOMCdataSection | DOMText
     {
         $data = (string) $data;
         if (! $cdata) {
@@ -397,10 +407,8 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     /**
      * Checks that the name is a valid XML element name.
-     *
-     * @param string|Stringable $name
      */
-    private function isElementNameValid($name): bool
+    private function isElementNameValid(string | Stringable $name): bool
     {
         return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }

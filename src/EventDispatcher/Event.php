@@ -15,13 +15,9 @@ class Event implements StoppableEventInterface
     private Context $context;
     private bool $propagationStopped = false;
 
-    /** @var mixed */
-    private $data;
+    private mixed $data;
 
-    /**
-     * @param mixed $data
-     */
-    public function __construct(Context $context, $data, Type $type)
+    public function __construct(Context $context, mixed $data, Type $type)
     {
         $this->context = $context;
         $this->type = $type;
@@ -48,18 +44,12 @@ class Event implements StoppableEventInterface
         $this->type = $type;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data): void
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }

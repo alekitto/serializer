@@ -26,7 +26,7 @@ final class MaxDepth
      * @param array<string, mixed>|int $depth
      * @phpstan-param array{depth?: int, value?: int}|int $depth
      */
-    public function __construct($depth)
+    public function __construct(array|int $depth)
     {
         if (is_int($depth)) {
             $data = ['depth' => $depth];

@@ -13,9 +13,11 @@ use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use UnitEnum;
 
 use function assert;
 use function is_scalar;
+use function method_exists;
 
 class DeserializeGraphNavigator extends GraphNavigator
 {
@@ -33,7 +35,7 @@ class DeserializeGraphNavigator extends GraphNavigator
      *
      * @param DeserializationContext $context
      */
-    public function accept($data, ?Type $type, Context $context)
+    public function accept(mixed $data, ?Type $type, Context $context): mixed
     {
         if ($type === null) {
             throw new RuntimeException('The type must be given for all properties when deserializing.');
@@ -42,12 +44,7 @@ class DeserializeGraphNavigator extends GraphNavigator
         return $this->deserialize($data, $type, $context);
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    private function deserialize($data, Type $type, DeserializationContext $context)
+    private function deserialize(mixed $data, Type $type, DeserializationContext $context): mixed
     {
         $context->increaseDepth();
 
@@ -78,11 +75,14 @@ class DeserializeGraphNavigator extends GraphNavigator
         return $rs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context)
+    protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
-        return $context->visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
+        $visitor = $context->visitor;
+        $reflection = $metadata->getReflectionClass();
+        if ($reflection->implementsInterface(UnitEnum::class) && method_exists($visitor, 'visitEnum')) {
+            return $visitor->visitEnum($data, $type, $context);
+        }
+
+        return $visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
     }
 }

@@ -15,8 +15,6 @@ use ReflectionNamedType;
 use function assert;
 use function is_string;
 
-use const PHP_VERSION_ID;
-
 class ReflectionLoader implements LoaderInterface
 {
     private LoaderInterface $delegate;
@@ -29,8 +27,8 @@ class ReflectionLoader implements LoaderInterface
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
     {
         $ret = $this->delegate->loadClassMetadata($classMetadata);
-        if (! $ret || PHP_VERSION_ID < 70400) {
-            return $ret;
+        if (! $ret) {
+            return false;
         }
 
         // We base our scan on the internal driver's property list so that we

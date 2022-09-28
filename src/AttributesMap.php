@@ -13,26 +13,18 @@ class AttributesMap implements ArrayAccess
 
     /**
      * Returns an attribute by name.
-     *
-     * @param mixed $default
-     *
-     * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->map[$key] ?? $default;
     }
 
     /**
      * Set an attribute into the map.
-     *
-     * @param mixed $value
-     *
-     * @return mixed
      */
-    public function set(string $key, $value)
+    public function set(string $key, mixed $value): void
     {
-        return $this->map[$key] = $value;
+        $this->map[$key] = $value;
     }
 
     /**
@@ -53,39 +45,22 @@ class AttributesMap implements ArrayAccess
         return $this->map;
     }
 
-    /**
-     * @param mixed $offset
-     */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return mixed
-     */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        return $this->set($offset, $value);
+        $this->set($offset, $value);
     }
 
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->map[$offset]);
     }

@@ -15,23 +15,17 @@ class AdditionalPropertyMetadata extends PropertyMetadata
     {
         $this->class = $class;
         $this->name = $name;
-        $this->readOnly = true;
+        $this->immutable = true;
 
         $this->setType($class . '::' . $name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue(object $obj)
+    public function getValue(object $obj): object
     {
         return $obj;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setValue($obj, $value): void
+    public function setValue(object $obj, mixed $value): void
     {
         throw new LogicException('AdditionalPropertyMetadata is immutable.');
     }

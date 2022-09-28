@@ -8,11 +8,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class YamlDeserializationVisitor extends GenericDeserializationVisitor
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function prepare($str)
+    public function prepare(mixed $data): mixed
     {
-        return Yaml::parse($str, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
+        return Yaml::parse($data, Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE);
     }
 }

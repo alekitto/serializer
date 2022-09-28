@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
+use BackedEnum;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
+use UnitEnum;
 
 use function array_key_exists;
 use function assert;
 use function gettype;
 use function is_array;
+use function is_subclass_of;
 use function Safe\sprintf;
 use function var_export;
 
@@ -25,7 +28,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitHash($data, Type $type, Context $context)
+    public function visitHash(mixed $data, Type $type, Context $context): array
     {
         if (! is_array($data)) {
             throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), var_export($data, true)));
@@ -76,7 +79,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitArray(mixed $data, Type $type, Context $context): array
     {
         if (! is_array($data)) {
             throw new RuntimeException(sprintf('Expected array, but got %s: %s', gettype($data), var_export($data, true)));
@@ -96,16 +99,40 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function visitEnum(mixed $data, Type $type, Context $context): ?UnitEnum
+    {
+        assert($type->metadata !== null);
+        $enum = $type->metadata->getName();
+        assert(is_subclass_of($enum, UnitEnum::class, true));
+
+        if (is_subclass_of($enum, BackedEnum::class, true)) {
+            $value = $enum::from($data);
+        } else {
+            $value = null;
+            foreach ($enum::cases() as $case) {
+                if ($case->name === $data) {
+                    $value = $case;
+                    break;
+                }
+            }
+
+            if ($value === null) {
+                throw new RuntimeException(sprintf('Invalid value "%s" for enum "%s"', (string) $data, $enum));
+            }
+        }
+
+        $this->setData($value);
+
+        return $value;
+    }
+
     public function visitObject(
         ClassMetadata $metadata,
-        $data,
+        mixed $data,
         Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
-    ) {
+    ): object {
         assert($objectConstructor !== null);
         assert($context instanceof DeserializationContext);
         $object = $objectConstructor->construct($this, $metadata, $data, $type, $context);
@@ -124,10 +151,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $object;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function visitProperty(PropertyMetadata $metadata, $data, Context $context)
+    protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
         $name = $this->namingStrategy->translateName($metadata);
 

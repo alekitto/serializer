@@ -27,7 +27,7 @@ final class XmlNamespace
      * @param array<string, mixed>|string $uri
      * @phpstan-param array{uri?: string, value?: string, prefix?: string}|string $uri
      */
-    public function __construct($uri, ?string $prefix = null)
+    public function __construct(array|string $uri, ?string $prefix = null)
     {
         if (is_string($uri)) {
             $data = ['uri' => $uri];

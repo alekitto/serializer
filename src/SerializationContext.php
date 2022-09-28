@@ -9,7 +9,6 @@ use Kcs\Serializer\Type\Type;
 use SplObjectStorage;
 
 use function assert;
-use function get_class;
 use function gettype;
 use function is_object;
 
@@ -64,15 +63,13 @@ class SerializationContext extends Context
 
     /**
      * Guesses the serialization type for the given data.
-     *
-     * @param mixed $data
      */
-    public function guessType($data): Type
+    public function guessType(mixed $data): Type
     {
         if ($data === null) {
             return Type::null();
         }
 
-        return new Type(is_object($data) ? get_class($data) : gettype($data));
+        return new Type(is_object($data) ? $data::class : gettype($data));
     }
 }

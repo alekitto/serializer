@@ -117,7 +117,7 @@ class AnnotationLoader implements LoaderInterface
      */
     private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata): void
     {
-        $metadata->readOnly = $metadata->readOnly || $classMetadata->readOnly;
+        $metadata->immutable = $metadata->immutable || $classMetadata->immutable;
         $accessType = $classMetadata->defaultAccessType;
 
         $accessor = [null, null];

@@ -19,97 +19,82 @@ interface VisitorInterface
     /**
      * Allows visitors to convert the input data to a different representation
      * before the actual serialization/deserialization process starts.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    public function prepare($data);
+    public function prepare(mixed $data): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits NULL value.
      */
-    public function visitNull($data, Type $type, Context $context);
+    public function visitNull(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits string value.
+     * Data will be converted to string. This means that a Stringable object will be
+     * converted to its string representation by this method.
      */
-    public function visitString($data, Type $type, Context $context);
+    public function visitString(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits boolean value.
+     * Data will be converted to boolean. All falsy values will be converted to false.
      */
-    public function visitBoolean($data, Type $type, Context $context);
+    public function visitBoolean(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits a floating point value.
+     * Integers will be converted to float.
      */
-    public function visitDouble($data, Type $type, Context $context);
+    public function visitDouble(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits a floating point value.
+     * Floats will be converted (truncated) to integer.
      */
-    public function visitInteger($data, Type $type, Context $context);
+    public function visitInteger(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits an array.
+     * The array will be treated as list (without keys).
      */
-    public function visitArray($data, Type $type, Context $context);
+    public function visitArray(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits an array.
+     * The array will be treated as map (with keys).
      */
-    public function visitHash($data, Type $type, Context $context);
+    public function visitHash(mixed $data, Type $type, Context $context): mixed;
+
+    /*
+     * Visits an enum (PHP 8.1).
+     */
+    // public function visitEnum(mixed $data, Type $type, Context $context): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Visits an object.
+     * This will recursively visit all its properties (if not excluded).
      */
     public function visitObject(
         ClassMetadata $metadata,
-        $data,
+        mixed $data,
         Type $type,
         Context $context,
         ?ObjectConstructorInterface $objectConstructor = null
-    );
+    ): mixed;
 
     /**
-     * @param mixed $data
-     *
-     * @return mixed
+     * Calls a custom handler.
      */
-    public function visitCustom(callable $handler, $data, Type $type, Context $context);
+    public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed;
 
     /**
      * Called before the properties of the object are being visited.
-     *
-     * @param mixed $data
      */
-    public function startVisiting(&$data, Type $type, Context $context): void;
+    public function startVisiting(mixed &$data, Type $type, Context $context): void;
 
     /**
      * Called after all properties of the object have been visited.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    public function endVisiting($data, Type $type, Context $context);
+    public function endVisiting(mixed $data, Type $type, Context $context): mixed;
 
     /**
      * Called before serialization/deserialization starts.
@@ -117,7 +102,7 @@ interface VisitorInterface
     public function setNavigator(?GraphNavigator $navigator = null): void;
 
     /**
-     * @return mixed
+     * Gets the result of the (de)serializer.
      */
-    public function getResult();
+    public function getResult(): mixed;
 }

@@ -10,7 +10,6 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Type\Parser\Parser;
 
 use function count;
-use function get_class;
 use function gettype;
 use function is_object;
 use function is_string;
@@ -25,7 +24,7 @@ use const JSON_THROW_ON_ERROR;
 final class Type implements JsonSerializable
 {
     public string $name;
-    public ?MetadataInterface $metadata = null;
+    public MetadataInterface $metadata;
 
     /** @var array<string|int, mixed> */
     private array $params;
@@ -54,17 +53,15 @@ final class Type implements JsonSerializable
 
     /**
      * Create a new Type from an object or a class string.
-     *
-     * @param mixed $object
      */
-    public static function from($object): self
+    public static function from(mixed $object): self
     {
         if ($object instanceof self) {
             return $object;
         }
 
         if (is_object($object)) {
-            $object = get_class($object);
+            $object = $object::class;
         }
 
         if (! is_string($object)) {
@@ -117,22 +114,16 @@ final class Type implements JsonSerializable
 
     /**
      * Returns if this type has param with index $index.
-     *
-     * @param string|int $index
      */
-    public function hasParam($index): bool
+    public function hasParam(string|int $index): bool
     {
         return isset($this->params[$index]);
     }
 
     /**
      * Return the param $index.
-     *
-     * @param string|int $index
-     *
-     * @return mixed
      */
-    public function getParam($index)
+    public function getParam(string|int $index): mixed
     {
         return $this->params[$index];
     }

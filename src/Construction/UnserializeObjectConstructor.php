@@ -14,10 +14,7 @@ class UnserializeObjectConstructor implements ObjectConstructorInterface
 {
     private ?Instantiator $instantiator = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, $data, Type $type, DeserializationContext $context): object
+    public function construct(VisitorInterface $visitor, ClassMetadata $metadata, mixed $data, Type $type, DeserializationContext $context): object
     {
         return $this->getInstantiator()->instantiate($metadata->getName());
     }

@@ -21,7 +21,7 @@ abstract class Collection
      * @param array<string, mixed>|string $entry
      * @phpstan-param array{entry?: string, value?: string, inline?: bool, namespace?: string}|string $entry
      */
-    public function __construct($entry = 'entry', ?bool $inline = null, ?string $namespace = null)
+    public function __construct(array|string $entry = 'entry', ?bool $inline = null, ?string $namespace = null)
     {
         if (is_string($entry)) {
             $data = ['entry' => $entry];

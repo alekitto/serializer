@@ -8,7 +8,6 @@ use Kcs\Metadata\MetadataInterface;
 use Kcs\Serializer\Annotation as Annotations;
 
 use function array_key_exists;
-use function get_class;
 
 class AnnotationProcessor
 {
@@ -18,7 +17,7 @@ class AnnotationProcessor
      */
     protected static array $processor = [
         Annotations\AccessType::class => AccessTypeProcessor::class,
-        Annotations\ReadOnly::class => ReadOnlyProcessor::class,
+        Annotations\Immutable::class => ImmutableProcessor::class,
 
         /* Class annotations */
         Annotations\AccessorOrder::class => AccessorOrderProcessor::class,
@@ -48,7 +47,7 @@ class AnnotationProcessor
 
     public function process(object $annotation, MetadataInterface $metadata): void
     {
-        $class = get_class($annotation);
+        $class = $annotation::class;
         if (! array_key_exists($class, static::$processor)) {
             return;
         }

@@ -39,11 +39,9 @@ final class Parser
     /**
      * Match a token in the lexer.
      *
-     * @return mixed
-     *
      * @throws SyntaxErrorException
      */
-    private function match(int $type)
+    private function match(int $type): mixed
     {
         if (! $this->lexer->isNextToken($type)) {
             $this->syntaxError();
@@ -100,6 +98,6 @@ final class Parser
             $position = (int) $this->lexer->lookahead['position'];
         }
 
-        throw new SyntaxErrorException($this->lexer->getInputUntilPosition(PHP_INT_MAX), $value ?? 'end of string', $position);
+        throw new SyntaxErrorException($this->lexer->getInputUntilPosition(PHP_INT_MAX), (string) ($value ?? 'end of string'), $position);
     }
 }

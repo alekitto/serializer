@@ -26,13 +26,10 @@ class VirtualPropertyMetadata extends PropertyMetadata
         $this->class = $class;
         $this->name = $fieldName;
         $this->getter = $methodName;
-        $this->readOnly = true;
+        $this->immutable = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setValue($obj, $value): void
+    public function setValue(object $obj, mixed $value): void
     {
         throw new LogicException('VirtualPropertyMetadata is immutable.');
     }

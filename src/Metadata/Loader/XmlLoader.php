@@ -206,7 +206,7 @@ class XmlLoader extends AnnotationLoader
         }
 
         $pElems = $element->xpath("./property[@name = '" . $property->name . "']");
-        $pElem = $pElems === false ? null : reset($pElems);
+        $pElem = empty($pElems) ? null : reset($pElems);
 
         if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
             return ! $pElem || $pElem->attributes()->expose === null; // @phpstan-ignore-line
@@ -261,10 +261,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    /**
-     * @return false|SimpleXMLElement
-     */
-    private function getClassElement(string $class)
+    private function getClassElement(string $class): false|SimpleXMLElement
     {
         $elems = $this->document->xpath("./class[@name = '" . $class . "']");
         if (empty($elems)) {

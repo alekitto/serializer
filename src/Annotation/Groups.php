@@ -30,7 +30,7 @@ final class Groups
      * @param array<string, mixed>|string[]|string $groups
      * @phpstan-param array{groups?: string[]|array<string, mixed>, value?: string[]|array<string, mixed>}|array<string, mixed>|string[]|string $groups
      */
-    public function __construct($groups)
+    public function __construct(array|string $groups)
     {
         if (is_string($groups)) {
             $data = ['groups' => [$groups]];

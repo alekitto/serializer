@@ -15,10 +15,12 @@ use Psr\Log\LoggerInterface;
 use ReflectionFunction;
 
 use function array_unshift;
+use function assert;
 use function get_debug_type;
 use function implode;
 use function is_array;
 use function is_string;
+use function method_exists;
 use function Safe\sprintf;
 
 class TraceableVisitor implements VisitorInterface
@@ -32,10 +34,7 @@ class TraceableVisitor implements VisitorInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function prepare($data)
+    public function prepare(mixed $data): mixed
     {
         $this->logger->debug(
             'Preparing data...',
@@ -45,10 +44,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->prepare($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitNull($data, Type $type, Context $context)
+    public function visitNull(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting null at path {path}',
@@ -61,10 +57,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitNull($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitString($data, Type $type, Context $context)
+    public function visitString(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting string at path {path}',
@@ -78,10 +71,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitString($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitBoolean($data, Type $type, Context $context)
+    public function visitBoolean(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting boolean at path {path}',
@@ -95,10 +85,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitBoolean($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitDouble($data, Type $type, Context $context)
+    public function visitDouble(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting float/double at path {path}',
@@ -112,10 +99,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitDouble($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitInteger($data, Type $type, Context $context)
+    public function visitInteger(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting integer at path {path}',
@@ -129,10 +113,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitInteger($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitArray($data, Type $type, Context $context)
+    public function visitArray(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting array at path {path}',
@@ -146,10 +127,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitArray($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitHash($data, Type $type, Context $context)
+    public function visitHash(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Visiting hashmap at path {path}',
@@ -163,10 +141,22 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitHash($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null)
+    public function visitEnum(mixed $data, Type $type, Context $context): mixed
+    {
+        assert(method_exists($this->visitor, 'visitEnum'));
+        $this->logger->debug(
+            'Start visiting enum at path {path}',
+            [
+                'path' => $this->getPath($context),
+                'data' => $data,
+                'type' => $type->jsonSerialize(),
+            ]
+        );
+
+        return $this->visitor->visitEnum($data, $type, $context);
+    }
+
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
     {
         $this->logger->debug(
             'Start visiting object at path {path}',
@@ -180,10 +170,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitObject($metadata, $data, $type, $context, $objectConstructor);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function visitCustom(callable $handler, $data, Type $type, Context $context)
+    public function visitCustom(callable $handler, mixed $data, Type $type, Context $context): mixed
     {
         if (is_array($handler)) {
             $handlerRepresentation = (is_string($handler[0]) ? $handler[0] : get_debug_type($handler[0])) . '::' . $handler[1];
@@ -209,18 +196,12 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitCustom($handler, $data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function startVisiting(&$data, Type $type, Context $context): void
+    public function startVisiting(mixed &$data, Type $type, Context $context): void
     {
         $this->visitor->startVisiting($data, $type, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endVisiting($data, Type $type, Context $context)
+    public function endVisiting(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'End visiting path {path}',
@@ -239,10 +220,7 @@ class TraceableVisitor implements VisitorInterface
         $this->visitor->setNavigator($navigator);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResult()
+    public function getResult(): mixed
     {
         return $this->visitor->getResult();
     }

@@ -11,7 +11,7 @@ use Kcs\Serializer\Tests\Fixtures\Price;
  * @Csv(keySeparator="::")
  * @AccessType("property")
  */
-#[Csv(keySeparatpr: "::")]
+#[Csv(keySeparator: "::")]
 #[AccessType(AccessType::PROPERTY)]
 class KeySeparator
 {

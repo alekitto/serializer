@@ -60,16 +60,12 @@ abstract class GraphNavigator
      *
      * @return mixed the return value depends on the direction, and type of visitor
      */
-    abstract public function accept($data, ?Type $type, Context $context);
+    abstract public function accept(mixed $data, ?Type $type, Context $context): mixed;
 
     /**
      * Call serialization visitor.
-     *
-     * @param mixed $data
-     *
-     * @return mixed
      */
-    protected function callVisitor($data, Type $type, Context $context, ?ClassMetadata $metadata = null)
+    protected function callVisitor(mixed $data, Type $type, Context $context, ?ClassMetadata $metadata = null): mixed
     {
         $visitor = $context->visitor;
 
@@ -134,11 +130,10 @@ abstract class GraphNavigator
      */
     protected function getMetadataForType(Type $type): ?ClassMetadata
     {
-        $metadata = $type->metadata;
-        if ($metadata !== null) {
-            assert($metadata instanceof ClassMetadata);
+        if (isset($type->metadata)) {
+            assert($type->metadata instanceof ClassMetadata);
 
-            return $metadata;
+            return $type->metadata;
         }
 
         $name = $type->name;
@@ -152,10 +147,5 @@ abstract class GraphNavigator
         return $type->metadata = $metadata;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return mixed
-     */
-    abstract protected function visitObject(ClassMetadata $metadata, $data, Type $type, Context $context);
+    abstract protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed;
 }
