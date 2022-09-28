@@ -9,11 +9,8 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
-use RuntimeException;
 
 use function count;
-
-use const PHP_VERSION_ID;
 
 class AttributesLoader extends AnnotationLoader
 {

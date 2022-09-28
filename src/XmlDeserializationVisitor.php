@@ -247,17 +247,17 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitCustom($handler, $data, $type, $context);
     }
 
-    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): ?UnitEnum
+    public function visitEnum(mixed $data, Type $type, Context $context): ?UnitEnum
     {
+        $reflection = new ReflectionEnum($type->metadata->getName());
         $data = (string) $data;
 
-        $reflection = new ReflectionEnum($metadata->getName());
         $backingType = $reflection->getBackingType();
         if ($backingType !== null && (string) $backingType === 'int') {
             $data = (int) $data;
         }
 
-        return parent::visitEnum($metadata, $data, $type, $context);
+        return parent::visitEnum($data, $type, $context);
     }
 
     public function visitObject(

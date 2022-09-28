@@ -114,7 +114,7 @@ class TraceableSerializer implements SerializerInterface
         return [
             'data' => $this->cloner->cloneVar($data),
             'format' => $format,
-            'type' => $this->cloner->cloneVar($type !== null ? $type->jsonSerialize() : null),
+            'type' => $this->cloner->cloneVar($type?->jsonSerialize()),
             'context' => $this->cloner->cloneVar(
                 $context !== null ? [
                     'attributes' => $context->attributes->all(),

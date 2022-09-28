@@ -118,9 +118,9 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = $rs;
     }
 
-    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
+    public function visitEnum(mixed $data, Type $type, Context $context): mixed
     {
-        $reflection = new ReflectionEnum($metadata->getName());
+        $reflection = new ReflectionEnum($data::class);
         $backingType = $reflection->getBackingType();
         if ($backingType !== null && (string) $backingType === 'int') {
             return $this->visitInteger($data->value, $type, $context);

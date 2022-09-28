@@ -209,10 +209,10 @@ class XmlLoader extends AnnotationLoader
         $pElem = $pElems === false ? null : reset($pElems);
 
         if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
-            return ! $pElem || $pElem->attributes()->expose === null; // @phpstan-ignore-line
+            return ! $pElem || $pElem->attributes()->expose === null;
         }
 
-        return $pElem && $pElem->attributes()->exclude !== null; // @phpstan-ignore-line
+        return $pElem && $pElem->attributes()->exclude !== null;
     }
 
     /**

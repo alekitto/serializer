@@ -45,33 +45,21 @@ class AttributesMap implements ArrayAccess
         return $this->map;
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     */
     public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     */
     public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     */
     public function offsetUnset(mixed $offset): void
     {
         unset($this->map[$offset]);

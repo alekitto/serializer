@@ -118,7 +118,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): array
+    public function visitEnum(mixed $data, Type $type, Context $context): array
     {
         return $this->visitSimpleString($data instanceof BackedEnum ? (string) $data->value : $data->name);
     }

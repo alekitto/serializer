@@ -24,8 +24,6 @@ use function assert;
 use function dirname;
 use function is_string;
 
-use const PHP_VERSION_ID;
-
 class MappingLoaderPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void

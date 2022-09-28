@@ -40,7 +40,7 @@ class SerializeGraphNavigator extends GraphNavigator
     {
         $visitor = $context->visitor;
         if ($data instanceof UnitEnum && method_exists($visitor, 'visitEnum')) {
-            return $context->visitor->visitEnum($metadata, $data, $type, $context);
+            return $context->visitor->visitEnum($data, $type, $context);
         }
 
         if ($data instanceof SerializationGroupProviderInterface) {

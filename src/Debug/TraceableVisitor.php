@@ -139,7 +139,7 @@ class TraceableVisitor implements VisitorInterface
         return $this->visitor->visitHash($data, $type, $context);
     }
 
-    public function visitEnum(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
+    public function visitEnum(mixed $data, Type $type, Context $context): mixed
     {
         $this->logger->debug(
             'Start visiting enum at path {path}',
@@ -150,7 +150,7 @@ class TraceableVisitor implements VisitorInterface
             ]
         );
 
-        return $this->visitor->visitEnum($metadata, $data, $type, $context);
+        return $this->visitor->visitEnum($data, $type, $context);
     }
 
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed

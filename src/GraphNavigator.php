@@ -130,11 +130,10 @@ abstract class GraphNavigator
      */
     protected function getMetadataForType(Type $type): ?ClassMetadata
     {
-        $metadata = $type->metadata;
-        if ($metadata !== null) {
-            assert($metadata instanceof ClassMetadata);
+        if (isset($type->metadata)) {
+            assert($type->metadata instanceof ClassMetadata);
 
-            return $metadata;
+            return $type->metadata;
         }
 
         $name = $type->name;

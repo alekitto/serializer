@@ -31,8 +31,6 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
 
-use const PHP_VERSION_ID;
-
 /**
  * Builder for serializer instances.
  *

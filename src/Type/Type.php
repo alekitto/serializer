@@ -24,7 +24,7 @@ use const JSON_THROW_ON_ERROR;
 final class Type implements JsonSerializable
 {
     public string $name;
-    public ?MetadataInterface $metadata = null;
+    public MetadataInterface $metadata;
 
     /** @var array<string|int, mixed> */
     private array $params;

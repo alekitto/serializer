@@ -80,7 +80,7 @@ class DeserializeGraphNavigator extends GraphNavigator
         $visitor = $context->visitor;
         $reflection = $metadata->getReflectionClass();
         if ($reflection->implementsInterface(UnitEnum::class) && method_exists($visitor, 'visitEnum')) {
-            return $visitor->visitEnum($metadata, $data, $type, $context);
+            return $visitor->visitEnum($data, $type, $context);
         }
 
         return $visitor->visitObject($metadata, $data, $type, $context, $this->objectConstructor);
