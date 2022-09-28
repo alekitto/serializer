@@ -15,10 +15,12 @@ use Psr\Log\LoggerInterface;
 use ReflectionFunction;
 
 use function array_unshift;
+use function assert;
 use function get_debug_type;
 use function implode;
 use function is_array;
 use function is_string;
+use function method_exists;
 use function Safe\sprintf;
 
 class TraceableVisitor implements VisitorInterface
@@ -141,6 +143,7 @@ class TraceableVisitor implements VisitorInterface
 
     public function visitEnum(mixed $data, Type $type, Context $context): mixed
     {
+        assert(method_exists($this->visitor, 'visitEnum'));
         $this->logger->debug(
             'Start visiting enum at path {path}',
             [

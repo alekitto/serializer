@@ -9,6 +9,7 @@ use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Throwable;
 
@@ -16,9 +17,9 @@ class TraceableSerializer implements SerializerInterface
 {
     private VarCloner $cloner;
 
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     public array $serializeOperations = [];
-    /** @var array<string, mixed> */
+    /** @var array<array-key, mixed> */
     public array $deserializeOperations = [];
 
     public function __construct(private SerializerInterface $serializer, ?VarCloner $cloner = null)
@@ -108,6 +109,7 @@ class TraceableSerializer implements SerializerInterface
 
     /**
      * @return array<string, mixed>
+     * @phpstan-return array{data: Data, format: string, type: Data, context: Data, result: Data|null, exception: Data|null}
      */
     private function prepareDebugData(mixed $data, string $format, ?Type $type, ?Context $context): array
     {

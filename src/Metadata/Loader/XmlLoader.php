@@ -206,13 +206,13 @@ class XmlLoader extends AnnotationLoader
         }
 
         $pElems = $element->xpath("./property[@name = '" . $property->name . "']");
-        $pElem = $pElems === false ? null : reset($pElems);
+        $pElem = empty($pElems) ? null : reset($pElems);
 
         if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
-            return ! $pElem || $pElem->attributes()->expose === null;
+            return ! $pElem || $pElem->attributes()->expose === null; // @phpstan-ignore-line
         }
 
-        return $pElem && $pElem->attributes()->exclude !== null;
+        return $pElem && $pElem->attributes()->exclude !== null; // @phpstan-ignore-line
     }
 
     /**

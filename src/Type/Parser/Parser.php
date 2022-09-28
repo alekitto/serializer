@@ -98,6 +98,6 @@ final class Parser
             $position = (int) $this->lexer->lookahead['position'];
         }
 
-        throw new SyntaxErrorException($this->lexer->getInputUntilPosition(PHP_INT_MAX), $value ?? 'end of string', $position);
+        throw new SyntaxErrorException($this->lexer->getInputUntilPosition(PHP_INT_MAX), (string) ($value ?? 'end of string'), $position);
     }
 }

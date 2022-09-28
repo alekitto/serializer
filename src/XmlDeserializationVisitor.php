@@ -57,7 +57,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
             libxml_use_internal_errors($previous);
         }
 
-        $this->docNamespaces = $doc->getDocNamespaces(true);
+        $this->docNamespaces = $doc->getDocNamespaces(true) ?: [];
 
         return $doc;
     }
@@ -252,7 +252,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $reflection = new ReflectionEnum($type->metadata->getName());
         $data = (string) $data;
 
-        $backingType = $reflection->getBackingType();
+        $backingType = $reflection->getBackingType(); // @phpstan-ignore-line
         if ($backingType !== null && (string) $backingType === 'int') {
             $data = (int) $data;
         }
