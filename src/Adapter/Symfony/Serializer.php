@@ -19,10 +19,8 @@ final class Serializer implements SymfonySerializerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @phpstan-param string $format
      */
-    public function serialize($data, $format, array $context = [])
+    public function serialize(mixed $data, string $format, array $context = []): string
     {
         return $this->serializer->serialize($data, $format, ContextConverter::toSerializationContext($context));
     }
@@ -33,7 +31,7 @@ final class Serializer implements SymfonySerializerInterface
      * @phpstan-param string $type
      * @phpstan-param string $format
      */
-    public function deserialize($data, $type, $format, array $context = [])
+    public function deserialize(mixed $data, string $type, string $format, array $context = []): mixed
     {
         return $this->serializer->deserialize($data, Type::parse($type), $format, ContextConverter::toDeserializationContext($context));
     }

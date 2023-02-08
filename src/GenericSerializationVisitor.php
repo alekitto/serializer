@@ -121,7 +121,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     public function visitEnum(mixed $data, Type $type, Context $context): mixed
     {
         $reflection = new ReflectionEnum($data::class);
-        $backingType = $reflection->getBackingType(); // @phpstan-ignore-line
+        $backingType = $reflection->getBackingType();
         if ($backingType !== null && (string) $backingType === 'int') {
             return $this->visitInteger($data->value, $type, $context);
         }

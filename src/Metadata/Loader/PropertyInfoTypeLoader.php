@@ -17,7 +17,6 @@ use Symfony\Component\PropertyInfo\Type as SymfonyType;
 use function assert;
 use function count;
 use function implode;
-use function method_exists;
 use function reset;
 
 /**
@@ -69,27 +68,12 @@ class PropertyInfoTypeLoader implements LoaderInterface
             $type = reset($types);
             if ($type->isCollection()) {
                 $params = [];
-
-                if (method_exists($type, 'getCollectionKeyTypes')) {
-                    $keyType = $type->getCollectionKeyTypes()[0] ?? null;
-                } else {
-                    // @codeCoverageIgnoreStart
-                    $keyType = $type->getCollectionKeyType();
-                    // @codeCoverageIgnoreEnd
-                }
-
+                $keyType = $type->getCollectionKeyTypes()[0] ?? null;
                 if ($keyType !== null && $keyType->getBuiltinType() !== SymfonyType::BUILTIN_TYPE_INT) {
                     $params[] = $keyType->getClassName() ?? $keyType->getBuiltinType();
                 }
 
-                if (method_exists($type, 'getCollectionValueTypes')) {
-                    $valueType = $type->getCollectionValueTypes()[0] ?? null;
-                } else {
-                    // @codeCoverageIgnoreStart
-                    $valueType = $type->getCollectionValueType();
-                    // @codeCoverageIgnoreEnd
-                }
-
+                $valueType = $type->getCollectionValueTypes()[0] ?? null;
                 if ($valueType !== null) {
                     $params[] = $valueType->getClassName() ?? $valueType->getBuiltinType();
                 }

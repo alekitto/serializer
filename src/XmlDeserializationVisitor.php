@@ -252,7 +252,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $reflection = new ReflectionEnum($type->metadata->getName());
         $data = (string) $data;
 
-        $backingType = $reflection->getBackingType(); // @phpstan-ignore-line
+        $backingType = $reflection->getBackingType();
         if ($backingType !== null && (string) $backingType === 'int') {
             $data = (int) $data;
         }

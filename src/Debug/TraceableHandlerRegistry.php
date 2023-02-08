@@ -122,7 +122,6 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
 
             $methodName = $className . '::' . $r->getName();
         } elseif (is_object($callable) && is_callable([$callable, '__invoke'])) {
-            // @phpstan-ignore-next-line
             $reflClass = new ReflectionClass($callable);
             $methodName = $reflClass->isSubclassOf(ProxyInterface::class) && ($parent = $reflClass->getParentClass()) ? $parent->getShortName() : $reflClass->getShortName();
         } else {
