@@ -170,7 +170,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
             $headers += array_flip(array_keys($row));
         }
 
-        return array_keys($headers);
+        return array_keys($headers); // @phpstan-ignore-line
     }
 
     /**
