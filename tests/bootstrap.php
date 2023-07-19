@@ -9,6 +9,8 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
     require $autoloadFile;
 
-    AnnotationRegistry::registerAutoloadNamespace('Doctrine\Common\Annotations');
-    AnnotationRegistry::registerLoader('class_exists');
+    if (method_exists(AnnotationRegistry::class, 'registerAutoloadNamespace')) {
+        AnnotationRegistry::registerAutoloadNamespace('Doctrine\Common\Annotations');
+        AnnotationRegistry::registerLoader('class_exists');
+    }
 });

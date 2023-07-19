@@ -47,8 +47,8 @@ final class Parser
             $this->syntaxError();
         }
 
-        assert(isset($this->lexer->lookahead['value']));
-        $value = $this->lexer->lookahead['value'];
+        assert(null !== $this->lexer->lookahead->value);
+        $value = $this->lexer->lookahead->value;
         $this->lexer->moveNext();
 
         return $value;
@@ -77,7 +77,7 @@ final class Parser
             } else {
                 $this->syntaxError();
             }
-        } while ($this->lexer->lookahead !== null && $this->lexer->lookahead['type'] === Lexer::T_COMMA && $this->lexer->moveNext());
+        } while ($this->lexer->lookahead?->type === Lexer::T_COMMA && $this->lexer->moveNext());
 
         $this->match(Lexer::T_CLOSED_BRACKET);
 
@@ -91,12 +91,8 @@ final class Parser
      */
     private function syntaxError(): void
     {
-        $value = null;
-        $position = null;
-        if ($this->lexer->lookahead !== null) {
-            $value = $this->lexer->lookahead['value'];
-            $position = (int) $this->lexer->lookahead['position'];
-        }
+        $value = $this->lexer->lookahead?->value;
+        $position = $this->lexer->lookahead?->position;
 
         throw new SyntaxErrorException($this->lexer->getInputUntilPosition(PHP_INT_MAX), (string) ($value ?? 'end of string'), $position);
     }
