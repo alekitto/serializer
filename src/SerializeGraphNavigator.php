@@ -27,7 +27,7 @@ class SerializeGraphNavigator extends GraphNavigator
      *
      * @param SerializationContext $context
      */
-    public function accept($data, ?Type $type, Context $context): mixed
+    public function accept($data, Type|null $type, Context $context): mixed
     {
         if ($type === null) {
             $type = $context->guessType($data);

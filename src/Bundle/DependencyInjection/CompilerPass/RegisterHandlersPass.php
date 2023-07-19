@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 use function is_subclass_of;
-use function Safe\sprintf;
+use function sprintf;
 
 class RegisterHandlersPass implements CompilerPassInterface
 {

@@ -12,7 +12,7 @@ use function get_debug_type;
 use function is_array;
 use function is_object;
 use function is_string;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * @Annotation
@@ -31,7 +31,7 @@ final class AdditionalField
      * @param array<string, mixed>|string $name
      * @phpstan-param array{name?: string, value?: string, attributes?: object[]|array{string, string}[]}|string $name
      */
-    public function __construct(array|string $name, ?array $attributes = null)
+    public function __construct(array|string $name, array|null $attributes = null)
     {
         if (is_string($name)) {
             $data = ['name' => $name];

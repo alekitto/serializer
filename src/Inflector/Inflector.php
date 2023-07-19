@@ -12,11 +12,9 @@ use function class_exists;
 if (! class_exists(InflectorFactory::class)) {
     class Inflector
     {
-        private static ?self $instance = null;
+        private static self|null $instance = null;
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public function __construct()
         {
         }
@@ -44,12 +42,10 @@ if (! class_exists(InflectorFactory::class)) {
     // phpcs:ignore
     class Inflector
     {
-        private static ?self $instance = null;
+        private static self|null $instance = null;
         private DoctrineInflector $inflector;
 
-        /**
-         * @internal
-         */
+        /** @internal */
         public function __construct()
         {
             $this->inflector = InflectorFactory::create()->build();

@@ -9,11 +9,8 @@ use Kcs\Serializer\Type\Type;
 
 abstract class AbstractVisitor implements VisitorInterface
 {
-    protected PropertyNamingStrategyInterface $namingStrategy;
-
-    public function __construct(PropertyNamingStrategyInterface $namingStrategy)
+    public function __construct(protected PropertyNamingStrategyInterface $namingStrategy)
     {
-        $this->namingStrategy = $namingStrategy;
         $this->setNavigator(null);
     }
 
@@ -32,7 +29,7 @@ abstract class AbstractVisitor implements VisitorInterface
         return $handler($this, $data, $type, $context);
     }
 
-    protected function getElementType(Type $type): ?Type
+    protected function getElementType(Type $type): Type|null
     {
         if ($type->countParams() === 0) {
             return null;

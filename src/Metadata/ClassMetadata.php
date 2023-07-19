@@ -10,6 +10,7 @@ use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use LogicException;
 
+use function array_flip;
 use function array_keys;
 use function array_merge;
 use function array_search;
@@ -18,10 +19,9 @@ use function implode;
 use function in_array;
 use function is_array;
 use function is_string;
-use function Safe\array_flip;
-use function Safe\ksort;
-use function Safe\sprintf;
-use function Safe\uksort;
+use function ksort;
+use function sprintf;
+use function uksort;
 use function var_export;
 
 /**
@@ -36,9 +36,9 @@ class ClassMetadata extends BaseClassMetadata
     public string $exclusionPolicy = ExclusionPolicy::NONE;
     public string $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
     public bool $immutable = false;
-    public ?string $xmlRootName = null;
-    public ?string $xmlRootNamespace = null;
-    public ?string $xmlEncoding = null;
+    public string|null $xmlRootName = null;
+    public string|null $xmlRootNamespace = null;
+    public string|null $xmlEncoding = null;
     public string $csvDelimiter = ',';
     public string $csvEnclosure = '"';
     public string $csvEscapeChar = '\\';
@@ -46,17 +46,17 @@ class ClassMetadata extends BaseClassMetadata
     public string $csvKeySeparator = '.';
     public bool $csvNoHeaders = false;
     public bool $csvOutputBom = false;
-    public ?string $accessorOrder = null;
+    public string|null $accessorOrder = null;
     public bool $discriminatorDisabled = false;
-    public ?string $discriminatorBaseClass = null;
-    public ?string $discriminatorFieldName = null;
-    public ?string $discriminatorValue = null;
+    public string|null $discriminatorBaseClass = null;
+    public string|null $discriminatorFieldName = null;
+    public string|null $discriminatorValue = null;
 
     /** @var string[] */
     public array $xmlNamespaces = [];
 
     /** @var string[]|null */
-    public ?array $customOrder = null;
+    public array|null $customOrder = null;
 
     /** @var array<string, class-string> */
     public array $discriminatorMap = [];
@@ -111,6 +111,7 @@ class ClassMetadata extends BaseClassMetadata
     public function addAttributeMetadata(MetadataInterface $metadata): void
     {
         parent::addAttributeMetadata($metadata);
+
         $this->sortProperties();
     }
 
@@ -144,7 +145,7 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
-    public function registerNamespace(string $uri, ?string $prefix = null): void
+    public function registerNamespace(string $uri, string|null $prefix = null): void
     {
         if ($prefix === null) {
             $prefix = '';

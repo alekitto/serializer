@@ -25,13 +25,8 @@ use function reset;
  */
 class PropertyInfoTypeLoader implements LoaderInterface
 {
-    protected LoaderInterface $delegate;
-    private PropertyInfoExtractorInterface $propertyInfoExtractor;
-
-    public function __construct(LoaderInterface $delegate, PropertyInfoExtractorInterface $propertyInfoExtractor)
+    public function __construct(protected LoaderInterface $delegate, private PropertyInfoExtractorInterface $propertyInfoExtractor)
     {
-        $this->delegate = $delegate;
-        $this->propertyInfoExtractor = $propertyInfoExtractor;
     }
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool

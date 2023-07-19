@@ -9,7 +9,7 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 use function assert;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
@@ -37,7 +37,7 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
         $classMetadata->setDiscriminator(
             $doctrineMetadata->discriminatorColumn['name'],
             $doctrineMetadata->discriminatorMap, // @phpstan-ignore-line
-            []
+            [],
         );
     }
 

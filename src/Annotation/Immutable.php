@@ -10,7 +10,7 @@ use TypeError;
 use function get_debug_type;
 use function is_array;
 use function is_bool;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * @Annotation
@@ -21,9 +21,7 @@ final class Immutable
 {
     public bool $immutable = true;
 
-    /**
-     * @param array<string, mixed>|bool $immutable
-     */
+    /** @param array<string, mixed>|bool $immutable */
     public function __construct(array|bool $immutable = true)
     {
         if (is_bool($immutable)) {

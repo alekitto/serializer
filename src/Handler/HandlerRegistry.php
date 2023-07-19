@@ -16,15 +16,12 @@ use function interface_exists;
 use function is_array;
 use function is_callable;
 use function Safe\preg_match;
-use function Safe\sprintf;
-use function Safe\substr;
+use function sprintf;
 use function strrpos;
+use function substr;
 
 final class HandlerRegistry implements HandlerRegistryInterface
 {
-    /** @var array<int, mixed> */
-    private array $handlers;
-
     public static function getDefaultMethod(int $direction, string $type): string
     {
         $pos = strrpos($type, '\\');
@@ -52,12 +49,9 @@ final class HandlerRegistry implements HandlerRegistryInterface
         }
     }
 
-    /**
-     * @param array<int, mixed> $handlers
-     */
-    public function __construct(array $handlers = [])
+    /** @param array<int, mixed> $handlers */
+    public function __construct(private array $handlers = [])
     {
-        $this->handlers = $handlers;
     }
 
     public function registerSubscribingHandler(SubscribingHandlerInterface $handler): self
@@ -104,7 +98,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
         return $this->registerHandler(Direction::DIRECTION_DESERIALIZATION, $handler::getType(), new InternalDeserializationHandler([$handler, 'deserialize']));
     }
 
-    public function getHandler(int $direction, string $typeName): ?callable
+    public function getHandler(int $direction, string $typeName): callable|null
     {
         if (! isset($this->handlers[$direction][$typeName])) {
             return null;

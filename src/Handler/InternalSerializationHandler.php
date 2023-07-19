@@ -16,11 +16,9 @@ use function assert;
 use function get_debug_type;
 use function is_array;
 use function is_callable;
-use function Safe\sprintf;
+use function sprintf;
 
-/**
- * @internal
- */
+/** @internal */
 final class InternalSerializationHandler
 {
     /** @var callable */

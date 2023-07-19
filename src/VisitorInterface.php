@@ -78,7 +78,7 @@ interface VisitorInterface
         mixed $data,
         Type $type,
         Context $context,
-        ?ObjectConstructorInterface $objectConstructor = null
+        ObjectConstructorInterface|null $objectConstructor = null,
     ): mixed;
 
     /**
@@ -99,7 +99,7 @@ interface VisitorInterface
     /**
      * Called before serialization/deserialization starts.
      */
-    public function setNavigator(?GraphNavigator $navigator = null): void;
+    public function setNavigator(GraphNavigator|null $navigator = null): void;
 
     /**
      * Gets the result of the (de)serializer.

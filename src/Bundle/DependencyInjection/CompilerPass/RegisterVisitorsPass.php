@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-use function Safe\sprintf;
+use function sprintf;
 
 class RegisterVisitorsPass implements CompilerPassInterface
 {

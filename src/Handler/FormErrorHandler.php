@@ -38,7 +38,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         ];
     }
 
-    public function __construct(private LegacyTranslatorInterface | TranslatorInterface | null $translator = null)
+    public function __construct(private LegacyTranslatorInterface|TranslatorInterface|null $translator = null)
     {
     }
 
@@ -67,7 +67,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
                 return $this->translator->trans(
                     $error->getMessageTemplate(),
                     ['%count%' => $error->getMessagePluralization()] + $error->getMessageParameters(),
-                    'validators'
+                    'validators',
                 );
             }
 
@@ -75,7 +75,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
                 $error->getMessageTemplate(),
                 $error->getMessagePluralization(),
                 $error->getMessageParameters(),
-                'validators'
+                'validators',
             );
         }
 

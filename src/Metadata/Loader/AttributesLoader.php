@@ -14,9 +14,9 @@ use function count;
 
 class AttributesLoader extends AnnotationLoader
 {
-    private ?AnnotationLoader $decorated;
+    private AnnotationLoader|null $decorated;
 
-    public function __construct(?AnnotationLoader $annotationLoader = null)
+    public function __construct(AnnotationLoader|null $annotationLoader = null)
     {
         parent::__construct();
 
@@ -32,9 +32,7 @@ class AttributesLoader extends AnnotationLoader
         return count($class->getAttributes(Annotation\Exclude::class)) !== 0;
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
         $attributes = $this->decorated ? $this->decorated->getClassAnnotations($classMetadata) : [];
@@ -45,9 +43,7 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     protected function getMethodAnnotations(ReflectionMethod $method): array
     {
         $attributes = $this->decorated ? $this->decorated->getMethodAnnotations($method) : [];
@@ -58,9 +54,7 @@ class AttributesLoader extends AnnotationLoader
         return $attributes;
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
         $attributes = $this->decorated ? $this->decorated->getPropertyAnnotations($property) : [];

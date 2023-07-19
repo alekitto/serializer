@@ -9,19 +9,19 @@ use TypeError;
 use function get_debug_type;
 use function is_array;
 use function is_string;
-use function Safe\sprintf;
+use function sprintf;
 
 abstract class Collection
 {
     public string $entry = 'entry';
     public bool $inline = false;
-    public ?string $namespace = null;
+    public string|null $namespace = null;
 
     /**
      * @param array<string, mixed>|string $entry
      * @phpstan-param array{entry?: string, value?: string, inline?: bool, namespace?: string}|string $entry
      */
-    public function __construct(array|string $entry = 'entry', ?bool $inline = null, ?string $namespace = null)
+    public function __construct(array|string $entry = 'entry', bool|null $inline = null, string|null $namespace = null)
     {
         if (is_string($entry)) {
             $data = ['entry' => $entry];

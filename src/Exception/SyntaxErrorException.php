@@ -6,12 +6,12 @@ namespace Kcs\Serializer\Exception;
 
 use Exception;
 
-use function Safe\sprintf;
+use function sprintf;
 use function strlen;
 
 class SyntaxErrorException extends Exception
 {
-    public function __construct(string $original, string $value, ?int $position)
+    public function __construct(string $original, string $value, int|null $position)
     {
         if (! $position) {
             $position = strlen($original);

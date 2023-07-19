@@ -30,9 +30,9 @@ use function iterator_to_array;
 use function libxml_use_internal_errors;
 use function Safe\libxml_get_last_error;
 use function Safe\preg_match;
-use function Safe\sprintf;
-use function Safe\substr;
 use function sha1;
+use function sprintf;
+use function substr;
 
 /**
  * XmlSerializationVisitor.
@@ -47,7 +47,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     private SplStack $nodeStack;
 
     /** @var DOMNode[] */
-    private ?array $currentNodes = null;
+    private array|null $currentNodes = null;
 
     /** @var string[] */
     private array $xmlNamespaces = [];
@@ -73,10 +73,8 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = [$node];
     }
 
-    /**
-     * @return DOMNode[]
-     */
-    public function visitSimpleString(string | Stringable $data): array
+    /** @return DOMNode[] */
+    public function visitSimpleString(string|Stringable $data): array
     {
         return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
@@ -126,7 +124,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * {@inheritdoc}
      */
-    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): array
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): array
     {
         $properties = $context->getNonSkippedProperties($metadata);
         $this->validateObjectProperties($metadata, $properties);
@@ -158,10 +156,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = array_merge(...$nodes ?: [[]]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): ?array
+    protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): array|null
     {
         assert($context instanceof SerializationContext);
         $v = $metadata->getValue($data);
@@ -309,7 +304,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $nodes;
     }
 
-    public function setNavigator(?GraphNavigator $navigator = null): void
+    public function setNavigator(GraphNavigator|null $navigator = null): void
     {
         $this->currentNodes = [$this->document = $this->createDocument()];
         $this->nodeStack = new SplStack();
@@ -340,7 +335,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return null;
     }
 
-    public function getResult(): string | bool
+    public function getResult(): string|bool
     {
         $this->attachNullNS();
         assert($this->document->documentElement !== null);
@@ -370,7 +365,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $xml;
     }
 
-    private function createTextNode(string | Stringable $data, bool $cdata = false): DOMCdataSection | DOMText
+    private function createTextNode(string|Stringable $data, bool $cdata = false): DOMCdataSection|DOMText
     {
         $data = (string) $data;
         if (! $cdata) {
@@ -383,7 +378,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * Create a new document object.
      */
-    private function createDocument(?string $version = null, ?string $encoding = null): DOMDocument
+    private function createDocument(string|null $version = null, string|null $encoding = null): DOMDocument
     {
         $doc = new DOMDocument($version ?: $this->defaultVersion, $encoding ?: $this->defaultEncoding);
         $doc->formatOutput = true;
@@ -401,21 +396,19 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->document->documentElement->setAttributeNS(
             'http://www.w3.org/2000/xmlns/',
             'xmlns:xsi',
-            'http://www.w3.org/2001/XMLSchema-instance'
+            'http://www.w3.org/2001/XMLSchema-instance',
         );
     }
 
     /**
      * Checks that the name is a valid XML element name.
      */
-    private function isElementNameValid(string | Stringable $name): bool
+    private function isElementNameValid(string|Stringable $name): bool
     {
         return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
-    /**
-     * @param PropertyMetadata[] $properties
-     */
+    /** @param PropertyMetadata[] $properties */
     private function validateObjectProperties(ClassMetadata $metadata, array $properties): void
     {
         $hasXmlValue = false;
@@ -451,7 +444,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $node;
     }
 
-    private function createElement(?string $namespace, ?string $elementName): DOMElement
+    private function createElement(string|null $namespace, string|null $elementName): DOMElement
     {
         $prefix = $namespace !== null ? $this->lookupPrefix($namespace) : '';
         if ($prefix !== '') {
@@ -476,17 +469,17 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $prefix;
     }
 
-    private function createRootNode(?ClassMetadata $metadata = null): void
+    private function createRootNode(ClassMetadata|null $metadata = null): void
     {
         $rootName = $metadata !== null && $metadata->xmlRootName ? $metadata->xmlRootName : 'result';
-        $rootNamespace = $metadata !== null ? $metadata->xmlRootNamespace : null;
+        $rootNamespace = $metadata?->xmlRootNamespace;
         if ($rootNamespace !== null) {
             $rootNode = $this->document->createElementNS($rootNamespace, $rootName);
         } else {
             $rootNode = $this->document->createElement($rootName);
         }
 
-        if ($metadata !== null && $metadata->xmlEncoding !== null) {
+        if ($metadata?->xmlEncoding !== null) {
             $this->document->encoding = $metadata->xmlEncoding;
         }
 

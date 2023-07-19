@@ -14,9 +14,9 @@ use RuntimeException;
 use function explode;
 use function is_bool;
 use function is_string;
-use function Safe\sprintf;
-use function Safe\substr;
+use function sprintf;
 use function strpos;
+use function substr;
 use function var_export;
 
 trait LoaderTrait
@@ -44,7 +44,7 @@ trait LoaderTrait
         return $reflectionClass->newInstanceWithoutConstructor();
     }
 
-    private function getDefaultPropertyName(object $annotation): ?string
+    private function getDefaultPropertyName(object $annotation): string|null
     {
         $reflectionAnnotation = new ReflectionClass($annotation);
         $properties = $reflectionAnnotation->getProperties();

@@ -17,15 +17,9 @@ use function assert;
  */
 class DisjunctExclusionStrategy implements ExclusionStrategyInterface
 {
-    /** @var ExclusionStrategyInterface[] */
-    private array $delegates;
-
-    /**
-     * @param ExclusionStrategyInterface[] $delegates
-     */
-    public function __construct(array $delegates)
+    /** @param ExclusionStrategyInterface[] $delegates */
+    public function __construct(private array $delegates)
     {
-        $this->delegates = $delegates;
     }
 
     public function addStrategy(ExclusionStrategyInterface $strategy): void

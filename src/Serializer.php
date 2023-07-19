@@ -14,7 +14,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 use function get_debug_type;
 use function is_array;
-use function Safe\sprintf;
+use function sprintf;
 
 class Serializer implements SerializerInterface
 {
@@ -30,11 +30,11 @@ class Serializer implements SerializerInterface
         private ObjectConstructorInterface $objectConstructor,
         private array $serializationVisitors,
         private array $deserializationVisitors,
-        private ?EventDispatcherInterface $dispatcher = null
+        private EventDispatcherInterface|null $dispatcher = null,
     ) {
     }
 
-    public function serialize(mixed $data, string $format, ?SerializationContext $context = null, ?Type $type = null): mixed
+    public function serialize(mixed $data, string $format, SerializationContext|null $context = null, Type|null $type = null): mixed
     {
         $this->navigator = new SerializeGraphNavigator($this->factory, $this->handlerRegistry, $this->dispatcher);
 
@@ -49,7 +49,7 @@ class Serializer implements SerializerInterface
         return $this->visit($this->serializationVisitors[$format], $context, $data, $format, $type);
     }
 
-    public function deserialize(mixed $data, Type $type, string $format, ?DeserializationContext $context = null): mixed
+    public function deserialize(mixed $data, Type $type, string $format, DeserializationContext|null $context = null): mixed
     {
         $this->navigator = new DeserializeGraphNavigator($this->factory, $this->handlerRegistry, $this->objectConstructor, $this->dispatcher);
 
@@ -67,7 +67,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function normalize($data, ?SerializationContext $context = null): array
+    public function normalize($data, SerializationContext|null $context = null): array
     {
         $result = $this->serialize($data, 'array', $context);
 
@@ -81,7 +81,7 @@ class Serializer implements SerializerInterface
     /**
      * {@inheritdoc}
      */
-    public function denormalize(array $data, Type $type, ?DeserializationContext $context = null): mixed
+    public function denormalize(array $data, Type $type, DeserializationContext|null $context = null): mixed
     {
         return $this->deserialize($data, $type, 'array', $context);
     }
@@ -91,7 +91,7 @@ class Serializer implements SerializerInterface
         return $this->factory;
     }
 
-    private function visit(VisitorInterface $visitor, Context $context, mixed $data, string $format, ?Type $type): mixed
+    private function visit(VisitorInterface $visitor, Context $context, mixed $data, string $format, Type|null $type): mixed
     {
         $data = $visitor->prepare($data);
         $context->initialize($format, $visitor, $this->navigator, $this->factory);

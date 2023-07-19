@@ -18,17 +18,15 @@ use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlSerializationVisitor;
 
 use function Safe\preg_replace;
-use function Safe\sprintf;
-use function Safe\substr;
+use function sprintf;
 use function str_replace;
+use function substr;
 
 class DateHandler implements SubscribingHandlerInterface
 {
     private const DATEINTERVAL_FORMAT = '%RP%yY%mM%dDT%hH%iM%sS';
 
-    private string $defaultFormat;
     private DateTimeZone $defaultTimezone;
-    private bool $xmlCData;
 
     /**
      * {@inheritdoc}
@@ -83,13 +81,11 @@ class DateHandler implements SubscribingHandlerInterface
     }
 
     public function __construct(
-        string $defaultFormat = DateTimeInterface::ATOM,
+        private string $defaultFormat = DateTimeInterface::ATOM,
         string $defaultTimezone = 'UTC',
-        bool $xmlCData = true
+        private bool $xmlCData = true,
     ) {
-        $this->defaultFormat = $defaultFormat;
         $this->defaultTimezone = new DateTimeZone($defaultTimezone);
-        $this->xmlCData = $xmlCData;
     }
 
     public function serializeDateTime(VisitorInterface $visitor, DateTimeInterface $date, Type $type, Context $context): mixed
@@ -123,17 +119,17 @@ class DateHandler implements SubscribingHandlerInterface
         return $interval;
     }
 
-    public function deserializeDateTime(VisitorInterface $visitor, mixed $data, Type $type): ?DateTimeInterface
+    public function deserializeDateTime(VisitorInterface $visitor, mixed $data, Type $type): DateTimeInterface|null
     {
         return $this->deserializeDateTimeInterface(DateTime::class, $data, $type);
     }
 
-    public function deserializeDateTimeImmutable(VisitorInterface $visitor, mixed $data, Type $type): ?DateTimeInterface
+    public function deserializeDateTimeImmutable(VisitorInterface $visitor, mixed $data, Type $type): DateTimeInterface|null
     {
         return $this->deserializeDateTimeInterface(DateTimeImmutable::class, $data, $type);
     }
 
-    public function deserializeChronos(VisitorInterface $visitor, mixed $date, Type $type): ?Chronos
+    public function deserializeChronos(VisitorInterface $visitor, mixed $date, Type $type): Chronos|null
     {
         $date = $this->deserializeDateTimeImmutable($visitor, $date, $type);
         if ($date === null) {
@@ -143,9 +139,7 @@ class DateHandler implements SubscribingHandlerInterface
         return Chronos::instance($date);
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public function formatInterval(DateInterval $dateInterval): string
     {
         $formatted = $dateInterval->format(self::DATEINTERVAL_FORMAT);
@@ -163,7 +157,7 @@ class DateHandler implements SubscribingHandlerInterface
         return $formatted;
     }
 
-    private function deserializeDateTimeInterface(string $class, mixed $data, Type $type): ?DateTimeInterface
+    private function deserializeDateTimeInterface(string $class, mixed $data, Type $type): DateTimeInterface|null
     {
         if ($data === null) {
             return null;

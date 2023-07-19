@@ -11,7 +11,7 @@ use TypeError;
 use function get_debug_type;
 use function is_array;
 use function is_string;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * Controls the order of properties in a class.
@@ -36,7 +36,7 @@ final class AccessorOrder
      * @param array<string, mixed>|string $order
      * @phpstan-param array{order?: string, value?: string, custom?: string|string[]}|string $order
      */
-    public function __construct(array|string $order, ?array $custom = null)
+    public function __construct(array|string $order, array|null $custom = null)
     {
         if (is_string($order)) {
             $data = ['order' => $order];

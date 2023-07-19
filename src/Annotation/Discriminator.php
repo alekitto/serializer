@@ -10,7 +10,7 @@ use TypeError;
 use function array_intersect_key;
 use function get_debug_type;
 use function is_array;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * @Annotation
@@ -36,7 +36,7 @@ final class Discriminator
      * @param array<string, mixed> $map
      * @phpstan-param array{map?: array<string, mixed>, value?: array<string, mixed>, field?: string, disabled?: string, groups?: string|string[]}|array<string, mixed> $map
      */
-    public function __construct(array $map, ?string $field = null, ?bool $disabled = null, ?array $groups = null)
+    public function __construct(array $map, string|null $field = null, bool|null $disabled = null, array|null $groups = null)
     {
         if (! is_array($map)) {
             throw new TypeError(sprintf('Argument #1 passed to %s must be an array. %s passed', __METHOD__, get_debug_type($map)));

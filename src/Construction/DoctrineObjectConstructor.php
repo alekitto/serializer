@@ -24,9 +24,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     /** @var SplObjectStorage<ManagerRegistry> */
     private SplObjectStorage $managerRegistryCollection;
 
-    /**
-     * @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor
-     */
+    /** @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor */
     public function __construct(private ObjectConstructorInterface $fallbackConstructor)
     {
         $this->managerRegistryCollection = new SplObjectStorage();
@@ -53,7 +51,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
      * Get the object manager handling the specified class
      * Returns NULL if cannot be found.
      */
-    protected function getObjectManager(ClassMetadata $metadata): ?ObjectManager
+    protected function getObjectManager(ClassMetadata $metadata): ObjectManager|null
     {
         foreach ($this->managerRegistryCollection as $managerRegistry) {
             $objectManager = $managerRegistry->getManagerForClass($metadata->getName());
@@ -68,7 +66,7 @@ class DoctrineObjectConstructor implements ObjectConstructorInterface
     /**
      * Try to load an object from doctrine.
      */
-    protected function loadFromObjectManager(ClassMetadata $metadata, mixed $data): ?object
+    protected function loadFromObjectManager(ClassMetadata $metadata, mixed $data): object|null
     {
         // Locate possible ObjectManager
         $objectManager = $this->getObjectManager($metadata);

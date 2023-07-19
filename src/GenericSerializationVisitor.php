@@ -21,7 +21,7 @@ use function assert;
 use function count;
 use function is_array;
 use function range;
-use function Safe\sprintf;
+use function sprintf;
 
 class GenericSerializationVisitor extends AbstractVisitor
 {
@@ -32,7 +32,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     private mixed $root = null;
     private mixed $data = null;
 
-    public function setNavigator(?GraphNavigator $navigator = null): void
+    public function setNavigator(GraphNavigator|null $navigator = null): void
     {
         if ($navigator === null) {
             unset($this->navigator);
@@ -49,7 +49,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = null;
     }
 
-    public function visitString(mixed $data, Type $type, Context $context): ?string
+    public function visitString(mixed $data, Type $type, Context $context): string|null
     {
         return $this->data = (string) $data;
     }
@@ -59,12 +59,12 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = (bool) $data;
     }
 
-    public function visitInteger(mixed $data, Type $type, Context $context): ?int
+    public function visitInteger(mixed $data, Type $type, Context $context): int|null
     {
         return $this->data = (int) $data;
     }
 
-    public function visitDouble(mixed $data, Type $type, Context $context): ?float
+    public function visitDouble(mixed $data, Type $type, Context $context): float|null
     {
         return $this->data = (float) $data;
     }
@@ -129,7 +129,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->visitString($data instanceof BackedEnum ? $data->value : $data->name, $type, $context);
     }
 
-    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): mixed
     {
         $this->data = [];
         $metadataStack = $context->getMetadataStack();
@@ -172,17 +172,13 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = parent::visitCustom($handler, $data, $type, $context);
     }
 
-    /**
-     * @return array<string, mixed>|ArrayObject<string, mixed>|null
-     */
+    /** @return array<string, mixed>|ArrayObject<string, mixed>|null */
     public function getRoot(): mixed
     {
         return $this->root;
     }
 
-    /**
-     * @param array<string, mixed>|ArrayObject<string, mixed> $data the passed data must be understood by whatever encoding function is applied later
-     */
+    /** @param array<string, mixed>|ArrayObject<string, mixed> $data the passed data must be understood by whatever encoding function is applied later */
     public function setRoot(mixed $data): void
     {
         if ($data === null) {
@@ -237,9 +233,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         $this->data = $data;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     protected function getData(): mixed
     {
         return $this->data;

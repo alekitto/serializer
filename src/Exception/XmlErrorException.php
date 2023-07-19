@@ -7,7 +7,7 @@ namespace Kcs\Serializer\Exception;
 use LibXMLError;
 use Throwable;
 
-use function Safe\sprintf;
+use function sprintf;
 
 use const LIBXML_ERR_ERROR;
 use const LIBXML_ERR_FATAL;
@@ -17,7 +17,7 @@ class XmlErrorException extends RuntimeException
 {
     private LibXMLError $xmlError;
 
-    public function __construct(LibXMLError $error, ?Throwable $previous = null)
+    public function __construct(LibXMLError $error, Throwable|null $previous = null)
     {
         switch ($error->level) {
             case LIBXML_ERR_WARNING:

@@ -37,18 +37,11 @@ abstract class GraphNavigator
         'resource' => true,
     ];
 
-    protected ?EventDispatcherInterface $dispatcher;
-    protected MetadataFactoryInterface $metadataFactory;
-    private HandlerRegistryInterface $handlerRegistry;
-
     public function __construct(
-        MetadataFactoryInterface $metadataFactory,
-        HandlerRegistryInterface $handlerRegistry,
-        ?EventDispatcherInterface $dispatcher = null
+        protected MetadataFactoryInterface $metadataFactory,
+        private HandlerRegistryInterface $handlerRegistry,
+        protected EventDispatcherInterface|null $dispatcher = null,
     ) {
-        $this->dispatcher = $dispatcher;
-        $this->metadataFactory = $metadataFactory;
-        $this->handlerRegistry = $handlerRegistry;
     }
 
     /**
@@ -60,12 +53,12 @@ abstract class GraphNavigator
      *
      * @return mixed the return value depends on the direction, and type of visitor
      */
-    abstract public function accept(mixed $data, ?Type $type, Context $context): mixed;
+    abstract public function accept(mixed $data, Type|null $type, Context $context): mixed;
 
     /**
      * Call serialization visitor.
      */
-    protected function callVisitor(mixed $data, Type $type, Context $context, ?ClassMetadata $metadata = null): mixed
+    protected function callVisitor(mixed $data, Type $type, Context $context, ClassMetadata|null $metadata = null): mixed
     {
         $visitor = $context->visitor;
 
@@ -128,7 +121,7 @@ abstract class GraphNavigator
     /**
      * Get ClassMetadata instance for type. Returns null if class does not exist.
      */
-    protected function getMetadataForType(Type $type): ?ClassMetadata
+    protected function getMetadataForType(Type $type): ClassMetadata|null
     {
         if (isset($type->metadata)) {
             assert($type->metadata instanceof ClassMetadata);

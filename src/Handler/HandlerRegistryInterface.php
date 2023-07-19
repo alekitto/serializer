@@ -31,8 +31,6 @@ interface HandlerRegistryInterface
      */
     public function registerDeserializationHandler(DeserializationHandlerInterface $handler): self;
 
-    /**
-     * @param int $direction one of the GraphNavigator::DIRECTION_??? constants
-     */
-    public function getHandler(int $direction, string $typeName): ?callable;
+    /** @param int $direction one of the GraphNavigator::DIRECTION_??? constants */
+    public function getHandler(int $direction, string $typeName): callable|null;
 }

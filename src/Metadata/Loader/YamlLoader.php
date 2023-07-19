@@ -172,9 +172,7 @@ class YamlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    /**
-     * @phpstan-param class-string $class
-     */
+    /** @phpstan-param class-string $class */
     private function hasClassConfig(string $class): bool
     {
         return isset($this->config[$class]);

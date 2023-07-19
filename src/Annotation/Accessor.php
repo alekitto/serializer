@@ -16,14 +16,14 @@ use function is_string;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Accessor
 {
-    public ?string $getter = null;
-    public ?string $setter = null;
+    public string|null $getter = null;
+    public string|null $setter = null;
 
     /**
      * @param array<string, mixed>|string|null $getter
      * @phpstan-param array{getter?: string, value?: string, setter?: string}|string|null $getter
      */
-    public function __construct(array | string | null $getter = null, ?string $setter = null)
+    public function __construct(array|string|null $getter = null, string|null $setter = null)
     {
         if (is_string($getter)) {
             $data = ['getter' => $getter];

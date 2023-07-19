@@ -9,12 +9,10 @@ use SplObjectStorage;
 
 final class CacheNamingStrategy implements PropertyNamingStrategyInterface
 {
-    private PropertyNamingStrategyInterface $delegate;
     private SplObjectStorage $cache;
 
-    public function __construct(PropertyNamingStrategyInterface $delegate)
+    public function __construct(private PropertyNamingStrategyInterface $delegate)
     {
-        $this->delegate = $delegate;
         $this->cache = new SplObjectStorage();
     }
 

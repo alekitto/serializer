@@ -12,7 +12,7 @@ use function get_debug_type;
 use function is_array;
 use function is_object;
 use function is_string;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * @Annotation
@@ -32,11 +32,10 @@ final class StaticField
 
     /**
      * @param array<string, mixed>|string $name
-     * @param array|null $attributes
      * @phpstan-param array<int, object|mixed>|null $attributes
      * @phpstan-param array{name?: string, value?: mixed, attributes?: object[]}|string $name
      */
-    public function __construct(array|string $name, ?array $attributes = null, mixed $value = null)
+    public function __construct(array|string $name, array|null $attributes = null, mixed $value = null)
     {
         if (is_string($name)) {
             $data = ['name' => $name];

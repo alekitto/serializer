@@ -17,7 +17,7 @@ use function assert;
 use function gettype;
 use function is_array;
 use function is_subclass_of;
-use function Safe\sprintf;
+use function sprintf;
 use function var_export;
 
 /**
@@ -99,7 +99,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         return $result;
     }
 
-    public function visitEnum(mixed $data, Type $type, Context $context): ?UnitEnum
+    public function visitEnum(mixed $data, Type $type, Context $context): UnitEnum|null
     {
         assert($type->metadata !== null);
         $enum = $type->metadata->getName();
@@ -131,7 +131,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         mixed $data,
         Type $type,
         Context $context,
-        ?ObjectConstructorInterface $objectConstructor = null
+        ObjectConstructorInterface|null $objectConstructor = null,
     ): object {
         assert($objectConstructor !== null);
         assert($context instanceof DeserializationContext);

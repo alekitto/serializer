@@ -20,9 +20,7 @@ use Stringable;
 use function array_filter;
 use function is_array;
 
-/**
- * @property int $direction
- */
+/** @property int $direction */
 abstract class Context
 {
     public AttributesMap $attributes;
@@ -30,7 +28,7 @@ abstract class Context
     public VisitorInterface $visitor;
     private GraphNavigator $navigator;
     private MetadataFactoryInterface $metadataFactory;
-    private ?ExclusionStrategyInterface $exclusionStrategy = null;
+    private ExclusionStrategyInterface|null $exclusionStrategy = null;
     private bool $serializeNull = false;
     private bool $initialized = false;
     private MetadataStack $metadataStack;
@@ -55,9 +53,7 @@ abstract class Context
         return new static();
     }
 
-    /**
-     * @param array<string, mixed> $attributes
-     */
+    /** @param array<string, mixed> $attributes */
     public function createChildContext(array $attributes = []): self
     {
         if (! $this->initialized) {
@@ -89,7 +85,7 @@ abstract class Context
         string $format,
         VisitorInterface $visitor,
         GraphNavigator $navigator,
-        MetadataFactoryInterface $factory
+        MetadataFactoryInterface $factory,
     ): void {
         if ($this->initialized) {
             throw new LogicException('This context was already initialized, and cannot be re-used.');
@@ -106,7 +102,7 @@ abstract class Context
         $this->addGroupsExclusionStrategy();
     }
 
-    public function accept(mixed $data, ?Type $type = null): mixed
+    public function accept(mixed $data, Type|null $type = null): mixed
     {
         return $this->navigator->accept($data, $type, $this);
     }
@@ -121,7 +117,7 @@ abstract class Context
         return $this->navigator;
     }
 
-    public function getExclusionStrategy(): ?ExclusionStrategyInterface
+    public function getExclusionStrategy(): ExclusionStrategyInterface|null
     {
         return $this->exclusionStrategy;
     }

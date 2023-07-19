@@ -29,7 +29,7 @@ class MetadataStack implements IteratorAggregate, Countable
         $this->currentPath[] = $metadata->name;
     }
 
-    public function pop(): ?PropertyMetadata
+    public function pop(): PropertyMetadata|null
     {
         $metadata = $this->stack->pop();
         array_pop($this->currentPath);
@@ -57,14 +57,12 @@ class MetadataStack implements IteratorAggregate, Countable
         array_pop($this->currentPath);
     }
 
-    public function getCurrent(): ?PropertyMetadata
+    public function getCurrent(): PropertyMetadata|null
     {
         return $this->stack->isEmpty() ? null : $this->stack->top();
     }
 
-    /**
-     * @return Traversable<PropertyMetadata>
-     */
+    /** @return Traversable<PropertyMetadata> */
     public function getIterator(): Traversable
     {
         return $this->stack;

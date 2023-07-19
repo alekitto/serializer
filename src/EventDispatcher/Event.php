@@ -11,17 +11,10 @@ use Psr\EventDispatcher\StoppableEventInterface;
 
 class Event implements StoppableEventInterface
 {
-    protected Type $type;
-    private Context $context;
     private bool $propagationStopped = false;
 
-    private mixed $data;
-
-    public function __construct(Context $context, mixed $data, Type $type)
+    public function __construct(private Context $context, private mixed $data, protected Type $type)
     {
-        $this->context = $context;
-        $this->type = $type;
-        $this->data = $data;
     }
 
     public function getVisitor(): VisitorInterface

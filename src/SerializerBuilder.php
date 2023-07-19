@@ -41,9 +41,9 @@ class SerializerBuilder
 {
     private HandlerRegistry $handlerRegistry;
     private bool $handlersConfigured = false;
-    private ?EventDispatcherInterface $eventDispatcher = null;
+    private EventDispatcherInterface|null $eventDispatcher = null;
     private bool $listenersConfigured = false;
-    private ?ObjectConstructorInterface $objectConstructor = null;
+    private ObjectConstructorInterface|null $objectConstructor = null;
 
     /** @var VisitorInterface[] */
     private array $serializationVisitors;
@@ -52,9 +52,9 @@ class SerializerBuilder
     private array $deserializationVisitors;
 
     private PropertyNamingStrategyInterface $propertyNamingStrategy;
-    private ?CacheItemPoolInterface $cache = null;
-    private ?Reader $annotationReader = null;
-    private ?LoaderInterface $metadataLoader = null;
+    private CacheItemPoolInterface|null $cache = null;
+    private Reader|null $annotationReader = null;
+    private LoaderInterface|null $metadataLoader = null;
 
     public static function create(): self
     {
@@ -75,7 +75,7 @@ class SerializerBuilder
         return $this;
     }
 
-    public function setCache(?CacheItemPoolInterface $cache = null): self
+    public function setCache(CacheItemPoolInterface|null $cache = null): self
     {
         $this->cache = $cache;
 
@@ -226,7 +226,7 @@ class SerializerBuilder
             $this->objectConstructor ?: new InitializedObjectConstructor(new UnserializeObjectConstructor()),
             $this->serializationVisitors,
             $this->deserializationVisitors,
-            $this->eventDispatcher
+            $this->eventDispatcher,
         );
     }
 

@@ -19,8 +19,7 @@
         "doctrine/lexer": "^2.0 || ^3.0",
         "kcs/metadata": "^2.0 || ^3.0 || ^4.0",
         "psr/event-dispatcher": "^1.0",
-        "symfony/polyfill-php80": "^1.15",
-        "thecodingmachine/safe": "^1.1"
+        "thecodingmachine/safe": "^1.1 || ^2.0"
     },
     "conflict": {
         "twig/twig": "<1.12",
@@ -37,7 +36,7 @@
         "ext-libxml": "*",
         "ext-simplexml": "*",
         "cakephp/chronos": "^2.0",
-        "doctrine/annotations": "^1.0 | ^2.0",
+        "doctrine/annotations": "^1.0 || ^2.0",
         "doctrine/orm": "^2.3",
         "doctrine/persistence": "^2.0",
         "doctrine/phpcr-odm": "^1.0",

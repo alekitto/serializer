@@ -112,9 +112,7 @@ class AnnotationLoader implements LoaderInterface
         $this->loadExposedAttribute($metadata, $annotations, $classMetadata);
     }
 
-    /**
-     * @param object[] $annotations
-     */
+    /** @param object[] $annotations */
     private function loadExposedAttribute(PropertyMetadata $metadata, array $annotations, ClassMetadata $classMetadata): void
     {
         $metadata->immutable = $metadata->immutable || $classMetadata->immutable;

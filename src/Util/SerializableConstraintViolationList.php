@@ -32,9 +32,7 @@ final class SerializableConstraintViolationList
         }
     }
 
-    /**
-     * @return SerializableConstraintViolation[]
-     */
+    /** @return SerializableConstraintViolation[] */
     public function getViolations(): array
     {
         return $this->violations;

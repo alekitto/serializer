@@ -11,9 +11,7 @@ use Symfony\Component\Form\FormInterface;
 
 use function assert;
 
-/**
- * @Xml\Root(name="form")
- */
+/** @Xml\Root(name="form") */
 #[Xml\Root(name: 'form')]
 final class SerializableForm
 {
@@ -55,17 +53,13 @@ final class SerializableForm
         }
     }
 
-    /**
-     * @return FormError[]
-     */
+    /** @return FormError[] */
     public function getErrors(): array
     {
         return $this->errors;
     }
 
-    /**
-     * @return static[]
-     */
+    /** @return static[] */
     public function getChildren(): array
     {
         return $this->children;

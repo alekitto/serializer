@@ -21,7 +21,7 @@ class SerializationContext extends Context
         string $format,
         VisitorInterface $visitor,
         GraphNavigator $navigator,
-        MetadataFactoryInterface $factory
+        MetadataFactoryInterface $factory,
     ): void {
         parent::initialize($format, $visitor, $navigator, $factory);
 

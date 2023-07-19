@@ -10,7 +10,7 @@ use TypeError;
 use function get_debug_type;
 use function is_array;
 use function is_string;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * @Annotation
@@ -21,14 +21,14 @@ final class Root
 {
     /** @Required */
     public string $name;
-    public ?string $namespace = null;
-    public ?string $encoding = null;
+    public string|null $namespace = null;
+    public string|null $encoding = null;
 
     /**
      * @param array<string, mixed>|string $name
      * @phpstan-param array{name?: string, value?: string, namespace?: string, encoding?: string}|string $name
      */
-    public function __construct(array|string $name, ?string $namespace = null, ?string $encoding = null)
+    public function __construct(array|string $name, string|null $namespace = null, string|null $encoding = null)
     {
         if (is_string($name)) {
             $data = ['name' => $name];

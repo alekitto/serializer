@@ -11,9 +11,9 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 use function array_map;
 use function assert;
 use function implode;
-use function Safe\sprintf;
-use function Safe\substr;
+use function sprintf;
 use function strpos;
+use function substr;
 
 class GroupsProcessor extends PropertyMetadataProcessor
 {

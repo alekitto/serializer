@@ -11,6 +11,7 @@ use Kcs\Serializer\Type\Type;
 
 use function array_fill_keys;
 use function array_filter;
+use function array_flip;
 use function array_keys;
 use function array_map;
 use function array_values;
@@ -19,7 +20,6 @@ use function in_array;
 use function is_array;
 use function is_iterable;
 use function iterator_to_array;
-use function Safe\array_flip;
 use function Safe\array_replace;
 use function Safe\fclose;
 use function Safe\fopen;
@@ -33,9 +33,9 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
 {
     private const FORMULAS_START_CHARS = ['=', '-', '+', '@'];
     private const UTF8_BOM = "\xEF\xBB\xBF";
-    private ?ClassMetadata $rootMetadata = null;
+    private ClassMetadata|null $rootMetadata = null;
 
-    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ?ObjectConstructorInterface $objectConstructor = null): mixed
+    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): mixed
     {
         if ($this->rootMetadata === null) {
             $this->rootMetadata = $metadata;
@@ -44,9 +44,10 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
         return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
     }
 
-    public function setNavigator(?GraphNavigator $navigator = null): void
+    public function setNavigator(GraphNavigator|null $navigator = null): void
     {
         $this->rootMetadata = null;
+
         parent::setNavigator($navigator);
     }
 
@@ -56,7 +57,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
      */
     private static function fputcsv($handle, array $data, string $delimiter, string $enclosure, string $escapeChar): int
     {
-        $data = array_map(static fn (?string $value) => null === $value ? $value : str_replace($enclosure, $escapeChar . $enclosure, $value), $data);
+        $data = array_map(static fn (string|null $value) => $value === null ? $value : str_replace($enclosure, $escapeChar . $enclosure, $value), $data);
 
         return fputcsv($handle, $data, $delimiter, $enclosure, $enclosure);
     }
@@ -112,7 +113,7 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
             // Sequential arrays of arrays are considered as collections
             if (
                 array_keys($data) !== array_keys(array_values($data)) ||
-                0 < count(array_filter(array_map('gettype', $data), static fn (string $t) => 'array' !== $t))
+                0 < count(array_filter(array_map('gettype', $data), static fn (string $t) => $t !== 'array'))
             ) {
                 $data = [$data];
             }

@@ -47,7 +47,7 @@ final class Parser
             $this->syntaxError();
         }
 
-        assert(null !== $this->lexer->lookahead->value);
+        assert($this->lexer->lookahead->value !== null);
         $value = $this->lexer->lookahead->value;
         $this->lexer->moveNext();
 

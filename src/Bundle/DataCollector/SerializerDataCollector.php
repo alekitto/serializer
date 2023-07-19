@@ -19,16 +19,11 @@ use function count;
 
 class SerializerDataCollector extends DataCollector
 {
-    private SerializerInterface $serializer;
-    private HandlerRegistryInterface $handlerRegistry;
-
-    public function __construct(SerializerInterface $serializer, HandlerRegistryInterface $handlerRegistry)
+    public function __construct(private SerializerInterface $serializer, private HandlerRegistryInterface $handlerRegistry)
     {
-        $this->serializer = $serializer;
-        $this->handlerRegistry = $handlerRegistry;
     }
 
-    public function collect(Request $request, Response $response, ?Throwable $exception = null): void
+    public function collect(Request $request, Response $response, Throwable|null $exception = null): void
     {
         $handlerCalls = $serialize = $deserialize = [];
         if ($this->serializer instanceof TraceableSerializer) {

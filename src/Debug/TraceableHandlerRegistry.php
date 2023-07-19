@@ -28,7 +28,6 @@ use function is_object;
 
 class TraceableHandlerRegistry implements HandlerRegistryInterface
 {
-    private HandlerRegistryInterface $decorated;
     private VarCloner $cloner;
 
     /**
@@ -37,9 +36,8 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
      */
     public array $calls = [];
 
-    public function __construct(HandlerRegistryInterface $decorated, ?VarCloner $cloner = null)
+    public function __construct(private HandlerRegistryInterface $decorated, VarCloner|null $cloner = null)
     {
-        $this->decorated = $decorated;
         $this->cloner = $cloner ?? new VarCloner();
     }
 
@@ -50,9 +48,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function registerHandler(int $direction, string $typeName, $handler): HandlerRegistryInterface
     {
         $this->decorated->registerHandler($direction, $typeName, $handler);
@@ -74,7 +70,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    public function getHandler(int $direction, string $typeName): ?callable
+    public function getHandler(int $direction, string $typeName): callable|null
     {
         $callable = $this->decorated->getHandler($direction, $typeName);
         if ($callable === null) {

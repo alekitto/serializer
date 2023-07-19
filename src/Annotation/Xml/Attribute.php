@@ -16,13 +16,13 @@ use function is_string;
 #[PhpAttribute(PhpAttribute::TARGET_METHOD | PhpAttribute::TARGET_PROPERTY)]
 final class Attribute
 {
-    public ?string $namespace = null;
+    public string|null $namespace = null;
 
     /**
      * @param array<string, mixed>|string|null $namespace
      * @phpstan-param array{namespace?: string, value?: string}|string|null $namespace
      */
-    public function __construct(array | string | null $namespace = null)
+    public function __construct(array|string|null $namespace = null)
     {
         if (is_string($namespace)) {
             $data = ['namespace' => $namespace];

@@ -50,13 +50,8 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         'simple_array' => 'array<string>',
     ];
 
-    protected LoaderInterface $delegate;
-    protected ManagerRegistry $registry;
-
-    public function __construct(LoaderInterface $delegate, ManagerRegistry $registry)
+    public function __construct(protected LoaderInterface $delegate, protected ManagerRegistry $registry)
     {
-        $this->delegate = $delegate;
-        $this->registry = $registry;
     }
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
@@ -109,10 +104,8 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
 
     abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void;
 
-    /**
-     * @phpstan-param class-string<object> $className
-     */
-    protected function tryLoadingDoctrineMetadata(string $className): ?DoctrineClassMetadata
+    /** @phpstan-param class-string<object> $className */
+    protected function tryLoadingDoctrineMetadata(string $className): DoctrineClassMetadata|null
     {
         $manager = $this->registry->getManagerForClass($className);
         if ($manager === null) {
@@ -126,7 +119,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         return $manager->getClassMetadata($className);
     }
 
-    protected function normalizeFieldType(string $type): ?string
+    protected function normalizeFieldType(string $type): string|null
     {
         return self::FIELD_MAPPING[$type] ?? null;
     }

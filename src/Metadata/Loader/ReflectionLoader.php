@@ -17,11 +17,8 @@ use function is_string;
 
 class ReflectionLoader implements LoaderInterface
 {
-    private LoaderInterface $delegate;
-
-    public function __construct(LoaderInterface $delegate)
+    public function __construct(private LoaderInterface $delegate)
     {
-        $this->delegate = $delegate;
     }
 
     public function loadClassMetadata(ClassMetadataInterface $classMetadata): bool
@@ -50,7 +47,7 @@ class ReflectionLoader implements LoaderInterface
 
             try {
                 $reflectionProperty = $propertyMetadata->getReflection();
-            } catch (ReflectionException $e) {
+            } catch (ReflectionException) {
                 continue;
             }
 
@@ -74,7 +71,7 @@ class ReflectionLoader implements LoaderInterface
         try {
             assert(is_string($propertyMetadata->getter));
             $reflection = new ReflectionMethod($propertyMetadata->class, $propertyMetadata->getter);
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             return;
         }
 

@@ -10,7 +10,7 @@ use TypeError;
 use function get_debug_type;
 use function is_array;
 use function is_bool;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * @Annotation
@@ -20,13 +20,13 @@ use function Safe\sprintf;
 final class Element
 {
     public bool $cdata = true;
-    public ?string $namespace = null;
+    public string|null $namespace = null;
 
     /**
      * @param array<string, mixed>|bool $cdata
      * @phpstan-param array{cdata?: bool, value?: bool, namespace?: string}|bool $cdata
      */
-    public function __construct(array|bool $cdata = true, ?string $namespace = null)
+    public function __construct(array|bool $cdata = true, string|null $namespace = null)
     {
         if (is_bool($cdata)) {
             $data = ['cdata' => $cdata];

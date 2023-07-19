@@ -16,19 +16,19 @@ use function is_string;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class Csv
 {
-    public ?string $delimiter;
-    public ?string $enclosure;
-    public ?string $escapeChar;
-    public ?bool $escapeFormulas;
-    public ?string $keySeparator;
-    public ?bool $printHeaders;
-    public ?bool $outputBom;
+    public string|null $delimiter;
+    public string|null $enclosure;
+    public string|null $escapeChar;
+    public bool|null $escapeFormulas;
+    public string|null $keySeparator;
+    public bool|null $printHeaders;
+    public bool|null $outputBom;
 
     /**
      * @param array<string, mixed>|string $delimiter
      * @phpstan-param array{delimiter?: string, value?: string, enclosure?: string, escapeChar?: string, escapeFormulas?: bool, keySeparator?: string, printHeaders?: bool, outputBom?: bool}|string $delimiter
      */
-    public function __construct(array|string|null $delimiter = null, ?string $enclosure = null, ?string $escapeChar = null, ?bool $escapeFormulas = null, ?string $keySeparator = null, ?bool $printHeaders = null, ?bool $outputBom = null)
+    public function __construct(array|string|null $delimiter = null, string|null $enclosure = null, string|null $escapeChar = null, bool|null $escapeFormulas = null, string|null $keySeparator = null, bool|null $printHeaders = null, bool|null $outputBom = null)
     {
         if (is_string($delimiter)) {
             $data = ['delimiter' => $delimiter];

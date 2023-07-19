@@ -10,7 +10,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 use Throwable;
 
 use function assert;
-use function Safe\sprintf;
+use function sprintf;
 
 /**
  * This class decorates any other driver. If the inner driver does not provide a
@@ -49,7 +49,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
         } elseif ($doctrineMetadata->hasAssociation($propertyName)) {
             try {
                 $targetEntity = $doctrineMetadata->getAssociationTargetClass($propertyName);
-            } catch (Throwable $e) { // @phpstan-ignore-line
+            } catch (Throwable) { // @phpstan-ignore-line
                 return;
             }
 

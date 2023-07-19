@@ -52,7 +52,7 @@ class MappingLoaderPass implements CompilerPassInterface
                         $yamlPaths[] = $fileInfo->getPathname();
                     }
                 }
-            } catch (UnexpectedValueException $e) {
+            } catch (UnexpectedValueException) {
                 // Directory not found or not a dir.
                 // @ignoreException
             }

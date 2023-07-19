@@ -38,6 +38,7 @@ class XmlLoader extends AnnotationLoader
     public function __construct(string $filePath)
     {
         parent::__construct();
+
         $fileContent = $this->loadFile($filePath);
 
         $previous = libxml_use_internal_errors(true);
@@ -125,9 +126,14 @@ class XmlLoader extends AnnotationLoader
             $annotations[] = $discriminator;
         }
 
+        $reflClass = new ReflectionClass(Annotations\StaticField::class);
         foreach ($element->xpath('./static-field') as $fieldElement) {
-            $field = (new ReflectionClass(Annotations\StaticField::class))->newInstanceWithoutConstructor();
+            $field = $reflClass->newInstanceWithoutConstructor();
             foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
+                if (! $reflClass->hasProperty($attrName)) {
+                    continue;
+                }
+
                 $field->{$attrName} = $value;
             }
 
@@ -135,9 +141,14 @@ class XmlLoader extends AnnotationLoader
             $annotations[] = $field;
         }
 
+        $reflClass = new ReflectionClass(Annotations\AdditionalField::class);
         foreach ($element->xpath('./additional-field') as $fieldElement) {
             $field = (new ReflectionClass(Annotations\AdditionalField::class))->newInstanceWithoutConstructor();
             foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
+                if (! $reflClass->hasProperty($attrName)) {
+                    continue;
+                }
+
                 $field->{$attrName} = $value;
             }
 
@@ -171,7 +182,7 @@ class XmlLoader extends AnnotationLoader
             $annotations,
             ...$this->getAnnotationFromElement($element, "pre-serialize[@method = '" . $methodName . "']"),
             ...$this->getAnnotationFromElement($element, "post-serialize[@method = '" . $methodName . "']"),
-            ...$this->getAnnotationFromElement($element, "post-deserialize[@method = '" . $methodName . "']")
+            ...$this->getAnnotationFromElement($element, "post-deserialize[@method = '" . $methodName . "']"),
         );
 
         return $annotations;
@@ -235,9 +246,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    /**
-     * @return object[]
-     */
+    /** @return object[] */
     private function getAnnotationFromElement(SimpleXMLElement $element, string $name): array
     {
         $annotations = [];
@@ -299,9 +308,7 @@ class XmlLoader extends AnnotationLoader
         return $annotations;
     }
 
-    /**
-     * @return iterable<string, mixed>
-     */
+    /** @return iterable<string, mixed> */
     private function loadAnnotationProperties(SimpleXMLElement $elem): iterable
     {
         foreach (($elem->attributes() ?: []) as $attrName => $value) {

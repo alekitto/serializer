@@ -24,10 +24,10 @@ use function reset;
 use function Safe\libxml_get_last_error;
 use function Safe\preg_replace;
 use function Safe\simplexml_load_string;
-use function Safe\sprintf;
-use function Safe\substr;
+use function sprintf;
 use function str_replace;
 use function stripos;
+use function substr;
 use function uniqid;
 use function var_export;
 
@@ -247,7 +247,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitCustom($handler, $data, $type, $context);
     }
 
-    public function visitEnum(mixed $data, Type $type, Context $context): ?UnitEnum
+    public function visitEnum(mixed $data, Type $type, Context $context): UnitEnum|null
     {
         $reflection = new ReflectionEnum($type->metadata->getName());
         $data = (string) $data;
@@ -265,7 +265,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         mixed $data,
         Type $type,
         Context $context,
-        ?ObjectConstructorInterface $objectConstructor = null
+        ObjectConstructorInterface|null $objectConstructor = null,
     ): object {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -274,7 +274,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
     }
 
-    public function visitString(mixed $data, Type $type, Context $context): ?string
+    public function visitString(mixed $data, Type $type, Context $context): string|null
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -283,7 +283,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitString($data, $type, $context);
     }
 
-    public function visitInteger(mixed $data, Type $type, Context $context): ?int
+    public function visitInteger(mixed $data, Type $type, Context $context): int|null
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -292,7 +292,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitInteger($data, $type, $context);
     }
 
-    public function visitDouble(mixed $data, Type $type, Context $context): ?float
+    public function visitDouble(mixed $data, Type $type, Context $context): float|null
     {
         if ($this->isNullNode($data)) {
             return $this->visitNull(null, Type::null(), $context);
@@ -301,17 +301,13 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         return parent::visitDouble($data, $type, $context);
     }
 
-    /**
-     * @param string[] $doctypeWhitelist
-     */
+    /** @param string[] $doctypeWhitelist */
     public function setDoctypeWhitelist(array $doctypeWhitelist): void
     {
         $this->doctypeWhitelist = $doctypeWhitelist;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getDoctypeWhitelist(): array
     {
         return $this->doctypeWhitelist;

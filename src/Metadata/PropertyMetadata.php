@@ -14,7 +14,7 @@ use ReflectionException;
 use function assert;
 use function implode;
 use function method_exists;
-use function Safe\sprintf;
+use function sprintf;
 use function ucfirst;
 
 class PropertyMetadata extends BasePropertyMetadata
@@ -25,8 +25,8 @@ class PropertyMetadata extends BasePropertyMetadata
     public const ON_EXCLUDE_NULL = 'null';
     public const ON_EXCLUDE_SKIP = 'skip';
 
-    public ?string $sinceVersion = null;
-    public ?string $untilVersion = null;
+    public string|null $sinceVersion = null;
+    public string|null $untilVersion = null;
 
     /** @var string[] */
     public array $groups = [];
@@ -35,16 +35,16 @@ class PropertyMetadata extends BasePropertyMetadata
     public array $exclusionGroups = [];
 
     public string $onExclude = self::ON_EXCLUDE_NULL;
-    public ?string $serializedName = null;
-    public ?Type $type = null;
+    public string|null $serializedName = null;
+    public Type|null $type = null;
     public bool $xmlCollection = false;
     public bool $xmlCollectionInline = false;
-    public ?string $xmlEntryName = null;
-    public ?string $xmlEntryNamespace = null;
-    public ?string $xmlKeyAttribute = null;
+    public string|null $xmlEntryName = null;
+    public string|null $xmlEntryNamespace = null;
+    public string|null $xmlKeyAttribute = null;
     public bool $xmlAttribute = false;
     public bool $xmlValue = false;
-    public ?string $xmlNamespace = null;
+    public string|null $xmlNamespace = null;
     public bool $xmlKeyValuePairs = false;
     public bool $xmlElementCData = true;
 
@@ -57,7 +57,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public bool $inline = false;
     public bool $immutable = false;
     public bool $xmlAttributeMap = false;
-    public ?int $maxDepth = null;
+    public int|null $maxDepth = null;
     public string $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
 
     /**
@@ -77,7 +77,7 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->getReflection()->setAccessible(true);
     }
 
-    public function setAccessor(string $type, ?string $getter = null, ?string $setter = null): void
+    public function setAccessor(string $type, string|null $getter = null, string|null $setter = null): void
     {
         $this->accessorType = $type;
         $this->getter = $getter;
@@ -100,7 +100,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
                 try {
                     return $reflector->getValue($obj);
-                } catch (Error $e) {
+                } catch (Error) {
                     return null;
                 }
             }
@@ -182,7 +182,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
                 return;
             }
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             // Property does not exist.
             // @ignoreException
         }
@@ -209,7 +209,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
                 return;
             }
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             // Property does not exist.
             // @ignoreException
         }

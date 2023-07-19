@@ -8,6 +8,7 @@ use Kcs\Serializer\Context;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
+use function array_combine;
 use function array_fill;
 use function array_filter;
 use function array_key_exists;
@@ -15,7 +16,6 @@ use function array_values;
 use function count;
 use function in_array;
 use function is_array;
-use function Safe\array_combine;
 use function strpos;
 
 class GroupsExclusionStrategy implements ExclusionStrategyInterface
@@ -26,9 +26,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
     private array $groups;
     private bool $nestedGroups;
 
-    /**
-     * @param array<string|int, mixed> $groups
-     */
+    /** @param array<string|int, mixed> $groups */
     public function __construct(array $groups)
     {
         if (empty($groups)) {
@@ -98,9 +96,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
         return ! empty($property->groups);
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     private function getGroupsFor(Context $navigatorContext): array
     {
         $groups = $this->groups;
@@ -108,7 +104,7 @@ class GroupsExclusionStrategy implements ExclusionStrategyInterface
             $navigatorContext->getMetadataStack()->getPath(),
             static function ($path) {
                 return strpos((string) $path, '[') !== 0;
-            }
+            },
         ));
 
         foreach ($metadataPath as $index => $path) {

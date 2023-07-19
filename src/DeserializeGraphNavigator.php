@@ -21,13 +21,9 @@ use function method_exists;
 
 class DeserializeGraphNavigator extends GraphNavigator
 {
-    private ObjectConstructorInterface $objectConstructor;
-
-    public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, ObjectConstructorInterface $objectConstructor, ?EventDispatcherInterface $dispatcher = null)
+    public function __construct(MetadataFactoryInterface $metadataFactory, HandlerRegistryInterface $handlerRegistry, private ObjectConstructorInterface $objectConstructor, EventDispatcherInterface|null $dispatcher = null)
     {
         parent::__construct($metadataFactory, $handlerRegistry, $dispatcher);
-
-        $this->objectConstructor = $objectConstructor;
     }
 
     /**
@@ -35,7 +31,7 @@ class DeserializeGraphNavigator extends GraphNavigator
      *
      * @param DeserializationContext $context
      */
-    public function accept(mixed $data, ?Type $type, Context $context): mixed
+    public function accept(mixed $data, Type|null $type, Context $context): mixed
     {
         if ($type === null) {
             throw new RuntimeException('The type must be given for all properties when deserializing.');

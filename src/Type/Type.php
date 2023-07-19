@@ -23,19 +23,11 @@ use const JSON_THROW_ON_ERROR;
  */
 final class Type implements JsonSerializable
 {
-    public string $name;
     public MetadataInterface $metadata;
 
-    /** @var array<string|int, mixed> */
-    private array $params;
-
-    /**
-     * @param array<string|int, mixed> $params
-     */
-    public function __construct(string $name, array $params = [])
+    /** @param array<string|int, mixed> $params */
+    public function __construct(public string $name, private array $params = [])
     {
-        $this->name = $name;
-        $this->params = $params;
     }
 
     /**
@@ -81,17 +73,13 @@ final class Type implements JsonSerializable
         return $nullType;
     }
 
-    /**
-     * @return array<string|int, mixed>
-     */
+    /** @return array<string|int, mixed> */
     public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param array<string|int, mixed> $params
-     */
+    /** @param array<string|int, mixed> $params */
     public function setParams(array $params): self
     {
         $this->params = $params;
@@ -128,9 +116,7 @@ final class Type implements JsonSerializable
         return $this->params[$index];
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function jsonSerialize(): array
     {
         return [
