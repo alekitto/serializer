@@ -197,10 +197,11 @@ class SerializerBuilder
     {
         $metadataLoader = $this->metadataLoader;
         if ($metadataLoader === null) {
-            $annotationReader = $this->annotationReader ?: new AnnotationReader();
+            if (class_exists(AnnotationReader::class)) {
+                $metadataLoader = new AnnotationLoader();
+                $metadataLoader->setReader($this->annotationReader ?? new AnnotationReader());
+            }
 
-            $metadataLoader = new AnnotationLoader();
-            $metadataLoader->setReader($annotationReader);
             $metadataLoader = new AttributesLoader($metadataLoader);
         }
 
