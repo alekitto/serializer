@@ -18,7 +18,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateTime::class."<'d/m/Y H:i:s'>");
 
-        $this->visitor->visitString('12/12/2018 22:00:00', $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitString('12/12/2018 22:00:00', $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
@@ -26,7 +26,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateTime::class."<'d/m/Y H:i:s'>");
 
-        $this->visitor->visitString('12/12/2018 22:00:00', $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitString('12/12/2018 22:00:00', $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \Safe\DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
@@ -34,7 +34,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateTime::class);
 
-        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
@@ -42,7 +42,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateTime::class."<'U'>");
 
-        $this->visitor->visitInteger(1544652000, $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitInteger(1544652000, $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTime('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
@@ -50,7 +50,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateInterval::class);
 
-        $this->visitor->visitString('P7D', $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitString('P7D', $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateInterval($this->visitor->reveal(), new \DateInterval('P1W'), $type, $this->context->reveal());
     }
 
@@ -58,7 +58,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateTimeImmutable::class);
 
-        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \DateTimeImmutable('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
@@ -66,7 +66,7 @@ class DateHandlerTest extends AbstractHandlerTest
     {
         $type = Type::parse(\DateTimeImmutable::class);
 
-        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->shouldBeCalled();
+        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->willReturn()->shouldBeCalled();
         $this->handler->serializeDateTime($this->visitor->reveal(), new \Safe\DateTimeImmutable('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 

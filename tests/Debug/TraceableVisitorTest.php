@@ -44,7 +44,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitNull(): void
     {
-        $this->innerVisitor->visitNull(null, Type::null(), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitNull(null, Type::null(), $this->context)
+            ->willReturn(null)
+            ->shouldBeCalledOnce();
         $this->visitor->visitNull(null, Type::null(), $this->context);
 
         self::assertEquals([
@@ -64,7 +67,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitString(): void
     {
-        $this->innerVisitor->visitString('foobar', Type::from('string'), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitString('foobar', Type::from('string'), $this->context)
+            ->willReturn('foobar')
+            ->shouldBeCalledOnce();
         $this->visitor->visitString('foobar', Type::from('string'), $this->context);
 
         self::assertEquals([
@@ -85,7 +91,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitBoolean(): void
     {
-        $this->innerVisitor->visitBoolean(true, Type::from('bool'), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitBoolean(true, Type::from('bool'), $this->context)
+            ->willReturn('true')
+            ->shouldBeCalledOnce();
         $this->visitor->visitBoolean(true, Type::from('bool'), $this->context);
 
         self::assertEquals([
@@ -106,7 +115,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitDouble(): void
     {
-        $this->innerVisitor->visitDouble(.3, Type::from('float'), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitDouble(.3, Type::from('float'), $this->context)
+            ->willReturn('0.3')
+            ->shouldBeCalledOnce();
         $this->visitor->visitDouble(.3, Type::from('float'), $this->context);
 
         self::assertEquals([
@@ -127,7 +139,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitInteger(): void
     {
-        $this->innerVisitor->visitInteger(42, Type::from('int'), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitInteger(42, Type::from('int'), $this->context)
+            ->willReturn('42')
+            ->shouldBeCalledOnce();
         $this->visitor->visitInteger(42, Type::from('int'), $this->context);
 
         self::assertEquals([
@@ -148,7 +163,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitArray(): void
     {
-        $this->innerVisitor->visitArray(['foo', 'bar', 'foobar'], Type::parse('array<string>'), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitArray(['foo', 'bar', 'foobar'], Type::parse('array<string>'), $this->context)
+            ->willReturn('[foo,bar,foobar]')
+            ->shouldBeCalledOnce();
         $this->visitor->visitArray(['foo', 'bar', 'foobar'], Type::parse('array<string>'), $this->context);
 
         self::assertEquals([
@@ -171,7 +189,10 @@ class TraceableVisitorTest extends TestCase
 
     public function testVisitHash(): void
     {
-        $this->innerVisitor->visitHash(['foo' => 'bar', 'foobar' => 'bazbaz'], Type::parse('array<string, string>'), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitHash(['foo' => 'bar', 'foobar' => 'bazbaz'], Type::parse('array<string, string>'), $this->context)
+            ->willReturn('{"foo":"bar","foobar":"bazbaz"}')
+            ->shouldBeCalledOnce();
         $this->visitor->visitHash(['foo' => 'bar', 'foobar' => 'bazbaz'], Type::parse('array<string, string>'), $this->context);
 
         self::assertEquals([
@@ -197,7 +218,10 @@ class TraceableVisitorTest extends TestCase
     {
         $metadata = new ClassMetadata(new ReflectionClass($this));
 
-        $this->innerVisitor->visitObject($metadata, $this, Type::from($this), $this->context, null)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitObject($metadata, $this, Type::from($this), $this->context, null)
+            ->willReturn('{}')
+            ->shouldBeCalledOnce();
         $this->visitor->visitObject($metadata, $this, Type::from($this), $this->context, null);
 
         self::assertEquals([
@@ -221,7 +245,10 @@ class TraceableVisitorTest extends TestCase
      */
     public function testVisitCustom(string $handlerString, callable $handler): void
     {
-        $this->innerVisitor->visitCustom($handler, $this, Type::from($this), $this->context)->shouldBeCalledOnce();
+        $this->innerVisitor
+            ->visitCustom($handler, $this, Type::from($this), $this->context)
+            ->willReturn('custom')
+            ->shouldBeCalledOnce();
         $this->visitor->visitCustom($handler, $this, Type::from($this), $this->context);
 
         self::assertEquals([

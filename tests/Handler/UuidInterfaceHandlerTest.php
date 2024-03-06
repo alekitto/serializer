@@ -18,13 +18,20 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
 
     public function testSerializeShouldHandleNullValue(): void
     {
-        $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled();
+        $this->visitor
+            ->visitNull(null, Type::null(), $this->context)
+            ->shouldBeCalled()
+            ->willReturn(null);
+
         $this->handler->serialize($this->visitor->reveal(), null, Type::parse(UuidInterface::class), $this->context->reveal());
     }
 
     public function testSerializeShouldReturnStringRepresentation(): void
     {
-        $this->visitor->visitString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95', Argument::type(Type::class), $this->context)->shouldBeCalled();
+        $this->visitor
+            ->visitString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95', Argument::type(Type::class), $this->context)
+            ->shouldBeCalled()
+            ->willReturn(null);
 
         $uuid = Uuid::fromString('b9fe1e68-667c-4bd3-b8ce-c6d3c0640b95');
         $this->handler->serialize($this->visitor->reveal(), $uuid, Type::parse(Uuid::class), $this->context->reveal());
@@ -32,7 +39,11 @@ class UuidInterfaceHandlerTest extends AbstractHandlerTest
 
     public function testDeserializeShouldHandleNullValue(): void
     {
-        $this->visitor->visitNull(null, Type::null(), $this->context)->shouldBeCalled()->willReturn(null);
+        $this->visitor
+            ->visitNull(null, Type::null(), $this->context)
+            ->shouldBeCalled()
+            ->willReturn(null);
+
         $this->handler->deserialize($this->visitor->reveal(), null, Type::parse(UuidInterface::class), $this->context->reveal());
     }
 
