@@ -96,7 +96,7 @@ class GenericSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {

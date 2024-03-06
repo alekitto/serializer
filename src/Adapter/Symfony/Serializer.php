@@ -15,7 +15,7 @@ final class Serializer implements SymfonySerializerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function serialize(mixed $data, string $format, array $context = []): string
     {
@@ -23,7 +23,7 @@ final class Serializer implements SymfonySerializerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @phpstan-param string $type
      * @phpstan-param string $format

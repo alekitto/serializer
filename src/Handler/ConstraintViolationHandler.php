@@ -19,7 +19,7 @@ use function assert;
 class ConstraintViolationHandler implements SubscribingHandlerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribingMethods(): iterable
     {

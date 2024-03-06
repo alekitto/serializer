@@ -29,7 +29,7 @@ class SerializationContext extends Context
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createChildContext(array $attributes = []): self
     {

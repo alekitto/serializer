@@ -79,7 +79,7 @@ final class HandlerRegistry implements HandlerRegistryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function registerHandler(int $direction, string $typeName, $handler): HandlerRegistryInterface
     {

@@ -61,7 +61,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public string $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function __construct(string $class, string $name)
     {

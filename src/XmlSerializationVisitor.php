@@ -61,7 +61,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitNull(mixed $data, Type $type, Context $context): array
     {
@@ -80,7 +80,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitString(mixed $data, Type $type, Context $context): array
     {
@@ -90,7 +90,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitInteger(mixed $data, Type $type, Context $context): array
     {
@@ -98,7 +98,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitBoolean(mixed $data, Type $type, Context $context): array
     {
@@ -106,7 +106,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitDouble(mixed $data, Type $type, Context $context): array
     {
@@ -114,7 +114,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitEnum(mixed $data, Type $type, Context $context): array
     {
@@ -122,7 +122,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): array
     {
@@ -231,7 +231,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitHash(mixed $data, Type $type, Context $context): array
     {
@@ -271,7 +271,7 @@ class XmlSerializationVisitor extends AbstractVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {

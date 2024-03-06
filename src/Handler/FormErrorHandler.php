@@ -20,7 +20,7 @@ use function assert;
 class FormErrorHandler implements SubscribingHandlerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribingMethods(): iterable
     {

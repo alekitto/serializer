@@ -63,7 +63,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitHash(mixed $data, Type $type, Context $context): array
     {
@@ -129,7 +129,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {

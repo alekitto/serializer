@@ -17,7 +17,7 @@ use Kcs\Serializer\VisitorInterface;
 class ArrayCollectionHandler implements SubscribingHandlerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribingMethods(): iterable
     {

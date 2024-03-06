@@ -26,7 +26,7 @@ use function var_export;
 class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitHash(mixed $data, Type $type, Context $context): array
     {
@@ -77,7 +77,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {

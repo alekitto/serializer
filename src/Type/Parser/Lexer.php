@@ -21,7 +21,7 @@ final class Lexer extends AbstractLexer
     public const T_IDENTIFIER = 100;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getCatchablePatterns(): array
     {
@@ -32,7 +32,7 @@ final class Lexer extends AbstractLexer
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getNonCatchablePatterns(): array
     {
@@ -43,7 +43,7 @@ final class Lexer extends AbstractLexer
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getType(&$value): int
     {

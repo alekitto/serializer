@@ -62,7 +62,7 @@ class TraceableSerializer implements SerializerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function normalize(mixed $data, SerializationContext|null $context = null): array
     {
@@ -82,7 +82,7 @@ class TraceableSerializer implements SerializerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function denormalize(array $data, Type $type, DeserializationContext|null $context = null): mixed
     {

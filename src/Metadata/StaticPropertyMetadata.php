@@ -13,7 +13,7 @@ class StaticPropertyMetadata extends PropertyMetadata
     private mixed $value;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param mixed $fieldValue
      */
@@ -44,7 +44,7 @@ class StaticPropertyMetadata extends PropertyMetadata
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function __sleep(): array
     {

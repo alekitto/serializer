@@ -21,7 +21,7 @@ use function method_exists;
 final class SerializerExtension extends Extension
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container): void
     {

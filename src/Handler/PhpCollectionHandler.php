@@ -18,7 +18,7 @@ use function iterator_to_array;
 class PhpCollectionHandler implements SubscribingHandlerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribingMethods(): iterable
     {

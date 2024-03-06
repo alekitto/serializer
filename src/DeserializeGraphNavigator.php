@@ -27,7 +27,7 @@ class DeserializeGraphNavigator extends GraphNavigator
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param DeserializationContext $context
      */

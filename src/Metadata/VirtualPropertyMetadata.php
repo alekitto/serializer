@@ -13,7 +13,7 @@ use function substr;
 class VirtualPropertyMetadata extends PropertyMetadata
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function __construct(string $class, string $methodName)
     {

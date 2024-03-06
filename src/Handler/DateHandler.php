@@ -29,7 +29,7 @@ class DateHandler implements SubscribingHandlerInterface
     private DateTimeZone $defaultTimezone;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribingMethods(): iterable
     {

@@ -65,7 +65,7 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function normalize($data, SerializationContext|null $context = null): array
     {
@@ -79,7 +79,7 @@ class Serializer implements SerializerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function denormalize(array $data, Type $type, DeserializationContext|null $context = null): mixed
     {

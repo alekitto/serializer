@@ -80,7 +80,7 @@ class XmlLoader extends AnnotationLoader
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getClassAnnotations(ClassMetadata $classMetadata): array
     {
@@ -160,7 +160,7 @@ class XmlLoader extends AnnotationLoader
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getMethodAnnotations(ReflectionMethod $method): array
     {
@@ -189,7 +189,7 @@ class XmlLoader extends AnnotationLoader
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getPropertyAnnotations(ReflectionProperty $property): array
     {

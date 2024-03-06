@@ -23,7 +23,7 @@ use function method_exists;
 class SerializeGraphNavigator extends GraphNavigator
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @param SerializationContext $context
      */
