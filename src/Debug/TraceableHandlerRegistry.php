@@ -113,12 +113,16 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         if (is_array($callable)) {
             $reflClass = new ReflectionClass($callable[0]);
             $r = new ReflectionMethod($callable[0], $callable[1]);
-            $className = $reflClass->isSubclassOf(ProxyInterface::class) && ($parent = $reflClass->getParentClass()) ? $parent->getName() : $reflClass->getName();
+            $className = class_exists(ProxyInterface::class) &&
+                $reflClass->isSubclassOf(ProxyInterface::class) &&
+                ($parent = $reflClass->getParentClass()) ? $parent->getName() : $reflClass->getName();
 
             $methodName = $className . '::' . $r->getName();
         } elseif (is_object($callable) && is_callable([$callable, '__invoke'])) {
             $reflClass = new ReflectionClass($callable);
-            $methodName = $reflClass->isSubclassOf(ProxyInterface::class) && ($parent = $reflClass->getParentClass()) ? $parent->getShortName() : $reflClass->getShortName();
+            $methodName = class_exists(ProxyInterface::class) &&
+                $reflClass->isSubclassOf(ProxyInterface::class) &&
+                ($parent = $reflClass->getParentClass()) ? $parent->getShortName() : $reflClass->getShortName();
         } else {
             $r = new ReflectionFunction(Closure::fromCallable($callable));
             $methodName = $r->getName();
