@@ -10,7 +10,16 @@ use LogicException;
 class DeserializationContext extends Context
 {
     public Direction $direction = Direction::Deserialization;
+    public bool $ignoreCase = false;
     private int $depth = 0;
+
+    public function createChildContext(array $attributes = []): Context
+    {
+        $context = parent::createChildContext($attributes);
+        $context->ignoreCase = $this->ignoreCase;
+
+        return $context;
+    }
 
     public function getDepth(): int
     {

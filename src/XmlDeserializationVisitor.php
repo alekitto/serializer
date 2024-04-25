@@ -30,7 +30,6 @@ use function sprintf;
 use function str_replace;
 use function stripos;
 use function substr;
-use function uniqid;
 use function var_export;
 
 class XmlDeserializationVisitor extends GenericDeserializationVisitor
@@ -69,13 +68,22 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function visitHash(mixed $data, Type $type, Context $context): array
     {
+        assert($context instanceof DeserializationContext);
         $currentMetadata = $context->getMetadataStack()->getCurrent();
 
         $entryName = $currentMetadata !== null && $currentMetadata->xmlEntryName ? $currentMetadata->xmlEntryName : 'entry';
         $namespace = $currentMetadata !== null && $currentMetadata->xmlEntryNamespace ? $currentMetadata->xmlEntryNamespace : null;
         $result = [];
 
-        $nodes = $namespace !== null ? $data->children($namespace)->$entryName : $data->$entryName;
+        if ($context->ignoreCase) {
+            $entryName = strtolower($entryName);
+            $nodes = $namespace !== null
+                ? $data->xpath('./*[namespace-uri() = "' . $namespace . '" and translate(local-name(), \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\') = "' . $entryName . '"]')
+                : $data->xpath('./*[translate(local-name(), \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\') = "' . $entryName . '"]');
+        } else {
+            $nodes = $namespace !== null ? $data->children($namespace)->$entryName : $data->$entryName;
+        }
+
         switch ($type->countParams()) {
             case 0:
                 throw new RuntimeException(sprintf('The array type must be specified either as "array<T>", or "array<K,V>".'));
@@ -135,13 +143,22 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
      */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {
+        assert($context instanceof DeserializationContext);
         $currentMetadata = $context->getMetadataStack()->getCurrent();
 
         $entryName = $currentMetadata !== null && $currentMetadata->xmlEntryName ? $currentMetadata->xmlEntryName : 'entry';
         $namespace = $currentMetadata !== null && $currentMetadata->xmlEntryNamespace ? $currentMetadata->xmlEntryNamespace : null;
         $result = [];
 
-        $nodes = $namespace !== null ? $data->children($namespace)->$entryName : $data->$entryName;
+        if ($context->ignoreCase) {
+            $entryName = strtolower($entryName);
+            $nodes = $namespace !== null
+                ? $data->xpath('./*[namespace-uri() = "' . $namespace . '" and translate(local-name(), \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\') = "' . $entryName . '"]')
+                : $data->xpath('./*[translate(local-name(), \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\') = "' . $entryName . '"]');
+        } else {
+            $nodes = $namespace !== null ? $data->children($namespace)->$entryName : $data->$entryName;
+        }
+
         foreach ($nodes as $k => $v) {
             $context->getMetadataStack()->pushIndexPath((string) $k);
             if ($this->isNullNode($v)) {
@@ -160,7 +177,12 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
+        assert($context instanceof DeserializationContext);
         $name = $context->namingStrategy->translateName($metadata);
+
+        if ($data !== null && $context->ignoreCase) {
+            $name = mb_convert_case($name, MB_CASE_LOWER);
+        }
 
         if ($metadata->type === null) {
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
@@ -168,6 +190,12 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
         if ($metadata->xmlAttribute) {
             $attributes = $data->attributes($metadata->xmlNamespace);
+            if ($context->ignoreCase) {
+                $keys = array_keys(((array) $attributes)['@attributes'] ?? []);
+                $keys = array_change_key_case(array_combine($keys, $keys), CASE_LOWER);
+                $name = $keys[$name] ?? $name;
+            }
+
             if (isset($attributes[$name])) {
                 return $context->accept($attributes[$name], $metadata->type);
             }
@@ -182,31 +210,56 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         if ($metadata->xmlCollection) {
             $enclosingElem = $data;
             if (! $metadata->xmlCollectionInline) {
-                $enclosingElem = $data->children($metadata->xmlNamespace)->$name;
+                $children = $data->children($metadata->xmlNamespace);
+                if ($context->ignoreCase) {
+                    $children = (object) array_change_key_case((array) $children, CASE_LOWER);
+                }
+
+                $enclosingElem = $children->$name;
             }
 
             return $context->accept($enclosingElem, $metadata->type);
         }
 
         if ($metadata->xmlNamespace) {
-            $node = $data->children($metadata->xmlNamespace)->$name;
-            if (! $node->count()) {
-                return null;
+            if ($context->ignoreCase) {
+                $children = $data->xpath('./*[namespace-uri() = "' . $metadata->xmlNamespace . '" and translate(local-name(), \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\') = "' . $name . '"]');
+                if (empty($children)) {
+                    return null;
+                }
+
+                $node = $children[0];
+            } else {
+                $children = $data->children($metadata->xmlNamespace);
+                $node = $children->$name;
+
+                if (! $node->count()) {
+                    return null;
+                }
             }
         } else {
             $namespaces = $data->getDocNamespaces();
             if (isset($namespaces[''])) {
-                $prefix = uniqid('ns-');
-                $data->registerXPathNamespace($prefix, $namespaces['']);
+                $localNameFn = 'local-name()';
+                if ($context->ignoreCase) {
+                    $localNameFn = 'translate(' . $localNameFn . ', \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\')';
+                }
 
-                $nodes = $data->xpath('./' . $prefix . ':' . $name);
+                $nodes = $data->xpath('./*[namespace-uri() = "' . $namespaces[''] . '" and ' . $localNameFn . ' = "' . $name . '"]');
                 if (empty($nodes)) {
                     return null;
                 }
 
                 $node = reset($nodes);
+            } elseif ($context->ignoreCase) {
+                $children = $data->xpath('./*[translate(local-name(), \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\', \'abcdefghijklmnopqrstuvwxyz\') = "' . $name . '"]');
+                if (empty($children)) {
+                    return null;
+                }
+
+                $node = $children[0];
             } else {
-                if (! isset($data->$name)) {
+                if (!isset($data->$name)) {
                     return null;
                 }
 

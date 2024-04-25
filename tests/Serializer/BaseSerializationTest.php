@@ -469,6 +469,12 @@ abstract class BaseSerializationTest extends TestCase
             self::assertFalse($this->getField($deserialized, 'published'));
             self::assertEquals(new ArrayCollection(), $this->getField($deserialized, 'comments'));
             self::assertNull($this->getField($deserialized, 'author'));
+
+            $context = DeserializationContext::create()->setSerializeNull(true);
+            $context->ignoreCase = true;
+            $deserializedCaseInsensitive = $this->deserialize($this->getContent('blog_post_unauthored_case_insensitive'), \get_class($post), $context);
+
+            self::assertEquals($deserialized, $deserializedCaseInsensitive);
         }
     }
 

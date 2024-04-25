@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Serializer;
 
 use Kcs\Serializer\Construction\UnserializeObjectConstructor;
+use Kcs\Serializer\DeserializationContext;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\XmlErrorException;
@@ -202,6 +203,17 @@ class XmlSerializationTest extends BaseSerializationTest
             $object,
             $this->deserialize($this->getContent('object_with_namespaces_and_list'), \get_class($object))
         );
+
+        $context = DeserializationContext::create();
+        $context->ignoreCase = true;
+        self::assertEquals(
+            $object,
+            $this->deserialize(
+                $this->getContent('object_with_namespaces_and_list_case_insensitive'),
+                \get_class($object),
+                $context,
+            )
+        );
     }
 
     public function testArrayKeyValues(): void
@@ -267,6 +279,14 @@ class XmlSerializationTest extends BaseSerializationTest
 
         self::assertEquals($this->getContent('object_with_null_xml_attribute'), $this->serialize($object, SerializationContext::create()->setSerializeNull(false)));
         self::assertEquals($this->getContent('object_with_null_xml_attribute_serialized'), $this->serialize($object, SerializationContext::create()->setSerializeNull(true)));
+
+        $context = DeserializationContext::create();
+        $context->ignoreCase = true;
+        self::assertEquals($object, $this->deserialize(
+            $this->getContent('object_with_null_xml_attribute_case_insensitive'),
+            Type::from($object),
+            $context,
+        ));
     }
 
     public function testXmlNamespacesInheritance(): void

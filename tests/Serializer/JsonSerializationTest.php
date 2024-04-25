@@ -37,6 +37,7 @@ class JsonSerializationTest extends BaseSerializationTest
             $outputs['array_named_datetimes_object'] = '{"named_array_with_formatted_date":{"testdate1":"01.01.2047 12:47:47","testdate2":"05.12.2013 00:00:00"}}';
             $outputs['blog_post'] = '{"id":"what_a_nice_id","title":"This is a nice title.","created_at":"2011-07-30T00:00:00+00:00","is_published":false,"etag":"1edf9bf60a32d89afbb85b2be849e3ceed5f5b10","comments":[{"author":{"full_name":"Foo Bar"},"text":"foo"}],"comments2":[{"author":{"full_name":"Foo Bar"},"text":"foo"}],"metadata":{"foo":"bar"},"author":{"full_name":"Foo Bar"},"publisher":{"pub_name":"Bar Foo"},"tag":[{"name":"tag1"},{"name":"tag2"}]}';
             $outputs['blog_post_unauthored'] = '{"id":"what_a_nice_id","title":"This is a nice title.","created_at":"2011-07-30T00:00:00+00:00","is_published":false,"etag":"1edf9bf60a32d89afbb85b2be849e3ceed5f5b10","comments":[],"comments2":[],"metadata":{"foo":"bar"},"author":null,"publisher":null,"tag":null}';
+            $outputs['blog_post_unauthored_case_insensitive'] = '{"ID":"what_a_nice_id","Title":"This is a nice title.","crEAted_At":"2011-07-30T00:00:00+00:00","is_PUBlished":false,"ETAg":"1edf9bf60a32d89afbb85b2be849e3ceed5f5b10","comMents":[],"commEnts2":[],"mEtadata":{"foo":"bar"},"AUthor":null,"pubLIsher":null,"tAg":null}';
             $outputs['price'] = '{"price":3}';
             $outputs['currency_aware_price'] = '{"currency":"EUR","amount":2.34}';
             $outputs['order'] = '{"cost":{"price":12.34}}';
