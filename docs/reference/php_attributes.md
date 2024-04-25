@@ -9,7 +9,7 @@ be called to retrieve, or set the value of the given property.
 Arguments:
 
 | name   | type   | required | description                                    |
-| ------ | ------ | -------- | ---------------------------------------------- |
+|--------|--------|----------|------------------------------------------------|
 | getter | string | no       | The getter method to use to read the property  |  
 | setter | string | no       | The setter method to use to write the property |  
 
@@ -43,20 +43,21 @@ default, the order is undefined, but you may change it to either "alphabetical",
 
 Arguments:
 
-| name            | type     | required               | description                                      |
-| --------------- | -------- | ---------------------- | ------------------------------------------------ |
-| order (default) | string   | yes                    | Could be "undefined", "alphabetical" or "custom" |  
-| custom          | string[] | yes if order is custom | Property names of custom order                   |  
+| name   | type                                 | required               | description                                      |
+|--------|--------------------------------------|------------------------|--------------------------------------------------|
+| order  | Kcs\Serializer\Metadata\Access\Order | yes                    | Could be "Undefined", "Alphabetical" or "Custom" |  
+| custom | string[]                             | yes if order is custom | Property names of custom order                   |  
 
 ```php
 use Kcs\Serializer\Annotation\AccessorOrder;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Metadata\Access;
 
 /**
  * Resulting Property Order: id, name
  */
-#[AccessorOrder(AccessorOrder::ALPHABETICAL)]
+#[AccessorOrder(Access\Order::Alphabetical)]
 class User
 {
     private $id;
@@ -66,7 +67,7 @@ class User
 /**
  * Resulting Property Order: name, id
  */
-#[AccessorOrder(AccessorOrder::CUSTOM, custom: ['name', 'id'])]
+#[AccessorOrder(Access\Order::Custom, custom: ['name', 'id'])]
 class User
 {
     private $id;
@@ -76,7 +77,7 @@ class User
 /**
  * Resulting Property Order: name, mood, id
  */
-#[AccessorOrder(AccessorOrder::CUSTOM, custom: ['name', 'SomeMethod', 'id'])]
+#[AccessorOrder(Access\Order::Custom, custom: ['name', 'SomeMethod', 'id'])]
 class User
 {
     private $id;
@@ -99,14 +100,15 @@ set the value via public methods, but you may change this to use a reflection in
 
 Arguments:
 
-| name           | type   | required               | description                             |
-| -------------- | ------ | ---------------------- | --------------------------------------- |
-| type (default) | string | yes                    | Could be "property", or "public_method" |
+| name | type                                | required | description                            |
+|------|-------------------------------------|----------|----------------------------------------|
+| type | Kcs\Serializer\Metadata\Access\Type | yes      | Could be "Property", or "PublicMethod" |
 
 ```php
 use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Metadata\Access;
 
-#[AccessType(AccessType::PROPERTY)]
+#[AccessType(Access\Type::Property)]
 class User
 {
     private $name;
@@ -134,10 +136,10 @@ handled by a specific serializer handler
 
 Arguments:
 
-| name           | type                      | required | description                                      |
-| -------------- | ------------------------- | -------- | ------------------------------------------------ |
-| name (default) | string                    | yes      | The name of the additional field                 |
-| attributes     | [class-string, mixed[]][] | no       | Attributes to be applied to the additional field |
+| name       | type                      | required | description                                      |
+|------------|---------------------------|----------|--------------------------------------------------|
+| name       | string                    | yes      | The name of the additional field                 |
+| attributes | [class-string, mixed[]][] | no       | Attributes to be applied to the additional field |
 
 ?> `attributes` array elements are 2-elements array in which the first is the attribute class name
 and the second is the array of arguments.  
@@ -169,15 +171,15 @@ It is only applied if the object is the root object of serialization.
 
 Arguments:
 
-| name                | type    | required | description                                  |
-| ------------------- | ------- | -------- | -------------------------------------------- |
-| delimiter (default) | string  | no       | The csv delimiter (one character)            |
-| enclosure           | string  | no       | The field enclosure (one character)          |
-| escapeChar          | string  | no       | The escape character (at most one character) |
-| escapeFormulas      | bool    | no       | Whether to escape formulas or not            |
-| keySeparator        | string  | no       | The key separator                            |
-| printHeaders        | bool    | no       | Whether to print headers in the first row    |
-| outputBom           | bool    | no       | Output UTF BOM                               |
+| name           | type   | required | description                                  |
+|----------------|--------|----------|----------------------------------------------|
+| delimiter      | string | no       | The csv delimiter (one character)            |
+| enclosure      | string | no       | The field enclosure (one character)          |
+| escapeChar     | string | no       | The escape character (at most one character) |
+| escapeFormulas | bool   | no       | Whether to escape formulas or not            |
+| keySeparator   | string | no       | The key separator                            |
+| printHeaders   | bool   | no       | Whether to print headers in the first row    |
+| outputBom      | bool   | no       | Output UTF BOM                               |
 
 ```php
 use Kcs\Serializer\Annotation\Csv;
@@ -203,12 +205,12 @@ to the least super type:
 
 Arguments:
 
-| name          | type                  | required | description                                                                             |
-| ------------- | --------------------- | -------- | --------------------------------------------------------------------------------------- |
-| map (default) | array<string, string> | yes      | The discriminator map                                                                   |
-| field         | string                | no       | The field name                                                                          |
-| disabled      | bool                  | no       | Whether to disable discriminator (useful in combination with doctrine metadata loaders) |
-| groups        | string[]              | no       | The key separator                                                                       |
+| name     | type                  | required | description                                                                             |
+|----------|-----------------------|----------|-----------------------------------------------------------------------------------------|
+| map      | array<string, string> | yes      | The discriminator map                                                                   |
+| field    | string                | no       | The field name                                                                          |
+| disabled | bool                  | no       | Whether to disable discriminator (useful in combination with doctrine metadata loaders) |
+| groups   | string[]              | no       | The key separator                                                                       |
 
 ```php
 use Kcs\Serializer\Annotation\Discriminator;
@@ -232,16 +234,16 @@ ExclusionPolicy
 This attribute can be defined on a class to indicate the exclusion strategy
 that should be used for the class.
 
-| Policy   | Description                                                                                                             |
-| -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| all      | all properties are excluded by default; only properties marked with Expose will be serialized/unserialized              |
-| none     | no properties are excluded by default; all properties except those marked with @Exclude will be serialized/unserialized |
+| Policy | Description                                                                                                             |
+|--------|-------------------------------------------------------------------------------------------------------------------------|
+| all    | all properties are excluded by default; only properties marked with Expose will be serialized/unserialized              |
+| none   | no properties are excluded by default; all properties except those marked with @Exclude will be serialized/unserialized |
 
 Arguments:
 
-| name             | type   | required | description                   |
-| ---------------- | ------ | -------- | ----------------------------- |
-| policy (default) | string | yes      | The exclusion policy to apply |
+| name   | type                                     | required | description                   |
+|--------|------------------------------------------|----------|-------------------------------|
+| policy | Kcs\Serializer\Metadata\Exclusion\Policy | yes      | The exclusion policy to apply |
 
 Expose
 ------
@@ -259,9 +261,9 @@ To exclude a property the group name must be prefixed with "!"
 
 Arguments:
 
-| name             | type     | required | description              |
-| ---------------- | -------- | -------- | ------------------------ |
-| groups (default) | string[] | yes      | The serialization groups |
+| name   | type     | required | description              |
+|--------|----------|----------|--------------------------|
+| groups | string[] | yes      | The serialization groups |
 
 Inline
 ------
@@ -291,9 +293,9 @@ large object graph.
 
 Arguments:
 
-| name            | type | required | description             |
-| --------------- | ---- | -------- | ----------------------- |
-| depth (default) | int  | yes      | The maximum graph depth |
+| name  | type | required | description             |
+|-------|------|----------|-------------------------|
+| depth | int  | yes      | The maximum graph depth |
 
 OnExclude
 ---------
@@ -304,9 +306,9 @@ See [Exclusion strategy](../cookbook/exclusion_strategies.md) for more informati
 
 Arguments:
 
-| name             | type   | required | description                        |
-| ---------------- | ------ | -------- | ---------------------------------- |
-| policy (default) | string | yes      | The behavior to apply on exclusion |
+| name   | type                                       | required | description                        |
+|--------|--------------------------------------------|----------|------------------------------------|
+| policy | Kcs\Serializer\Metadata\Exclusion\Behavior | yes      | The behavior to apply on exclusion |
 
 SerializedName
 --------------
@@ -316,9 +318,9 @@ configured naming strategy.
 
 Arguments:
 
-| name           | type   | required | description         |
-| -------------- | ------ | -------- | ------------------- |
-| name (default) | string | yes      | The serialized name |
+| name | type   | required | description         |
+|------|--------|----------|---------------------|
+| name | string | yes      | The serialized name |
 
 Since
 -----
@@ -329,9 +331,9 @@ understood by PHP's `version_compare` function.
 
 Arguments:
 
-| name              | type   | required | description                            |
-| ----------------- | ------ | -------- | -------------------------------------- |
-| version (default) | string | yes      | A normalized version string to compare |
+| name    | type   | required | description                            |
+|---------|--------|----------|----------------------------------------|
+| version | string | yes      | A normalized version string to compare |
 
 StaticField
 -----------
@@ -339,11 +341,11 @@ Can be used to add a static property to an object.
 
 Arguments:
 
-| name           | type                      | required | description                                      |
-| -------------- | ------------------------- | -------- | ------------------------------------------------ |
-| name (default) | string                    | yes      | The name of the additional field                 |
-| value          | mixed                     | yes      | The value of the static field                    |
-| attributes     | [class-string, mixed[]][] | no       | Attributes to be applied to the additional field |
+| name       | type                      | required | description                                      |
+|------------|---------------------------|----------|--------------------------------------------------|
+| name       | string                    | yes      | The name of the additional field                 |
+| value      | mixed                     | yes      | The value of the static field                    |
+| attributes | [class-string, mixed[]][] | no       | Attributes to be applied to the additional field |
 
 For example, you can use:
 
@@ -376,14 +378,14 @@ force a certain format to be used for DateTime types.
 
 Arguments:
 
-| name           | type   | required | description                                     |
-| -------------- | -------| -------- | ----------------------------------------------- |
-| name (default) | string | yes      | The type name. See table below for valid values |
+| name | type   | required | description                                     |
+|------|--------|----------|-------------------------------------------------|
+| name | string | yes      | The type name. See table below for valid values |
 
 Available Types:
 
 | Type                       | Description                                                                                                                |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+|----------------------------|----------------------------------------------------------------------------------------------------------------------------|
 | boolean                    | Primitive boolean                                                                                                          |
 | integer                    | Primitive integer                                                                                                          |
 | double                     | Primitive double                                                                                                           |
@@ -439,9 +441,9 @@ PHP's `version_compare` function.
 
 Arguments:
 
-| name              | type   | required | description                            |
-| ----------------- | ------ | -------- | -------------------------------------- |
-| version (default) | string | yes      | A normalized version string to compare |
+| name    | type   | required | description                            |
+|---------|--------|----------|----------------------------------------|
+| version | string | yes      | A normalized version string to compare |
 
 VirtualProperty
 ---------------
@@ -460,9 +462,9 @@ and not as child elements.
 
 Arguments:
 
-| name                | type   | required | description                                    |
-| ------------------- | ------ | -------- | ---------------------------------------------- |
-| namespace (default) | string | no       | The (optional) namespace URI for the attribute |
+| name      | type   | required | description                                    |
+|-----------|--------|----------|------------------------------------------------|
+| namespace | string | no       | The (optional) namespace URI for the attribute |
 
 ```php
 use Kcs\Serializer\Annotation\Xml;
@@ -515,10 +517,10 @@ This attribute can be defined on a property to add additional xml serialization/
 
 Arguments:
 
-| name            | type   | required | description                                    |
-| --------------- | ------ | -------- | ---------------------------------------------- |
-| cdata (default) | bool   | no       | If the element should be wrapped in CDATA tag  |
-| namespace       | string | no       | The (optional) namespace URI for the attribute |
+| name      | type   | required | description                                    |
+|-----------|--------|----------|------------------------------------------------|
+| cdata     | bool   | no       | If the element should be wrapped in CDATA tag  |
+| namespace | string | no       | The (optional) namespace URI for the attribute |
 
 ```php
 use Kcs\Serializer\Annotation\Xml;
@@ -551,11 +553,11 @@ This allows you to specify the name of the top-level element.
 
 Arguments:
 
-| name           | type   | required | description                                    |
-| -------------- | ------ | -------- | ---------------------------------------------- |
-| name (default) | string | no       | The name of the root element                   |
-| namespace      | string | no       | The (optional) namespace URI for the attribute |
-| encoding       | string | no       | The XML document encoding                      |
+| name      | type   | required | description                                    |
+|-----------|--------|----------|------------------------------------------------|
+| name      | string | no       | The name of the root element                   |
+| namespace | string | no       | The (optional) namespace URI for the attribute |
+| encoding  | string | no       | The XML document encoding                      |
 
 ```php
 use Kcs\Serializer\Annotation\Xml;
@@ -588,9 +590,9 @@ Xml\Value also has property cdata. Which has the same meaning as the one in Xml\
 
 Arguments:
 
-| name            | type   | required | description                                    |
-| --------------- | ------ | -------- | ---------------------------------------------- |
-| cdata (default) | bool   | no       | If the element should be wrapped in CDATA tag  |
+| name  | type | required | description                                   |
+|-------|------|----------|-----------------------------------------------|
+| cdata | bool | no       | If the element should be wrapped in CDATA tag |
 
 ```php
 use Kcs\Serializer\Annotation\Xml;
@@ -620,11 +622,11 @@ keys of the array are not important.
 
 Arguments:
 
-| name            | type   | required | description                                   |
-| --------------- | ------ | -------- | --------------------------------------------- |
-| entry (default) | string | no       | The name of each element                      |
-| inline          | bool   | no       | Whether the list elements should be inlined   |
-| namespace       | string | no       | The (optional) namespace URI for the elements |
+| name      | type   | required | description                                   |
+|-----------|--------|----------|-----------------------------------------------|
+| entry     | string | no       | The name of each element                      |
+| inline    | bool   | no       | Whether the list elements should be inlined   |
+| namespace | string | no       | The (optional) namespace URI for the elements |
 
 ```php
 use Kcs\Serializer\Annotation\Xml;
@@ -676,11 +678,11 @@ Similar to Xml\XmlList, but the keys of the array are meaningful.
 
 Arguments:
 
-| name            | type   | required | description                                   |
-| --------------- | ------ | -------- | --------------------------------------------- |
-| entry (default) | string | no       | The name of each element                      |
-| inline          | bool   | no       | Whether the list elements should be inlined   |
-| namespace       | string | no       | The (optional) namespace URI for the elements |
+| name      | type   | required | description                                   |
+|-----------|--------|----------|-----------------------------------------------|
+| entry     | string | no       | The name of each element                      |
+| inline    | bool   | no       | Whether the list elements should be inlined   |
+| namespace | string | no       | The (optional) namespace URI for the elements |
 
 Xml\XmlNamespace
 ----------------
@@ -688,10 +690,10 @@ This attribute allows you to specify Xml namespace/s and prefix used.
 
 Arguments:
 
-| name          | type   | required | description                                                             |
-| ------------- | ------ | -------- | ----------------------------------------------------------------------- |
-| uri (default) | string | yes      | The URI of the namespace                                                |
-| prefix        | string | no       | The prefix to be applied to elements/attributes with the same namespace |
+| name   | type   | required | description                                                             |
+|--------|--------|----------|-------------------------------------------------------------------------|
+| uri    | string | yes      | The URI of the namespace                                                |
+| prefix | string | no       | The prefix to be applied to elements/attributes with the same namespace |
 
 ```php
 use Kcs\Serializer\Annotation\Groups;
