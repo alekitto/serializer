@@ -16,8 +16,8 @@ object will be serialized. If you only want to expose a few of the properties,
 then it is easier to change the exclusion policy, and only mark these few properties:
 
 ```php
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Annotation\Expose;
+use Kcs\Serializer\Attribute\ExclusionPolicy;
+use Kcs\Serializer\Attribute\Expose;
 
 /**
  * The following annotations tells the serializer to skip all properties which
@@ -42,9 +42,9 @@ Versioning Objects
 The serializer comes by default with a feature which allows you to add versioning support to your objects.
 
 ```php
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Since;
-use Kcs\Serializer\Annotation\Until;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Since;
+use Kcs\Serializer\Attribute\Until;
 
 class VersionedObject
 {
@@ -78,7 +78,7 @@ user can request a list of items or the details of a single item.
 You can achieve that by using the `Groups` attribute on your properties.
 
 ```php
-use Kcs\Serializer\Annotation\Groups;
+use Kcs\Serializer\Attribute\Groups;
 
 class BlogPost
 {
@@ -123,7 +123,7 @@ depths of the object graph.
 For example if you have a User that has a manager and friends:
 
 ```php
-use Kcs\Serializer\Annotation\Groups;
+use Kcs\Serializer\Attribute\Groups;
 
 class User
 {
@@ -234,8 +234,8 @@ In some cases it is preferred to include the property but set it to `null`.
 In these cases you can add the `OnExclude` attribute on the property setting the preferred exclusion behavior.
 
 ```php
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\OnExclude;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\OnExclude;
 
 class MyObject
 {
@@ -257,7 +257,7 @@ affect the serialized content of others classes than the one you apply the
 annotation to.
 
 ```php
-use Kcs\Serializer\Annotation\MaxDepth;
+use Kcs\Serializer\Attribute\MaxDepth;
 
 class User
 {

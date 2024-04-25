@@ -2,10 +2,10 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\Accessor;
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Immutable;
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Accessor;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Immutable;
+use Kcs\Serializer\Attribute\Xml;
 use Kcs\Serializer\Metadata\Access;
 
 #[Xml\Root('post')]

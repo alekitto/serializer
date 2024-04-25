@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Attribute as Serializer;
 use Kcs\Serializer\Metadata\Access;
 
 #[Serializer\AccessType(Access\Type::Property)]

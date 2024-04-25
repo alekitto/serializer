@@ -4,12 +4,12 @@ namespace Kcs\Serializer\Tests\Fixtures\DoctrinePHPCR;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\PHPCR\Mapping\Attributes as PHPCRODM;
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml\Attribute;
-use Kcs\Serializer\Annotation\Xml\XmlList;
-use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml\Attribute;
+use Kcs\Serializer\Attribute\Xml\XmlList;
+use Kcs\Serializer\Attribute\Xml\Root;
 
 #[PHPCRODM\Document]
 #[Root('blog-post')]

@@ -2,12 +2,12 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml\Attribute;
-use Kcs\Serializer\Annotation\Xml\Element;
-use Kcs\Serializer\Annotation\Xml\XmlNamespace;
-use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml\Attribute;
+use Kcs\Serializer\Attribute\Xml\Element;
+use Kcs\Serializer\Attribute\Xml\XmlNamespace;
+use Kcs\Serializer\Attribute\Xml\Root;
 use Kcs\Serializer\Metadata\Access;
 
 #[Root('test-object', namespace: 'http://example.com/namespace')]

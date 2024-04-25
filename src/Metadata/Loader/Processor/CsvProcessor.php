@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\Csv;
+use Kcs\Serializer\Attribute\Csv;
 use Kcs\Serializer\Metadata\ClassMetadata;
 
 use function assert;

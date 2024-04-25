@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\Xml\Collection;
-use Kcs\Serializer\Annotation\Xml\Map;
+use Kcs\Serializer\Attribute\Xml\Collection;
+use Kcs\Serializer\Attribute\Xml\Map;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 use function assert;

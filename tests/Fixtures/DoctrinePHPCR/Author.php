@@ -3,7 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures\DoctrinePHPCR;
 
 use Doctrine\ODM\PHPCR\Mapping\Attributes as PHPCRODM;
-use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Attribute\SerializedName;
 
 #[PHPCRODM\Document]
 class Author

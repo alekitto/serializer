@@ -2,11 +2,11 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\Accessor;
-use Kcs\Serializer\Annotation\Immutable;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Attribute\Accessor;
+use Kcs\Serializer\Attribute\Immutable;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml\Root;
 
 #[Root("author")]
 class AuthorReadOnly

@@ -2,11 +2,11 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Since;
-use Kcs\Serializer\Annotation\Until;
-use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Since;
+use Kcs\Serializer\Attribute\Until;
+use Kcs\Serializer\Attribute\VirtualProperty;
 
 /**
  * dummy comment.

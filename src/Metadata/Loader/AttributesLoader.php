@@ -6,7 +6,7 @@ namespace Kcs\Serializer\Metadata\Loader;
 
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\LoaderInterface;
-use Kcs\Serializer\Annotation;
+use Kcs\Serializer\Attribute;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\Exclusion;
@@ -64,7 +64,7 @@ class AttributesLoader implements LoaderInterface
 
     protected function isExcluded(ReflectionClass $class): bool
     {
-        return count($class->getAttributes(Annotation\Exclude::class)) !== 0;
+        return count($class->getAttributes(Attribute\Exclude::class)) !== 0;
     }
 
     /** @return object[] */
@@ -103,10 +103,10 @@ class AttributesLoader implements LoaderInterface
     protected function isPropertyExcluded(ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
         if ($classMetadata->exclusionPolicy === Exclusion\Policy::All) {
-            return count($property->getAttributes(Annotation\Expose::class)) === 0;
+            return count($property->getAttributes(Attribute\Expose::class)) === 0;
         }
 
-        return count($property->getAttributes(Annotation\Exclude::class)) !== 0;
+        return count($property->getAttributes(Attribute\Exclude::class)) !== 0;
     }
 
     private function processClassAnnotations(ClassMetadata $classMetadata): void
@@ -115,10 +115,10 @@ class AttributesLoader implements LoaderInterface
         foreach ($annotations as $annotation) {
             $this->processor->process($annotation, $classMetadata);
 
-            if ($annotation instanceof Annotation\AdditionalField) {
+            if ($annotation instanceof Attribute\AdditionalField) {
                 $additionalMetadata = new AdditionalPropertyMetadata($classMetadata->name, $annotation->name);
                 $this->loadExposedAttribute($additionalMetadata, $annotation->attributes, $classMetadata);
-            } elseif ($annotation instanceof Annotation\StaticField) {
+            } elseif ($annotation instanceof Attribute\StaticField) {
                 $staticMetadata = new StaticPropertyMetadata($classMetadata->name, $annotation->name, $annotation->value);
                 $this->loadExposedAttribute($staticMetadata, $annotation->attributes, $classMetadata);
             }
@@ -132,7 +132,7 @@ class AttributesLoader implements LoaderInterface
 
         $methodAnnotations = $this->getMethodAnnotations($method);
         foreach ($methodAnnotations as $annotation) {
-            if (! ($annotation instanceof Annotation\VirtualProperty)) {
+            if (! ($annotation instanceof Attribute\VirtualProperty)) {
                 continue;
             }
 
@@ -165,9 +165,9 @@ class AttributesLoader implements LoaderInterface
         foreach ($annotations as $annotation) {
             $this->processor->process($annotation, $metadata);
 
-            if ($annotation instanceof Annotation\AccessType) {
+            if ($annotation instanceof Attribute\AccessType) {
                 $accessType = $annotation->type;
-            } elseif ($annotation instanceof Annotation\Accessor) {
+            } elseif ($annotation instanceof Attribute\Accessor) {
                 $accessor = [$annotation->getter, $annotation->setter];
             }
         }

@@ -2,8 +2,8 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Attribute\ExclusionPolicy;
+use Kcs\Serializer\Attribute\VirtualProperty;
 use Kcs\Serializer\Metadata\Exclusion;
 
 /**

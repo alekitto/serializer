@@ -2,12 +2,12 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\Immutable;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml\Element;
-use Kcs\Serializer\Annotation\Xml\XmlNamespace;
-use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Attribute\Immutable;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml\Element;
+use Kcs\Serializer\Attribute\Xml\XmlNamespace;
+use Kcs\Serializer\Attribute\Xml\Root;
 
 #[Root('publisher')]
 #[XmlNamespace(uri: 'http://example.com/namespace2', prefix: 'ns2')]

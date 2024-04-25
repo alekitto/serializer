@@ -4,7 +4,7 @@ namespace Kcs\Serializer\Tests\Fixtures\Doctrine;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Attribute\SerializedName;
 
 #[ORM\Entity]
 class Author

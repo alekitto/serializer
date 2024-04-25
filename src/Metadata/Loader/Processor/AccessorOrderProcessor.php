@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\AccessorOrder;
+use Kcs\Serializer\Attribute\AccessorOrder;
 use Kcs\Serializer\Metadata\ClassMetadata;
 
 use function array_map;

@@ -2,8 +2,8 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Xml\KeyValuePairs;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Xml\KeyValuePairs;
 use Kcs\Serializer\Metadata\Access;
 
 #[AccessType(Access\Type::Property)]

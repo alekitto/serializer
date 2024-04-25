@@ -14,7 +14,7 @@ Arguments:
 | setter | string | no       | The setter method to use to write the property |  
 
 ```php
-use Kcs\Serializer\Annotation\Accessor;
+use Kcs\Serializer\Attribute\Accessor;
 
 class User
 {
@@ -49,9 +49,9 @@ Arguments:
 | custom | string[]                             | yes if order is custom | Property names of custom order                   |  
 
 ```php
-use Kcs\Serializer\Annotation\AccessorOrder;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Attribute\AccessorOrder;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\VirtualProperty;
 use Kcs\Serializer\Metadata\Access;
 
 /**
@@ -105,7 +105,7 @@ Arguments:
 | type | Kcs\Serializer\Metadata\Access\Type | yes      | Could be "Property", or "PublicMethod" |
 
 ```php
-use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Attribute\AccessType;
 use Kcs\Serializer\Metadata\Access;
 
 #[AccessType(Access\Type::Property)]
@@ -146,8 +146,8 @@ and the second is the array of arguments.
 This is needed as PHP attributes only accepts constant expressions, so "new" is not valid in that context.
 
 ```php
-use Kcs\Serializer\Annotation\AdditionalField;
-use Kcs\Serializer\Annotation\SerializedName;
+use Kcs\Serializer\Attribute\AdditionalField;
+use Kcs\Serializer\Attribute\SerializedName;
 
 // ! A custom handler for User::user_links must be registered on handler registry
 
@@ -182,7 +182,7 @@ Arguments:
 | outputBom      | bool   | no       | Output UTF BOM                               |
 
 ```php
-use Kcs\Serializer\Annotation\Csv;
+use Kcs\Serializer\Attribute\Csv;
 
 #[Csv(delimiter: ';')]
 class User
@@ -213,7 +213,7 @@ Arguments:
 | groups   | string[]              | no       | The key separator                                                                       |
 
 ```php
-use Kcs\Serializer\Annotation\Discriminator;
+use Kcs\Serializer\Attribute\Discriminator;
 
     #[Discriminator(field: 'type', map: ['car' => 'Car', 'moped' => 'Moped'])]
     abstract class Vehicle { }
@@ -350,8 +350,8 @@ Arguments:
 For example, you can use:
 
 ```php
-use Kcs\Serializer\Annotation\StaticField;
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Attribute\StaticField;
+use Kcs\Serializer\Attribute\Type;
 
 #[StaticField('additional', value: '12', attributes: [ [Type::class, ['integer']] ])]
 class User
@@ -405,7 +405,7 @@ Examples:
 ```php
 namespace MyNamespace;
 
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Attribute\Type;
 
 class BlogPost
 {
@@ -467,7 +467,7 @@ Arguments:
 | namespace | string | no       | The (optional) namespace URI for the attribute |
 
 ```php
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Xml;
 
 class User
 {
@@ -493,7 +493,7 @@ This is similar to the Xml\KeyValuePairs, but instead of creating child elements
 No arguments.
 
 ```php
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Xml;
 
 class Input
 {
@@ -523,7 +523,7 @@ Arguments:
 | namespace | string | no       | The (optional) namespace URI for the attribute |
 
 ```php
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Xml;
 
 #[Xml\XmlNamespace(uri: 'http://www.w3.org/2005/Atom', prefix: 'atom')]
 class User
@@ -560,7 +560,7 @@ Arguments:
 | encoding  | string | no       | The XML document encoding                      |
 
 ```php
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Xml;
 
 #[Xml\Root("user")]
 class User
@@ -595,7 +595,7 @@ Arguments:
 | cdata | bool | no       | If the element should be wrapped in CDATA tag |
 
 ```php
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Xml;
 
 #[Xml\Root('price')]
 class Price
@@ -629,7 +629,7 @@ Arguments:
 | namespace | string | no       | The (optional) namespace URI for the elements |
 
 ```php
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Xml;
 
 #[Xml\Root('post')]
 class Post
@@ -696,10 +696,10 @@ Arguments:
 | prefix | string | no       | The prefix to be applied to elements/attributes with the same namespace |
 
 ```php
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml;
 
 #[Xml\XmlNamespace(uri: 'http://example.com/namespace')]
 #[Xml\XmlNamespace(uri: 'http://www.w3.org/2005/Atom', prefix: 'atom')]

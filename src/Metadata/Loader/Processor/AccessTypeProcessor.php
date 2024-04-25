@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
 use Kcs\Metadata\MetadataInterface;
-use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Attribute\AccessType;
 use Kcs\Serializer\Metadata\ClassMetadata;
 
 use function assert;

@@ -2,9 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\Exclude;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Attribute\Exclude;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\VirtualProperty;
 
 class ObjectWithExcludedAndVirtualProperty
 {

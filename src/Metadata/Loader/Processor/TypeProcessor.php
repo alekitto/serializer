@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Attribute\Type;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 
 use function assert;

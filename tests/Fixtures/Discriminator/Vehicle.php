@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\Discriminator;
 
-use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Attribute as Serializer;
 use Kcs\Serializer\Metadata\Access;
 
 #[Serializer\Discriminator(map: ['car' => Car::class, 'moped' => Moped::class], field: 'type', groups: ['Default', 'discriminator_group'])]

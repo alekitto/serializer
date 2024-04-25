@@ -2,9 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\ExclusionPolicy;
-use Kcs\Serializer\Annotation\Expose;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\ExclusionPolicy;
+use Kcs\Serializer\Attribute\Expose;
 use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Metadata\Exclusion;
 

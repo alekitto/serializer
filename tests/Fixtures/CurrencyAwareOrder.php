@@ -2,9 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml\Root;
 use Kcs\Serializer\Metadata\Access;
 
 #[Root('order')]

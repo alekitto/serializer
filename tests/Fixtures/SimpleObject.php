@@ -2,9 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
 use Kcs\Serializer\Metadata\Access;
 
 #[AccessType(Access\Type::Property)]

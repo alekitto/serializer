@@ -2,7 +2,7 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation as Kcs;
+use Kcs\Serializer\Attribute as Kcs;
 
 #[Kcs\Xml\Root('tag')]
 #[Kcs\Xml\XmlNamespace(uri: 'http://purl.org/dc/elements/1.1/', prefix: 'dc')]

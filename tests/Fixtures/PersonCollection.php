@@ -3,9 +3,9 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml;
 use Kcs\Serializer\Metadata\Access;
 
 #[Xml\Root('person_collection')]

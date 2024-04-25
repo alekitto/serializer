@@ -6,7 +6,7 @@ namespace Kcs\Serializer\Metadata\Loader;
 
 use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoaderTrait;
-use Kcs\Serializer\Annotation as Annotations;
+use Kcs\Serializer\Attribute as Annotations;
 use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Inflector\Inflector;
 use Kcs\Serializer\Metadata\ClassMetadata;

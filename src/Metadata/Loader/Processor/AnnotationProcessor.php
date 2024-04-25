@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
 use Kcs\Metadata\MetadataInterface;
-use Kcs\Serializer\Annotation as Annotations;
+use Kcs\Serializer\Attribute as Annotations;
 
 use function array_key_exists;
 

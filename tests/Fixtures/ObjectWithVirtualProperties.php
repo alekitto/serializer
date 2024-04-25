@@ -2,11 +2,11 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessorOrder;
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Attribute\AccessorOrder;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\VirtualProperty;
 use Kcs\Serializer\Metadata\Access;
 
 /**

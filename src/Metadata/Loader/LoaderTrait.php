@@ -47,7 +47,7 @@ trait LoaderTrait
         }
 
         /** @phpstan-var class-string $annotationClass */
-        $annotationClass = 'Kcs\\Serializer\\Annotation\\' . $className;
+        $annotationClass = 'Kcs\\Serializer\\Attribute\\' . $className;
         $reflectionClass = new ReflectionClass($annotationClass);
 
         $instance = $reflectionClass->newInstanceWithoutConstructor();

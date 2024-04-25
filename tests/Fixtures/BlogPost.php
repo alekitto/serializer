@@ -3,12 +3,12 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\OnExclude;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\OnExclude;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml;
 use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Metadata\Exclusion;
 use PhpCollection\Map;

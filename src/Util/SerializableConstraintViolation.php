@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Util;
 
-use Kcs\Serializer\Annotation\Immutable;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Attribute\Immutable;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**

@@ -5,12 +5,12 @@ namespace Kcs\Serializer\Tests\Fixtures\Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\SerializedName;
-use Kcs\Serializer\Annotation\Type;
-use Kcs\Serializer\Annotation\Xml\Attribute;
-use Kcs\Serializer\Annotation\Xml\Root;
-use Kcs\Serializer\Annotation\Xml\XmlList;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\SerializedName;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Attribute\Xml\Attribute;
+use Kcs\Serializer\Attribute\Xml\Root;
+use Kcs\Serializer\Attribute\Xml\XmlList;
 
 #[ORM\Entity]
 #[Root('blog-post')]

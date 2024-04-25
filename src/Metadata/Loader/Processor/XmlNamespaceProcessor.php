@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\Xml\XmlNamespace;
+use Kcs\Serializer\Attribute\Xml\XmlNamespace;
 use Kcs\Serializer\Metadata\ClassMetadata;
 
 use function assert;

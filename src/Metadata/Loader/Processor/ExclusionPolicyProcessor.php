@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Metadata\Loader\Processor;
 
-use Kcs\Serializer\Annotation\ExclusionPolicy;
+use Kcs\Serializer\Attribute\ExclusionPolicy;
 use Kcs\Serializer\Metadata\ClassMetadata;
 
 use function assert;

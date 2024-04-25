@@ -2,9 +2,9 @@
 
 namespace Kcs\Serializer\Tests\Fixtures;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Attribute\AccessType;
+use Kcs\Serializer\Attribute\Groups;
+use Kcs\Serializer\Attribute\Type;
 use Kcs\Serializer\Exclusion\SerializationGroupProviderInterface;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Metadata\Access;
