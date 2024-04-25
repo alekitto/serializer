@@ -17,11 +17,15 @@ use Safe\Exceptions\SimplexmlException;
 use SimpleXMLElement;
 use UnitEnum;
 
+use function array_change_key_case;
+use function array_combine;
 use function array_key_exists;
+use function array_keys;
 use function assert;
 use function in_array;
 use function is_string;
 use function libxml_use_internal_errors;
+use function mb_convert_case;
 use function reset;
 use function Safe\libxml_get_last_error;
 use function Safe\preg_replace;
@@ -29,8 +33,12 @@ use function Safe\simplexml_load_string;
 use function sprintf;
 use function str_replace;
 use function stripos;
+use function strtolower;
 use function substr;
 use function var_export;
+
+use const CASE_LOWER;
+use const MB_CASE_LOWER;
 
 class XmlDeserializationVisitor extends GenericDeserializationVisitor
 {
@@ -259,7 +267,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
                 $node = $children[0];
             } else {
-                if (!isset($data->$name)) {
+                if (! isset($data->$name)) {
                     return null;
                 }
 

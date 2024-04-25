@@ -12,13 +12,18 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use UnitEnum;
 
+use function array_change_key_case;
 use function array_key_exists;
 use function assert;
 use function gettype;
 use function is_array;
 use function is_subclass_of;
+use function mb_convert_case;
 use function sprintf;
 use function var_export;
+
+use const CASE_LOWER;
+use const MB_CASE_LOWER;
 
 /**
  * Generic Deserialization Visitor.

@@ -21,6 +21,7 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Throwable;
 
 use function call_user_func_array;
+use function class_exists;
 use function func_get_args;
 use function is_array;
 use function is_callable;

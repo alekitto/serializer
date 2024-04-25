@@ -52,13 +52,13 @@ abstract class Context
      *
      * @return static
      */
-    public static function create(): self
+    public static function create(): static
     {
         return new static();
     }
 
     /** @param array<string, mixed> $attributes */
-    public function createChildContext(array $attributes = []): self
+    public function createChildContext(array $attributes = []): static
     {
         if (! $this->initialized) {
             throw new LogicException('Cannot create a child context of an uninitialized context.');

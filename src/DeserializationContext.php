@@ -13,7 +13,8 @@ class DeserializationContext extends Context
     public bool $ignoreCase = false;
     private int $depth = 0;
 
-    public function createChildContext(array $attributes = []): Context
+    /** @inheritDoc */
+    public function createChildContext(array $attributes = []): static
     {
         $context = parent::createChildContext($attributes);
         $context->ignoreCase = $this->ignoreCase;
