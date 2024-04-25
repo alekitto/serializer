@@ -52,6 +52,9 @@
         <service class="Kcs\Serializer\Handler\UuidInterfaceHandler" id="kcs_serializer.handler.uuid">
             <tag name="kcs_serializer.handler" />
         </service>
+        <service class="Kcs\Serializer\Handler\SymfonyUidHandler" id="kcs_serializer.handler.symfony_uid">
+            <tag name="kcs_serializer.handler" />
+        </service>
         <service class="Kcs\Serializer\Handler\FormErrorHandler" id="kcs_serializer.handler.form_error">
             <tag name="kcs_serializer.handler" />
             <argument type="service" id="translator" on-invalid="null" />
