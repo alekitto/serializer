@@ -154,7 +154,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
         assert($context instanceof DeserializationContext);
-        $name = $context->namingStrategy->translateName($metadata);
+        $name = $propertyName = $context->namingStrategy->translateName($metadata);
 
         if ($data !== null && $context->ignoreCase) {
             $data = array_change_key_case($data, CASE_LOWER);
@@ -170,7 +170,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         }
 
         $v = $data[$name] !== null ? $context->accept($data[$name], $metadata->type) : null;
-        $this->addData($name, $v);
+        $this->addData($propertyName, $v);
 
         return $v;
     }
