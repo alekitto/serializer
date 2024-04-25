@@ -65,6 +65,7 @@
         "symfony/property-info": "^5.4 || ^6.0 || ^7.0",
         "symfony/serializer": "^5.4 || ^6.0 || ^7.0",
         "symfony/translation": "^5.4 || ^6.0 || ^7.0",
+        "symfony/uid": "^5.4 || ^6.0 || ^7.0",
         "symfony/validator": "^5.4 || ^6.0 || ^7.0",
         "symfony/web-profiler-bundle": "^5.4 || ^6.0 || ^7.0",
         "symfony/yaml": "^5.4 || ^6.0 || ^7.0",

@@ -14,7 +14,7 @@ Callback handlers receive four arguments: the visitor, the data, the type and th
 ```php
 $builder
     ->configureHandlers(function (\Kcs\Serializer\Handler\HandlerRegistry $registry) {
-        $registry->registerHandler(\Kcs\Serializer\Direction::DIRECTION_SERIALIZATION, 'MyObject',
+        $registry->registerHandler(\Kcs\Serializer\Direction::Serialization, 'MyObject',
             function (\Kcs\Serializer\VisitorInterface $visitor, MyObject $obj, \Kcs\Serializer\Type\Type $type, \Kcs\Serializer\Context $context) {
                 return $visitor->visitString($obj->getName(), $type, $context);
             }
@@ -103,7 +103,7 @@ class MyHandler implements SubscribingHandlerInterface
     public static function getSubscribingMethods(): iterable
     {
         yield [
-            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'direction' => Direction::Serialization,
             'type' => \DateTime::class,
             'method' => 'serializeDateTimeToJson',
         ];

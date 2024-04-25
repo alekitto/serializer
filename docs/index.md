@@ -55,7 +55,6 @@ Documentation
 
 - Reference
     * [PHP Attributes](./reference/php_attributes.md)
-    * [Annotations](./reference/annotations.md)
     * [XML Reference](./reference/xml_reference.md)
     * [YAML Reference](./reference/yml_reference.md)
 

@@ -25,12 +25,12 @@ class ConstraintViolationHandler implements SubscribingHandlerInterface
     {
         return [
             [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => ConstraintViolationList::class,
                 'method' => 'serializeList',
             ],
             [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => ConstraintViolation::class,
                 'method' => 'serializeViolation',
             ],

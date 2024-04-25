@@ -9,7 +9,7 @@ use LogicException;
 
 class DeserializationContext extends Context
 {
-    public int $direction = Direction::DIRECTION_DESERIALIZATION;
+    public Direction $direction = Direction::Deserialization;
     private int $depth = 0;
 
     public function getDepth(): int

@@ -26,12 +26,12 @@ class FormErrorHandler implements SubscribingHandlerInterface
     {
         return [
             [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => Form::class,
                 'method' => 'serializeForm',
             ],
             [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => FormError::class,
                 'method' => 'serializeFormError',
             ],

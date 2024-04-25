@@ -40,7 +40,7 @@ class GraphNavigatorTest extends TestCase
 
         $context = $this->prophesize(SerializationContext::class);
         $context->visitor = $this->prophesize(VisitorInterface::class);
-        $context->direction = Direction::DIRECTION_SERIALIZATION;
+        $context->direction = Direction::Serialization;
         $context->guessType(STDIN)->willReturn(new Type('resource'));
 
         $this->navigator->accept(STDIN, null, $context->reveal());
@@ -54,7 +54,7 @@ class GraphNavigatorTest extends TestCase
         $object = new SerializableClass();
         $metadata = $this->metadataFactory->getMetadataFor(\get_class($object));
 
-        $context->direction = Direction::DIRECTION_SERIALIZATION;
+        $context->direction = Direction::Serialization;
         $context->visitor = $visitor = $this->prophesize(VisitorInterface::class);
         $visitor->visitObject(Argument::cetera())->willReturn();
         $context->guessType($object)->willReturn(new Type(SerializableClass::class));
@@ -91,7 +91,7 @@ class GraphNavigatorTest extends TestCase
 
         $context = $this->prophesize(SerializationContext::class);
         $context->getMetadataStack()->willReturn($this->prophesize(MetadataStack::class));
-        $context->direction = Direction::DIRECTION_SERIALIZATION;
+        $context->direction = Direction::Serialization;
         $context->guessType($object)->willReturn(new Type(SerializableClass::class));
 
         $context->visitor = $visitor = $this->prophesize(VisitorInterface::class);
@@ -141,7 +141,7 @@ class TestSubscribingHandler implements SubscribingHandlerInterface
     {
         return [[
             'type' => \JsonSerializable::class,
-            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'direction' => Direction::Serialization,
             'method' => 'serialize',
         ]];
     }

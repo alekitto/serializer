@@ -59,7 +59,7 @@ If you have created custom handlers, you can add them to the serializer easily:
 $serializer = Kcs\Serializer\SerializerBuilder::create()
     ->addDefaultHandlers()
     ->configureHandlers(function (\Kcs\Serializer\Handler\HandlerRegistry $registry) {
-        $registry->registerHandler(\Kcs\Serializer\Direction::DIRECTION_SERIALIZATION, MyObject::class,
+        $registry->registerHandler(\Kcs\Serializer\Direction::Serialization, MyObject::class,
             fn ($visitor, MyObject $obj, array $type) => $visitor->visitString($obj->getName())
         );
     })

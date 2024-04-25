@@ -9,25 +9,20 @@ use Kcs\Serializer\Exception\InvalidArgumentException;
 use function sprintf;
 use function strtolower;
 
-final class Direction
+enum Direction
 {
-    public const DIRECTION_DESERIALIZATION = 2;
-    public const DIRECTION_SERIALIZATION = 1;
+    case Deserialization;
+    case Serialization;
 
     /**
      * Parses a direction string to one of the direction constants.
      */
-    public static function parseDirection(string $dirStr): int
+    public static function parseDirection(string $dirStr): self
     {
-        switch (strtolower($dirStr)) {
-            case 'serialization':
-                return self::DIRECTION_SERIALIZATION;
-
-            case 'deserialization':
-                return self::DIRECTION_DESERIALIZATION;
-
-            default:
-                throw new InvalidArgumentException(sprintf('The direction "%s" does not exist.', $dirStr));
-        }
+        return match (strtolower($dirStr)) {
+            'serialization' => self::Serialization,
+            'deserialization' => self::Deserialization,
+            default => throw new InvalidArgumentException(sprintf('The direction "%s" does not exist.', $dirStr)),
+        };
     }
 }

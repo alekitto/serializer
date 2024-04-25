@@ -42,11 +42,11 @@ class TraceableHandlerRegistryTest extends TestCase
     {
         $handler = static function () {
         };
-        $this->decorated->registerHandler(Direction::DIRECTION_SERIALIZATION, 'type', $handler)
+        $this->decorated->registerHandler(Direction::Serialization, 'type', $handler)
             ->shouldBeCalled()
             ->willReturn($this->decorated);
 
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'type', $handler);
+        $this->handlerRegistry->registerHandler(Direction::Serialization, 'type', $handler);
     }
 
     public function testRegisterSerializationHandlerShouldPassCallToDecorated(): void
@@ -75,11 +75,11 @@ class TraceableHandlerRegistryTest extends TestCase
             return 42;
         };
 
-        $this->decorated->getHandler(Direction::DIRECTION_SERIALIZATION, 'type')
+        $this->decorated->getHandler(Direction::Serialization, 'type')
             ->shouldBeCalled()
             ->willReturn($decorated);
 
-        $handler = $this->handlerRegistry->getHandler(Direction::DIRECTION_SERIALIZATION, 'type');
+        $handler = $this->handlerRegistry->getHandler(Direction::Serialization, 'type');
 
         self::assertNotSame($decorated, $handler);
         self::assertIsCallable($handler);

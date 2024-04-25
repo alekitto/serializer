@@ -23,9 +23,9 @@ use Stringable;
 use function array_filter;
 use function is_array;
 
-/** @property int $direction */
 abstract class Context
 {
+    public Direction $direction;
     public AttributesMap $attributes;
     public PropertyNamingStrategyInterface $namingStrategy;
     private string $format;
@@ -40,7 +40,6 @@ abstract class Context
     final public function __construct()
     {
         $this->attributes = new AttributesMap();
-        $this->namingStrategy = new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
     }
 
     public function __clone()
@@ -68,6 +67,7 @@ abstract class Context
         $obj = static::create();
 
         $obj->attributes = clone $this->attributes;
+        $obj->namingStrategy = $this->namingStrategy;
         foreach ($attributes as $key => $value) {
             $obj->attributes->set($key, $value);
         }
@@ -102,6 +102,7 @@ abstract class Context
         $this->navigator = $navigator;
         $this->metadataFactory = $factory;
         $this->metadataStack = new MetadataStack();
+        $this->namingStrategy ??= new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
 
         $this->addVersionExclusionStrategy();
         $this->addGroupsExclusionStrategy();

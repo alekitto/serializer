@@ -10,7 +10,7 @@ class TestHandler implements SubscribingHandlerInterface
     public static function getSubscribingMethods(): iterable
     {
         yield [
-            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'direction' => Direction::Serialization,
             'type' => 'TestObject',
             'method' => 'serialize',
         ];

@@ -38,14 +38,14 @@ class DateHandler implements SubscribingHandlerInterface
     {
         yield [
             'type' => DateTime::class,
-            'direction' => Direction::DIRECTION_DESERIALIZATION,
+            'direction' => Direction::Deserialization,
             'method' => 'deserializeDateTime',
         ];
 
         foreach ([DateTimeImmutable::class, DateTimeInterface::class] as $class) {
             yield [
                 'type' => $class,
-                'direction' => Direction::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::Deserialization,
                 'method' => 'deserializeDateTimeImmutable',
             ];
         }
@@ -53,32 +53,32 @@ class DateHandler implements SubscribingHandlerInterface
         foreach ([DateTime::class, DateTimeImmutable::class, DateTimeInterface::class, \Safe\DateTime::class, \Safe\DateTimeImmutable::class] as $class) {
             yield [
                 'type' => $class,
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'method' => 'serializeDateTime',
             ];
         }
 
         yield [
             'type' => DateInterval::class,
-            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'direction' => Direction::Serialization,
             'method' => 'serializeDateInterval',
         ];
 
         yield [
             'type' => DateInterval::class,
-            'direction' => Direction::DIRECTION_DESERIALIZATION,
+            'direction' => Direction::Deserialization,
             'method' => 'deserializeDateInterval',
         ];
 
         yield [
             'type' => Chronos::class,
-            'direction' => Direction::DIRECTION_SERIALIZATION,
+            'direction' => Direction::Serialization,
             'method' => 'serializeDateTime',
         ];
 
         yield [
             'type' => Chronos::class,
-            'direction' => Direction::DIRECTION_DESERIALIZATION,
+            'direction' => Direction::Deserialization,
             'method' => 'deserializeChronos',
         ];
     }

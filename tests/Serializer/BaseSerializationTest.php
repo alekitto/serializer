@@ -851,7 +851,7 @@ abstract class BaseSerializationTest extends TestCase
             return new CustomDeserializationObject('customly_unserialized_value');
         };
 
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_DESERIALIZATION, 'CustomDeserializationObject', $handler);
+        $this->handlerRegistry->registerHandler(Direction::Deserialization, 'CustomDeserializationObject', $handler);
 
         $serialized = $this->serializer->serialize(new CustomDeserializationObject('sometext'), $this->getFormat());
         $object = $this->serializer->deserialize($serialized, Type::from('CustomDeserializationObject'), $this->getFormat());
@@ -1069,7 +1069,7 @@ abstract class BaseSerializationTest extends TestCase
 
     public function testAdditionalField(): void
     {
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
+        $this->handlerRegistry->registerHandler(Direction::Serialization, 'Kcs\Serializer\Tests\Fixtures\Author::links',
             static function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
                 return $visitor->visitHash([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
@@ -1095,7 +1095,7 @@ abstract class BaseSerializationTest extends TestCase
 
     public function testAdditionalFieldInheritedBySubclasses(): void
     {
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'Kcs\Serializer\Tests\Fixtures\Author::links',
+        $this->handlerRegistry->registerHandler(Direction::Serialization, 'Kcs\Serializer\Tests\Fixtures\Author::links',
             static function (VisitorInterface $visitor, Author $author, Type $type, Context $context) {
                 return $visitor->visitHash([
                     'details' => 'http://foo.bar/details/'.$author->getName(),
@@ -1183,17 +1183,17 @@ abstract class BaseSerializationTest extends TestCase
         $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new UuidInterfaceHandler());
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorList',
+        $this->handlerRegistry->registerHandler(Direction::Serialization, 'AuthorList',
             static function (VisitorInterface $visitor, $object, Type $type, Context $context) {
                 return $visitor->visitHash(\iterator_to_array($object), $type, $context);
             }
         );
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_SERIALIZATION, 'AuthorAsType',
+        $this->handlerRegistry->registerHandler(Direction::Serialization, 'AuthorAsType',
             static function (VisitorInterface $visitor, Author $object, Type $type, Context $context) {
                 return $visitor->visitHash(['name' => $object->getName()], $type, $context);
             }
         );
-        $this->handlerRegistry->registerHandler(Direction::DIRECTION_DESERIALIZATION, 'AuthorList',
+        $this->handlerRegistry->registerHandler(Direction::Deserialization, 'AuthorList',
             static function (VisitorInterface $visitor, $data, $type, Context $context) {
                 $type = new Type(
                     'array',

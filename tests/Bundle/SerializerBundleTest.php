@@ -37,7 +37,7 @@ class SerializerBundleTest extends WebTestCase
             $registry = (fn () => $this->decorated)->bindTo($registry, TraceableHandlerRegistry::class)();
         }
 
-        $handler = $registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'TestObject');
+        $handler = $registry->getHandler(Direction::Serialization, 'TestObject');
         self::assertEquals([$client->getContainer()->get('test_handler'), 'serialize'], $handler);
     }
 
@@ -46,12 +46,12 @@ class SerializerBundleTest extends WebTestCase
         $client = self::createClient();
         $registry = $client->getContainer()->get('handler_registry');
 
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, 'ArrayCollection'));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, ConstraintViolation::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, DateTime::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Form::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, Sequence::class));
-        self::assertNotNull($registry->getHandler(Direction::DIRECTION_SERIALIZATION, UuidInterface::class));
+        self::assertNotNull($registry->getHandler(Direction::Serialization, 'ArrayCollection'));
+        self::assertNotNull($registry->getHandler(Direction::Serialization, ConstraintViolation::class));
+        self::assertNotNull($registry->getHandler(Direction::Serialization, DateTime::class));
+        self::assertNotNull($registry->getHandler(Direction::Serialization, Form::class));
+        self::assertNotNull($registry->getHandler(Direction::Serialization, Sequence::class));
+        self::assertNotNull($registry->getHandler(Direction::Serialization, UuidInterface::class));
     }
 
     public function testFunctional(): void

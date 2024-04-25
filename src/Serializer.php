@@ -9,9 +9,9 @@ use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
-use Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -37,7 +37,7 @@ class Serializer implements SerializerInterface
         private readonly EventDispatcherInterface|null $dispatcher = null,
         PropertyNamingStrategyInterface|null $defaultNamingStrategy = null,
     ) {
-        $this->defaultNamingStrategy = $defaultNamingStrategy ?? new SerializedNameAttributeStrategy(new IdenticalPropertyNamingStrategy());
+        $this->defaultNamingStrategy = $defaultNamingStrategy ?? new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
     }
 
     public function serialize(mixed $data, string $format, SerializationContext|null $context = null, Type|null $type = null): mixed

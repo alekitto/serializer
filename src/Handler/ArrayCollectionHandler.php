@@ -32,13 +32,13 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
 
         foreach ($collectionTypes as $type) {
             $methods[] = [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => $type,
                 'method' => 'serializeCollection',
             ];
 
             $methods[] = [
-                'direction' => Direction::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::Deserialization,
                 'type' => $type,
                 'method' => 'deserializeCollection',
             ];

@@ -15,6 +15,7 @@ use function class_exists;
 use function interface_exists;
 use function is_array;
 use function is_callable;
+use function is_string;
 use function Safe\preg_match;
 use function sprintf;
 use function strrpos;
@@ -22,7 +23,7 @@ use function substr;
 
 final class HandlerRegistry implements HandlerRegistryInterface
 {
-    public static function getDefaultMethod(int $direction, string $type): string
+    public static function getDefaultMethod(Direction $direction, string $type): string
     {
         $pos = strrpos($type, '\\');
         if ($pos !== false) {
@@ -37,19 +38,13 @@ final class HandlerRegistry implements HandlerRegistryInterface
             throw new LogicException(sprintf('Cannot derive a valid method name for type "%s". Please define the method name manually', $type));
         }
 
-        switch ($direction) {
-            case Direction::DIRECTION_DESERIALIZATION:
-                return 'deserialize' . $type;
-
-            case Direction::DIRECTION_SERIALIZATION:
-                return 'serialize' . $type;
-
-            default:
-                throw new LogicException(sprintf('The direction %d does not exist; see Direction constants.', $direction));
-        }
+        return match ($direction) {
+            Direction::Deserialization => 'deserialize' . $type,
+            Direction::Serialization => 'serialize' . $type,
+        };
     }
 
-    /** @param array<int, mixed> $handlers */
+    /** @param array<string, mixed> $handlers */
     public function __construct(private array $handlers = [])
     {
     }
@@ -61,9 +56,14 @@ final class HandlerRegistry implements HandlerRegistryInterface
                 throw new RuntimeException(sprintf('For each subscribing method a "type" attribute must be given for %s.', $handler::class));
             }
 
-            $directions = [Direction::DIRECTION_DESERIALIZATION, Direction::DIRECTION_SERIALIZATION];
+            $directions = [Direction::Deserialization, Direction::Serialization];
             if (isset($methodData['direction'])) {
-                $directions = [$methodData['direction']];
+                $direction = $methodData['direction'];
+                if (is_string($direction)) {
+                    $direction = Direction::parseDirection($direction);
+                }
+
+                $directions = [$direction];
             }
 
             foreach ($directions as $direction) {
@@ -78,33 +78,30 @@ final class HandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function registerHandler(int $direction, string $typeName, $handler): HandlerRegistryInterface
+    public function registerHandler(Direction $direction, string $typeName, callable $handler): HandlerRegistryInterface
     {
-        $this->handlers[$direction][$typeName] = $handler;
+        $this->handlers[$direction->name][$typeName] = $handler;
 
         return $this;
     }
 
     public function registerSerializationHandler(SerializationHandlerInterface $handler): HandlerRegistryInterface
     {
-        return $this->registerHandler(Direction::DIRECTION_SERIALIZATION, $handler::getType(), new InternalSerializationHandler([$handler, 'serialize']));
+        return $this->registerHandler(Direction::Serialization, $handler::getType(), new InternalSerializationHandler([$handler, 'serialize']));
     }
 
     public function registerDeserializationHandler(DeserializationHandlerInterface $handler): HandlerRegistryInterface
     {
-        return $this->registerHandler(Direction::DIRECTION_DESERIALIZATION, $handler::getType(), new InternalDeserializationHandler([$handler, 'deserialize']));
+        return $this->registerHandler(Direction::Deserialization, $handler::getType(), new InternalDeserializationHandler([$handler, 'deserialize']));
     }
 
-    public function getHandler(int $direction, string $typeName): callable|null
+    public function getHandler(Direction $direction, string $typeName): callable|null
     {
-        if (! isset($this->handlers[$direction][$typeName])) {
+        if (! isset($this->handlers[$direction->name][$typeName])) {
             return null;
         }
 
-        $v = &$this->handlers[$direction][$typeName];
+        $v = &$this->handlers[$direction->name][$typeName];
         if (is_array($v) && isset($v[0]) && $v[0] instanceof Closure) {
             $v[0] = $v[0]();
         }

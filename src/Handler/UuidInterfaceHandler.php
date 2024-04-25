@@ -40,13 +40,13 @@ class UuidInterfaceHandler implements SubscribingHandlerInterface
     {
         foreach (self::TYPES as $type) {
             yield [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => $type,
                 'method' => 'serialize',
             ];
 
             yield [
-                'direction' => Direction::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::Deserialization,
                 'type' => $type,
                 'method' => 'deserialize',
             ];

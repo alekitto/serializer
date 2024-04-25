@@ -14,7 +14,7 @@ use function is_object;
 
 class SerializationContext extends Context
 {
-    public int $direction = Direction::DIRECTION_SERIALIZATION;
+    public Direction $direction = Direction::Serialization;
     private SplObjectStorage $visitingSet;
 
     public function initialize(

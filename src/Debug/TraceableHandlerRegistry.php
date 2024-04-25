@@ -36,7 +36,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
      */
     public array $calls = [];
 
-    public function __construct(private HandlerRegistryInterface $decorated, VarCloner|null $cloner = null)
+    public function __construct(private readonly HandlerRegistryInterface $decorated, VarCloner|null $cloner = null)
     {
         $this->cloner = $cloner ?? new VarCloner();
     }
@@ -48,8 +48,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    /** @inheritDoc */
-    public function registerHandler(int $direction, string $typeName, $handler): HandlerRegistryInterface
+    public function registerHandler(Direction $direction, string $typeName, callable $handler): HandlerRegistryInterface
     {
         $this->decorated->registerHandler($direction, $typeName, $handler);
 
@@ -70,7 +69,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         return $this;
     }
 
-    public function getHandler(int $direction, string $typeName): callable|null
+    public function getHandler(Direction $direction, string $typeName): callable|null
     {
         $callable = $this->decorated->getHandler($direction, $typeName);
         if ($callable === null) {
@@ -85,7 +84,7 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
             } finally {
                 $this->calls[] = [
                     'type' => $typeName,
-                    'direction' => $direction === Direction::DIRECTION_SERIALIZATION ? 'SERIALIZE' : 'DESERIALIZE',
+                    'direction' => $direction === Direction::Serialization ? 'SERIALIZE' : 'DESERIALIZE',
                     'handler' => $this->getCallableName($callable),
                     'exception' => isset($e) ? $this->cloner->cloneVar($e) : null,
                 ];

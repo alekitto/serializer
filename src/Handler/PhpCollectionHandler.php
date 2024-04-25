@@ -30,13 +30,13 @@ class PhpCollectionHandler implements SubscribingHandlerInterface
 
         foreach ($collectionTypes as $type => $shortName) {
             $methods[] = [
-                'direction' => Direction::DIRECTION_SERIALIZATION,
+                'direction' => Direction::Serialization,
                 'type' => $type,
                 'method' => 'serialize' . $shortName,
             ];
 
             $methods[] = [
-                'direction' => Direction::DIRECTION_DESERIALIZATION,
+                'direction' => Direction::Deserialization,
                 'type' => $type,
                 'method' => 'deserialize' . $shortName,
             ];
