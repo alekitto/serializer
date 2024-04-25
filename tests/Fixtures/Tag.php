@@ -4,18 +4,10 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Kcs;
 
-/**
- * @Kcs\Xml\Root("tag")
- * @Kcs\Xml\XmlNamespace(uri="http://purl.org/dc/elements/1.1/", prefix="dc")
- */
 #[Kcs\Xml\Root('tag')]
 #[Kcs\Xml\XmlNamespace(uri: 'http://purl.org/dc/elements/1.1/', prefix: 'dc')]
 class Tag
 {
-    /**
-     * @Kcs\Xml\Element(cdata=false)
-     * @Kcs\Type("string")
-     */
     #[Kcs\Xml\Element(cdata: false)]
     #[Kcs\Type('string')]
     public $name;

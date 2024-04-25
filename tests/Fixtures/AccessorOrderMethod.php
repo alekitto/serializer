@@ -3,27 +3,18 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessorOrder("custom",  custom = {"method", "b", "a"})
- * @Serializer\AccessType("property")
- */
-#[Serializer\AccessorOrder('custom', custom: ['method', 'b', 'a'])]
-#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
+#[Serializer\AccessorOrder(Access\Order::Custom, custom: ['method', 'b', 'a'])]
+#[Serializer\AccessType(Access\Type::Property)]
 class AccessorOrderMethod
 {
     private $b = 'b';
     private $a = 'a';
 
-    /**
-     * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("foo")
-     *
-     * @return string
-     */
-    #[Serializer\VirtualProperty()]
+    #[Serializer\VirtualProperty]
     #[Serializer\SerializedName('foo')]
-    public function getMethod()
+    public function getMethod(): string
     {
         return 'c';
     }

@@ -2,7 +2,6 @@
 
 namespace Kcs\Serializer\Tests\Serializer;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Metadata\Factory\MetadataFactoryInterface;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\EventDispatcher\PreSerializeEvent;
@@ -12,7 +11,7 @@ use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\SerializationContext;
@@ -120,9 +119,7 @@ class GraphNavigatorTest extends TestCase
         $this->dispatcher = new EventDispatcher();
         $this->handlerRegistry = new HandlerRegistry();
 
-        $loader = new AnnotationLoader();
-        $loader->setReader(new AnnotationReader());
-        $this->metadataFactory = new MetadataFactory($loader);
+        $this->metadataFactory = new MetadataFactory(new AttributesLoader());
         $this->navigator = new SerializeGraphNavigator($this->metadataFactory, $this->handlerRegistry, $this->dispatcher);
     }
 }

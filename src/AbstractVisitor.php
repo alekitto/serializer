@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer;
 
-use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Type\Type;
 
 abstract class AbstractVisitor implements VisitorInterface
 {
-    public function __construct(protected PropertyNamingStrategyInterface $namingStrategy)
+    public function __construct()
     {
         $this->setNavigator(null);
-    }
-
-    public function getNamingStrategy(): PropertyNamingStrategyInterface
-    {
-        return $this->namingStrategy;
     }
 
     public function prepare(mixed $data): mixed

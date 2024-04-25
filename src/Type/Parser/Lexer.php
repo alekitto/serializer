@@ -42,10 +42,7 @@ final class Lexer extends AbstractLexer
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getType(&$value): int
+    protected function getType(string &$value): int
     {
         $type = self::T_NONE;
 

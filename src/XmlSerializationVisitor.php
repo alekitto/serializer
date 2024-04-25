@@ -168,7 +168,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         if ($metadata->xmlAttribute) {
             // Do not attach null namespace on null attributes
             $attachNull = $this->attachNullNamespace;
-            $attributeName = $this->namingStrategy->translateName($metadata);
+            $attributeName = $context->namingStrategy->translateName($metadata);
 
             $this->currentNodes = [$this->document->createElement('tmp')];
             $context->accept($v, $metadata->type);
@@ -205,7 +205,7 @@ class XmlSerializationVisitor extends AbstractVisitor
             return $this->currentNodes = $attributes;
         }
 
-        $elementName = $this->namingStrategy->translateName($metadata);
+        $elementName = $context->namingStrategy->translateName($metadata);
         $this->currentNodes = [$this->createElement($metadata->xmlNamespace, $elementName)];
 
         $context->accept($v, $metadata->type);

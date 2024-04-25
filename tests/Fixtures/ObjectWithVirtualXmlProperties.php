@@ -11,45 +11,37 @@ use Kcs\Serializer\Annotation\Xml;
 
 class ObjectWithVirtualXmlProperties
 {
-    /**
-     * @VirtualProperty
-     * @SerializedName("foo")
-     * @Groups({"attributes"})
-     * @Xml\Attribute
-     */
+    #[VirtualProperty]
+    #[SerializedName("foo")]
+    #[Groups(['attributes'])]
+    #[Xml\Attribute]
     public function getVirualXmlAttributeValue()
     {
         return 'bar';
     }
 
-    /**
-     * @VirtualProperty
-     * @SerializedName("xml-value")
-     * @Groups({"values"})
-     * @Xml\Value
-     */
+    #[VirtualProperty]
+    #[SerializedName("xml-value")]
+    #[Groups(['values'])]
+    #[Xml\Value]
     public function getVirualXmlValue()
     {
         return 'xml-value';
     }
 
-    /**
-     * @VirtualProperty
-     * @SerializedName("list")
-     * @Groups({"list"})
-     * @Xml\XmlList(inline = true, entry = "val")
-     */
+    #[VirtualProperty]
+    #[SerializedName("list")]
+    #[Groups(['list'])]
+    #[Xml\XmlList(entry: 'val', inline: true)]
     public function getVirualXmlList()
     {
         return ['One', 'Two'];
     }
 
-    /**
-     * @VirtualProperty
-     * @SerializedName("map")
-     * @Groups({"map"})
-     * @Xml\Map(keyAttribute = "key")
-     */
+    #[VirtualProperty]
+    #[SerializedName("map")]
+    #[Groups(['map'])]
+    #[Xml\Map(keyAttribute: 'key')]
     public function getVirualXmlMap()
     {
         return [
@@ -58,23 +50,19 @@ class ObjectWithVirtualXmlProperties
         ];
     }
 
-    /**
-     * @VirtualProperty
-     * @SerializedName("low")
-     * @Groups({"versions"})
-     * @Until("8")
-     */
+    #[VirtualProperty]
+    #[SerializedName("low")]
+    #[Groups(['versions'])]
+    #[Until('8')]
     public function getVirualLowValue()
     {
         return 1;
     }
 
-    /**
-     * @VirtualProperty
-     * @SerializedName("hight")
-     * @Groups({"versions"})
-     * @Since("8")
-     */
+    #[VirtualProperty]
+    #[SerializedName("high")]
+    #[Groups(['versions'])]
+    #[Since('8')]
     public function getVirualHighValue()
     {
         return 8;

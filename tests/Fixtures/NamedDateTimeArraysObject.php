@@ -5,17 +5,16 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml\KeyValuePairs;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class NamedDateTimeArraysObject
 {
     /**
      * @var \DateTime[]
-     * @Type("array<string,DateTime<'d.m.Y H:i:s'>>")
-     * @KeyValuePairs
      */
+    #[Type("array<string,DateTime<'d.m.Y H:i:s'>>")]
+    #[KeyValuePairs]
     private $namedArrayWithFormattedDate;
 
     public function __construct($namedArrayWithFormattedDate)

@@ -4,14 +4,11 @@ namespace Kcs\Serializer\Tests\Fixtures\Csv;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Csv;
+use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Tests\Fixtures\GroupsObject;
 
-/**
- * @Csv(delimiter=";")
- * @AccessType("property")
- */
 #[Csv(delimiter: ';')]
-#[AccessType(AccessType::PROPERTY)]
+#[AccessType(Access\Type::Property)]
 class DelimiterObject extends GroupsObject
 {
 }

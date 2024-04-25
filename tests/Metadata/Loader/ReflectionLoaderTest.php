@@ -2,9 +2,8 @@
 
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Tests\Fixtures\Entity_74_Proxy;
 use Kcs\Serializer\Tests\Fixtures\Entity_UnionType;
@@ -17,9 +16,7 @@ class ReflectionLoaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $loader = new AnnotationLoader();
-        $loader->setReader(new AnnotationReader());
-        $this->loader = new ReflectionLoader($loader);
+        $this->loader = new ReflectionLoader(new AttributesLoader());
     }
 
     public function testShouldLoadTypesFromTypedProperties(): void

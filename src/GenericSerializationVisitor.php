@@ -9,6 +9,7 @@ use BackedEnum;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\Exclusion\Behavior;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use ReflectionEnum;
@@ -137,7 +138,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
             assert($propertyMetadata instanceof PropertyMetadata);
             $excluded = $context->isPropertyExcluded($propertyMetadata);
-            if ($excluded && $propertyMetadata->onExclude === PropertyMetadata::ON_EXCLUDE_SKIP) {
+            if ($excluded && $propertyMetadata->onExclude === Behavior::Skip) {
                 continue;
             }
 
@@ -200,7 +201,7 @@ class GenericSerializationVisitor extends AbstractVisitor
             return null;
         }
 
-        $k = $this->namingStrategy->translateName($metadata);
+        $k = $context->namingStrategy->translateName($metadata);
 
         if ($metadata->inline) {
             if (is_array($v)) {

@@ -4,10 +4,9 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class Entity_74_Proxy extends Entity_74
 {
     public string $notUnset;
@@ -23,9 +22,7 @@ class Entity_74_Proxy extends Entity_74
         return 42;
     }
 
-    /**
-     * @VirtualProperty()
-     */
+    #[VirtualProperty]
     public function getVirtualProperty(): string
     {
         return '';

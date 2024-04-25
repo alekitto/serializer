@@ -3,8 +3,10 @@
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
 use Kcs\Metadata\Loader\LoaderInterface;
+use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\Exclusion\Behavior;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
@@ -51,21 +53,21 @@ abstract class BaseLoaderTest extends TestCase
         $p->type = Type::from('string');
         $p->groups = ['comments', 'post'];
         $p->xmlElementCData = false;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('id'));
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
         $p->groups = ['comments', 'post'];
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $p->onExclude = PropertyMetadata::ON_EXCLUDE_SKIP;
+        $p->accessorType = Access\Type::Property;
+        $p->onExclude = Behavior::Skip;
         self::assertEquals($p, $m->getAttributeMetadata('title'));
 
         $p = new PropertyMetadata($m->getName(), 'createdAt');
         $p->type = Type::from('DateTime');
         $p->xmlAttribute = true;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('createdAt'));
 
         $p = new PropertyMetadata($m->getName(), 'published');
@@ -73,7 +75,7 @@ abstract class BaseLoaderTest extends TestCase
         $p->serializedName = 'is_published';
         $p->xmlAttribute = true;
         $p->groups = ['post'];
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('published'));
 
         $p = new PropertyMetadata($m->getName(), 'etag');
@@ -81,7 +83,7 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlAttribute = true;
         $p->groups = ['post'];
         $p->xmlNamespace = 'http://schemas.google.com/g/2005';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('etag'));
 
         $p = new PropertyMetadata($m->getName(), 'comments');
@@ -90,14 +92,14 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlCollectionInline = true;
         $p->xmlEntryName = 'comment';
         $p->groups = ['comments'];
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('comments'));
 
         $p = new PropertyMetadata($m->getName(), 'author');
         $p->type = Type::from(Author::class);
         $p->groups = ['post'];
         $p->xmlNamespace = 'http://www.w3.org/2005/Atom';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('author'));
 
         $m = new ClassMetadata(new \ReflectionClass(Price::class));
@@ -107,7 +109,7 @@ abstract class BaseLoaderTest extends TestCase
         $p = new PropertyMetadata($m->getName(), 'price');
         $p->type = Type::from('double');
         $p->xmlValue = true;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('price'));
     }
 
@@ -247,34 +249,34 @@ abstract class BaseLoaderTest extends TestCase
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('title'));
 
         $p = new PropertyMetadata($m->getName(), 'createdAt');
         $p->type = Type::from('DateTime');
         $p->xmlAttribute = true;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('createdAt'));
 
         $p = new PropertyMetadata($m->getName(), 'etag');
         $p->type = Type::from('string');
         $p->xmlAttribute = true;
         $p->xmlNamespace = 'http://schemas.google.com/g/2005';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('etag'));
 
         $p = new PropertyMetadata($m->getName(), 'author');
         $p->type = Type::from('string');
         $p->xmlAttribute = false;
         $p->xmlNamespace = 'http://www.w3.org/2005/Atom';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('author'));
 
         $p = new PropertyMetadata($m->getName(), 'language');
         $p->type = Type::from('string');
         $p->xmlAttribute = true;
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('language'));
     }
 
@@ -314,19 +316,19 @@ abstract class BaseLoaderTest extends TestCase
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://old.foo.example.org';
         $p->xmlAttribute = true;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('foo'));
 
         $p = new PropertyMetadata($m->getName(), 'bar');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('bar'));
 
         $p = new PropertyMetadata($m->getName(), 'moo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://new.foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('moo'));
 
         $subm = new ClassMetadata(new \ReflectionClass(SimpleSubClassObject::class));
@@ -343,19 +345,19 @@ abstract class BaseLoaderTest extends TestCase
         $p = new PropertyMetadata($subm->getName(), 'moo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://better.foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('moo'));
 
         $p = new PropertyMetadata($subm->getName(), 'baz');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('baz'));
 
         $p = new PropertyMetadata($subm->getName(), 'qux');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://new.foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('qux'));
 
         $subm->merge($m);
@@ -372,19 +374,19 @@ abstract class BaseLoaderTest extends TestCase
         $p = new PropertyMetadata($subm->getName(), 'moo');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://better.foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('moo'));
 
         $p = new PropertyMetadata($subm->getName(), 'baz');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('baz'));
 
         $p = new PropertyMetadata($subm->getName(), 'qux');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://new.foo.example.org';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('qux'));
 
         if (\defined('HHVM_VERSION')) {
@@ -398,14 +400,14 @@ abstract class BaseLoaderTest extends TestCase
         $p->xmlNamespace = 'http://old.foo.example.org';
         $p->xmlAttribute = true;
         $p->class = SimpleClassObject::class;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('foo'));
 
         $p = new PropertyMetadata($subm->getName(), 'bar');
         $p->type = Type::from('string');
         $p->xmlNamespace = 'http://foo.example.org';
         $p->class = SimpleClassObject::class;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $subm->getAttributeMetadata('bar'));
     }
 

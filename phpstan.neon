@@ -11,6 +11,3 @@ parameters:
         - stubs/LegacyTranslatorInterface.stub
         - stubs/LocaleAwareInterface.stub
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        - message: "#Offset '.*' does not exist on array.+#"
-          path: src/Annotation/*

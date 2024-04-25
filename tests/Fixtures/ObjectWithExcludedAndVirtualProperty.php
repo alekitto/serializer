@@ -10,19 +10,17 @@ class ObjectWithExcludedAndVirtualProperty
 {
     /**
      * @var int
-     *
-     * @Exclude()
      */
+    #[Exclude]
     private $foo = 1;
 
     /**
      * NOTE: This method should NOT have a return type defined.
      *
-     * @VirtualProperty()
-     * @SerializedName("foo")
-     *
      * @return string
      */
+    #[VirtualProperty]
+    #[SerializedName('foo')]
     public function getFoo()
     {
         return 'this is a foo string';

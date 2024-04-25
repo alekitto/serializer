@@ -5,39 +5,28 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Xml\Root("test-object", namespace="http://example.com/namespace")
- * @AccessType("property")
- */
+#[Xml\Root('test-object', namespace: 'http://example.com/namespace')]
+#[AccessType(Access\Type::Property)]
 class ObjectWithXmlRootNamespace
 {
-    /**
-     * @Type("string")
-     */
+    #[Type("string")]
     private $title;
 
-    /**
-     * @Type("DateTime")
-     * @Xml\Attribute
-     */
+    #[Type("DateTime")]
+    #[Xml\Attribute]
     private $createdAt;
 
-    /**
-     * @Type("string")
-     * @Xml\Attribute
-     */
+    #[Type("string")]
+    #[Xml\Attribute]
     private $etag;
 
-    /**
-     * @Type("string")
-     */
+    #[Type("string")]
     private $author;
 
-    /**
-     * @Type("string")
-     * @Xml\Attribute
-     */
+    #[Type("string")]
+    #[Xml\Attribute]
     private $language;
 
     public function __construct($title, $author, \DateTime $createdAt, $language)

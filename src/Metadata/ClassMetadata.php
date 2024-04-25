@@ -6,7 +6,6 @@ namespace Kcs\Serializer\Metadata;
 
 use Kcs\Metadata\ClassMetadata as BaseClassMetadata;
 use Kcs\Metadata\MetadataInterface;
-use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Exception\InvalidArgumentException;
 use LogicException;
 
@@ -16,7 +15,6 @@ use function array_merge;
 use function array_search;
 use function assert;
 use function implode;
-use function in_array;
 use function is_array;
 use function is_string;
 use function ksort;
@@ -29,12 +27,8 @@ use function var_export;
  */
 class ClassMetadata extends BaseClassMetadata
 {
-    public const ACCESSOR_ORDER_UNDEFINED = 'undefined';
-    public const ACCESSOR_ORDER_ALPHABETICAL = 'alphabetical';
-    public const ACCESSOR_ORDER_CUSTOM = 'custom';
-
-    public string $exclusionPolicy = ExclusionPolicy::NONE;
-    public string $defaultAccessType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
+    public Exclusion\Policy $exclusionPolicy = Exclusion\Policy::None;
+    public Access\Type $defaultAccessType = Access\Type::PublicMethod;
     public bool $immutable = false;
     public string|null $xmlRootName = null;
     public string|null $xmlRootNamespace = null;
@@ -46,7 +40,7 @@ class ClassMetadata extends BaseClassMetadata
     public string $csvKeySeparator = '.';
     public bool $csvNoHeaders = false;
     public bool $csvOutputBom = false;
-    public string|null $accessorOrder = null;
+    public Access\Order $accessorOrder = Access\Order::Undefined;
     public bool $discriminatorDisabled = false;
     public string|null $discriminatorBaseClass = null;
     public string|null $discriminatorFieldName = null;
@@ -91,12 +85,8 @@ class ClassMetadata extends BaseClassMetadata
      *
      * @throws InvalidArgumentException When the accessor order is not valid or when the custom order is not valid.
      */
-    public function setAccessorOrder(string $order, array $customOrder = []): void
+    public function setAccessorOrder(Access\Order $order, array $customOrder = []): void
     {
-        if (! in_array($order, [self::ACCESSOR_ORDER_UNDEFINED, self::ACCESSOR_ORDER_ALPHABETICAL, self::ACCESSOR_ORDER_CUSTOM], true)) {
-            throw new InvalidArgumentException(sprintf('The accessor order "%s" is invalid.', $order));
-        }
-
         foreach ($customOrder as $name) {
             if (! is_string($name)) {
                 throw new InvalidArgumentException(sprintf('$customOrder is expected to be a list of strings, but got element of value %s.', var_export($name, true)));
@@ -115,33 +105,32 @@ class ClassMetadata extends BaseClassMetadata
         $this->sortProperties();
     }
 
-    public function merge(MetadataInterface $object): void
+    public function merge(MetadataInterface $metadata): void
     {
-        if (! $object instanceof self) {
+        if (! $metadata instanceof self) {
             throw new InvalidArgumentException('$object must be an instance of ClassMetadata.');
         }
 
-        parent::merge($object);
+        parent::merge($metadata);
 
-        $this->xmlRootName = $this->xmlRootName ?: $object->xmlRootName;
-        $this->xmlRootNamespace = $this->xmlRootNamespace ?: $object->xmlRootNamespace;
-        $this->xmlNamespaces = array_merge($object->xmlNamespaces, $this->xmlNamespaces);
+        $this->xmlRootName = $this->xmlRootName ?: $metadata->xmlRootName;
+        $this->xmlRootNamespace = $this->xmlRootNamespace ?: $metadata->xmlRootNamespace;
+        $this->xmlNamespaces = array_merge($metadata->xmlNamespaces, $this->xmlNamespaces);
 
         // Handler methods are not inherited
-
-        if (! $this->accessorOrder && $object->accessorOrder) {
-            $this->accessorOrder = $object->accessorOrder;
-            $this->customOrder = $object->customOrder;
+        if ($this->accessorOrder === Access\Order::Undefined && $metadata->accessorOrder !== Access\Order::Undefined) {
+            $this->accessorOrder = $metadata->accessorOrder;
+            $this->customOrder = $metadata->customOrder;
         }
 
         if (
-            $this->discriminatorFieldName && $object->discriminatorFieldName &&
-            $this->discriminatorFieldName !== $object->discriminatorFieldName
+            $this->discriminatorFieldName && $metadata->discriminatorFieldName &&
+            $this->discriminatorFieldName !== $metadata->discriminatorFieldName
         ) {
-            throw new LogicException(sprintf('The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.', $this->getName(), $object->discriminatorBaseClass, $object->discriminatorBaseClass));
+            throw new LogicException(sprintf('The discriminator of class "%s" would overwrite the discriminator of the parent class "%s". Please define all possible sub-classes in the discriminator of %s.', $this->getName(), $metadata->discriminatorBaseClass, $metadata->discriminatorBaseClass));
         }
 
-        $this->mergeDiscriminatorMap($object);
+        $this->mergeDiscriminatorMap($metadata);
         $this->sortProperties();
     }
 
@@ -184,11 +173,15 @@ class ClassMetadata extends BaseClassMetadata
     private function sortProperties(): void
     {
         switch ($this->accessorOrder) {
-            case self::ACCESSOR_ORDER_ALPHABETICAL:
+            case Access\Order::Undefined:
+                // no-op
+                break;
+
+            case Access\Order::Alphabetical:
                 ksort($this->attributesMetadata);
                 break;
 
-            case self::ACCESSOR_ORDER_CUSTOM:
+            case Access\Order::Custom:
                 $order = $this->customOrder;
                 $sorting = array_flip(array_keys($this->attributesMetadata));
                 uksort($this->attributesMetadata, static function ($a, $b) use ($order, $sorting): int {

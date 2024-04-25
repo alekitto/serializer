@@ -8,20 +8,16 @@ use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml\Root;
 
-/** @Root("author") */
+#[Root("author")]
 class AuthorReadOnly
 {
-    /**
-     * @Immutable
-     * @SerializedName("id")
-     */
+    #[Immutable]
+    #[SerializedName("id")]
     private $id;
 
-    /**
-     * @Type("string")
-     * @SerializedName("full_name")
-     * @Accessor("getName")
-     */
+    #[Type('string')]
+    #[SerializedName("full_name")]
+    #[Accessor('getName')]
     private $name;
 
     public function __construct($id, $name)

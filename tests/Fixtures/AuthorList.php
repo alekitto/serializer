@@ -3,20 +3,19 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 use Traversable;
 
 /**
  * An array-acting object that holds many author instances.
- *
- * @Serializer\AccessType("property")
  */
+#[Serializer\AccessType(Access\Type::Property)]
 class AuthorList implements \IteratorAggregate, \Countable, \ArrayAccess
 {
     /**
-     * @Serializer\Type("array<Kcs\Serializer\Tests\Fixtures\Author>")
-     *
      * @var array
      */
+    #[Serializer\Type('array<' . Author::class . '>')]
     protected $authors = [];
 
     /**

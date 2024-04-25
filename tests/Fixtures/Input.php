@@ -3,16 +3,13 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access\Type;
 
-/**
- * @Serializer\Xml\Root("input")
- * @Serializer\AccessType("property")
- */
+#[Serializer\Xml\Root("input")]
+#[Serializer\AccessType(Type::Property)]
 class Input
 {
-    /**
-     * @Serializer\Xml\AttributeMap
-     */
+    #[Serializer\Xml\AttributeMap]
     private $attributes;
 
     public function __construct($attributes = null)

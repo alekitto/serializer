@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures\Doctrine;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\SerializedName;
@@ -11,66 +12,43 @@ use Kcs\Serializer\Annotation\Xml\Attribute;
 use Kcs\Serializer\Annotation\Xml\Root;
 use Kcs\Serializer\Annotation\Xml\XmlList;
 
-/**
- * @ORM\Entity
- * @Root("blog-post")
- */
+#[ORM\Entity]
 #[Root('blog-post')]
 class BlogPost
 {
-    /**
-     * @ORM\Id @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
     protected $id;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Groups({"comments","post"})
-     */
+    #[ORM\Column(type: Types::STRING)]
     #[Groups(['comments', 'post'])]
     private $title;
 
-    /**
-     * @ORM\Column(type="some_custom_type")
-     */
+    #[ORM\Column(type: 'some_custom_type')]
     protected $slug;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Attribute
-     */
-    #[Attribute()]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Attribute]
     private $createdAt;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Type("integer")
      * This boolean to integer conversion is one of the few changes between this
      * and the standard BlogPost class. It's used to test the override behavior
      * of the DoctrineTypeDriver so notice it, but please don't change it.
-     *
-     * @SerializedName("is_published")
-     * @Groups({"post"})
-     * @Attribute
      */
+    #[ORM\Column(type: Types::BOOLEAN)]
+    #[Type('integer')]
     #[SerializedName('is_published')]
     #[Groups(['post'])]
-    #[Attribute()]
+    #[Attribute]
     private $published;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Comment", mappedBy="blogPost")
-     * @XmlList(inline=true, entry="comment")
-     * @Groups({"comments"})
-     */
-    #[XmlList(inline: true, entry: 'comment')]
+    #[ORM\OneToMany(mappedBy: 'blogPost', targetEntity: Comment::class)]
+    #[XmlList(entry: 'comment', inline: true)]
     #[Groups(['comments'])]
     private $comments;
 
-    /**
-     * @ORM\OneToOne(targetEntity="Author")
-     * @Groups({"post"})
-     */
+    #[ORM\OneToOne(targetEntity: Author::class)]
     #[Groups(['post'])]
     private $author;
 

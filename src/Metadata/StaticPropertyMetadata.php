@@ -10,18 +10,13 @@ use function array_merge;
 
 class StaticPropertyMetadata extends PropertyMetadata
 {
-    private mixed $value;
-
     /**
      * {@inheritDoc}
-     *
-     * @param mixed $fieldValue
      */
-    public function __construct(string $class, string $fieldName, $fieldValue)
+    public function __construct(string $class, string $fieldName, private mixed $value)
     {
         $this->class = $class;
         $this->name = $fieldName;
-        $this->value = $fieldValue;
         $this->immutable = true;
     }
 
@@ -35,7 +30,7 @@ class StaticPropertyMetadata extends PropertyMetadata
         throw new LogicException('StaticPropertyMetadata is immutable.');
     }
 
-    public function setAccessor(string $type, string|null $getter = null, string|null $setter = null): void
+    public function setAccessor(Access\Type $type, string|null $getter = null, string|null $setter = null): void
     {
     }
 

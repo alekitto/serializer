@@ -3,16 +3,17 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessType("property")
- */
+#[Serializer\AccessType(Access\Type::Property)]
 class ObjectWithIntListAndIntMap
 {
-    /** @Serializer\Type("array<integer>") @Serializer\Xml\XmlList */
+    #[Serializer\Type('array<integer>')]
+    #[Serializer\Xml\XmlList]
     private $list;
 
-    /** @Serializer\Type("array<integer,integer>") @Serializer\Xml\Map */
+    #[Serializer\Type('array<integer, integer>')]
+    #[Serializer\Xml\Map]
     private $map;
 
     public function __construct(array $list, array $map)

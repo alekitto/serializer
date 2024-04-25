@@ -13,23 +13,19 @@ use Kcs\Serializer\Annotation\VirtualProperty;
  */
 class ObjectWithVersionedVirtualProperties
 {
-    /**
-     * @Groups({"versions"})
-     * @VirtualProperty
-     * @SerializedName("low")
-     * @Until("8")
-     */
+    #[VirtualProperty]
+    #[SerializedName("low")]
+    #[Groups(['versions'])]
+    #[Until('8')]
     public function getVirualLowValue()
     {
         return 1;
     }
 
-    /**
-     * @Groups({"versions"})
-     * @VirtualProperty
-     * @SerializedName("high")
-     * @Since("6")
-     */
+    #[VirtualProperty]
+    #[SerializedName("high")]
+    #[Groups(['versions'])]
+    #[Since('6')]
     public function getVirualHighValue()
     {
         return 8;

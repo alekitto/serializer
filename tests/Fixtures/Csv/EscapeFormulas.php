@@ -5,22 +5,15 @@ namespace Kcs\Serializer\Tests\Fixtures\Csv;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Csv;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Csv(escapeFormulas=true)
- * @AccessType("property")
- */
 #[Csv(escapeFormulas: true)]
-#[AccessType(AccessType::PROPERTY)]
+#[AccessType(Access\Type::Property)]
 class EscapeFormulas
 {
-    /**
-     * @Type("string")
-     */
-    private $formula;
-
-    public function __construct(string $formula)
-    {
-        $this->formula = $formula;
+    public function __construct(
+        #[Type('string')]
+        private string $formula,
+    ) {
     }
 }

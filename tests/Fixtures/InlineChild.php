@@ -4,19 +4,14 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessType("property")
- */
+#[Serializer\AccessType(Access\Type::Property)]
 class InlineChild
 {
-    /**
-     * @Type("string")
-     */
+    #[Type('string')]
     private $a = 'a';
 
-    /**
-     * @Type("string")
-     */
+    #[Type('string')]
     private $b = 'b';
 }

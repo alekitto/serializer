@@ -9,6 +9,9 @@ use Kcs\Serializer\Construction\ObjectConstructorInterface;
 use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\UnsupportedFormatException;
 use Kcs\Serializer\Handler\HandlerRegistryInterface;
+use Kcs\Serializer\Naming\IdenticalPropertyNamingStrategy;
+use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use Kcs\Serializer\Type\Type;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
@@ -19,19 +22,22 @@ use function sprintf;
 class Serializer implements SerializerInterface
 {
     private GraphNavigator $navigator;
+    private readonly PropertyNamingStrategyInterface $defaultNamingStrategy;
 
     /**
      * @param VisitorInterface[] $serializationVisitors
      * @param VisitorInterface[] $deserializationVisitors
      */
     public function __construct(
-        private MetadataFactoryInterface $factory,
-        private HandlerRegistryInterface $handlerRegistry,
-        private ObjectConstructorInterface $objectConstructor,
-        private array $serializationVisitors,
-        private array $deserializationVisitors,
-        private EventDispatcherInterface|null $dispatcher = null,
+        private readonly MetadataFactoryInterface $factory,
+        private readonly HandlerRegistryInterface $handlerRegistry,
+        private readonly ObjectConstructorInterface $objectConstructor,
+        private readonly array $serializationVisitors,
+        private readonly array $deserializationVisitors,
+        private readonly EventDispatcherInterface|null $dispatcher = null,
+        PropertyNamingStrategyInterface|null $defaultNamingStrategy = null,
     ) {
+        $this->defaultNamingStrategy = $defaultNamingStrategy ?? new SerializedNameAttributeStrategy(new IdenticalPropertyNamingStrategy());
     }
 
     public function serialize(mixed $data, string $format, SerializationContext|null $context = null, Type|null $type = null): mixed
@@ -41,6 +47,8 @@ class Serializer implements SerializerInterface
         if ($context === null) {
             $context = new SerializationContext();
         }
+
+        $context->namingStrategy ??= $this->defaultNamingStrategy;
 
         if (! isset($this->serializationVisitors[$format])) {
             throw new UnsupportedFormatException(sprintf('The format "%s" is not supported for serialization', $format));
@@ -56,6 +64,8 @@ class Serializer implements SerializerInterface
         if ($context === null) {
             $context = new DeserializationContext();
         }
+
+        $context->namingStrategy ??= $this->defaultNamingStrategy;
 
         if (! isset($this->deserializationVisitors[$format])) {
             throw new UnsupportedFormatException(sprintf('The format "%s" is not supported for deserialization', $format));

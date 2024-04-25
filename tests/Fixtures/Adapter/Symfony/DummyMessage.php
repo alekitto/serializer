@@ -2,26 +2,19 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\Adapter\Symfony;
 
-use Kcs\Serializer\Annotation\AccessType;
-use Kcs\Serializer\Annotation\Groups;
-use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access\Type;
 
-/**
- * @AccessType("property")
- */
+
+#[Serializer\AccessType(Type::Property)]
 class DummyMessage implements DummyMessageInterface
 {
-    /**
-     * @var string
-     *
-     * @Type("string")
-     * @Groups({"foo"})
-     */
-    private $message;
-
-    public function __construct(string $message)
-    {
-        $this->message = $message;
+    public function __construct(
+        /** @var string */
+        #[Serializer\Type('string')]
+        #[Serializer\Groups(['foo'])]
+        private readonly string $message,
+    ) {
     }
 
     public function getMessage(): string

@@ -6,15 +6,14 @@ use Kcs\Serializer\Annotation\Accessor;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Immutable;
 use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Metadata\Access;
 
-/** @Xml\Root("post") */
+#[Xml\Root('post')]
 class IndexedCommentsBlogPost
 {
-    /**
-     * @Xml\Map(keyAttribute="author-name", inline=true, entry="comments")
-     * @Accessor(getter="getCommentsIndexedByAuthor")
-     * @Immutable()
-     */
+    #[Xml\Map(entry: 'comments', inline: true, keyAttribute: 'author-name')]
+    #[Accessor(getter: 'getCommentsIndexedByAuthor')]
+    #[Immutable]
     private $comments = [];
 
     public function __construct()
@@ -41,15 +40,13 @@ class IndexedCommentsBlogPost
     }
 }
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class IndexedCommentsList
 {
-    /** @Xml\XmlList(inline=true, entry="comment") */
+    #[Xml\XmlList(entry: 'comment', inline: true)]
     private $comments = [];
 
-    /** @Xml\Attribute */
+    #[Xml\Attribute]
     private $count = 0;
 
     public function addComment(Comment $comment)

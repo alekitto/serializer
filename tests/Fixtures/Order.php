@@ -5,14 +5,14 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml\Root;
+use Kcs\Serializer\Metadata\Access;
+use Kcs\Serializer\Tests\Fixtures\Price;
 
-/**
- * @Root("order")
- * @AccessType("property")
- */
+#[Root('order')]
+#[AccessType(Access\Type::Property)]
 class Order
 {
-    /** @Type("Kcs\Serializer\Tests\Fixtures\Price") */
+    #[Type(Price::class)]
     private $cost;
 
     public function __construct(Price $price = null)

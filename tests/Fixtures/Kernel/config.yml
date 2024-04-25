@@ -11,7 +11,10 @@ kcs_serializer:
     naming_strategy: underscore
 
 services:
-    Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController: ~
+    Kcs\Serializer\Tests\Fixtures\Kernel\Controller\TestController:
+        calls:
+            - ['setContainer', ['@service_container']]
+        public: true
 
     test_handler:
         class: Kcs\Serializer\Tests\Fixtures\Kernel\Handler\TestHandler

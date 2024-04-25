@@ -61,9 +61,9 @@
         <service alias="kcs_serializer.handler_registry" id="Kcs\Serializer\Handler\HandlerRegistryInterface" public="true" />
 
         <service class="Kcs\Serializer\Naming\CacheNamingStrategy" id="kcs_serializer.naming.cache_strategy">
-            <argument type="service" id="kcs_serializer.naming.serialized_name_annotation_strategy" />
+            <argument type="service" id="kcs_serializer.naming.serialized_name_attribute_strategy" />
         </service>
-        <service class="Kcs\Serializer\Naming\SerializedNameAnnotationStrategy" id="kcs_serializer.naming.serialized_name_annotation_strategy">
+        <service class="Kcs\Serializer\Naming\SerializedNameAttributeStrategy" id="kcs_serializer.naming.serialized_name_attribute_strategy">
             <argument type="service" id="kcs_serializer.naming_strategy" />
         </service>
 

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Kcs\Serializer;
 
 use Closure;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Reader;
 use Kcs\Metadata\Loader\LoaderInterface;
 use Kcs\Serializer\Construction\InitializedObjectConstructor;
 use Kcs\Serializer\Construction\ObjectConstructorInterface;
@@ -20,18 +18,15 @@ use Kcs\Serializer\Handler\FormErrorHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
 use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\UuidInterfaceHandler;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
-use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
-
-use function class_exists;
 
 /**
  * Builder for serializer instances.
@@ -55,7 +50,6 @@ class SerializerBuilder
 
     private PropertyNamingStrategyInterface $propertyNamingStrategy;
     private CacheItemPoolInterface|null $cache = null;
-    private Reader|null $annotationReader = null;
     private LoaderInterface|null $metadataLoader = null;
 
     public static function create(): self
@@ -68,13 +62,6 @@ class SerializerBuilder
         $this->handlerRegistry = new HandlerRegistry();
         $this->serializationVisitors = [];
         $this->deserializationVisitors = [];
-    }
-
-    public function setAnnotationReader(Reader $reader): self
-    {
-        $this->annotationReader = $reader;
-
-        return $this;
     }
 
     public function setCache(CacheItemPoolInterface|null $cache = null): self
@@ -171,11 +158,11 @@ class SerializerBuilder
         $this->initializePropertyNamingStrategy();
 
         $this->serializationVisitors = [
-            'array' => new GenericSerializationVisitor($this->propertyNamingStrategy),
-            'xml' => new XmlSerializationVisitor($this->propertyNamingStrategy),
-            'yml' => new YamlSerializationVisitor($this->propertyNamingStrategy),
-            'json' => new JsonSerializationVisitor($this->propertyNamingStrategy),
-            'csv' => new CsvSerializationVisitor($this->propertyNamingStrategy),
+            'array' => new GenericSerializationVisitor(),
+            'xml' => new XmlSerializationVisitor(),
+            'yml' => new YamlSerializationVisitor(),
+            'json' => new JsonSerializationVisitor(),
+            'csv' => new CsvSerializationVisitor(),
         ];
 
         return $this;
@@ -186,10 +173,10 @@ class SerializerBuilder
         $this->initializePropertyNamingStrategy();
 
         $this->deserializationVisitors = [
-            'array' => new GenericDeserializationVisitor($this->propertyNamingStrategy),
-            'xml' => new XmlDeserializationVisitor($this->propertyNamingStrategy),
-            'yml' => new YamlDeserializationVisitor($this->propertyNamingStrategy),
-            'json' => new JsonDeserializationVisitor($this->propertyNamingStrategy),
+            'array' => new GenericDeserializationVisitor(),
+            'xml' => new XmlDeserializationVisitor(),
+            'yml' => new YamlDeserializationVisitor(),
+            'json' => new JsonDeserializationVisitor(),
         ];
 
         return $this;
@@ -197,14 +184,11 @@ class SerializerBuilder
 
     public function build(): SerializerInterface
     {
+        $this->initializePropertyNamingStrategy();
+
         $metadataLoader = $this->metadataLoader;
         if ($metadataLoader === null) {
-            if (class_exists(AnnotationReader::class)) {
-                $metadataLoader = new AnnotationLoader();
-                $metadataLoader->setReader($this->annotationReader ?? new AnnotationReader());
-            }
-
-            $metadataLoader = new AttributesLoader($metadataLoader);
+            $metadataLoader = new AttributesLoader();
         }
 
         $metadataLoader = new ReflectionLoader($metadataLoader);
@@ -230,6 +214,7 @@ class SerializerBuilder
             $this->serializationVisitors,
             $this->deserializationVisitors,
             $this->eventDispatcher,
+            $this->propertyNamingStrategy,
         );
     }
 
@@ -239,6 +224,6 @@ class SerializerBuilder
             return;
         }
 
-        $this->propertyNamingStrategy = new SerializedNameAnnotationStrategy(new UnderscoreNamingStrategy());
+        $this->propertyNamingStrategy = new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
     }
 }

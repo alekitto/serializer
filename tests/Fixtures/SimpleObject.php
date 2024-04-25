@@ -5,22 +5,19 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class SimpleObject
 {
-    /** @Type("string") */
+    #[Type("string")]
     private $foo;
 
-    /**
-     * @SerializedName("moo")
-     * @Type("string")
-     */
+    #[SerializedName("moo")]
+    #[Type("string")]
     private $bar;
 
-    /** @Type("string") */
+    #[Type("string")]
     protected $camelCase = 'boo';
 
     public function __construct($foo, $bar)

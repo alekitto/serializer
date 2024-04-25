@@ -18,7 +18,9 @@ use SimpleXMLElement;
 use UnitEnum;
 
 use function array_key_exists;
+use function assert;
 use function in_array;
+use function is_string;
 use function libxml_use_internal_errors;
 use function reset;
 use function Safe\libxml_get_last_error;
@@ -158,7 +160,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
-        $name = $this->namingStrategy->translateName($metadata);
+        $name = $context->namingStrategy->translateName($metadata);
 
         if ($metadata->type === null) {
             throw new RuntimeException(sprintf('You must define a type for %s::$%s.', $metadata->getReflection()->class, $metadata->name));
@@ -249,7 +251,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
     public function visitEnum(mixed $data, Type $type, Context $context): UnitEnum|null
     {
-        $reflection = new ReflectionEnum($type->metadata->getName());
+        $reflection = new ReflectionEnum($type->metadata->getName()); // @phpstan-ignore-line
         $data = (string) $data;
 
         $backingType = $reflection->getBackingType();
@@ -337,6 +339,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $internalSubset = str_replace(["\n", "\r"], '', $internalSubset);
         $internalSubset = preg_replace('/\s{2,}/', ' ', $internalSubset);
         $internalSubset = str_replace(['[ <!', '> ]>'], ['[<!', '>]>'], $internalSubset);
+        assert(is_string($internalSubset));
 
         return $internalSubset;
     }

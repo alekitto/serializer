@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Metadata;
 
 use Kcs\Serializer\Exception\RuntimeException;
+use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Tests\Fixtures\Entity_74;
@@ -32,7 +33,7 @@ class ClassMetadataTest extends TestCase
         $metadata->addAttributeMetadata(new PropertyMetadata(PropertyMetadataOrder::class, 'a'));
         self::assertEquals(['b', 'a'], \array_keys($metadata->getAttributesMetadata()));
 
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_CUSTOM, $order);
+        $metadata->setAccessorOrder(Access\Order::Custom, $order);
         self::assertEquals($expected, \array_keys($metadata->getAttributesMetadata()));
     }
 
@@ -44,7 +45,7 @@ class ClassMetadataTest extends TestCase
 
         self::assertEquals(['b', 'a'], \array_keys($metadata->getAttributesMetadata()));
 
-        $metadata->setAccessorOrder(ClassMetadata::ACCESSOR_ORDER_ALPHABETICAL);
+        $metadata->setAccessorOrder(Access\Order::Alphabetical);
         self::assertEquals(['a', 'b'], \array_keys($metadata->getAttributesMetadata()));
     }
 
@@ -56,7 +57,7 @@ class ClassMetadataTest extends TestCase
         $object = new PropertyMetadataPublicMethod();
 
         $metadata = new PropertyMetadata(\get_class($object), $property);
-        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getterInit, $setterInit);
+        $metadata->setAccessor(Access\Type::PublicMethod, $getterInit, $setterInit);
 
         $metadata->setValue($object, 'x');
         self::assertEquals(\sprintf('%1$s:%1$s:x', \strtoupper($property)), $metadata->getValue($object));
@@ -74,7 +75,7 @@ class ClassMetadataTest extends TestCase
         $object = new PropertyMetadataPublicMethod();
 
         $metadata = new PropertyMetadata(\get_class($object), 'e');
-        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD, $getter, $setter);
+        $metadata->setAccessor(Access\Type::PublicMethod, $getter, $setter);
 
         if (null === $getter) {
             $metadata->getValue($object);
@@ -93,7 +94,7 @@ class ClassMetadataTest extends TestCase
         $object = new Entity_74();
 
         $metadata = new PropertyMetadata(\get_class($object), 'uninitialized');
-        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PROPERTY);
+        $metadata->setAccessor(Access\Type::Property);
 
         self::assertNull($metadata->getValue($object));
     }
@@ -106,12 +107,12 @@ class ClassMetadataTest extends TestCase
         $object = new Entity_74_Proxy();
 
         $metadata = new PropertyMetadata(\get_class($object), 'uninitialized');
-        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PROPERTY);
+        $metadata->setAccessor(Access\Type::Property);
 
         self::assertEquals(42, $metadata->getValue($object));
 
         $metadata = new PropertyMetadata(\get_class($object), 'notUnset');
-        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PROPERTY);
+        $metadata->setAccessor(Access\Type::Property);
 
         self::assertNull($metadata->getValue($object));
     }
@@ -122,7 +123,7 @@ class ClassMetadataTest extends TestCase
         $object->f = 'FOOBAR';
 
         $metadata = new PropertyMetadata(\get_class($object), 'f');
-        $metadata->setAccessor(PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD);
+        $metadata->setAccessor(Access\Type::PublicMethod);
 
         self::assertEquals('FOOBAR', $metadata->getValue($object));
 

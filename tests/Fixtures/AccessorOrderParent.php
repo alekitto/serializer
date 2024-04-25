@@ -3,11 +3,10 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessorOrder("alphabetical")
- * @Serializer\AccessType("property")
- */
+#[Serializer\AccessorOrder(Access\Order::Alphabetical)]
+#[Serializer\AccessType(Access\Type::Property)]
 class AccessorOrderParent
 {
     private $b = 'b';

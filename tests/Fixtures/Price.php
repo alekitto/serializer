@@ -6,19 +6,12 @@ use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml\Root;
 use Kcs\Serializer\Annotation\Xml\Value;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Root("price")
- * @AccessType("property")
- */
 #[Root('price')]
-#[AccessType(AccessType::PROPERTY)]
+#[AccessType(Access\Type::Property)]
 class Price
 {
-    /**
-     * @Type("double")
-     * @Value
-     */
     #[Type('double')]
     #[Value()]
     private $price;

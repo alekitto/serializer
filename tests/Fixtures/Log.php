@@ -6,24 +6,19 @@ use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\Xml;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Xml\Root("log")
- * @AccessType("property")
- */
+#[Xml\Root("log")]
+#[AccessType(Access\Type::Property)]
 class Log
 {
-    /**
-     * @SerializedName("author_list")
-     * @Xml\Map
-     * @Type("AuthorList")
-     */
+    #[SerializedName("author_list")]
+    #[Xml\Map]
+    #[Type("AuthorList")]
     private $authors;
 
-    /**
-     * @Xml\XmlList(inline=true, entry = "comment")
-     * @Type("array<Kcs\Serializer\Tests\Fixtures\Comment>")
-     */
+    #[Xml\XmlList(entry: "comment", inline: true)]
+    #[Type("array<".Comment::class.">")]
     private $comments;
 
     public function __construct()

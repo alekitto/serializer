@@ -19,12 +19,6 @@ use function ucfirst;
 
 class PropertyMetadata extends BasePropertyMetadata
 {
-    public const ACCESS_TYPE_PROPERTY = 'property';
-    public const ACCESS_TYPE_PUBLIC_METHOD = 'public_method';
-
-    public const ON_EXCLUDE_NULL = 'null';
-    public const ON_EXCLUDE_SKIP = 'skip';
-
     public string|null $sinceVersion = null;
     public string|null $untilVersion = null;
 
@@ -34,7 +28,7 @@ class PropertyMetadata extends BasePropertyMetadata
     /** @var string[] */
     public array $exclusionGroups = [];
 
-    public string $onExclude = self::ON_EXCLUDE_NULL;
+    public Exclusion\Behavior $onExclude = Exclusion\Behavior::Null;
     public string|null $serializedName = null;
     public Type|null $type = null;
     public bool $xmlCollection = false;
@@ -58,7 +52,7 @@ class PropertyMetadata extends BasePropertyMetadata
     public bool $immutable = false;
     public bool $xmlAttributeMap = false;
     public int|null $maxDepth = null;
-    public string $accessorType = self::ACCESS_TYPE_PUBLIC_METHOD;
+    public Access\Type $accessorType = Access\Type::PublicMethod;
 
     /**
      * {@inheritDoc}
@@ -77,7 +71,7 @@ class PropertyMetadata extends BasePropertyMetadata
         $this->getReflection()->setAccessible(true);
     }
 
-    public function setAccessor(string $type, string|null $getter = null, string|null $setter = null): void
+    public function setAccessor(Access\Type $type, string|null $getter = null, string|null $setter = null): void
     {
         $this->accessorType = $type;
         $this->getter = $getter;
@@ -86,7 +80,7 @@ class PropertyMetadata extends BasePropertyMetadata
 
     public function getValue(object $obj): mixed
     {
-        if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
+        if ($this->accessorType === Access\Type::Property) {
             $reflector = $this->getReflection();
             if ($reflector->hasType() && ! $reflector->isInitialized($obj)) {
                 // There is no way to check if a property has been unset or if it is uninitialized.
@@ -128,7 +122,7 @@ class PropertyMetadata extends BasePropertyMetadata
             return;
         }
 
-        if ($this->accessorType === self::ACCESS_TYPE_PROPERTY) {
+        if ($this->accessorType === Access\Type::Property) {
             $reflector = $this->getReflection();
             $reflector->setValue($obj, $value);
 

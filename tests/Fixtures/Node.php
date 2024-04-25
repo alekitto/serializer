@@ -3,16 +3,11 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessType("property")
- */
-#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
+#[Serializer\AccessType(Access\Type::Property)]
 class Node
 {
-    /**
-     * @Serializer\MaxDepth(2)
-     */
     #[Serializer\MaxDepth(2)]
     public $children;
 

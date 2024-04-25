@@ -1,23 +1,23 @@
 <?php declare(strict_types=1);
 
-namespace Kcs\Serializer\Tests\Fixture\Doctrine\SingleTableInheritance;
+namespace Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Teacher;
 
-/**
- * @ORM\Entity
- */
+#[ORM\Entity]
 class Clazz
 {
-    /** @ORM\Id @ORM\GeneratedValue(strategy = "AUTO") @ORM\Column(type = "integer") */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[ORM\Column(type: Types::INTEGER)]
     private $id;
 
-    /** @ORM\ManyToOne(targetEntity = "Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Teacher") */
+    #[ORM\ManyToOne(targetEntity: Teacher::class)]
     private $teacher;
 
-    /** @ORM\ManyToMany(targetEntity = "Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Student") */
+    #[ORM\ManyToMany(targetEntity: Student::class)]
     private $students;
 
     public function __construct(Teacher $teacher, array $students)

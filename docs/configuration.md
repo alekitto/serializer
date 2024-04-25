@@ -80,7 +80,6 @@ The other options available are listed here for reference.
 $builder = new \Kcs\Serializer\SerializerBuilder();
 
 $serializer = Kcs\Serializer\SerializerBuilder::create()
-    ->setAnnotationReader($reader)          // Override default annotation reader
     ->setMetadataLoader($metadataLoader)    // An implementation of \Kcs\Metadata\Loader\LoaderInterface that loads class metadata
     ->setObjectConstructor($constructor)    // To customize object construction process on deserialization
     ->setPropertyNamingStrategy($namingStrategy)    // By default "underscore" naming strategy is set. You can use one of builtin naming strategy or implement your own

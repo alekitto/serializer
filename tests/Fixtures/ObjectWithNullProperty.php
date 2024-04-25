@@ -3,10 +3,9 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class ObjectWithNullProperty extends SimpleObject
 {
     private $nullProperty = null;

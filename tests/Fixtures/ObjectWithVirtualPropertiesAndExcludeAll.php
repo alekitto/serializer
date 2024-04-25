@@ -4,17 +4,15 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Metadata\Exclusion;
 
 /**
  * @ExclusionPolicy("all")
  */
-#[ExclusionPolicy(ExclusionPolicy::ALL)]
+#[ExclusionPolicy(Exclusion\Policy::All)]
 class ObjectWithVirtualPropertiesAndExcludeAll
 {
-    /**
-     * @VirtualProperty
-     */
-    #[VirtualProperty()]
+    #[VirtualProperty]
     public function getVirtualValue()
     {
         return 'value';

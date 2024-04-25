@@ -5,19 +5,19 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Immutable;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/** @AccessType("public_method") */
+#[AccessType(Access\Type::PublicMethod)]
 class GetSetObject
 {
-    /** @AccessType("property") @Type("integer") */
+    #[AccessType(Access\Type::Property)]
+    #[Type('integer')]
     private $id = 1;
 
-    /** @Type("string") */
+    #[Type('string')]
     private $name = 'Foo';
 
-    /**
-     * @Immutable
-     */
+    #[Immutable]
     private $readOnlyProperty = 42;
 
     public function getId()

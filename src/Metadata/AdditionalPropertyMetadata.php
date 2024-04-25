@@ -30,7 +30,7 @@ class AdditionalPropertyMetadata extends PropertyMetadata
         throw new LogicException('AdditionalPropertyMetadata is immutable.');
     }
 
-    public function setAccessor(string $type, string|null $getter = null, string|null $setter = null): void
+    public function setAccessor(Access\Type $type, string|null $getter = null, string|null $setter = null): void
     {
     }
 

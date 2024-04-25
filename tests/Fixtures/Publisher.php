@@ -9,21 +9,11 @@ use Kcs\Serializer\Annotation\Xml\Element;
 use Kcs\Serializer\Annotation\Xml\XmlNamespace;
 use Kcs\Serializer\Annotation\Xml\Root;
 
-/**
- * @Root("publisher")
- * @XmlNamespace(uri="http://example.com/namespace2", prefix="ns2")
- * @Immutable()
- */
 #[Root('publisher')]
 #[XmlNamespace(uri: 'http://example.com/namespace2', prefix: 'ns2')]
 #[Immutable]
 class Publisher
 {
-    /**
-     * @Type("string")
-     * @Element(namespace="http://example.com/namespace2")
-     * @SerializedName("pub_name")
-     */
     #[Type('string')]
     #[Element(namespace: 'http://example.com/namespace2')]
     #[SerializedName('pub_name')]

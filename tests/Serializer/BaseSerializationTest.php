@@ -29,11 +29,10 @@ use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\JsonDeserializationVisitor;
 use Kcs\Serializer\JsonSerializationVisitor;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
 use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\ReflectionLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Serializer;
@@ -453,7 +452,7 @@ abstract class BaseSerializationTest extends TestCase
     public function testDeserializingNull(): void
     {
         $objectConstructor = new InitializedBlogPostConstructor();
-        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
+        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher, new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy()));
 
         $post = new BlogPost('This is a nice title.', $author = new Author('Foo Bar'), new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), new Publisher('Bar Foo'));
 
@@ -1047,7 +1046,8 @@ abstract class BaseSerializationTest extends TestCase
         $objectConstructor = new InitializedObjectConstructor(new UnserializeObjectConstructor());
         $serializer = new Serializer(
             $this->factory, $this->handlerRegistry, $objectConstructor,
-            $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher
+            $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher,
+            new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy())
         );
 
         $order = new Order(new Price(12));
@@ -1170,10 +1170,7 @@ abstract class BaseSerializationTest extends TestCase
      */
     protected function setUp(): void
     {
-        $loader = new AnnotationLoader();
-        $loader->setReader(new AnnotationReader());
-
-        $loader = new ReflectionLoader(new AttributesLoader($loader));
+        $loader = new ReflectionLoader(new AttributesLoader());
         $this->factory = new MetadataFactory($loader);
 
         $this->handlerRegistry = new HandlerRegistry();
@@ -1219,23 +1216,23 @@ abstract class BaseSerializationTest extends TestCase
         $this->dispatcher = new EventDispatcher();
         $this->dispatcher->addListener(PreSerializeEvent::class, [new DoctrineProxySubscriber(), 'onPreSerialize'], 20);
 
-        $namingStrategy = new SerializedNameAnnotationStrategy(new UnderscoreNamingStrategy());
+        $namingStrategy = new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
         $objectConstructor = new UnserializeObjectConstructor();
         $this->serializationVisitors = [
-            'array' => new GenericSerializationVisitor($namingStrategy),
-            'json' => new JsonSerializationVisitor($namingStrategy),
-            'xml' => new XmlSerializationVisitor($namingStrategy),
-            'yml' => new YamlSerializationVisitor($namingStrategy),
-            'csv' => new CsvSerializationVisitor($namingStrategy),
+            'array' => new GenericSerializationVisitor(),
+            'json' => new JsonSerializationVisitor(),
+            'xml' => new XmlSerializationVisitor(),
+            'yml' => new YamlSerializationVisitor(),
+            'csv' => new CsvSerializationVisitor(),
         ];
         $this->deserializationVisitors = [
-            'array' => new GenericDeserializationVisitor($namingStrategy),
-            'xml' => new XmlDeserializationVisitor($namingStrategy),
-            'yml' => new YamlDeserializationVisitor($namingStrategy),
-            'json' => new JsonDeserializationVisitor($namingStrategy),
+            'array' => new GenericDeserializationVisitor(),
+            'xml' => new XmlDeserializationVisitor(),
+            'yml' => new YamlDeserializationVisitor(),
+            'json' => new JsonDeserializationVisitor(),
         ];
 
-        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher);
+        $this->serializer = new Serializer($this->factory, $this->handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, $this->dispatcher, $namingStrategy);
     }
 
     protected function getField($obj, $name)

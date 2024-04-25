@@ -4,27 +4,20 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Groups;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class GroupsUser
 {
     private $name;
 
-    /**
-     * @Groups({"nickname_group"})
-     */
+    #[Groups(['nickname_group'])]
     private $nickname = 'nickname';
 
-    /**
-     * @Groups({"manager_group"})
-     */
+    #[Groups(['manager_group'])]
     private $manager;
 
-    /**
-     * @Groups({"friends_group"})
-     */
+    #[Groups(['friends_group'])]
     private $friends;
 
     public function __construct($name, self $manager = null, array $friends = [])

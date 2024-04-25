@@ -2,21 +2,18 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\Doctrine;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Kcs\Serializer\Annotation\SerializedName;
 
-/** @ORM\Entity */
+#[ORM\Entity]
 class Author
 {
-    /**
-     * @ORM\Id @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
     protected $id;
 
-    /**
-     * @ORM\Column(type="string")
-     * @SerializedName("full_name")
-     */
+    #[ORM\Column]
     #[SerializedName('full_name')]
     private $name;
 

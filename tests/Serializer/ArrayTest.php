@@ -8,9 +8,9 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\GenericDeserializationVisitor;
 use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\HandlerRegistry;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\MetadataFactory;
-use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\SerializerInterface;
@@ -33,16 +33,16 @@ class ArrayTest extends TestCase
      */
     protected function setUp(): void
     {
-        $namingStrategy = new SerializedNameAnnotationStrategy(new UnderscoreNamingStrategy());
-        $loader = new AnnotationLoader();
-        $loader->setReader(new AnnotationReader());
+        $namingStrategy = new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
 
         $this->serializer = new Serializer(
-            new MetadataFactory($loader),
+            new MetadataFactory(new AttributesLoader()),
             new HandlerRegistry(),
             new UnserializeObjectConstructor(),
-            ['array' => new GenericSerializationVisitor($namingStrategy)],
-            ['array' => new GenericDeserializationVisitor($namingStrategy)]
+            ['array' => new GenericSerializationVisitor()],
+            ['array' => new GenericDeserializationVisitor()],
+            null,
+            $namingStrategy,
         );
     }
 

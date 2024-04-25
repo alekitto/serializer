@@ -3,8 +3,9 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
+#[Serializer\AccessType(Access\Type::Property)]
 class ObjectWithEnums
 {
     private PostType $postType = PostType::POST_TEXT;

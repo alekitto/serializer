@@ -3,23 +3,12 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessType("property")
- * @Serializer\AdditionalField(name="links", attributes={
- *     @Serializer\SerializedName("_links"),
- *     @Serializer\Xml\KeyValuePairs(),
- *     @Serializer\Xml\XmlList(inline=true)
- * })
- */
-#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
-#[Serializer\AdditionalField(name: 'links', attributes: [[Serializer\SerializedName::class, ['_links']], [Serializer\Xml\KeyValuePairs::class], [Serializer\Xml\XmlList::class, ['inline' => true]]])]
+#[Serializer\AccessType(Access\Type::Property)]
+#[Serializer\AdditionalField(name: 'links', attributes: [ new Serializer\SerializedName('_links'), new Serializer\Xml\KeyValuePairs, new Serializer\Xml\XmlList(inline: true) ])]
 class Author
 {
-    /**
-     * @Serializer\Type("string")
-     * @Serializer\SerializedName("full_name")
-     */
     #[Serializer\Type('string')]
     #[Serializer\SerializedName('full_name')]
     private $name;

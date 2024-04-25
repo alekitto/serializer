@@ -5,16 +5,15 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class CircularReferenceParent
 {
-    /** @Type("array<Kcs\Serializer\Tests\Fixtures\CircularReferenceChild>") */
+    #[Type('array<'.CircularReferenceChild::class.'>')]
     protected $collection = [];
 
-    /** @Type("ArrayCollection<Kcs\Serializer\Tests\Fixtures\CircularReferenceChild>") */
+    #[Type('ArrayCollection<'.CircularReferenceChild::class.'>')]
     private $anotherCollection;
 
     public function __construct()

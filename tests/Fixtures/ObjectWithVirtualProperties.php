@@ -7,46 +7,33 @@ use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Metadata\Access;
 
 /**
  * @AccessorOrder("custom", custom = {"prop_name", "existField", "foo" })
  * @AccessType("property")
  */
-#[AccessorOrder('custom', custom: ['prop_name', 'existField', 'foo'])]
-#[AccessType(AccessType::PROPERTY)]
+#[AccessorOrder(Access\Order::Custom, custom: ['prop_name', 'existField', 'foo'])]
+#[AccessType(Access\Type::Property)]
 class ObjectWithVirtualProperties
 {
-    /**
-     * @Type("string")
-     */
     #[Type('string')]
     protected $existField = 'value';
 
-    /**
-     * @VirtualProperty
-     */
-    #[VirtualProperty()]
+    #[VirtualProperty]
     public function getVirtualValue()
     {
         return 'value';
     }
 
-    /**
-     * @VirtualProperty
-     * @SerializedName("test")
-     */
-    #[VirtualProperty()]
+    #[VirtualProperty]
     #[SerializedName('test')]
     public function getVirtualSerializedValue()
     {
         return 'other-name';
     }
 
-    /**
-     * @VirtualProperty
-     * @Type("int")
-     */
-    #[VirtualProperty()]
+    #[VirtualProperty]
     #[Type('int')]
     public function getTypedVirtualProperty()
     {

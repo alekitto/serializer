@@ -4,15 +4,13 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
+use Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class Garage
 {
-    /**
-     * @Type("array<Kcs\Serializer\Tests\Fixtures\Discriminator\Vehicle>")
-     */
+    #[Type('array<'.Vehicle::class.'>')]
     public $vehicles;
 
     public function __construct($vehicles)

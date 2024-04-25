@@ -6,10 +6,6 @@ namespace Kcs\Serializer\Annotation;
 
 use Attribute;
 
-/**
- * @Annotation
- * @Target("PROPERTY")
- */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Expose
 {

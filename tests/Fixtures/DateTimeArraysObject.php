@@ -4,22 +4,21 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class DateTimeArraysObject
 {
     /**
      * @var \DateTime[]
-     * @Type("array<DateTime>")
      */
+    #[Type('array<DateTime>')]
     private $arrayWithDefaultDateTime;
 
     /**
      * @var \DateTime[]
-     * @Type("array<DateTime<'d.m.Y H:i:s'>>")
      */
+    #[Type('array<DateTime<\'d.m.Y H:i:s\'>>')]
     private $arrayWithFormattedDateTime;
 
     public function __construct($arrayWithDefaultDateTime, $arrayWithFormattedDateTime)

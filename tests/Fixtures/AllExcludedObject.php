@@ -5,19 +5,15 @@ namespace Kcs\Serializer\Tests\Fixtures;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\ExclusionPolicy;
 use Kcs\Serializer\Annotation\Expose;
+use Kcs\Serializer\Metadata\Access;
+use Kcs\Serializer\Metadata\Exclusion;
 
-/**
- * @ExclusionPolicy("all")
- * @AccessType("property")
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- */
+#[ExclusionPolicy(Exclusion\Policy::All)]
+#[AccessType(Access\Type::Property)]
 class AllExcludedObject
 {
     private $foo = 'foo';
 
-    /**
-     * @Expose
-     */
+    #[Expose]
     private $bar = 'bar';
 }

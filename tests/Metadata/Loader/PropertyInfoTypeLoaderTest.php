@@ -3,8 +3,10 @@
 namespace Kcs\Serializer\Tests\Metadata\Loader;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Exclusion\Behavior;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\PropertyInfoTypeLoader;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
@@ -28,13 +30,11 @@ class PropertyInfoTypeLoaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $loader = new AnnotationLoader();
-        $loader->setReader(new AnnotationReader());
         $reflectionExtractor = new ReflectionExtractor();
         $phpDocExtractor = new PhpDocExtractor();
         $extractor = new PropertyInfoExtractor([$reflectionExtractor], [$reflectionExtractor, $phpDocExtractor], [$reflectionExtractor], [$reflectionExtractor], [$reflectionExtractor]);
 
-        $this->loader = new PropertyInfoTypeLoader($loader, $extractor);
+        $this->loader = new PropertyInfoTypeLoader(new AttributesLoader(), $extractor);
     }
 
     public function testObjectWithExcludedAndVirtualProperty(): void
@@ -45,7 +45,7 @@ class PropertyInfoTypeLoaderTest extends TestCase
         self::assertNotNull($m);
 
         $p = new VirtualPropertyMetadata($m->getName(), 'getFoo');
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PUBLIC_METHOD;
+        $p->accessorType = Access\Type::PublicMethod;
         $p->serializedName = 'foo';
         self::assertEquals($p, $m->getAttributeMetadata('foo'));
     }
@@ -71,21 +71,21 @@ class PropertyInfoTypeLoaderTest extends TestCase
         $p->type = Type::from('string');
         $p->groups = ['comments', 'post'];
         $p->xmlElementCData = false;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('id'));
 
         $p = new PropertyMetadata($m->getName(), 'title');
         $p->type = Type::from('string');
         $p->groups = ['comments', 'post'];
         $p->xmlNamespace = 'http://purl.org/dc/elements/1.1/';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
-        $p->onExclude = PropertyMetadata::ON_EXCLUDE_SKIP;
+        $p->accessorType = Access\Type::Property;
+        $p->onExclude = Behavior::Skip;
         self::assertEquals($p, $m->getAttributeMetadata('title'));
 
         $p = new PropertyMetadata($m->getName(), 'createdAt');
         $p->type = Type::from('DateTime');
         $p->xmlAttribute = true;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('createdAt'));
 
         $p = new PropertyMetadata($m->getName(), 'published');
@@ -93,7 +93,7 @@ class PropertyInfoTypeLoaderTest extends TestCase
         $p->serializedName = 'is_published';
         $p->xmlAttribute = true;
         $p->groups = ['post'];
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('published'));
 
         $p = new PropertyMetadata($m->getName(), 'etag');
@@ -101,7 +101,7 @@ class PropertyInfoTypeLoaderTest extends TestCase
         $p->xmlAttribute = true;
         $p->groups = ['post'];
         $p->xmlNamespace = 'http://schemas.google.com/g/2005';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('etag'));
 
         $p = new PropertyMetadata($m->getName(), 'comments');
@@ -110,14 +110,14 @@ class PropertyInfoTypeLoaderTest extends TestCase
         $p->xmlCollectionInline = true;
         $p->xmlEntryName = 'comment';
         $p->groups = ['comments'];
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('comments'));
 
         $p = new PropertyMetadata($m->getName(), 'author');
         $p->type = Type::from(Author::class);
         $p->groups = ['post'];
         $p->xmlNamespace = 'http://www.w3.org/2005/Atom';
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('author'));
 
         $m = new ClassMetadata(new \ReflectionClass(Price::class));
@@ -127,7 +127,7 @@ class PropertyInfoTypeLoaderTest extends TestCase
         $p = new PropertyMetadata($m->getName(), 'price');
         $p->type = Type::from('double');
         $p->xmlValue = true;
-        $p->accessorType = PropertyMetadata::ACCESS_TYPE_PROPERTY;
+        $p->accessorType = Access\Type::Property;
         self::assertEquals($p, $m->getAttributeMetadata('price'));
     }
 }

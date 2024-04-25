@@ -8,6 +8,7 @@ use Kcs\Metadata\ClassMetadataInterface;
 use Kcs\Metadata\Loader\FileLoaderTrait;
 use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\Exclusion\Policy;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -21,7 +22,7 @@ use function array_values;
 use function in_array;
 use function is_array;
 
-class YamlLoader extends AnnotationLoader
+class YamlLoader extends AttributesLoader
 {
     use FileLoaderTrait;
     use LoaderTrait;
@@ -39,7 +40,7 @@ class YamlLoader extends AnnotationLoader
     protected function isPropertyExcluded(ReflectionProperty $property, ClassMetadata $classMetadata): bool
     {
         $config = $this->getClassConfig($classMetadata->getName());
-        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
+        if ($classMetadata->exclusionPolicy === Policy::All) {
             if (array_key_exists($property->name, $config['properties']) && $config['properties'][$property->name] === null) {
                 return false;
             }
@@ -84,7 +85,7 @@ class YamlLoader extends AnnotationLoader
                     $value = $item['value'];
                     unset($item['value']);
 
-                    $annotation = new Annotations\StaticField($property, $this->loadProperty($item), $value);
+                    $annotation = new Annotations\StaticField($property, $value, $this->loadProperty($item));
                     $annotations[] = $annotation;
                 }
 
@@ -104,7 +105,7 @@ class YamlLoader extends AnnotationLoader
                 continue;
             }
 
-            array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
+            array_push($annotations, ...$this->createAttributesForArray($value, $key));
         }
 
         return $annotations;
@@ -166,7 +167,7 @@ class YamlLoader extends AnnotationLoader
         $annotations = [];
 
         foreach ($config as $key => $value) {
-            array_push($annotations, ...$this->createAnnotationsForArray($value, $key));
+            array_push($annotations, ...$this->createAttributesForArray($value, $key));
         }
 
         return $annotations;
@@ -195,7 +196,7 @@ class YamlLoader extends AnnotationLoader
      *
      * @return object[]
      */
-    private function createAnnotationsForArray($value, string $key): array
+    private function createAttributesForArray($value, string $key): array
     {
         $annotations = [];
 
@@ -218,7 +219,7 @@ class YamlLoader extends AnnotationLoader
             $annotations[] = new Annotations\Groups($value);
         } else {
             foreach ($value as $annotValue) {
-                array_push($annotations, ...$this->createAnnotationsForArray($annotValue, $key));
+                array_push($annotations, ...$this->createAttributesForArray($annotValue, $key));
             }
         }
 

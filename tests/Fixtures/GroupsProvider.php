@@ -7,28 +7,21 @@ use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Exclusion\SerializationGroupProviderInterface;
 use Kcs\Serializer\SerializationContext;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class GroupsProvider implements SerializationGroupProviderInterface
 {
-    /**
-     * @Groups({"foo"})
-     * @Type("string")
-     */
+    #[Groups(['foo'])]
+    #[Type('string')]
     private $foo;
 
-    /**
-     * @Groups({"foobar"})
-     * @Type("string")
-     */
+    #[Groups(['foobar'])]
+    #[Type('string')]
     private $foobar;
 
-    /**
-     * @Type(GroupsObject::class)
-     * @Groups({"foo"})
-     */
+    #[Type(GroupsObject::class)]
+    #[Groups(['foo'])]
     private $obj;
 
     public function __construct()

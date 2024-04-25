@@ -3,7 +3,7 @@
 namespace Kcs\Serializer\Tests\Fixtures\DoctrinePHPCR;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;
+use Doctrine\ODM\PHPCR\Mapping\Attributes as PHPCRODM;
 use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
@@ -11,66 +11,42 @@ use Kcs\Serializer\Annotation\Xml\Attribute;
 use Kcs\Serializer\Annotation\Xml\XmlList;
 use Kcs\Serializer\Annotation\Xml\Root;
 
-/**
- * @PHPCRODM\Document
- * @Root("blog-post")
- */
+#[PHPCRODM\Document]
 #[Root('blog-post')]
 class BlogPost
 {
-    /**
-     * @PHPCRODM\Id()
-     */
+    #[PHPCRODM\Id]
     protected $id;
 
-    /**
-     * @PHPCRODM\Field(type="string")
-     * @Groups({"comments","post"})
-     */
+    #[PHPCRODM\Field(type: "string")]
     #[Groups(['comments', 'post'])]
     private $title;
 
-    /**
-     * @PHPCRODM\Field(type="string")
-     */
+    #[PHPCRODM\Field(type: "string")]
     protected $slug;
 
-    /**
-     * @PHPCRODM\Field(type="date")
-     * @Attribute
-     */
-    #[Attribute()]
+    #[PHPCRODM\Field(type: "date")]
+    #[Attribute]
     private $createdAt;
 
     /**
-     * @PHPCRODM\Field(type="boolean")
-     * @Type("integer")
      * This boolean to integer conversion is one of the few changes between this
      * and the standard BlogPost class. It's used to test the override behavior
      * of the DoctrineTypeDriver so notice it, but please don't change it.
-     *
-     * @SerializedName("is_published")
-     * @Groups({"post"})
-     * @Attribute
      */
+    #[PHPCRODM\Field(type: "boolean")]
+    #[Type('integer')]
     #[SerializedName('is_published')]
     #[Groups(['post'])]
-    #[Attribute()]
+    #[Attribute]
     private $published;
 
-    /**
-     * @PHPCRODM\ReferenceMany(targetDocument="Comment", property="blogPost")
-     * @XmlList(inline=true, entry="comment")
-     * @Groups({"comments"})
-     */
-    #[XmlList(inline: true, entry: 'comment')]
+    #[PHPCRODM\ReferenceMany(property: "blogPost", targetDocument: Comment::class)]
+    #[XmlList(entry: 'comment', inline: true)]
     #[Groups(['comments'])]
     private $comments;
 
-    /**
-     * @PHPCRODM\ReferenceOne(targetDocument="Author")
-     * @Groups({"post"})
-     */
+    #[PHPCRODM\ReferenceOne(targetDocument: Author::class)]
     #[Groups(['post'])]
     private $author;
 

@@ -4,12 +4,12 @@ namespace Kcs\Serializer\Tests\Serializer\Naming;
 
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
-use Kcs\Serializer\Naming\SerializedNameAnnotationStrategy;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
-class SerializedNameAnnotationStrategyTest extends TestCase
+class SerializedNameAttributeStrategyTest extends TestCase
 {
     use ProphecyTrait;
 
@@ -18,7 +18,7 @@ class SerializedNameAnnotationStrategyTest extends TestCase
         $delegated = $this->prophesize(PropertyNamingStrategyInterface::class);
         $delegated->translateName(Argument::any())->shouldNotBeCalled();
 
-        $strategy = new SerializedNameAnnotationStrategy($delegated->reveal());
+        $strategy = new SerializedNameAttributeStrategy($delegated->reveal());
 
         $mockProperty = $this->prophesize(PropertyMetadata::class);
         $mockProperty->name = 'field';
@@ -32,7 +32,7 @@ class SerializedNameAnnotationStrategyTest extends TestCase
         $delegated = $this->prophesize(PropertyNamingStrategyInterface::class);
         $delegated->translateName(Argument::any())->shouldNotBeCalled();
 
-        $strategy = new SerializedNameAnnotationStrategy($delegated->reveal());
+        $strategy = new SerializedNameAttributeStrategy($delegated->reveal());
 
         $mockProperty = $this->prophesize(PropertyMetadata::class);
         $mockProperty->name = 'field';

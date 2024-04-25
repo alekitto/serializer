@@ -17,8 +17,11 @@ use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlSerializationVisitor;
 
+use function assert;
+use function is_string;
 use function Safe\preg_replace;
 use function sprintf;
+use function str_ends_with;
 use function str_replace;
 use function substr;
 
@@ -81,9 +84,9 @@ class DateHandler implements SubscribingHandlerInterface
     }
 
     public function __construct(
-        private string $defaultFormat = DateTimeInterface::ATOM,
+        private readonly string $defaultFormat = DateTimeInterface::ATOM,
         string $defaultTimezone = 'UTC',
-        private bool $xmlCData = true,
+        private readonly bool $xmlCData = true,
     ) {
         $this->defaultTimezone = new DateTimeZone($defaultTimezone);
     }
@@ -144,13 +147,15 @@ class DateHandler implements SubscribingHandlerInterface
     {
         $formatted = $dateInterval->format(self::DATEINTERVAL_FORMAT);
         $formatted = preg_replace('/(?<=\D)0[A-Z]/', '', $formatted);
+        assert(is_string($formatted));
+
         $formatted = str_replace('+', '', $formatted);
 
         if ($formatted === 'PT') {
             $formatted = 'PT0S';
         }
 
-        if (substr($formatted, -1) === 'T') {
+        if (str_ends_with($formatted, 'T')) {
             $formatted = substr($formatted, 0, -1);
         }
 

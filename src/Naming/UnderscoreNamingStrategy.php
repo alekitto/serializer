@@ -16,6 +16,6 @@ final class UnderscoreNamingStrategy implements PropertyNamingStrategyInterface
 {
     public function translateName(PropertyMetadata $property): string
     {
-        return strtolower(preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $property->name));
+        return strtolower(preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $property->name)); // @phpstan-ignore-line
     }
 }

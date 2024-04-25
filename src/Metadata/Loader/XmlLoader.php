@@ -10,6 +10,7 @@ use Kcs\Serializer\Annotation as Annotations;
 use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Inflector\Inflector;
 use Kcs\Serializer\Metadata\ClassMetadata;
+use Kcs\Serializer\Metadata\Exclusion\Policy;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -28,7 +29,7 @@ use function Safe\libxml_get_last_error;
 use function Safe\simplexml_load_string;
 use function strtolower;
 
-class XmlLoader extends AnnotationLoader
+class XmlLoader extends AttributesLoader
 {
     use FileLoaderTrait;
     use LoaderTrait;
@@ -219,11 +220,11 @@ class XmlLoader extends AnnotationLoader
         $pElems = $element->xpath("./property[@name = '" . $property->name . "']");
         $pElem = empty($pElems) ? null : reset($pElems);
 
-        if ($classMetadata->exclusionPolicy === Annotations\ExclusionPolicy::ALL) {
-            return ! $pElem || $pElem->attributes()->expose === null; // @phpstan-ignore-line
+        if ($classMetadata->exclusionPolicy === Policy::All) {
+            return ! $pElem || $pElem->attributes()->expose === null;
         }
 
-        return $pElem && $pElem->attributes()->exclude !== null; // @phpstan-ignore-line
+        return $pElem && $pElem->attributes()->exclude !== null;
     }
 
     /**

@@ -3,23 +3,18 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access\Type;
 
-/**
- * @Serializer\Xml\Root("price")
- * @Serializer\AccessType("property")
- */
+#[Serializer\Xml\Root('price')]
+#[Serializer\AccessType(Type::Property)]
 class CurrencyAwarePrice
 {
-    /**
-     * @Serializer\Xml\Attribute
-     * @Serializer\Type("string")
-     */
+    #[Serializer\Xml\Attribute]
+    #[Serializer\Type('string')]
     private $currency;
 
-    /**
-     * @Serializer\Xml\Value
-     * @Serializer\Type("double")
-     */
+    #[Serializer\Xml\Value]
+    #[Serializer\Type('double')]
     private $amount;
 
     public function __construct($amount, $currency = 'EUR')

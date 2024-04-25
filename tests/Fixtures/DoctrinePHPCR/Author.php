@@ -2,21 +2,16 @@
 
 namespace Kcs\Serializer\Tests\Fixtures\DoctrinePHPCR;
 
-use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;
+use Doctrine\ODM\PHPCR\Mapping\Attributes as PHPCRODM;
 use Kcs\Serializer\Annotation\SerializedName;
 
-/** @PHPCRODM\Document */
+#[PHPCRODM\Document]
 class Author
 {
-    /**
-     * @PHPCRODM\Id()
-     */
+    #[PHPCRODM\Id]
     protected $id;
 
-    /**
-     * @PHPCRODM\Field(type="string")
-     * @SerializedName("full_name")
-     */
+    #[PHPCRODM\Field(type: 'string')]
     #[SerializedName('full_name')]
     private $name;
 

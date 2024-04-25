@@ -13,6 +13,9 @@ use Kcs\Serializer\Exclusion\VersionExclusionStrategy;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\MetadataStack;
 use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Type\Type;
 use LogicException;
 use Stringable;
@@ -24,6 +27,7 @@ use function is_array;
 abstract class Context
 {
     public AttributesMap $attributes;
+    public PropertyNamingStrategyInterface $namingStrategy;
     private string $format;
     public VisitorInterface $visitor;
     private GraphNavigator $navigator;
@@ -36,6 +40,7 @@ abstract class Context
     final public function __construct()
     {
         $this->attributes = new AttributesMap();
+        $this->namingStrategy = new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
     }
 
     public function __clone()

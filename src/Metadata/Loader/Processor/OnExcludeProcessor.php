@@ -15,8 +15,6 @@ class OnExcludeProcessor extends PropertyMetadataProcessor
     {
         assert($annotation instanceof OnExclude);
 
-        $metadata->onExclude = $annotation->policy === OnExclude::NULL
-            ? PropertyMetadata::ON_EXCLUDE_NULL
-            : PropertyMetadata::ON_EXCLUDE_SKIP;
+        $metadata->onExclude = $annotation->policy;
     }
 }

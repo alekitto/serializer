@@ -8,6 +8,8 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Exception\XmlErrorException;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
+use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
+use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\Tests\Fixtures\InvalidUsageOfXmlValue;
@@ -217,7 +219,7 @@ class XmlSerializationTest extends BaseSerializationTest
         $handlerRegistry->registerSubscribingHandler(new DateHandler(\DateTime::ISO8601, 'UTC', false));
         $objectConstructor = new UnserializeObjectConstructor();
 
-        $serializer = new Serializer($this->factory, $handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors);
+        $serializer = new Serializer($this->factory, $handlerRegistry, $objectConstructor, $this->serializationVisitors, $this->deserializationVisitors, defaultNamingStrategy: new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy()));
 
         self::assertEquals($this->getContent($key.'_no_cdata'), $serializer->serialize($value, $this->getFormat()));
     }

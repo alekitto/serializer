@@ -153,7 +153,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): mixed
     {
-        $name = $this->namingStrategy->translateName($metadata);
+        $name = $context->namingStrategy->translateName($metadata);
 
         if ($data === null || ! array_key_exists($name, $data)) {
             return null;

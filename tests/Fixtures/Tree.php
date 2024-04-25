@@ -3,15 +3,12 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessType("property")
- */
+#[Serializer\AccessType(Access\Type::Property)]
 class Tree
 {
-    /**
-     * @Serializer\MaxDepth(10)
-     */
+    #[Serializer\MaxDepth(10)]
     public $tree;
 
     public function __construct($tree)

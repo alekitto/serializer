@@ -4,22 +4,14 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
-#[AccessType(AccessType::PROPERTY)]
+#[AccessType(Access\Type::Property)]
 class Comment
 {
-    /**
-     * @Type("Kcs\Serializer\Tests\Fixtures\Author")
-     */
     #[Type(Author::class)]
     private $author;
 
-    /**
-     * @Type("string")
-     */
     #[Type('string')]
     private $text;
 

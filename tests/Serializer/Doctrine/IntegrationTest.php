@@ -3,6 +3,7 @@
 namespace Kcs\Serializer\Tests\Serializer\Doctrine;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\AbstractManagerRegistry;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Proxy;
@@ -13,11 +14,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
-use Kcs\Serializer\Metadata\Loader\AnnotationLoader;
+use Kcs\Serializer\Metadata\Loader\AttributesLoader;
 use Kcs\Serializer\Metadata\Loader\DoctrineTypeLoader;
 use Kcs\Serializer\Serializer;
 use Kcs\Serializer\SerializerBuilder;
-use Kcs\Serializer\Tests\Fixture\Doctrine\SingleTableInheritance\Clazz;
+use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Clazz;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Student;
 use Kcs\Serializer\Tests\Fixtures\Doctrine\SingleTableInheritance\Teacher;
 use PHPUnit\Framework\TestCase;
@@ -69,23 +70,16 @@ class IntegrationTest extends TestCase
 
         $this->registry = $registry = new SimpleManagerRegistry(
             static function ($id) use ($connection, $entityManager) {
-                switch ($id) {
-                    case 'default_connection':
-                        return $connection;
-
-                    case 'default_manager':
-                        return $entityManager;
-
-                    default:
-                        throw new \RuntimeException(\sprintf('Unknown service id "%s".', $id));
-                }
+                return match ($id) {
+                    'default_connection' => $connection,
+                    'default_manager' => $entityManager,
+                    default => throw new \RuntimeException(\sprintf('Unknown service id "%s".', $id)),
+                };
             }
         );
 
-        $loader = new AnnotationLoader();
-        $loader->setReader(new AnnotationReader());
         $this->serializer = SerializerBuilder::create()
-            ->setMetadataLoader(new DoctrineTypeLoader($loader, $registry))
+            ->setMetadataLoader(new DoctrineTypeLoader(new AttributesLoader(), $registry))
             ->setEventDispatcher(new EventDispatcher())
             ->build()
         ;
@@ -115,7 +109,7 @@ class IntegrationTest extends TestCase
     private function createEntityManager(Connection $con): EntityManager
     {
         $cfg = new Configuration();
-        $cfg->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader(), [
+        $cfg->setMetadataDriverImpl(new AttributeDriver([
             __DIR__.'/../../Fixtures/Doctrine/SingleTableInheritance',
         ]));
         $cfg->setAutoGenerateProxyClasses(true);

@@ -7,41 +7,31 @@ use Kcs\Serializer\Annotation\Groups;
 use Kcs\Serializer\Annotation\SerializedName;
 use Kcs\Serializer\Annotation\Type;
 use Kcs\Serializer\Annotation\VirtualProperty;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class GroupsObject
 {
-    /**
-     * @Groups({"foo"})
-     * @Type("string")
-     */
+    #[Groups(['foo'])]
+    #[Type('string')]
     private $foo;
 
-    /**
-     * @Groups({"foo","bar"})
-     * @Type("string")
-     */
+    #[Groups(['foo', 'bar'])]
+    #[Type('string')]
     private $foobar;
 
-    /**
-     * @Groups({"bar", "Default"})
-     * @Type("string")
-     */
+    #[Groups(['bar', 'Default'])]
+    #[Type('string')]
     private $bar;
 
     /**
-     * @Groups({"foo", "!baz"})
-     * @Type("string")
-     *
      * @var string
      */
+    #[Groups(['foo', '!baz'])]
+    #[Type('string')]
     private $baz;
 
-    /**
-     * @Type("string")
-     */
+    #[Type('string')]
     private $none;
 
     public function __construct()
@@ -53,21 +43,17 @@ class GroupsObject
         $this->baz = 'baz';
     }
 
-    /**
-     * @Groups("baz")
-     * @VirtualProperty()
-     * @SerializedName("virt")
-     */
+    #[Groups(['baz'])]
+    #[VirtualProperty]
+    #[SerializedName('virt')]
     public function getVirtual1()
     {
         return 'virt_1';
     }
 
-    /**
-     * @Groups("!baz")
-     * @VirtualProperty()
-     * @SerializedName("virt")
-     */
+    #[Groups(['!baz'])]
+    #[VirtualProperty]
+    #[SerializedName('virt')]
     public function getVirtual2()
     {
         return 'virt_2';

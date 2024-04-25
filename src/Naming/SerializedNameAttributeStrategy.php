@@ -9,7 +9,7 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 /**
  * Naming strategy which uses an annotation to translate the property name.
  */
-final class SerializedNameAnnotationStrategy implements PropertyNamingStrategyInterface
+final class SerializedNameAttributeStrategy implements PropertyNamingStrategyInterface
 {
     private PropertyNamingStrategyInterface $delegate;
 

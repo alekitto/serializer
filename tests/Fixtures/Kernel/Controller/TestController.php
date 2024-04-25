@@ -4,13 +4,19 @@ namespace Kcs\Serializer\Tests\Fixtures\Kernel\Controller;
 
 use Kcs\Serializer\SerializerInterface;
 use Kcs\Serializer\Tests\Fixtures\IndexedCommentsBlogPost;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Service\Attribute\Required;
 
-class TestController implements ContainerAwareInterface
+class TestController
 {
-    use ContainerAwareTrait;
+    private ContainerInterface $container;
+
+    #[Required]
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     public function serializeAction($format)
     {

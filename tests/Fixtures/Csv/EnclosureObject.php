@@ -5,22 +5,15 @@ namespace Kcs\Serializer\Tests\Fixtures\Csv;
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Csv;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Csv(enclosure="'")
- * @AccessType("property")
- */
 #[Csv(enclosure: "'")]
-#[AccessType(AccessType::PROPERTY)]
+#[AccessType(Access\Type::Property)]
 class EnclosureObject
 {
-    /**
-     * @Type("string")
-     */
+    #[Type('string')]
     private $id = 'what_a_nice_id';
 
-    /**
-     * @Type("string")
-     */
+    #[Type('string')]
     private $title = 'This is a great title';
 }

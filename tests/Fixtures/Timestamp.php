@@ -4,15 +4,12 @@ namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation\AccessType;
 use Kcs\Serializer\Annotation\Type;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @AccessType("property")
- */
+#[AccessType(Access\Type::Property)]
 class Timestamp
 {
-    /**
-     * @Type("DateTime<'U'>")
-     */
+    #[Type("DateTime<'U'>")]
     private $timestamp;
 
     public function __construct($timestamp)

@@ -3,13 +3,10 @@
 namespace Kcs\Serializer\Tests\Fixtures;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\AccessorOrder("custom", custom = {"c", "d", "a", "b"})
- * @Serializer\AccessType("property")
- */
-#[Serializer\AccessorOrder('custom', custom: ['c', 'd', 'a', 'b'])]
-#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
+#[Serializer\AccessorOrder(Access\Order::Custom, custom: ['c', 'd', 'a', 'b'])]
+#[Serializer\AccessType(Access\Type::Property)]
 class AccessorOrderChild extends AccessorOrderParent
 {
     private $c = 'c';

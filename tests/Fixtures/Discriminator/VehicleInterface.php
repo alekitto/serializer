@@ -3,16 +3,10 @@
 namespace Kcs\Serializer\Tests\Fixtures\Discriminator;
 
 use Kcs\Serializer\Annotation as Serializer;
+use Kcs\Serializer\Metadata\Access;
 
-/**
- * @Serializer\Discriminator(field = "type", map = {
- *    "car": "Kcs\Serializer\Tests\Fixtures\Discriminator\Car",
- *    "moped": "Kcs\Serializer\Tests\Fixtures\Discriminator\Moped",
- * })
- * @Serializer\AccessType("property")
- */
-#[Serializer\Discriminator(field: 'type', map: ['car' => Car::class, 'moped' => Moped::class])]
-#[Serializer\AccessType(Serializer\AccessType::PROPERTY)]
+#[Serializer\Discriminator(map: ['car' => Car::class, 'moped' => Moped::class], field: 'type')]
+#[Serializer\AccessType(Access\Type::Property)]
 interface VehicleInterface
 {
 }
