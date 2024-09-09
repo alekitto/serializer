@@ -4,70 +4,30 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Inflector;
 
-use Doctrine\Inflector\Inflector as DoctrineInflector;
-use Doctrine\Inflector\InflectorFactory;
+use function lcfirst;
+use function str_replace;
+use function ucwords;
 
-use function class_exists;
+class Inflector
+{
+    private static self|null $instance = null;
 
-if (! class_exists(InflectorFactory::class)) {
-    class Inflector
+    public function classify(string $word): string
     {
-        private static self|null $instance = null;
-
-        /** @internal */
-        public function __construct()
-        {
-        }
-
-        public function classify(string $word): string
-        {
-            return \Doctrine\Common\Inflector\Inflector::classify($word);
-        }
-
-        public function camelize(string $word): string
-        {
-            return \Doctrine\Common\Inflector\Inflector::camelize($word);
-        }
-
-        public static function getInstance(): self
-        {
-            if (self::$instance === null) {
-                self::$instance = new self();
-            }
-
-            return self::$instance;
-        }
+        return str_replace([' ', '_', '-'], '', ucwords($word, ' _-'));
     }
-} else {
-    // phpcs:ignore
-    class Inflector
+
+    public function camelize(string $word): string
     {
-        private static self|null $instance = null;
-        private DoctrineInflector $inflector;
+        return lcfirst($this->classify($word));
+    }
 
-        /** @internal */
-        public function __construct()
-        {
-            $this->inflector = InflectorFactory::create()->build();
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
 
-        public function classify(string $word): string
-        {
-            return $this->inflector->classify($word);
-        }
-
-        public function camelize(string $word): string
-        {
-            return $this->inflector->camelize($word);
-        }
-
-        public static function getInstance(): self
-        {
-            if (self::$instance === null) {
-                self::$instance = new self();
-            }
-
-            return self::$instance;
-        }
+        return self::$instance;
     }
 }

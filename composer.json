@@ -12,14 +12,10 @@
     ],
     "require": {
         "php": "^8.1",
-        "composer-runtime-api": "^2.0",
-        "doctrine/common": "^2.0 || ^3.0",
         "doctrine/instantiator": "^1.0 || ^2.0",
-        "doctrine/inflector": "^1.0 || ^2.0",
         "doctrine/lexer": "^2.0 || ^3.0",
         "kcs/metadata": "^2.0 || ^3.0 || ^4.0",
-        "psr/event-dispatcher": "^1.0",
-        "thecodingmachine/safe": "^1.1 || ^2.0"
+        "psr/event-dispatcher": "^1.0"
     },
     "conflict": {
         "twig/twig": "<1.12",
@@ -37,6 +33,7 @@
         "ext-simplexml": "*",
         "cakephp/chronos": "^2.0",
         "doctrine/annotations": "^1.0 || ^2.0",
+        "doctrine/collections": "^1.0 || ^2.0",
         "doctrine/orm": "^2.3",
         "doctrine/persistence": "^2.0 || ^3.0",
         "doctrine/phpcr-odm": "^1.0 || ^2.0",

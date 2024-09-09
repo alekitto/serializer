@@ -19,7 +19,7 @@ use Kcs\Serializer\XmlSerializationVisitor;
 
 use function assert;
 use function is_string;
-use function Safe\preg_replace;
+use function preg_replace;
 use function sprintf;
 use function str_ends_with;
 use function str_replace;

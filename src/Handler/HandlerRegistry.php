@@ -16,7 +16,7 @@ use function interface_exists;
 use function is_array;
 use function is_callable;
 use function is_string;
-use function Safe\preg_match;
+use function preg_match;
 use function sprintf;
 use function strrpos;
 use function substr;

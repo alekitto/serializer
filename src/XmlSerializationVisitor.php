@@ -18,7 +18,6 @@ use Kcs\Serializer\Metadata\AdditionalPropertyMetadata;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
-use Safe\Exceptions\SimplexmlException;
 use SplStack;
 use Stringable;
 
@@ -27,9 +26,9 @@ use function array_search;
 use function assert;
 use function is_object;
 use function iterator_to_array;
+use function libxml_get_last_error;
 use function libxml_use_internal_errors;
-use function Safe\libxml_get_last_error;
-use function Safe\preg_match;
+use function preg_match;
 use function sha1;
 use function sprintf;
 use function substr;
@@ -352,8 +351,9 @@ class XmlSerializationVisitor extends AbstractVisitor
         $previous = libxml_use_internal_errors(true);
         try {
             $xml = $this->document->saveXML();
-        } catch (SimplexmlException $e) {
-            throw new XmlErrorException(libxml_get_last_error(), $e);
+            if ($xml === false) {
+                throw new XmlErrorException(libxml_get_last_error(), $e);
+            }
         } finally {
             libxml_use_internal_errors($previous);
         }

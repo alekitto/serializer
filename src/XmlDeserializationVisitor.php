@@ -13,7 +13,6 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use Kcs\Serializer\Type\Type;
 use ReflectionEnum;
-use Safe\Exceptions\SimplexmlException;
 use SimpleXMLElement;
 use UnitEnum;
 
@@ -24,12 +23,12 @@ use function array_keys;
 use function assert;
 use function in_array;
 use function is_string;
+use function libxml_get_last_error;
 use function libxml_use_internal_errors;
 use function mb_convert_case;
+use function preg_replace;
 use function reset;
-use function Safe\libxml_get_last_error;
-use function Safe\preg_replace;
-use function Safe\simplexml_load_string;
+use function simplexml_load_string;
 use function sprintf;
 use function str_replace;
 use function stripos;
@@ -60,8 +59,9 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
 
         try {
             $doc = simplexml_load_string($data);
-        } catch (SimplexmlException $e) {
-            throw new XmlErrorException(libxml_get_last_error(), $e);
+            if ($doc === false) {
+                throw new XmlErrorException(libxml_get_last_error());
+            }
         } finally {
             libxml_use_internal_errors($previous);
         }
