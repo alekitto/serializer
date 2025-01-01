@@ -153,7 +153,7 @@ class RegisterVisitorsPassTest extends TestCase
 
     public function testShouldDecorateVisitorsIfDebugIsEnabled(): void
     {
-        $container = new ContainerBuilder(new ParameterBag(['kernel.debug' => true]));
+        $container = new ContainerBuilder(new ParameterBag(['kernel.debug' => true, 'kcs_serializer.debug.logger' => 'logger']));
         $container->register(self::SERVICE_ID, Serializer::class)
                   ->setArguments([null, null, null, [], [], null]);
 

@@ -53,8 +53,11 @@ class RegisterVisitorsPass implements CompilerPassInterface
 
         if ($container->hasParameter('kernel.debug') && $container->getParameter('kernel.debug')) {
             $processVisitor = static function (array &$visitors) use ($container): void {
+                $loggerSvc = $container->getParameter('kcs_serializer.debug.logger');
+                $loggerRef = new Reference($loggerSvc, ContainerInterface::NULL_ON_INVALID_REFERENCE);
+
                 foreach ($visitors as $key => $reference) {
-                    $def = new Definition(TraceableVisitor::class, [$reference, new Reference('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE)]);
+                    $def = new Definition(TraceableVisitor::class, [$reference, $loggerRef]);
                     $def->addTag('monolog.logger', ['channel' => 'kcs_serializer']);
 
                     $id = '.traceable.' . $reference;

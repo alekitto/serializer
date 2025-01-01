@@ -57,6 +57,8 @@ final class SerializerExtension extends Extension
         $container->setParameter('kcs_serializer.metadata_loader.property_info.enabled', $config['metadata']['property_info'] ?? false);
         $container->setParameter('kcs_serializer.metadata_loader.doctrine_orm.enabled', $config['metadata']['doctrine_orm'] ?? false);
         $container->setParameter('kcs_serializer.metadata_loader.doctrine_phpcr.enabled', $config['metadata']['doctrine_phpcr'] ?? false);
+
+        $container->setParameter('kcs_serializer.debug.logger', $config['debug']['logger'] ?? 'logger');
     }
 
     public function getAlias(): string
