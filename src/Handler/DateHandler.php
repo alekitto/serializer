@@ -16,6 +16,7 @@ use Kcs\Serializer\Exception\RuntimeException;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 use Kcs\Serializer\XmlSerializationVisitor;
+use Symfony\Component\Clock\DatePoint;
 
 use function assert;
 use function is_string;
@@ -81,6 +82,18 @@ class DateHandler implements SubscribingHandlerInterface
             'direction' => Direction::Deserialization,
             'method' => 'deserializeChronos',
         ];
+
+        yield [
+            'type' => DatePoint::class,
+            'direction' => Direction::Serialization,
+            'method' => 'serializeDateTime',
+        ];
+
+        yield [
+            'type' => DatePoint::class,
+            'direction' => Direction::Deserialization,
+            'method' => 'deserializeDatePoint',
+        ];
     }
 
     public function __construct(
@@ -130,6 +143,11 @@ class DateHandler implements SubscribingHandlerInterface
     public function deserializeDateTimeImmutable(VisitorInterface $visitor, mixed $data, Type $type): DateTimeInterface|null
     {
         return $this->deserializeDateTimeInterface(DateTimeImmutable::class, $data, $type);
+    }
+
+    public function deserializeDatePoint(VisitorInterface $visitor, mixed $data, Type $type): DateTimeInterface|null
+    {
+        return $this->deserializeDateTimeInterface(DatePoint::class, $data, $type);
     }
 
     public function deserializeChronos(VisitorInterface $visitor, mixed $date, Type $type): Chronos|null

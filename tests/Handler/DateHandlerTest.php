@@ -9,12 +9,15 @@ use DateTimeImmutable;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Type\Type;
+use Symfony\Component\Clock\DatePoint;
+
+use function iterator_to_array;
 
 class DateHandlerTest extends AbstractHandlerTest
 {
     public function testGetSubscribingMethodsShouldReturnAllTypes(): void
     {
-        self::assertCount(12, \iterator_to_array($this->handler::getSubscribingMethods()));
+        self::assertCount(14, iterator_to_array($this->handler::getSubscribingMethods()));
     }
 
     public function testSerializeDateTimeShouldUseFormatTheDateTimeObject(): void
@@ -73,21 +76,33 @@ class DateHandlerTest extends AbstractHandlerTest
         $this->handler->serializeDateTime($this->visitor->reveal(), new \Safe\DateTimeImmutable('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
     }
 
+    public function testSerializeDateTimeShouldHandleSymfonyDatePoint(): void
+    {
+        $type = Type::parse(DatePoint::class);
+
+        $this->visitor->visitString('2018-12-12T22:00:00+00:00', $type, $this->context)->willReturn()->shouldBeCalled();
+        $this->handler->serializeDateTime($this->visitor->reveal(), new DatePoint('2018-12-12T22:00:00Z'), $type, $this->context->reveal());
+    }
+
     public function testDeserializeDateTime(): void
     {
-        self::assertNull($this->handler->deserializeDateTime($this->visitor->reveal(), null, Type::parse(DateTime::class), $this->context->reveal()));
+        self::assertNull($this->handler->deserializeDateTime($this->visitor->reveal(), null, Type::parse(DateTime::class)));
 
         self::assertEquals(
             new DateTimeImmutable('2018-12-12T22:00:00Z'),
-            $this->handler->deserializeDateTimeImmutable($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTimeImmutable::class), $this->context->reveal())
+            $this->handler->deserializeDateTimeImmutable($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTimeImmutable::class))
         );
         self::assertEquals(
             new DateTime('2018-12-12T22:00:00Z'),
-            $this->handler->deserializeDateTime($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTime::class), $this->context->reveal())
+            $this->handler->deserializeDateTime($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTime::class))
         );
         self::assertEquals(
             new Chronos('2018-12-12T22:00:00Z'),
-            $this->handler->deserializeChronos($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTime::class), $this->context->reveal())
+            $this->handler->deserializeChronos($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTime::class))
+        );
+        self::assertEquals(
+            new DatePoint('2018-12-12T22:00:00Z'),
+            $this->handler->deserializeDatePoint($this->visitor->reveal(), '2018-12-12T22:00:00+00:00', Type::parse(DateTimeImmutable::class))
         );
     }
 

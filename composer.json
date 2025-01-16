@@ -50,6 +50,7 @@
         "roave/security-advisories": "dev-master",
         "solido/php-coding-standards": "dev-master",
         "symfony/browser-kit": "^5.4 || ^6.0 || ^7.0",
+        "symfony/clock": "^5.4 || ^6.0 || ^7.0",
         "symfony/config": "^5.4 || ^6.0 || ^7.0",
         "symfony/contracts": "^1.1 || ^2.0 || ^3.0",
         "symfony/css-selector": "^5.4 || ^6.0 || ^7.0",
