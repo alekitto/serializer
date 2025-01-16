@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
+use function is_string;
 use function sprintf;
 
 class RegisterVisitorsPass implements CompilerPassInterface
@@ -54,8 +55,11 @@ class RegisterVisitorsPass implements CompilerPassInterface
         if ($container->hasParameter('kernel.debug') && $container->getParameter('kernel.debug')) {
             $processVisitor = static function (array &$visitors) use ($container): void {
                 $loggerSvc = $container->getParameter('kcs_serializer.debug.logger');
-                $loggerRef = new Reference($loggerSvc, ContainerInterface::NULL_ON_INVALID_REFERENCE);
+                if (! is_string($loggerSvc)) {
+                    throw new InvalidConfigurationException('Serializer debug logger must be a string');
+                }
 
+                $loggerRef = new Reference($loggerSvc, ContainerInterface::NULL_ON_INVALID_REFERENCE);
                 foreach ($visitors as $key => $reference) {
                     $def = new Definition(TraceableVisitor::class, [$reference, $loggerRef]);
                     $def->addTag('monolog.logger', ['channel' => 'kcs_serializer']);

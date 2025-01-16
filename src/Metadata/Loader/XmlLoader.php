@@ -45,7 +45,7 @@ class XmlLoader extends AttributesLoader
         try {
             $elem = simplexml_load_string($fileContent);
             if ($elem === false) {
-                throw new XmlErrorException(libxml_get_last_error());
+                throw new XmlErrorException(libxml_get_last_error()); /* @phpstan-ignore-line */
             }
         } finally {
             libxml_use_internal_errors($previous);

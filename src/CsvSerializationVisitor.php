@@ -58,13 +58,21 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
     private static function fputcsv($handle, array $data, string $delimiter, string $enclosure, string $escapeChar): int
     {
         $data = array_map(static fn (string|null $value) => $value === null ? $value : str_replace($enclosure, $escapeChar . $enclosure, $value), $data);
+        $result = fputcsv($handle, $data, $delimiter, $enclosure, $enclosure);
+        if ($result === false) {
+            throw new RuntimeException('Failed to write csv data.');
+        }
 
-        return fputcsv($handle, $data, $delimiter, $enclosure, $enclosure);
+        return $result;
     }
 
     public function getResult(): string
     {
-        $handle = fopen('php://temp,', 'w+');
+        $handle = fopen('php://temp,', 'wb+');
+        if ($handle === false) {
+            throw new RuntimeException('Unable to open temp file.');
+        }
+
         $data = $this->getRoot();
 
         [$delimiter, $keySeparator, $escapeFormulas, $enclosure, $escapeChar, $noHeaders, $outputBom] = $this->getOptions();
@@ -81,6 +89,10 @@ class CsvSerializationVisitor extends GenericSerializationVisitor
 
         rewind($handle);
         $value = stream_get_contents($handle);
+        if ($value === false) {
+            throw new RuntimeException('Unable to read data.');
+        }
+
         fclose($handle);
 
         if ($outputBom) {

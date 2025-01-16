@@ -352,14 +352,10 @@ class XmlSerializationVisitor extends AbstractVisitor
         try {
             $xml = $this->document->saveXML();
             if ($xml === false) {
-                throw new XmlErrorException(libxml_get_last_error(), $e);
+                throw new XmlErrorException(libxml_get_last_error());  /* @phpstan-ignore-line */
             }
         } finally {
             libxml_use_internal_errors($previous);
-        }
-
-        if ($xml === false) {
-            throw new XmlErrorException(libxml_get_last_error());
         }
 
         return $xml;

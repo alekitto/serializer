@@ -60,7 +60,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         try {
             $doc = simplexml_load_string($data);
             if ($doc === false) {
-                throw new XmlErrorException(libxml_get_last_error());
+                throw new XmlErrorException(libxml_get_last_error()); /* @phpstan-ignore-line */
             }
         } finally {
             libxml_use_internal_errors($previous);
@@ -399,6 +399,7 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
         $internalSubset = substr($data, $startPos ?: 0, $endPos - $startPos);
         $internalSubset = str_replace(["\n", "\r"], '', $internalSubset);
         $internalSubset = preg_replace('/\s{2,}/', ' ', $internalSubset);
+        assert(is_string($internalSubset));
         $internalSubset = str_replace(['[ <!', '> ]>'], ['[<!', '>]>'], $internalSubset);
         assert(is_string($internalSubset));
 
