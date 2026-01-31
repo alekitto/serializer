@@ -106,7 +106,6 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
 
     public function visitEnum(mixed $data, Type $type, Context $context): UnitEnum|null
     {
-        assert($type->metadata !== null);
         $enum = $type->metadata->getName();
         assert(is_subclass_of($enum, UnitEnum::class, true));
 

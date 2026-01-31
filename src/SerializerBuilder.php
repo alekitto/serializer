@@ -16,7 +16,6 @@ use Kcs\Serializer\Handler\ConstraintViolationHandler;
 use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\FormErrorHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
-use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\SymfonyUidHandler;
 use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\Metadata\Loader\AttributesLoader;
@@ -92,7 +91,6 @@ class SerializerBuilder
         $this->handlerRegistry->registerSubscribingHandler(new DateHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ConstraintViolationHandler());
         $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler());
-        $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new UuidInterfaceHandler());
         $this->handlerRegistry->registerSubscribingHandler(new SymfonyUidHandler());

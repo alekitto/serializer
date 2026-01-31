@@ -64,10 +64,10 @@ interface VisitorInterface
      */
     public function visitHash(mixed $data, Type $type, Context $context): mixed;
 
-    /*
+    /**
      * Visits an enum (PHP 8.1).
      */
-    // public function visitEnum(mixed $data, Type $type, Context $context): mixed;
+    public function visitEnum(mixed $data, Type $type, Context $context): mixed;
 
     /**
      * Visits an object.

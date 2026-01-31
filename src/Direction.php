@@ -25,4 +25,12 @@ enum Direction
             default => throw new InvalidArgumentException(sprintf('The direction "%s" does not exist.', $dirStr)),
         };
     }
+
+    public function toString(): string
+    {
+        return match ($this) {
+            self::Deserialization => 'deserialization',
+            self::Serialization => 'serialization',
+        };
+    }
 }

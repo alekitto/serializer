@@ -18,7 +18,6 @@ use function is_object;
 use function is_scalar;
 use function is_subclass_of;
 use function iterator_to_array;
-use function method_exists;
 
 class SerializeGraphNavigator extends GraphNavigator
 {
@@ -39,7 +38,7 @@ class SerializeGraphNavigator extends GraphNavigator
     protected function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context): mixed
     {
         $visitor = $context->visitor;
-        if ($data instanceof UnitEnum && method_exists($visitor, 'visitEnum')) {
+        if ($data instanceof UnitEnum) {
             return $visitor->visitEnum($data, $type, $context);
         }
 

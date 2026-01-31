@@ -8,7 +8,6 @@ use DateTime;
 use Kcs\Serializer\Debug\TraceableHandlerRegistry;
 use Kcs\Serializer\Direction;
 use Kcs\Serializer\Tests\Fixtures\Kernel\AppKernel;
-use PhpCollection\Sequence;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Form\Form;
@@ -50,7 +49,6 @@ class SerializerBundleTest extends WebTestCase
         self::assertNotNull($registry->getHandler(Direction::Serialization, ConstraintViolation::class));
         self::assertNotNull($registry->getHandler(Direction::Serialization, DateTime::class));
         self::assertNotNull($registry->getHandler(Direction::Serialization, Form::class));
-        self::assertNotNull($registry->getHandler(Direction::Serialization, Sequence::class));
         self::assertNotNull($registry->getHandler(Direction::Serialization, UuidInterface::class));
     }
 

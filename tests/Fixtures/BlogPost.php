@@ -11,8 +11,6 @@ use Kcs\Serializer\Attribute\Type;
 use Kcs\Serializer\Attribute\Xml;
 use Kcs\Serializer\Metadata\Access;
 use Kcs\Serializer\Metadata\Exclusion;
-use PhpCollection\Map;
-use PhpCollection\Sequence;
 
 #[Xml\Root('blog-post')]
 #[Xml\XmlNamespace(uri: "http://example.com/namespace")]
@@ -53,12 +51,12 @@ class BlogPost
     #[Groups(['comments'])]
     private $comments;
 
-    #[Type(Sequence::class.'<'.Comment::class.'>')]
+    #[Type('array<'.Comment::class.'>')]
     #[Xml\XmlList(inline: true, entry: 'comment2')]
     #[Groups(['comments'])]
     private $comments2;
 
-    #[Type(Map::class.'<string, string>')]
+    #[Type('array<string, string>')]
     #[Xml\Map(keyAttribute: 'key')]
     private $metadata;
 
@@ -81,9 +79,9 @@ class BlogPost
         $this->publisher = $publisher;
         $this->published = false;
         $this->comments = new ArrayCollection();
-        $this->comments2 = new Sequence();
-        $this->metadata = new Map();
-        $this->metadata->set('foo', 'bar');
+        $this->comments2 = [];
+        $this->metadata = [];
+        $this->metadata['foo'] = 'bar';
         $this->createdAt = $createdAt;
         $this->etag = \sha1($this->createdAt->format(\DateTime::ISO8601));
     }
@@ -101,7 +99,7 @@ class BlogPost
     public function addComment(Comment $comment)
     {
         $this->comments->add($comment);
-        $this->comments2->add($comment);
+        $this->comments2[] = $comment;
     }
 
     public function addTag(Tag $tag)

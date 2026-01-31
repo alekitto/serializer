@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Handler;
 
+use Kcs\Serializer\Direction;
+
 interface SubscribingHandlerInterface
 {
     /**
      * Return format:.
      *
      *      yield [
-     *          'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
+     *          'direction' => Direction::Serialization,
      *          'type' => 'DateTime',
      *          'method' => 'serializeDateTimeToJson',
      *      ];
      *
      * The direction and method keys can be omitted.
      *
-     * @return iterable<string, mixed>
-     * @phpstan-return iterable{direction: int, type: string, method: string}
+     * @return iterable<array<string, mixed>>
+     * @phpstan-return iterable<array{direction: Direction, type: string, method: string}>
      */
     public static function getSubscribingMethods(): iterable;
 }

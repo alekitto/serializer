@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Kcs\Serializer\Type\Parser;
 
 use Doctrine\Common\Lexer\AbstractLexer;
+use UnitEnum;
 
 use function ctype_alpha;
 use function str_replace;
 use function substr;
 
+/** @extends AbstractLexer<UnitEnum|string|int, string> */
 final class Lexer extends AbstractLexer
 {
     public const T_NONE = 1;

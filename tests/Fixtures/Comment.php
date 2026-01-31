@@ -15,7 +15,7 @@ class Comment
     #[Type('string')]
     private $text;
 
-    public function __construct(Author $author = null, $text)
+    public function __construct(Author|null $author, $text)
     {
         $this->author = $author;
         $this->text = $text;

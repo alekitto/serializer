@@ -14,7 +14,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use function assert;
 use function class_exists;
 use function interface_exists;
-use function method_exists;
 
 /**
  * Handles traversal along the object graph.
@@ -88,15 +87,11 @@ abstract class GraphNavigator
                 return $visitor->visitDouble($data, $type, $context);
 
             case 'array':
-                if (method_exists($visitor, 'visitHash')) {
-                    if ($type->countParams() === 1) {
-                        return $visitor->visitArray($data, $type, $context);
-                    }
-
-                    return $visitor->visitHash($data, $type, $context);
+                if ($type->countParams() === 1) {
+                    return $visitor->visitArray($data, $type, $context);
                 }
 
-                return $visitor->visitArray($data, $type, $context);
+                return $visitor->visitHash($data, $type, $context);
 
             case 'resource':
                 $msg = 'Resources are not supported in serialized data.';

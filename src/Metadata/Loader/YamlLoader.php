@@ -136,7 +136,6 @@ class YamlLoader extends AttributesLoader
      */
     protected function getPropertyAnnotations(ReflectionProperty $property): array
     {
-        // @phpstan-ignore-next-line
         $config = $this->getClassConfig($property->class);
         $propertyName = $property->name;
 

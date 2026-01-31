@@ -19,7 +19,6 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('kcs_serializer');
         $rootNode = $treeBuilder->getRootNode();
 
-        // @phpstan-ignore-next-line
         $rootNode
             ->canBeDisabled()
             ->addDefaultsIfNotSet()

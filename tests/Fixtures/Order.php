@@ -15,7 +15,7 @@ class Order
     #[Type(Price::class)]
     private $cost;
 
-    public function __construct(Price $price = null)
+    public function __construct(Price|null $price = null)
     {
         $this->cost = $price ?: new Price(5);
     }

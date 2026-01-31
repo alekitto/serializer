@@ -10,8 +10,6 @@ use Kcs\Serializer\Attribute\SerializedName;
 use Kcs\Serializer\Attribute\Type;
 use Kcs\Serializer\Attribute\Xml;
 use Kcs\Serializer\Metadata\Exclusion\Behavior;
-use PhpCollection\Map;
-use PhpCollection\Sequence;
 use Kcs\Serializer\Metadata\Access;
 
 
@@ -58,7 +56,7 @@ class NonAnnotatedBlogPost
     private $comments;
 
     /**
-     * @var Sequence<Comment>
+     * @var list<Comment>
      *
      * @Xml\XmlList(inline=true, entry="comment2")
      * @Groups({"comments"})
@@ -68,7 +66,7 @@ class NonAnnotatedBlogPost
     private $comments2;
 
     /**
-     * @var Map<string,string>
+     * @var array<string,string>
      */
     #[Xml\Map(keyAttribute: 'key')]
     private $metadata;
@@ -99,9 +97,9 @@ class NonAnnotatedBlogPost
         $this->publisher = $publisher;
         $this->published = false;
         $this->comments = new ArrayCollection();
-        $this->comments2 = new Sequence();
-        $this->metadata = new Map();
-        $this->metadata->set('foo', 'bar');
+        $this->comments2 = [];
+        $this->metadata = [];
+        $this->metadata['foo'] = 'bar';
         $this->createdAt = $createdAt;
         $this->etag = \sha1($this->createdAt->format(\DateTime::ISO8601));
     }
@@ -124,7 +122,7 @@ class NonAnnotatedBlogPost
     public function addComment(Comment $comment)
     {
         $this->comments->add($comment);
-        $this->comments2->add($comment);
+        $this->comments2[] = $comment;
     }
 
     public function addTag(Tag $tag)

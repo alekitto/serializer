@@ -14,7 +14,7 @@ class CurrencyAwareOrder
     #[Type(CurrencyAwarePrice::class)]
     private $cost;
 
-    public function __construct(CurrencyAwarePrice $price = null)
+    public function __construct(CurrencyAwarePrice|null $price = null)
     {
         $this->cost = $price ?: new CurrencyAwarePrice(5);
     }

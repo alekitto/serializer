@@ -12,11 +12,10 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Parameter;
 
 use function class_exists;
-use function method_exists;
 
 final class SerializerExtension extends Extension
 {
@@ -27,20 +26,18 @@ final class SerializerExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.php');
 
         if ($container->getParameter('kernel.debug')) {
-            $loader->load('services_debug.xml');
+            $loader->load('services_debug.php');
         }
 
-        if (method_exists($container, 'registerForAutoconfiguration')) {
-            $container->registerForAutoconfiguration(SubscribingHandlerInterface::class)
-                ->addTag('kcs_serializer.handler');
+        $container->registerForAutoconfiguration(SubscribingHandlerInterface::class)
+            ->addTag('kcs_serializer.handler');
 
-            $container->registerForAutoconfiguration(SerializationHandlerInterface::class)->addTag('kcs_serializer.serialization_handler');
-            $container->registerForAutoconfiguration(DeserializationHandlerInterface::class)->addTag('kcs_serializer.deserialization_handler');
-        }
+        $container->registerForAutoconfiguration(SerializationHandlerInterface::class)->addTag('kcs_serializer.serialization_handler');
+        $container->registerForAutoconfiguration(DeserializationHandlerInterface::class)->addTag('kcs_serializer.deserialization_handler');
 
         $container->setParameter('kcs_serializer.xml_default_encoding', $config['xml_default_encoding'] ?? 'UTF-8');
         $container->setParameter('kcs_serializer.naming_strategy', $config['naming_strategy'] ?? 'underscore');

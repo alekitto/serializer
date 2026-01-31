@@ -13,10 +13,17 @@ use Kcs\Serializer\Metadata\StaticPropertyMetadata;
 use Kcs\Serializer\Metadata\VirtualPropertyMetadata;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 use Symfony\Component\PropertyInfo\Type as SymfonyType;
+use Symfony\Component\TypeInfo\Type\BuiltinType;
+use Symfony\Component\TypeInfo\Type\CollectionType;
+use Symfony\Component\TypeInfo\Type\CompositeTypeInterface;
+use Symfony\Component\TypeInfo\Type\GenericType;
+use Symfony\Component\TypeInfo\Type\ObjectType;
+use Symfony\Component\TypeInfo\TypeIdentifier;
 
 use function assert;
 use function count;
 use function implode;
+use function method_exists;
 use function reset;
 
 /**
@@ -55,28 +62,73 @@ class PropertyInfoTypeLoader implements LoaderInterface
                 continue;
             }
 
-            $types = $this->propertyInfoExtractor->getTypes($classMetadata->name, $propertyMetadata->name);
-            if ($types === null || count($types) !== 1) {
-                continue;
-            }
-
-            $type = reset($types);
-            if ($type->isCollection()) {
-                $params = [];
-                $keyType = $type->getCollectionKeyTypes()[0] ?? null;
-                if ($keyType !== null && $keyType->getBuiltinType() !== SymfonyType::BUILTIN_TYPE_INT) {
-                    $params[] = $keyType->getClassName() ?? $keyType->getBuiltinType();
+            if (method_exists($this->propertyInfoExtractor, 'getTypes')) { // sf < 8
+                $types = $this->propertyInfoExtractor->getTypes($classMetadata->name, $propertyMetadata->name);
+                if ($types === null || count($types) !== 1) {
+                    continue;
                 }
 
-                $valueType = $type->getCollectionValueTypes()[0] ?? null;
-                if ($valueType !== null) {
-                    $params[] = $valueType->getClassName() ?? $valueType->getBuiltinType();
-                }
+                $type = reset($types);
 
-                $type = $type->getClassName() ?? $type->getBuiltinType();
-                $type .= $params ? '<' . implode(',', $params) . '>' : '';
+                if ($type->isCollection()) {
+                    $params = [];
+                    $keyType = $type->getCollectionKeyTypes()[0] ?? null;
+                    /* @phpstan-ignore-next-line */
+                    if ($keyType !== null && $keyType->getBuiltinType() !== SymfonyType::BUILTIN_TYPE_INT) {
+                        $params[] = $keyType->getClassName() ?? $keyType->getBuiltinType();
+                    }
+
+                    $valueType = $type->getCollectionValueTypes()[0] ?? null;
+                    if ($valueType !== null) {
+                        $params[] = $valueType->getClassName() ?? $valueType->getBuiltinType();
+                    }
+
+                    $type = $type->getClassName() ?? $type->getBuiltinType();
+                    $type .= $params ? '<' . implode(',', $params) . '>' : '';
+                } else {
+                    $type = $type->getClassName() ?? $type->getBuiltinType();
+                }
             } else {
-                $type = $type->getClassName() ?? $type->getBuiltinType();
+                $type = $this->propertyInfoExtractor->getType($classMetadata->name, $propertyMetadata->name);
+                if ($type === null) {
+                    continue;
+                }
+
+                if ($type instanceof CompositeTypeInterface) {
+                    continue;
+                }
+
+                if ($type instanceof CollectionType) {
+                    $params = [];
+                    $mainType = $type->getWrappedType();
+                    if ($mainType instanceof GenericType) {
+                        $mainType = $mainType->getWrappedType();
+                    }
+
+                    if (! $type->isList()) {
+                        $keyType = $type->getCollectionKeyType();
+                        if ($keyType instanceof BuiltinType && $keyType->getTypeIdentifier() !== TypeIdentifier::INT) {
+                            $params[] = $keyType->getTypeIdentifier()->value;
+                        } elseif ($keyType instanceof ObjectType) {
+                            $params[] = $keyType->getClassName();
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    $valueType = $type->getCollectionValueType();
+                    if ($valueType instanceof BuiltinType) {
+                        $params[] = $valueType->getTypeIdentifier()->value;
+                    } elseif ($valueType instanceof ObjectType) {
+                        $params[] = $valueType->getClassName();
+                    } else {
+                        continue;
+                    }
+
+                    $type = $mainType . '<' . implode(',', $params) . '>';
+                } else {
+                    $type = (string) $type;
+                }
             }
 
             $propertyMetadata->setType($type);

@@ -103,7 +103,7 @@ class XmlLoader extends AttributesLoader
 
         $annotations = $this->loadComplex($element, ['name'], $exclude);
 
-        foreach ($element->xpath('./discriminator') as $discriminatorElement) {
+        foreach ($element->xpath('./discriminator') as $discriminatorElement) { // @phpstan-ignore-line
             $discriminator = new Annotations\Discriminator([]);
             foreach ($this->loadAnnotationProperties($discriminatorElement) as $attrName => $value) {
                 if ($attrName === 'groups' && is_string($value)) {
@@ -114,7 +114,7 @@ class XmlLoader extends AttributesLoader
             }
 
             $map = [];
-            foreach ($discriminatorElement->xpath('./map') as $item) {
+            foreach ($discriminatorElement->xpath('./map') as $item) { // @phpstan-ignore-line
                 $attr = $item->attributes();
                 assert($attr !== null);
 
@@ -128,7 +128,7 @@ class XmlLoader extends AttributesLoader
         }
 
         $reflClass = new ReflectionClass(Annotations\StaticField::class);
-        foreach ($element->xpath('./static-field') as $fieldElement) {
+        foreach ($element->xpath('./static-field') as $fieldElement) { // @phpstan-ignore-line
             $field = $reflClass->newInstanceWithoutConstructor();
             foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
                 if (! $reflClass->hasProperty($attrName)) {
@@ -143,7 +143,7 @@ class XmlLoader extends AttributesLoader
         }
 
         $reflClass = new ReflectionClass(Annotations\AdditionalField::class);
-        foreach ($element->xpath('./additional-field') as $fieldElement) {
+        foreach ($element->xpath('./additional-field') as $fieldElement) { // @phpstan-ignore-line
             $field = (new ReflectionClass(Annotations\AdditionalField::class))->newInstanceWithoutConstructor();
             foreach ($this->loadAnnotationProperties($fieldElement) as $attrName => $value) {
                 if (! $reflClass->hasProperty($attrName)) {

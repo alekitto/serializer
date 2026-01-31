@@ -155,6 +155,8 @@ class ClassMetadata extends BaseClassMetadata
      */
     public function getSubtype(array|object $data): string
     {
+        assert($this->discriminatorFieldName !== null);
+
         if (is_array($data) && isset($data[$this->discriminatorFieldName])) {
             $typeValue = (string) $data[$this->discriminatorFieldName];
         } elseif (isset($data->{$this->discriminatorFieldName})) {

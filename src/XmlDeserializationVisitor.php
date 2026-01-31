@@ -382,6 +382,10 @@ class XmlDeserializationVisitor extends GenericDeserializationVisitor
     private function getDomDocumentType(string $data): string
     {
         $startPos = $endPos = stripos($data, '<!doctype');
+        if ($endPos === false) {
+            return '';
+        }
+
         $braces = 0;
         do {
             $char = $data[$endPos++];

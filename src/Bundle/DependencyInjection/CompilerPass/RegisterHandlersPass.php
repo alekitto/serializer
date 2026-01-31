@@ -18,7 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-use function is_string;
 use function is_subclass_of;
 use function sprintf;
 
@@ -45,8 +44,8 @@ class RegisterHandlersPass implements CompilerPassInterface
                 $directions = [Direction::Deserialization, Direction::Serialization];
                 if (isset($methodData['direction'])) {
                     $direction = $methodData['direction'];
-                    if (is_string($direction)) {
-                        $direction = Direction::parseDirection($direction);
+                    if (! $direction instanceof Direction) {
+                        $direction = Direction::parseDirection((string) $direction);
                     }
 
                     $directions = [$direction];

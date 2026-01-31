@@ -210,7 +210,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $context->accept($v, $metadata->type);
 
         if (
-            is_object($v) && $v !== null &&
+            is_object($v) &&
             ! $metadata instanceof AdditionalPropertyMetadata &&
             $context->isVisiting($v)
         ) {
@@ -241,7 +241,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         $nodeName = 'entry';
         $metadata = $context->getMetadataStack()->getCurrent();
         if ($metadata !== null && ! empty($metadata->xmlEntryName)) {
-            assert($metadata instanceof PropertyMetadata);
             $nodeName = $metadata->xmlEntryName;
         }
 
@@ -281,7 +280,6 @@ class XmlSerializationVisitor extends AbstractVisitor
         $nodeName = 'entry';
         $metadata = $context->getMetadataStack()->getCurrent();
         if ($metadata !== null && ! empty($metadata->xmlEntryName)) {
-            assert($metadata instanceof PropertyMetadata);
             $nodeName = $metadata->xmlEntryName;
         }
 
@@ -328,6 +326,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
 
         foreach ($nodes as $node) {
+            assert(isset($this->currentNodes[0]));
             $this->currentNodes[0]->appendChild($node);
         }
 

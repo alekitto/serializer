@@ -13,7 +13,7 @@ class TestController
     private ContainerInterface $container;
 
     #[Required]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface|null $container)
     {
         $this->container = $container;
     }

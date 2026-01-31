@@ -24,7 +24,6 @@ use Kcs\Serializer\Handler\DateHandler;
 use Kcs\Serializer\Handler\DeserializationHandlerInterface;
 use Kcs\Serializer\Handler\FormErrorHandler;
 use Kcs\Serializer\Handler\HandlerRegistry;
-use Kcs\Serializer\Handler\PhpCollectionHandler;
 use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\UuidInterfaceHandler;
 use Kcs\Serializer\JsonDeserializationVisitor;
@@ -90,7 +89,6 @@ use Kcs\Serializer\XmlDeserializationVisitor;
 use Kcs\Serializer\XmlSerializationVisitor;
 use Kcs\Serializer\YamlDeserializationVisitor;
 use Kcs\Serializer\YamlSerializationVisitor;
-use PhpCollection\Sequence;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Ramsey\Uuid\Uuid;
@@ -443,7 +441,7 @@ abstract class BaseSerializationTest extends TestCase
             self::assertFalse($this->getField($deserialized, 'published'));
             self::assertSame('1edf9bf60a32d89afbb85b2be849e3ceed5f5b10', $this->getField($deserialized, 'etag'));
             self::assertEquals(new ArrayCollection([$comment]), $this->getField($deserialized, 'comments'));
-            self::assertEquals(new Sequence([$comment]), $this->getField($deserialized, 'comments2'));
+            self::assertEquals([$comment], $this->getField($deserialized, 'comments2'));
             self::assertEquals($author, $this->getField($deserialized, 'author'));
             self::assertEquals([$tag1, $tag2], $this->getField($deserialized, 'tag'));
         }
@@ -1161,12 +1159,12 @@ abstract class BaseSerializationTest extends TestCase
         return true;
     }
 
-    protected function serialize($data, Context $context = null, ?Type $type = null)
+    protected function serialize($data, Context|null $context = null, Type|null $type = null)
     {
         return $this->serializer->serialize($data, $this->getFormat(), $context, $type);
     }
 
-    protected function deserialize($content, $type, ?Context $context = null)
+    protected function deserialize($content, $type, Context|null $context = null)
     {
         return $this->serializer->deserialize($content, Type::from($type), $this->getFormat(), $context);
     }
@@ -1186,7 +1184,7 @@ abstract class BaseSerializationTest extends TestCase
         $translator = \is_subclass_of(IdentityTranslator::class, TranslatorInterface::class, true) ?
             new IdentityTranslator() : new IdentityTranslator(new MessageSelector());
         $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler($translator));
-        $this->handlerRegistry->registerSubscribingHandler(new PhpCollectionHandler());
+        $this->handlerRegistry->registerSubscribingHandler(new FormErrorHandler($translator));
         $this->handlerRegistry->registerSubscribingHandler(new ArrayCollectionHandler());
         $this->handlerRegistry->registerSubscribingHandler(new UuidInterfaceHandler());
         $this->handlerRegistry->registerHandler(Direction::Serialization, 'AuthorList',
