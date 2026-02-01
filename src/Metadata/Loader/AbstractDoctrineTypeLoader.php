@@ -27,18 +27,24 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
      * Map of doctrine 2 field types to Kcs\Serializer types.
      */
     protected const FIELD_MAPPING = [
+        'ascii_string' => 'string',
         'string' => 'string',
         'text' => 'string',
         'blob' => 'string',
+        'binary' => 'string',
 
         'integer' => 'integer',
         'smallint' => 'integer',
         'bigint' => 'integer',
 
         'datetime' => 'DateTime',
+        'datetime_immutable' => 'DateTimeImmutable',
         'datetimetz' => 'DateTime',
+        'datetimetz_immutable' => 'DateTimeImmutable',
         'time' => 'DateTime',
+        'time_immutable' => 'DateTimeImmutable',
         'date' => 'DateTime',
+        'date_immutable' => 'DateTimeImmutable',
 
         'float' => 'float',
         'decimal' => 'float',
@@ -46,6 +52,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         'boolean' => 'boolean',
 
         'array' => 'array',
+        'json' => 'array',
         'json_array' => 'array',
         'simple_array' => 'array<string>',
     ];
