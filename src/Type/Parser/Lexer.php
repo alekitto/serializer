@@ -44,7 +44,7 @@ final class Lexer extends AbstractLexer
         ];
     }
 
-    protected function getType(string &$value): int
+    protected function getType(mixed &$value): int
     {
         $type = self::T_NONE;
 
