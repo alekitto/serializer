@@ -6,7 +6,12 @@ namespace Kcs\Serializer\Tests\Serialization;
 
 use DateTimeImmutable;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Kcs\Serializer\Context;
 use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\GenericSerializationVisitor;
+use Kcs\Serializer\Handler\ArrayCollectionHandler;
+use Kcs\Serializer\IterableSerializationVisitorInterface;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\SerializerBuilder;
@@ -15,6 +20,7 @@ use Kcs\Serializer\Tests\Fixtures\BlogPost;
 use Kcs\Serializer\Tests\Fixtures\Comment;
 use Kcs\Serializer\Tests\Fixtures\Publisher;
 use Kcs\Serializer\Tests\Fixtures\SimpleObject;
+use Kcs\Serializer\Type\Type as SerializerType;
 use PHPUnit\Framework\TestCase;
 
 final class CompiledSerializationVisitorTest extends TestCase
@@ -78,6 +84,33 @@ final class CompiledSerializationVisitorTest extends TestCase
         self::assertGreaterThan(0, $visitor->getCompiledSerializationStats()->compiledObjects);
         self::assertGreaterThan(0, $visitor->getCompiledSerializationStats()->delegatedProperties);
         self::assertSame(0, $visitor->getCompiledSerializationStats()->fallbackObjects);
+    }
+
+    public function testArrayCollectionHandlerUsesIterableVisitorFastPath(): void
+    {
+        $visitor = new CompiledIterableSpyVisitor();
+        $handler = new ArrayCollectionHandler();
+
+        self::assertSame(
+            'fast-path',
+            $handler->serializeCollection(
+                $visitor,
+                new ArrayCollection([new CompiledChildDto('c', 1)]),
+                new SerializerType(ArrayCollection::class, [SerializerType::from(CompiledChildDto::class)]),
+                SerializationContext::create(),
+            ),
+        );
+        self::assertTrue($visitor->visitedIterable);
+    }
+
+    public function testCompiledJsonVisitorKeepsEmptyCollectionMapsAsObjects(): void
+    {
+        $data = [new CompiledCollectionMapDto(new ArrayCollection())];
+
+        self::assertSame(
+            $this->baseline()->serialize($data, 'json'),
+            SerializerBuilder::create()->enableCompiledSerialization()->build()->serialize($data, 'json'),
+        );
     }
 
     public function testCompiledVisitorFallsBackWhenGroupsAreActive(): void
@@ -165,5 +198,27 @@ final class CompiledUnsupportedDto
         public DateTimeImmutable $createdAt,
         public array $tags,
     ) {
+    }
+}
+
+final class CompiledCollectionMapDto
+{
+    public function __construct(
+        #[Type('ArrayCollection<string, string>')]
+        public ArrayCollection $items,
+    ) {
+    }
+}
+
+final class CompiledIterableSpyVisitor extends GenericSerializationVisitor implements IterableSerializationVisitorInterface
+{
+    public bool $visitedIterable = false;
+
+    /** @inheritDoc */
+    public function visitIterable(iterable $data, SerializerType $type, Context $context): mixed
+    {
+        $this->visitedIterable = true;
+
+        return 'fast-path';
     }
 }

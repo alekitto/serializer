@@ -14,6 +14,7 @@ use function assert;
 use function class_exists;
 use function is_array;
 use function is_object;
+use function iterator_to_array;
 
 trait CompiledSerializationVisitorTrait
 {
@@ -66,6 +67,25 @@ trait CompiledSerializationVisitorTrait
             $this->delegatedProperties,
             $this->delegationReasons,
         );
+    }
+
+    /** @inheritDoc */
+    public function visitIterable(iterable $data, Type $type, Context $context): mixed
+    {
+        $items = is_array($data) ? $data : iterator_to_array($data);
+        $supported = false;
+        $result = $this->serializeCompiledTypedArray($type, $items, $context, $supported);
+        if ($supported) {
+            $this->setData($result);
+
+            return $result;
+        }
+
+        if ($type->countParams() === 1) {
+            return parent::visitArray($items, $type, $context);
+        }
+
+        return parent::visitHash($items, $type, $context);
     }
 
     /** @return array<string, mixed> */

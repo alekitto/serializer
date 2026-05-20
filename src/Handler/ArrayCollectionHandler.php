@@ -11,6 +11,7 @@ use Doctrine\ODM\PHPCR\PersistentCollection as PHPCRPersistentCollection;
 use Doctrine\ORM\PersistentCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Direction;
+use Kcs\Serializer\IterableSerializationVisitorInterface;
 use Kcs\Serializer\Type\Type;
 use Kcs\Serializer\VisitorInterface;
 
@@ -50,6 +51,10 @@ class ArrayCollectionHandler implements SubscribingHandlerInterface
     /** @param Collection<mixed> $collection */
     public function serializeCollection(VisitorInterface $visitor, Collection $collection, Type $type, Context $context): mixed
     {
+        if ($visitor instanceof IterableSerializationVisitorInterface) {
+            return $visitor->visitIterable($collection->toArray(), $type, $context);
+        }
+
         if ($type->countParams() === 1) {
             return $visitor->visitArray($collection->toArray(), $type, $context);
         }
