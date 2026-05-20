@@ -24,6 +24,9 @@ use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
+use Kcs\Serializer\Serialization\Compiled\CompiledJsonSerializationVisitor;
+use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
+use Kcs\Serializer\Serialization\Compiled\CompiledYamlSerializationVisitor;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
@@ -51,6 +54,7 @@ class SerializerBuilder
     private PropertyNamingStrategyInterface $propertyNamingStrategy;
     private CacheItemPoolInterface|null $cache = null;
     private LoaderInterface|null $metadataLoader = null;
+    private bool $compiledSerializationEnabled = false;
 
     public static function create(): self
     {
@@ -146,6 +150,13 @@ class SerializerBuilder
         return $this;
     }
 
+    public function enableCompiledSerialization(bool $enabled = true): self
+    {
+        $this->compiledSerializationEnabled = $enabled;
+
+        return $this;
+    }
+
     public function setDeserializationVisitor(string $format, VisitorInterface $visitor): self
     {
         $this->deserializationVisitors[$format] = $visitor;
@@ -158,10 +169,10 @@ class SerializerBuilder
         $this->initializePropertyNamingStrategy();
 
         $this->serializationVisitors = [
-            'array' => new GenericSerializationVisitor(),
+            'array' => $this->compiledSerializationEnabled ? new CompiledSerializationVisitor() : new GenericSerializationVisitor(),
             'xml' => new XmlSerializationVisitor(),
-            'yml' => new YamlSerializationVisitor(),
-            'json' => new JsonSerializationVisitor(),
+            'yml' => $this->compiledSerializationEnabled ? new CompiledYamlSerializationVisitor() : new YamlSerializationVisitor(),
+            'json' => $this->compiledSerializationEnabled ? new CompiledJsonSerializationVisitor() : new JsonSerializationVisitor(),
             'csv' => new CsvSerializationVisitor(),
         ];
 

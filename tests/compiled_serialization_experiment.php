@@ -1,19 +1,14 @@
 <?php declare(strict_types=1);
 
-use Kcs\Serializer\Context;
-use Kcs\Serializer\GenericSerializationVisitor;
-use Kcs\Serializer\GraphNavigator;
-use Kcs\Serializer\Metadata\Access\Type as AccessType;
-use Kcs\Serializer\Metadata\ClassMetadata;
-use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\SerializerBuilder;
+use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\BlogPost;
 use Kcs\Serializer\Tests\Fixtures\Comment;
-use Kcs\Serializer\Tests\Fixtures\Author;
 use Kcs\Serializer\Tests\Fixtures\Publisher;
 use Kcs\Serializer\Tests\Fixtures\SimpleObject;
-use Kcs\Serializer\Type\Type;
 
 require_once __DIR__ . '/bootstrap.php';
 
@@ -41,14 +36,16 @@ function experimentAssertSameOutput(string $name, mixed $baseline, mixed $compil
     ));
 }
 
-function experimentReport(string $name, Closure $baseline, Closure $compiled, int $times = 1000): void
+function experimentReport(string $name, Closure $baseline, Closure $compiled, CompiledSerializationVisitor $compiledVisitor, int $times = 1000): void
 {
     $baselineOutput = $baseline();
     $compiledOutput = $compiled();
     experimentAssertSameOutput($name, $baselineOutput, $compiledOutput);
 
+    $compiledVisitor->resetCompiledSerializationStats();
     $baselineTime = experimentBenchmark($baseline, $times);
     $compiledTime = experimentBenchmark($compiled, $times);
+    $stats = $compiledVisitor->getCompiledSerializationStats();
 
     printf(
         "%s baseline %.6f compiled %.6f ratio %.2fx\n",
@@ -57,320 +54,12 @@ function experimentReport(string $name, Closure $baseline, Closure $compiled, in
         $compiledTime,
         $compiledTime > 0 ? $baselineTime / $compiledTime : INF,
     );
-}
-
-final class ExperimentPropertyPlan
-{
-    public function __construct(
-        public readonly PropertyMetadata $metadata,
-        public readonly string $serializedName,
-        public readonly string|null $nativeType,
-        private readonly Closure|null $reader,
-    ) {
-    }
-
-    public function read(object $object): mixed
-    {
-        if ($this->reader !== null) {
-            return ($this->reader)($object);
-        }
-
-        return $this->metadata->getValue($object);
-    }
-}
-
-final class ExperimentClassPlan
-{
-    /** @param ExperimentPropertyPlan[] $properties */
-    public function __construct(
-        public readonly array $properties,
-        public readonly bool $nativeOnly,
-    ) {
-    }
-}
-
-final class ExperimentPlanFactory
-{
-    /** @var array<int, array<int, ExperimentClassPlan>> */
-    private array $plans = [];
-
-    public function getPlan(ClassMetadata $metadata, Context $context): ExperimentClassPlan
-    {
-        $metadataId = spl_object_id($metadata);
-        $namingId = spl_object_id($context->namingStrategy);
-        if (isset($this->plans[$metadataId][$namingId])) {
-            return $this->plans[$metadataId][$namingId];
-        }
-
-        $properties = [];
-        $nativeOnly = true;
-        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
-            assert($propertyMetadata instanceof PropertyMetadata);
-
-            $nativeType = $this->getNativeType($propertyMetadata);
-            if ($nativeType === null || $propertyMetadata->inline) {
-                $nativeOnly = false;
-            }
-
-            $properties[] = new ExperimentPropertyPlan(
-                $propertyMetadata,
-                $context->namingStrategy->translateName($propertyMetadata),
-                $nativeType,
-                $this->createReader($propertyMetadata),
-            );
-        }
-
-        return $this->plans[$metadataId][$namingId] = new ExperimentClassPlan($properties, $nativeOnly && $properties !== []);
-    }
-
-    private function createReader(PropertyMetadata $metadata): Closure|null
-    {
-        if ($metadata->accessorType !== AccessType::Property) {
-            return null;
-        }
-
-        try {
-            $reflection = $metadata->getReflection();
-        } catch (ReflectionException) {
-            return null;
-        }
-
-        if ($reflection->hasType()) {
-            return null;
-        }
-
-        $property = $metadata->name;
-        $reader = Closure::bind(static fn (object $object): mixed => $object->{$property}, null, $reflection->getDeclaringClass()->name);
-        assert($reader !== null);
-
-        return $reader;
-    }
-
-    private function getNativeType(PropertyMetadata $metadata): string|null
-    {
-        $type = $metadata->type;
-        if ($type === null || $type->countParams() !== 0) {
-            return null;
-        }
-
-        return match ($type->name) {
-            'string' => 'string',
-            'integer', 'int' => 'int',
-            'boolean', 'bool' => 'bool',
-            'double', 'float' => 'float',
-            default => null,
-        };
-    }
-}
-
-final class ExperimentCompiledVisitor extends GenericSerializationVisitor
-{
-    private GraphNavigator $experimentNavigator;
-    private ExperimentPlanFactory $planFactory;
-    private int $compiledObjects = 0;
-    private int $fallbackObjects = 0;
-
-    /** @var array<int, true> */
-    private array $unsupportedPlans = [];
-
-    public function setNavigator(GraphNavigator|null $navigator = null): void
-    {
-        parent::setNavigator($navigator);
-
-        if ($navigator !== null) {
-            $this->experimentNavigator = $navigator;
-        }
-
-        $this->planFactory ??= new ExperimentPlanFactory();
-    }
-
-    public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, \Kcs\Serializer\Construction\ObjectConstructorInterface|null $objectConstructor = null): mixed
-    {
-        if ($context->getExclusionStrategy() !== null) {
-            ++$this->fallbackObjects;
-
-            return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
-        }
-
-        $plan = $this->planFactory->getPlan($metadata, $context);
-        if (isset($this->unsupportedPlans[spl_object_id($plan)])) {
-            ++$this->fallbackObjects;
-
-            return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
-        }
-
-        $result = $this->serializeObjectFromPlan($plan, $data, $context);
-
-        if ($result !== null) {
-            ++$this->compiledObjects;
-            $this->setData($result);
-
-            return $result;
-        }
-
-        $this->unsupportedPlans[spl_object_id($plan)] = true;
-        ++$this->fallbackObjects;
-
-        return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
-    }
-
-    public function resetStats(): void
-    {
-        $this->compiledObjects = 0;
-        $this->fallbackObjects = 0;
-    }
-
-    /** @return array{compiled: int, fallback: int} */
-    public function getStats(): array
-    {
-        return [
-            'compiled' => $this->compiledObjects,
-            'fallback' => $this->fallbackObjects,
-        ];
-    }
-
-    /** @return array<string, mixed>|null */
-    private function serializeObjectFromPlan(ExperimentClassPlan $plan, object $data, Context $context): array|null
-    {
-        $result = [];
-        foreach ($plan->properties as $property) {
-            $supported = false;
-            $serialized = $this->serializeProperty($property, $data, $context, $supported);
-            if (! $supported) {
-                return null;
-            }
-
-            if ($serialized === null && ! $context->shouldSerializeNull()) {
-                continue;
-            }
-
-            $result[$property->serializedName] = $serialized;
-        }
-
-        return $result;
-    }
-
-    private function serializeProperty(ExperimentPropertyPlan $property, object $data, Context $context, bool &$supported): mixed
-    {
-        $supported = true;
-        $value = $property->read($data);
-        if ($value === null) {
-            return null;
-        }
-
-        if ($property->nativeType !== null) {
-            return match ($property->nativeType) {
-                'string' => (string) $value,
-                'int' => (int) $value,
-                'bool' => (bool) $value,
-                'float' => (float) $value,
-                default => $value,
-            };
-        }
-
-        $type = $property->metadata->type;
-        if ($type === null) {
-            $supported = false;
-
-            return null;
-        }
-
-        if (is_object($value) && $type->countParams() === 0 && class_exists($type->name)) {
-            return $this->serializeTypedObject($type, $value, $context, $supported);
-        }
-
-        if (is_array($value) && $type->name === 'array' && $type->countParams() > 0 && $type->countParams() <= 2) {
-            return $this->serializeTypedArray($type, $value, $context, $supported);
-        }
-
-        $supported = false;
-
-        return null;
-    }
-
-    /** @return array<string, mixed>|null */
-    private function serializeTypedObject(Type $type, object $value, Context $context, bool &$supported): array|null
-    {
-        $supported = true;
-        $metadata = $context->getMetadataFactory()->getMetadataFor($type->name);
-        assert($metadata instanceof ClassMetadata);
-
-        $result = $this->serializeObjectFromPlan($this->planFactory->getPlan($metadata, $context), $value, $context);
-        $supported = $result !== null;
-
-        return $result;
-    }
-
-    /** @param mixed[] $value */
-    private function serializeTypedArray(Type $type, array $value, Context $context, bool &$supported): array|null
-    {
-        $supported = true;
-        $elementType = $this->getElementType($type);
-        if ($elementType === null) {
-            $supported = false;
-
-            return null;
-        }
-
-        $onlyValues = $type->hasParam(0) && ! $type->hasParam(1);
-        $result = [];
-        foreach ($value as $key => $item) {
-            $itemSupported = false;
-            $serialized = $this->serializeArrayItem($elementType, $item, $context, $itemSupported);
-            if (! $itemSupported) {
-                $supported = false;
-
-                return null;
-            }
-
-            if ($serialized === null && ! $context->shouldSerializeNull()) {
-                continue;
-            }
-
-            if ($onlyValues) {
-                $result[] = $serialized;
-            } else {
-                $result[$key] = $serialized;
-            }
-        }
-
-        return $result;
-    }
-
-    private function serializeArrayItem(Type $type, mixed $item, Context $context, bool &$supported): mixed
-    {
-        $supported = true;
-        if ($item === null) {
-            return null;
-        }
-
-        if ($type->countParams() === 0) {
-            $nativeType = match ($type->name) {
-                'string' => 'string',
-                'integer', 'int' => 'int',
-                'boolean', 'bool' => 'bool',
-                'double', 'float' => 'float',
-                default => null,
-            };
-            if ($nativeType !== null) {
-                return match ($nativeType) {
-                    'string' => (string) $item,
-                    'int' => (int) $item,
-                    'bool' => (bool) $item,
-                    'float' => (float) $item,
-                    default => $item,
-                };
-            }
-
-            if (is_object($item) && class_exists($type->name)) {
-                return $this->serializeTypedObject($type, $item, $context, $supported);
-            }
-        }
-
-        $supported = false;
-
-        return null;
-    }
+    printf(
+        "  compiled_objects %d fallback_objects %d delegated_properties %d\n",
+        $stats->compiledObjects,
+        $stats->fallbackObjects,
+        $stats->delegatedProperties,
+    );
 }
 
 final class ExperimentChildDto
@@ -396,6 +85,7 @@ final class ExperimentListDto
     /** @param ExperimentChildDto[] $children */
     public function __construct(
         public string $id,
+        #[Type('array<' . ExperimentChildDto::class . '>')]
         public array $children,
     ) {
     }
@@ -448,10 +138,12 @@ for ($i = 0; $i < 50; ++$i) {
 }
 
 $baseline = SerializerBuilder::create()->build();
-$compiledVisitor = new ExperimentCompiledVisitor();
+$compiledVisitor = new CompiledSerializationVisitor();
 $compiled = SerializerBuilder::create()
     ->setSerializationVisitor('array', $compiledVisitor)
     ->build();
+$groupsContext = SerializationContext::create();
+$groupsContext->setGroups(['Default']);
 
 foreach ([
     'simple_object' => [$simpleObjects, 1000, null],
@@ -459,13 +151,10 @@ foreach ([
     'list_object' => [$listObjects, 1000, null],
     'fallback_object' => [$fallbackObjects, 1000, null],
     'fallback_blog_post' => [$blogPosts, 200, null],
-    'groups_fallback' => [$simpleObjects, 1000, SerializationContext::create()->setGroups(['Default'])],
+    'groups_fallback' => [$simpleObjects, 1000, $groupsContext],
 ] as $name => [$dataset, $times, $context]) {
     $baselineClosure = static fn () => $baseline->serialize($dataset, 'array', $context !== null ? clone $context : null);
     $compiledClosure = static fn () => $compiled->serialize($dataset, 'array', $context !== null ? clone $context : null);
 
-    $compiledVisitor->resetStats();
-    experimentReport($name, $baselineClosure, $compiledClosure, $times);
-    $stats = $compiledVisitor->getStats();
-    printf("  compiled_objects %d fallback_objects %d\n", $stats['compiled'], $stats['fallback']);
+    experimentReport($name, $baselineClosure, $compiledClosure, $compiledVisitor, $times);
 }

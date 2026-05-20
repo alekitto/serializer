@@ -43,23 +43,36 @@ function createObject()
 $serializer = \Kcs\Serializer\SerializerBuilder::create()
     ->setEventDispatcher(new \Symfony\Component\EventDispatcher\EventDispatcher())
     ->build();
+$compiledSerializer = \Kcs\Serializer\SerializerBuilder::create()
+    ->setEventDispatcher(new \Symfony\Component\EventDispatcher\EventDispatcher())
+    ->enableCompiledSerialization()
+    ->build();
 $collection = createCollection();
 $metrics = [];
 $f = static function ($format) use ($serializer, $collection) {
     $serializer->serialize($collection, $format);
 };
+$cf = static function ($format) use ($compiledSerializer, $collection) {
+    $compiledSerializer->serialize($collection, $format);
+};
 
 // Load all necessary classes into memory.
 $f('array');
+$cf('array');
 
 $table = new \Symfony\Component\Console\Helper\Table($output);
-$table->setHeaders(['Format', 'Direction', 'Time']);
+$table->setHeaders(['Format', 'Direction', 'Variant', 'Time']);
 
-$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 9);
+$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 12);
 $progressBar->start();
 
 foreach (['array', 'json', 'yml', 'xml', 'csv'] as $format) {
-    $table->addRow([$format, 'serialize', benchmark($f, $format)]);
+    $table->addRow([$format, 'serialize', 'baseline', benchmark($f, $format)]);
+    $progressBar->advance();
+}
+
+foreach (['array', 'json', 'yml'] as $format) {
+    $table->addRow([$format, 'serialize', 'compiled', benchmark($cf, $format)]);
     $progressBar->advance();
 }
 
@@ -79,7 +92,7 @@ $d = static function ($format) use ($serializer, $serialized, $type) {
 };
 
 foreach (['array', 'json', 'yml', 'xml'] as $format) {
-    $table->addRow([$format, 'deserialize', benchmark($d, $format)]);
+    $table->addRow([$format, 'deserialize', 'baseline', benchmark($d, $format)]);
     $progressBar->advance();
 }
 
