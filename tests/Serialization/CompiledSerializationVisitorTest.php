@@ -134,6 +134,34 @@ final class CompiledSerializationVisitorTest extends TestCase
         );
     }
 
+    public function testCompiledSerializationDescriptorsCanBeStoredAndReloadedFromPhpFiles(): void
+    {
+        $directory = sys_get_temp_dir() . '/serializer_compiled_descriptors_' . bin2hex(random_bytes(4));
+        $data = [new CompiledParentDto('p', new CompiledChildDto('c', 1))];
+
+        $first = SerializerBuilder::create()
+            ->enableCompiledSerialization()
+            ->setCompiledSerializationCacheDirectory($directory)
+            ->build();
+        $baseline = $first->serialize($data, 'array');
+
+        self::assertNotFalse(glob($directory . '/*.php'));
+        self::assertNotSame([], glob($directory . '/*.php'));
+
+        $second = SerializerBuilder::create()
+            ->enableCompiledSerialization()
+            ->setCompiledSerializationCacheDirectory($directory)
+            ->build();
+
+        self::assertSame($baseline, $second->serialize($data, 'array'));
+
+        foreach (glob($directory . '/*.php') ?: [] as $file) {
+            unlink($file);
+        }
+
+        rmdir($directory);
+    }
+
     public function testCompiledVisitorFallsBackWhenGroupsAreActive(): void
     {
         $data = [new SimpleObject('foo', 'bar')];

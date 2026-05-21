@@ -12,12 +12,17 @@ use Kcs\Serializer\Metadata\PropertyMetadata;
 use ReflectionException;
 
 use function assert;
+use function array_key_exists;
 use function spl_object_id;
 
 final class CompiledSerializationPlanFactory
 {
     /** @var array<int, array<int, CompiledClassPlan>> */
     private array $plans = [];
+
+    public function __construct(private readonly CompiledSerializationDescriptorCacheInterface|null $descriptorCache = null)
+    {
+    }
 
     public function getPlan(ClassMetadata $metadata, Context $context): CompiledClassPlan
     {
@@ -27,25 +32,99 @@ final class CompiledSerializationPlanFactory
             return $this->plans[$metadataId][$namingId];
         }
 
+        $cacheKey = $this->getCacheKey($metadata, $context);
+        $descriptor = $this->descriptorCache?->get($cacheKey);
+        if ($descriptor !== null && $this->isDescriptorValid($descriptor, $metadata, $context)) {
+            return $this->plans[$metadataId][$namingId] = $this->createPlanFromDescriptor($descriptor, $metadata);
+        }
+
+        $descriptor = $this->createDescriptor($metadata, $context);
+        $this->descriptorCache?->save($cacheKey, $descriptor);
+
+        return $this->plans[$metadataId][$namingId] = $this->createPlanFromDescriptor($descriptor, $metadata);
+    }
+
+    private function createDescriptor(ClassMetadata $metadata, Context $context): CompiledClassDescriptor
+    {
         $properties = [];
-        $nativeOnly = true;
         foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
             assert($propertyMetadata instanceof PropertyMetadata);
 
-            $nativeType = $this->getNativeType($propertyMetadata);
-            if ($nativeType === null || $propertyMetadata->inline) {
+            $properties[] = new CompiledPropertyDescriptor(
+                $propertyMetadata->name,
+                $context->namingStrategy->translateName($propertyMetadata),
+                $this->getNativeType($propertyMetadata),
+                $propertyMetadata->inline,
+            );
+        }
+
+        return new CompiledClassDescriptor($metadata->name, $context->namingStrategy::class, $properties);
+    }
+
+    private function createPlanFromDescriptor(CompiledClassDescriptor $descriptor, ClassMetadata $metadata): CompiledClassPlan
+    {
+        $metadataByName = [];
+        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+            assert($propertyMetadata instanceof PropertyMetadata);
+            $metadataByName[$propertyMetadata->name] = $propertyMetadata;
+        }
+
+        $properties = [];
+        $nativeOnly = true;
+        foreach ($descriptor->properties as $propertyDescriptor) {
+            $propertyMetadata = $metadataByName[$propertyDescriptor->name];
+            if ($propertyDescriptor->nativeType === null || $propertyDescriptor->inline) {
                 $nativeOnly = false;
             }
 
             $properties[] = new CompiledPropertyPlan(
                 $propertyMetadata,
-                $context->namingStrategy->translateName($propertyMetadata),
-                $nativeType,
+                $propertyDescriptor->serializedName,
+                $propertyDescriptor->nativeType,
                 $this->createReader($propertyMetadata),
             );
         }
 
-        return $this->plans[$metadataId][$namingId] = new CompiledClassPlan($properties, $nativeOnly && $properties !== []);
+        return new CompiledClassPlan($properties, $nativeOnly && $properties !== []);
+    }
+
+    private function isDescriptorValid(CompiledClassDescriptor $descriptor, ClassMetadata $metadata, Context $context): bool
+    {
+        if ($descriptor->className !== $metadata->name || $descriptor->namingStrategy !== $context->namingStrategy::class) {
+            return false;
+        }
+
+        $metadataByName = [];
+        foreach ($metadata->getAttributesMetadata() as $propertyMetadata) {
+            assert($propertyMetadata instanceof PropertyMetadata);
+            $metadataByName[$propertyMetadata->name] = $propertyMetadata;
+        }
+
+        if (count($descriptor->properties) !== count($metadataByName)) {
+            return false;
+        }
+
+        foreach ($descriptor->properties as $propertyDescriptor) {
+            if (! array_key_exists($propertyDescriptor->name, $metadataByName)) {
+                return false;
+            }
+
+            $propertyMetadata = $metadataByName[$propertyDescriptor->name];
+            if ($propertyDescriptor->nativeType !== $this->getNativeType($propertyMetadata)) {
+                return false;
+            }
+
+            if ($propertyDescriptor->inline !== $propertyMetadata->inline) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function getCacheKey(ClassMetadata $metadata, Context $context): string
+    {
+        return $metadata->name . '|' . $context->namingStrategy::class;
     }
 
     /** @return Closure(object): mixed|null */

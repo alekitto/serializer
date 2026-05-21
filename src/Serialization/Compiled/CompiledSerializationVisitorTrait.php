@@ -22,7 +22,8 @@ use function iterator_to_array;
 trait CompiledSerializationVisitorTrait
 {
     private GraphNavigator|null $compiledNavigator = null;
-    private CompiledSerializationPlanFactory $compiledPlanFactory;
+    private CompiledSerializationPlanFactory|null $compiledPlanFactory = null;
+    private CompiledSerializationDescriptorCacheInterface|null $compiledDescriptorCache = null;
     private int $compiledObjects = 0;
     private int $fallbackObjects = 0;
     private int $delegatedProperties = 0;
@@ -46,7 +47,13 @@ trait CompiledSerializationVisitorTrait
         parent::setNavigator($navigator);
 
         $this->compiledNavigator = $navigator;
-        $this->compiledPlanFactory ??= new CompiledSerializationPlanFactory();
+        $this->compiledPlanFactory ??= new CompiledSerializationPlanFactory($this->compiledDescriptorCache);
+    }
+
+    public function setCompiledSerializationDescriptorCache(CompiledSerializationDescriptorCacheInterface|null $cache): void
+    {
+        $this->compiledDescriptorCache = $cache;
+        $this->compiledPlanFactory = new CompiledSerializationPlanFactory($cache);
     }
 
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): mixed
@@ -57,6 +64,7 @@ trait CompiledSerializationVisitorTrait
             return parent::visitObject($metadata, $data, $type, $context, $objectConstructor);
         }
 
+        $this->compiledPlanFactory ??= new CompiledSerializationPlanFactory($this->compiledDescriptorCache);
         $plan = $this->compiledPlanFactory->getPlan($metadata, $context);
         $result = $this->serializeObjectFromCompiledPlan($plan, $data, $context);
         ++$this->compiledObjects;
@@ -196,6 +204,7 @@ trait CompiledSerializationVisitorTrait
         $metadata = $context->getMetadataFactory()->getMetadataFor($className);
         assert($metadata instanceof ClassMetadata);
 
+        $this->compiledPlanFactory ??= new CompiledSerializationPlanFactory($this->compiledDescriptorCache);
         $plan = $this->compiledPlanFactory->getPlan($metadata, $context);
         if ($plan->properties === []) {
             $supported = false;

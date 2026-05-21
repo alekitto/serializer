@@ -24,9 +24,11 @@ use Kcs\Serializer\Metadata\MetadataFactory;
 use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Naming\SerializedNameAttributeStrategy;
 use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
+use Kcs\Serializer\Serialization\Compiled\CompiledSerializationDescriptorCacheInterface;
 use Kcs\Serializer\Serialization\Compiled\CompiledJsonSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledYamlSerializationVisitor;
+use Kcs\Serializer\Serialization\Compiled\PhpFileCompiledSerializationDescriptorCache;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as SymfonyEventDispatcher;
@@ -55,6 +57,7 @@ class SerializerBuilder
     private CacheItemPoolInterface|null $cache = null;
     private LoaderInterface|null $metadataLoader = null;
     private bool $compiledSerializationEnabled = false;
+    private CompiledSerializationDescriptorCacheInterface|null $compiledSerializationDescriptorCache = null;
 
     public static function create(): self
     {
@@ -157,6 +160,18 @@ class SerializerBuilder
         return $this;
     }
 
+    public function setCompiledSerializationDescriptorCache(CompiledSerializationDescriptorCacheInterface|null $cache): self
+    {
+        $this->compiledSerializationDescriptorCache = $cache;
+
+        return $this;
+    }
+
+    public function setCompiledSerializationCacheDirectory(string $directory): self
+    {
+        return $this->setCompiledSerializationDescriptorCache(new PhpFileCompiledSerializationDescriptorCache($directory));
+    }
+
     public function setDeserializationVisitor(string $format, VisitorInterface $visitor): self
     {
         $this->deserializationVisitors[$format] = $visitor;
@@ -169,10 +184,10 @@ class SerializerBuilder
         $this->initializePropertyNamingStrategy();
 
         $this->serializationVisitors = [
-            'array' => $this->compiledSerializationEnabled ? new CompiledSerializationVisitor() : new GenericSerializationVisitor(),
+            'array' => $this->compiledSerializationEnabled ? $this->createCompiledSerializationVisitor() : new GenericSerializationVisitor(),
             'xml' => new XmlSerializationVisitor(),
-            'yml' => $this->compiledSerializationEnabled ? new CompiledYamlSerializationVisitor() : new YamlSerializationVisitor(),
-            'json' => $this->compiledSerializationEnabled ? new CompiledJsonSerializationVisitor() : new JsonSerializationVisitor(),
+            'yml' => $this->compiledSerializationEnabled ? $this->createCompiledYamlSerializationVisitor() : new YamlSerializationVisitor(),
+            'json' => $this->compiledSerializationEnabled ? $this->createCompiledJsonSerializationVisitor() : new JsonSerializationVisitor(),
             'csv' => new CsvSerializationVisitor(),
         ];
 
@@ -236,5 +251,29 @@ class SerializerBuilder
         }
 
         $this->propertyNamingStrategy = new SerializedNameAttributeStrategy(new UnderscoreNamingStrategy());
+    }
+
+    private function createCompiledSerializationVisitor(): CompiledSerializationVisitor
+    {
+        $visitor = new CompiledSerializationVisitor();
+        $visitor->setCompiledSerializationDescriptorCache($this->compiledSerializationDescriptorCache);
+
+        return $visitor;
+    }
+
+    private function createCompiledJsonSerializationVisitor(): CompiledJsonSerializationVisitor
+    {
+        $visitor = new CompiledJsonSerializationVisitor();
+        $visitor->setCompiledSerializationDescriptorCache($this->compiledSerializationDescriptorCache);
+
+        return $visitor;
+    }
+
+    private function createCompiledYamlSerializationVisitor(): CompiledYamlSerializationVisitor
+    {
+        $visitor = new CompiledYamlSerializationVisitor();
+        $visitor->setCompiledSerializationDescriptorCache($this->compiledSerializationDescriptorCache);
+
+        return $visitor;
     }
 }
