@@ -11,8 +11,9 @@ use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Metadata\PropertyMetadata;
 use ReflectionException;
 
-use function assert;
 use function array_key_exists;
+use function assert;
+use function count;
 use function spl_object_id;
 
 final class CompiledSerializationPlanFactory

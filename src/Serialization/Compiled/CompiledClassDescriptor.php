@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Kcs\Serializer\Serialization\Compiled;
 
+use function array_map;
+use function array_values;
+
 final class CompiledClassDescriptor
 {
     /** @param CompiledPropertyDescriptor[] $properties */
@@ -14,13 +17,7 @@ final class CompiledClassDescriptor
     ) {
     }
 
-    /**
-     * @param array{
-     *     className: string,
-     *     namingStrategy: string,
-     *     properties: list<array{name: string, serializedName: string, nativeType: string|null, inline: bool}>
-     * } $data
-     */
+    /** @param array{className: string, namingStrategy: string, properties: list<array{name: string, serializedName: string, nativeType: string|null, inline: bool}>} $data */
     public static function fromArray(array $data): self
     {
         return new self(

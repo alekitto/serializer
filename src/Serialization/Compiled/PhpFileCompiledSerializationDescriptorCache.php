@@ -30,12 +30,12 @@ final class PhpFileCompiledSerializationDescriptorCache implements CompiledSeria
             return null;
         }
 
+        /** @var array{className: string, namingStrategy: string, properties: list<array{name: string, serializedName: string, nativeType: string|null, inline: bool}>} $data */
         $data = require $file;
         if (! is_array($data)) {
             return null;
         }
 
-        /** @var array{className: string, namingStrategy: string, properties: list<array{name: string, serializedName: string, nativeType: string|null, inline: bool}>} $data */
         return CompiledClassDescriptor::fromArray($data);
     }
 

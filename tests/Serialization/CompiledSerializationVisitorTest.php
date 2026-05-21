@@ -7,6 +7,7 @@ namespace Kcs\Serializer\Tests\Serialization;
 use DateTimeImmutable;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Kcs\Serializer\Adapter\Symfony\SymfonyCompiledSerializationDescriptorCache;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Attribute\Type;
 use Kcs\Serializer\Direction;
@@ -184,6 +185,34 @@ final class CompiledSerializationVisitorTest extends TestCase
         self::assertSame([['second_name' => 'c', 'second_age' => 1]], $second->serialize($data, 'array'));
 
         foreach (glob($directory . '/*.php') ?: [] as $file) {
+            unlink($file);
+        }
+
+        rmdir($directory);
+    }
+
+    public function testSymfonyCompiledSerializationDescriptorCacheStoresConfigMetadata(): void
+    {
+        $directory = sys_get_temp_dir() . '/serializer_symfony_compiled_descriptors_' . bin2hex(random_bytes(4));
+        $data = [new CompiledParentDto('p', new CompiledChildDto('c', 1))];
+
+        $first = SerializerBuilder::create()
+            ->enableCompiledSerialization()
+            ->setCompiledSerializationDescriptorCache(new SymfonyCompiledSerializationDescriptorCache($directory, true))
+            ->build();
+        $baseline = $first->serialize($data, 'array');
+
+        self::assertNotSame([], glob($directory . '/*.php'));
+        self::assertNotSame([], glob($directory . '/*.php.meta'));
+
+        $second = SerializerBuilder::create()
+            ->enableCompiledSerialization()
+            ->setCompiledSerializationDescriptorCache(new SymfonyCompiledSerializationDescriptorCache($directory, true))
+            ->build();
+
+        self::assertSame($baseline, $second->serialize($data, 'array'));
+
+        foreach (glob($directory . '/*.php*') ?: [] as $file) {
             unlink($file);
         }
 
