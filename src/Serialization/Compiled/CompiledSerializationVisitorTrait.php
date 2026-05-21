@@ -10,10 +10,10 @@ use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 
-use function array_key_last;
 use function array_pop;
 use function assert;
 use function class_exists;
+use function count;
 use function interface_exists;
 use function is_array;
 use function is_object;
@@ -39,7 +39,7 @@ trait CompiledSerializationVisitorTrait
     /** @var array<string, int> */
     private array $skippedNullReasons = [];
 
-    /** @var string[] */
+    /** @var list<string> */
     private array $delegationStack = [];
 
     public function setNavigator(GraphNavigator|null $navigator = null): void
@@ -332,7 +332,9 @@ trait CompiledSerializationVisitorTrait
     {
         ++$this->iterableFastPathProperties;
 
-        $key = $this->delegationStack[array_key_last($this->delegationStack)] ?? 'direct_iterable';
+        $key = $this->delegationStack === []
+            ? 'direct_iterable'
+            : $this->delegationStack[count($this->delegationStack) - 1];
         $this->iterableFastPathReasons[$key] = ($this->iterableFastPathReasons[$key] ?? 0) + 1;
     }
 
