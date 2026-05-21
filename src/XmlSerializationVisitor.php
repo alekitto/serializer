@@ -43,13 +43,13 @@ class XmlSerializationVisitor extends AbstractVisitor
     private string $defaultVersion = '1.0';
     private string $defaultEncoding = 'UTF-8';
     private bool $attachNullNamespace = false;
-    private SplStack $nodeStack;
+    protected SplStack $nodeStack;
 
     /** @var DOMNode[] */
-    private array|null $currentNodes = null;
+    protected array|null $currentNodes = null;
 
     /** @var string[] */
-    private array $xmlNamespaces = [];
+    protected array $xmlNamespaces = [];
 
     /**
      * Sets the default document encoding.
@@ -157,20 +157,23 @@ class XmlSerializationVisitor extends AbstractVisitor
 
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): array|null
     {
-        assert($context instanceof SerializationContext);
-        $v = $metadata->getValue($data);
+        return $this->visitPropertyValue($metadata, $metadata->getValue($data), $context);
+    }
 
-        if ($v === null && ! $context->shouldSerializeNull()) {
+    protected function visitPropertyValue(PropertyMetadata $metadata, mixed $value, Context $context, string|null $serializedName = null): array|null
+    {
+        assert($context instanceof SerializationContext);
+        if ($value === null && ! $context->shouldSerializeNull()) {
             return $this->currentNodes = null;
         }
 
         if ($metadata->xmlAttribute) {
             // Do not attach null namespace on null attributes
             $attachNull = $this->attachNullNamespace;
-            $attributeName = $context->namingStrategy->translateName($metadata);
+            $attributeName = $serializedName ?? $context->namingStrategy->translateName($metadata);
 
             $this->currentNodes = [$this->document->createElement('tmp')];
-            $context->accept($v, $metadata->type);
+            $context->accept($value, $metadata->type);
 
             $node = $this->createAttributeNode($metadata, $attributeName);
             $node->appendChild($this->createTextNode((string) $this->currentNodes[0]->nodeValue));
@@ -182,7 +185,7 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         if ($metadata->xmlValue) {
             $this->currentNodes = [$this->document->createElement('tmp')];
-            $context->accept($v, $metadata->type);
+            $context->accept($value, $metadata->type);
 
             $node = $this->currentNodes[0]->childNodes->item(0);
             assert($node !== null);
@@ -194,9 +197,9 @@ class XmlSerializationVisitor extends AbstractVisitor
 
         if ($metadata->xmlAttributeMap) {
             $attributes = [];
-            foreach ($v as $key => $value) {
+            foreach ($value as $key => $attributeValue) {
                 $node = $this->createAttributeNode($metadata, $key);
-                $node->appendChild($this->createTextNode((string) $value));
+                $node->appendChild($this->createTextNode((string) $attributeValue));
 
                 $attributes[] = $node;
             }
@@ -204,15 +207,15 @@ class XmlSerializationVisitor extends AbstractVisitor
             return $this->currentNodes = $attributes;
         }
 
-        $elementName = $context->namingStrategy->translateName($metadata);
+        $elementName = $serializedName ?? $context->namingStrategy->translateName($metadata);
         $this->currentNodes = [$this->createElement($metadata->xmlNamespace, $elementName)];
 
-        $context->accept($v, $metadata->type);
+        $context->accept($value, $metadata->type);
 
         if (
-            is_object($v) &&
+            is_object($value) &&
             ! $metadata instanceof AdditionalPropertyMetadata &&
-            $context->isVisiting($v)
+            $context->isVisiting($value)
         ) {
             return $this->currentNodes = null;
         }
@@ -360,7 +363,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $xml;
     }
 
-    private function createTextNode(string|Stringable $data, bool $cdata = false): DOMCdataSection|DOMText
+    protected function createTextNode(string|Stringable $data, bool $cdata = false): DOMCdataSection|DOMText
     {
         $data = (string) $data;
         if (! $cdata) {
@@ -398,13 +401,13 @@ class XmlSerializationVisitor extends AbstractVisitor
     /**
      * Checks that the name is a valid XML element name.
      */
-    private function isElementNameValid(string|Stringable $name): bool
+    protected function isElementNameValid(string|Stringable $name): bool
     {
         return $name && preg_match('#^[\pL_][\pL0-9._-]*$#ui', (string) $name);
     }
 
     /** @param PropertyMetadata[] $properties */
-    private function validateObjectProperties(ClassMetadata $metadata, array $properties): void
+    protected function validateObjectProperties(ClassMetadata $metadata, array $properties): void
     {
         $hasXmlValue = false;
         foreach ($properties as $property) {
@@ -426,7 +429,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         }
     }
 
-    private function createAttributeNode(PropertyMetadata $metadata, string $attributeName): DOMAttr
+    protected function createAttributeNode(PropertyMetadata $metadata, string $attributeName): DOMAttr
     {
         $namespace = (string) $metadata->xmlNamespace;
         if ($namespace !== '') {
@@ -439,7 +442,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $node;
     }
 
-    private function createElement(string|null $namespace, string|null $elementName): DOMElement
+    protected function createElement(string|null $namespace, string|null $elementName): DOMElement
     {
         $prefix = $namespace !== null ? $this->lookupPrefix($namespace) : '';
         if ($prefix !== '') {
@@ -464,7 +467,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $prefix;
     }
 
-    private function createRootNode(ClassMetadata|null $metadata = null): void
+    protected function createRootNode(ClassMetadata|null $metadata = null): void
     {
         $rootName = $metadata !== null && $metadata->xmlRootName ? $metadata->xmlRootName : 'result';
         $rootNamespace = $metadata?->xmlRootNamespace;

@@ -27,6 +27,7 @@ use Kcs\Serializer\Naming\UnderscoreNamingStrategy;
 use Kcs\Serializer\Serialization\Compiled\CompiledJsonSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationDescriptorCacheInterface;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
+use Kcs\Serializer\Serialization\Compiled\CompiledXmlSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledYamlSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\PhpFileCompiledSerializationDescriptorCache;
 use Psr\Cache\CacheItemPoolInterface;
@@ -185,7 +186,7 @@ class SerializerBuilder
 
         $this->serializationVisitors = [
             'array' => $this->compiledSerializationEnabled ? $this->createCompiledSerializationVisitor() : new GenericSerializationVisitor(),
-            'xml' => new XmlSerializationVisitor(),
+            'xml' => $this->compiledSerializationEnabled ? $this->createCompiledXmlSerializationVisitor() : new XmlSerializationVisitor(),
             'yml' => $this->compiledSerializationEnabled ? $this->createCompiledYamlSerializationVisitor() : new YamlSerializationVisitor(),
             'json' => $this->compiledSerializationEnabled ? $this->createCompiledJsonSerializationVisitor() : new JsonSerializationVisitor(),
             'csv' => new CsvSerializationVisitor(),
@@ -264,6 +265,14 @@ class SerializerBuilder
     private function createCompiledJsonSerializationVisitor(): CompiledJsonSerializationVisitor
     {
         $visitor = new CompiledJsonSerializationVisitor();
+        $visitor->setCompiledSerializationDescriptorCache($this->compiledSerializationDescriptorCache);
+
+        return $visitor;
+    }
+
+    private function createCompiledXmlSerializationVisitor(): CompiledXmlSerializationVisitor
+    {
+        $visitor = new CompiledXmlSerializationVisitor();
         $visitor->setCompiledSerializationDescriptorCache($this->compiledSerializationDescriptorCache);
 
         return $visitor;

@@ -8,6 +8,7 @@ use Kcs\Serializer\Adapter\Symfony\SymfonyCompiledSerializationDescriptorCache;
 use Kcs\Serializer\Bundle\DependencyInjection\SerializerExtension;
 use Kcs\Serializer\Serialization\Compiled\CompiledJsonSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
+use Kcs\Serializer\Serialization\Compiled\CompiledXmlSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledYamlSerializationVisitor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -28,6 +29,7 @@ final class SerializerExtensionTest extends TestCase
 
         self::assertSame(CompiledSerializationVisitor::class, $container->getDefinition('kcs_serializer.serialization_visitor.array')->getClass());
         self::assertSame(CompiledJsonSerializationVisitor::class, $container->getDefinition('kcs_serializer.serialization_visitor.json')->getClass());
+        self::assertSame(CompiledXmlSerializationVisitor::class, $container->getDefinition('kcs_serializer.serialization_visitor.xml')->getClass());
         self::assertSame(CompiledYamlSerializationVisitor::class, $container->getDefinition('kcs_serializer.serialization_visitor.yaml')->getClass());
 
         self::assertTrue($container->hasDefinition('kcs_serializer.compiled_serialization.descriptor_cache'));

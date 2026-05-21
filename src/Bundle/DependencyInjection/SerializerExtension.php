@@ -10,6 +10,7 @@ use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
 use Kcs\Serializer\Serialization\Compiled\CompiledJsonSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
+use Kcs\Serializer\Serialization\Compiled\CompiledXmlSerializationVisitor;
 use Kcs\Serializer\Serialization\Compiled\CompiledYamlSerializationVisitor;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -98,6 +99,12 @@ final class SerializerExtension extends Extension
             $container,
             'kcs_serializer.serialization_visitor.json',
             CompiledJsonSerializationVisitor::class,
+            $cacheReference,
+        );
+        $this->configureCompiledSerializationVisitor(
+            $container,
+            'kcs_serializer.serialization_visitor.xml',
+            CompiledXmlSerializationVisitor::class,
             $cacheReference,
         );
         $this->configureCompiledSerializationVisitor(

@@ -252,6 +252,21 @@ final class CompiledSerializationVisitorTest extends TestCase
             $this->baseline()->serialize($data, 'yml'),
             SerializerBuilder::create()->enableCompiledSerialization()->build()->serialize($data, 'yml'),
         );
+        self::assertSame(
+            $this->baseline()->serialize($data, 'xml'),
+            SerializerBuilder::create()->enableCompiledSerialization()->build()->serialize($data, 'xml'),
+        );
+    }
+
+    public function testBuilderCanEnableCompiledXmlSerializationForBlogPost(): void
+    {
+        $post = new BlogPost('Title', new Author('Author'), new DateTime(), new Publisher('Publisher'));
+        $post->addComment(new Comment(new Author('Comment Author'), 'Comment'));
+
+        self::assertSame(
+            $this->baseline()->serialize([$post], 'xml'),
+            SerializerBuilder::create()->enableCompiledSerialization()->build()->serialize([$post], 'xml'),
+        );
     }
 
     private function baseline(): \Kcs\Serializer\SerializerInterface

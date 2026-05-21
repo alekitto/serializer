@@ -63,7 +63,7 @@ $cf('array');
 $table = new \Symfony\Component\Console\Helper\Table($output);
 $table->setHeaders(['Format', 'Direction', 'Variant', 'Time']);
 
-$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 12);
+$progressBar = new \Symfony\Component\Console\Helper\ProgressBar($output, 13);
 $progressBar->start();
 
 foreach (['array', 'json', 'yml', 'xml', 'csv'] as $format) {
@@ -71,7 +71,7 @@ foreach (['array', 'json', 'yml', 'xml', 'csv'] as $format) {
     $progressBar->advance();
 }
 
-foreach (['array', 'json', 'yml'] as $format) {
+foreach (['array', 'json', 'yml', 'xml'] as $format) {
     $table->addRow([$format, 'serialize', 'compiled', benchmark($cf, $format)]);
     $progressBar->advance();
 }
