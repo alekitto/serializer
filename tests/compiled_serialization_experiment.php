@@ -55,10 +55,12 @@ function experimentReport(string $name, Closure $baseline, Closure $compiled, Co
         $compiledTime > 0 ? $baselineTime / $compiledTime : INF,
     );
     printf(
-        "  compiled_objects %d fallback_objects %d delegated_properties %d\n",
+        "  compiled_objects %d fallback_objects %d delegated_properties %d iterable_fast_path_properties %d skipped_null_properties %d\n",
         $stats->compiledObjects,
         $stats->fallbackObjects,
         $stats->delegatedProperties,
+        $stats->iterableFastPathProperties,
+        $stats->skippedNullProperties,
     );
 }
 

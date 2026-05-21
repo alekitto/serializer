@@ -54,6 +54,11 @@ abstract class GraphNavigator
      */
     abstract public function accept(mixed $data, Type|null $type, Context $context): mixed;
 
+    public function hasHandler(Direction $direction, string $typeName): bool
+    {
+        return $this->handlerRegistry->getHandler($direction, $typeName) !== null;
+    }
+
     /**
      * Call serialization visitor.
      */

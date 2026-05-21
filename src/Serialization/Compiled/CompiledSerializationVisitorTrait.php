@@ -10,8 +10,11 @@ use Kcs\Serializer\GraphNavigator;
 use Kcs\Serializer\Metadata\ClassMetadata;
 use Kcs\Serializer\Type\Type;
 
+use function array_key_last;
+use function array_pop;
 use function assert;
 use function class_exists;
+use function interface_exists;
 use function is_array;
 use function is_object;
 use function iterator_to_array;
@@ -23,9 +26,20 @@ trait CompiledSerializationVisitorTrait
     private int $compiledObjects = 0;
     private int $fallbackObjects = 0;
     private int $delegatedProperties = 0;
+    private int $iterableFastPathProperties = 0;
+    private int $skippedNullProperties = 0;
 
     /** @var array<string, int> */
     private array $delegationReasons = [];
+
+    /** @var array<string, int> */
+    private array $iterableFastPathReasons = [];
+
+    /** @var array<string, int> */
+    private array $skippedNullReasons = [];
+
+    /** @var string[] */
+    private array $delegationStack = [];
 
     public function setNavigator(GraphNavigator|null $navigator = null): void
     {
@@ -56,7 +70,12 @@ trait CompiledSerializationVisitorTrait
         $this->compiledObjects = 0;
         $this->fallbackObjects = 0;
         $this->delegatedProperties = 0;
+        $this->iterableFastPathProperties = 0;
+        $this->skippedNullProperties = 0;
         $this->delegationReasons = [];
+        $this->iterableFastPathReasons = [];
+        $this->skippedNullReasons = [];
+        $this->delegationStack = [];
     }
 
     public function getCompiledSerializationStats(): CompiledSerializationStats
@@ -66,6 +85,10 @@ trait CompiledSerializationVisitorTrait
             $this->fallbackObjects,
             $this->delegatedProperties,
             $this->delegationReasons,
+            $this->iterableFastPathProperties,
+            $this->iterableFastPathReasons,
+            $this->skippedNullProperties,
+            $this->skippedNullReasons,
         );
     }
 
@@ -76,6 +99,7 @@ trait CompiledSerializationVisitorTrait
         $supported = false;
         $result = $this->serializeCompiledTypedArray($type, $items, $context, $supported);
         if ($supported) {
+            $this->recordIterableFastPath();
             $this->setData($result);
 
             return $result;
@@ -133,6 +157,12 @@ trait CompiledSerializationVisitorTrait
         $type = $property->metadata->type;
         if ($type === null) {
             return $this->delegateCompiledProperty($property, $value, $context, 'missing_type');
+        }
+
+        if ($this->canSkipUnsupportedTypeWithoutHandler($type, $context)) {
+            $this->recordSkippedNullProperty($property, 'unsupported_type_without_handler');
+
+            return null;
         }
 
         if (is_object($value) && $type->countParams() === 0 && class_exists($type->name)) {
@@ -279,11 +309,51 @@ trait CompiledSerializationVisitorTrait
 
         $metadataStack = $context->getMetadataStack();
         $metadataStack->push($property->metadata);
+        $this->delegationStack[] = $key;
 
         try {
             return $this->compiledNavigator->accept($value, $property->metadata->type, $context);
         } finally {
+            array_pop($this->delegationStack);
             $metadataStack->pop();
         }
+    }
+
+    private function recordIterableFastPath(): void
+    {
+        ++$this->iterableFastPathProperties;
+
+        $key = $this->delegationStack[array_key_last($this->delegationStack)] ?? 'direct_iterable';
+        $this->iterableFastPathReasons[$key] = ($this->iterableFastPathReasons[$key] ?? 0) + 1;
+    }
+
+    private function canSkipUnsupportedTypeWithoutHandler(Type $type, Context $context): bool
+    {
+        if ($this->compiledNavigator === null) {
+            return false;
+        }
+
+        if (
+            match ($type->name) {
+            'NULL', 'string', 'integer', 'int', 'boolean', 'bool', 'double', 'float', 'array', 'resource' => true,
+            default => false,
+            }
+        ) {
+            return false;
+        }
+
+        if ($this->compiledNavigator->hasHandler($context->direction, $type->name)) {
+            return false;
+        }
+
+        return ! class_exists($type->name) && ! interface_exists($type->name);
+    }
+
+    private function recordSkippedNullProperty(CompiledPropertyPlan $property, string $reason): void
+    {
+        ++$this->skippedNullProperties;
+
+        $key = $property->metadata->class . '::$' . $property->metadata->name . ':' . $reason;
+        $this->skippedNullReasons[$key] = ($this->skippedNullReasons[$key] ?? 0) + 1;
     }
 }

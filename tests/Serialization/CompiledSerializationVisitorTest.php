@@ -9,6 +9,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Kcs\Serializer\Context;
 use Kcs\Serializer\Attribute\Type;
+use Kcs\Serializer\Direction;
 use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\IterableSerializationVisitorInterface;
@@ -83,7 +84,27 @@ final class CompiledSerializationVisitorTest extends TestCase
         self::assertSame($this->baseline()->serialize([$post], 'array'), $compiled->serialize([$post], 'array'));
         self::assertGreaterThan(0, $visitor->getCompiledSerializationStats()->compiledObjects);
         self::assertGreaterThan(0, $visitor->getCompiledSerializationStats()->delegatedProperties);
+        self::assertGreaterThan(0, $visitor->getCompiledSerializationStats()->iterableFastPathProperties);
+        self::assertGreaterThan(0, $visitor->getCompiledSerializationStats()->skippedNullProperties);
         self::assertSame(0, $visitor->getCompiledSerializationStats()->fallbackObjects);
+    }
+
+    public function testCompiledVisitorKeepsCustomHandlersForUnknownTypes(): void
+    {
+        $data = [new CompiledCustomHandledDto('value')];
+
+        $compiled = SerializerBuilder::create()
+            ->configureHandlers(static function ($registry): void {
+                $registry->registerHandler(
+                    Direction::Serialization,
+                    'custom_handler_type',
+                    static fn ($visitor, $data, $type, $context) => $visitor->visitString('handled:' . $data, $type, $context),
+                );
+            })
+            ->enableCompiledSerialization()
+            ->build();
+
+        self::assertSame([['value' => 'handled:value']], $compiled->serialize($data, 'array'));
     }
 
     public function testArrayCollectionHandlerUsesIterableVisitorFastPath(): void
@@ -206,6 +227,15 @@ final class CompiledCollectionMapDto
     public function __construct(
         #[Type('ArrayCollection<string, string>')]
         public ArrayCollection $items,
+    ) {
+    }
+}
+
+final class CompiledCustomHandledDto
+{
+    public function __construct(
+        #[Type('custom_handler_type')]
+        public string $value,
     ) {
     }
 }
