@@ -261,6 +261,15 @@ class XmlSerializationTest extends BaseSerializationTest
         self::assertEquals('Foo Bar', $this->getField($deserialized, 'author'));
     }
 
+    public function testXmlNamespacesDoNotLeakAcrossSerializations(): void
+    {
+        $this->serialize(new XmlSerializationNamespaceLeakFooObject());
+        $xml = $this->serialize(new XmlSerializationNamespaceLeakBarObject());
+
+        self::assertStringContainsString('xmlns:bar="http://example.com/bar"', $xml);
+        self::assertStringNotContainsString('xmlns:foo="http://example.com/foo"', $xml);
+    }
+
     public function testObjectWithXmlRootNamespace(): void
     {
         $object = new ObjectWithXmlRootNamespace('This is a nice title.', 'Foo Bar', new \DateTime('2011-07-30 00:00', new \DateTimeZone('UTC')), 'en');
@@ -334,4 +343,22 @@ class XmlSerializationTest extends BaseSerializationTest
     {
         return 'xml';
     }
+}
+
+#[\Kcs\Serializer\Attribute\Xml\Root('foo-object')]
+#[\Kcs\Serializer\Attribute\Xml\XmlNamespace(uri: 'http://example.com/foo', prefix: 'foo')]
+#[\Kcs\Serializer\Attribute\AccessType(\Kcs\Serializer\Metadata\Access\Type::Property)]
+class XmlSerializationNamespaceLeakFooObject
+{
+    #[\Kcs\Serializer\Attribute\Type('string')]
+    private string $value = 'foo';
+}
+
+#[\Kcs\Serializer\Attribute\Xml\Root('bar-object')]
+#[\Kcs\Serializer\Attribute\Xml\XmlNamespace(uri: 'http://example.com/bar', prefix: 'bar')]
+#[\Kcs\Serializer\Attribute\AccessType(\Kcs\Serializer\Metadata\Access\Type::Property)]
+class XmlSerializationNamespaceLeakBarObject
+{
+    #[\Kcs\Serializer\Attribute\Type('string')]
+    private string $value = 'bar';
 }

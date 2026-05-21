@@ -309,6 +309,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->currentNodes = [$this->document = $this->createDocument()];
         $this->nodeStack = new SplStack();
         $this->attachNullNamespace = false;
+        $this->xmlNamespaces = [];
     }
 
     public function startVisiting(mixed &$data, Type $type, Context $context): void
