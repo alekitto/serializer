@@ -13,6 +13,8 @@ use Kcs\Serializer\Direction;
 use Kcs\Serializer\GenericSerializationVisitor;
 use Kcs\Serializer\Handler\ArrayCollectionHandler;
 use Kcs\Serializer\IterableSerializationVisitorInterface;
+use Kcs\Serializer\Metadata\PropertyMetadata;
+use Kcs\Serializer\Naming\PropertyNamingStrategyInterface;
 use Kcs\Serializer\Serialization\Compiled\CompiledSerializationVisitor;
 use Kcs\Serializer\SerializationContext;
 use Kcs\Serializer\SerializerBuilder;
@@ -162,6 +164,32 @@ final class CompiledSerializationVisitorTest extends TestCase
         rmdir($directory);
     }
 
+    public function testCompiledSerializationDescriptorCacheValidatesTranslatedNames(): void
+    {
+        $directory = sys_get_temp_dir() . '/serializer_compiled_descriptors_' . bin2hex(random_bytes(4));
+        $data = [new CompiledChildDto('c', 1)];
+
+        $first = SerializerBuilder::create()
+            ->setPropertyNamingStrategy(new CompiledPrefixNamingStrategy('first_'))
+            ->enableCompiledSerialization()
+            ->setCompiledSerializationCacheDirectory($directory)
+            ->build();
+        self::assertSame([['first_name' => 'c', 'first_age' => 1]], $first->serialize($data, 'array'));
+
+        $second = SerializerBuilder::create()
+            ->setPropertyNamingStrategy(new CompiledPrefixNamingStrategy('second_'))
+            ->enableCompiledSerialization()
+            ->setCompiledSerializationCacheDirectory($directory)
+            ->build();
+        self::assertSame([['second_name' => 'c', 'second_age' => 1]], $second->serialize($data, 'array'));
+
+        foreach (glob($directory . '/*.php') ?: [] as $file) {
+            unlink($file);
+        }
+
+        rmdir($directory);
+    }
+
     public function testCompiledVisitorFallsBackWhenGroupsAreActive(): void
     {
         $data = [new SimpleObject('foo', 'bar')];
@@ -278,5 +306,17 @@ final class CompiledIterableSpyVisitor extends GenericSerializationVisitor imple
         $this->visitedIterable = true;
 
         return 'fast-path';
+    }
+}
+
+final class CompiledPrefixNamingStrategy implements PropertyNamingStrategyInterface
+{
+    public function __construct(private readonly string $prefix)
+    {
+    }
+
+    public function translateName(PropertyMetadata $property): string
+    {
+        return $this->prefix . $property->name;
     }
 }

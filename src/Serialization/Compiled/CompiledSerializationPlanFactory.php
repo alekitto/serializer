@@ -117,6 +117,10 @@ final class CompiledSerializationPlanFactory
             if ($propertyDescriptor->inline !== $propertyMetadata->inline) {
                 return false;
             }
+
+            if ($propertyDescriptor->serializedName !== $context->namingStrategy->translateName($propertyMetadata)) {
+                return false;
+            }
         }
 
         return true;
