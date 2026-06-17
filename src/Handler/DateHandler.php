@@ -28,7 +28,7 @@ use function substr;
 
 class DateHandler implements SubscribingHandlerInterface
 {
-    private const DATEINTERVAL_FORMAT = '%RP%yY%mM%dDT%hH%iM%sS';
+    private const string DATEINTERVAL_FORMAT = '%RP%yY%mM%dDT%hH%iM%sS';
 
     private DateTimeZone $defaultTimezone;
 

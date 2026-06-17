@@ -12,7 +12,7 @@ use Symfony\Component\Uid;
 
 class SymfonyUidHandler implements SubscribingHandlerInterface
 {
-    private const UUID_TYPES = [
+    private const array UUID_TYPES = [
         Uid\AbstractUid::class,
         Uid\Uuid::class,
         Uid\NilUuid::class,
@@ -26,7 +26,7 @@ class SymfonyUidHandler implements SubscribingHandlerInterface
         Uid\UuidV8::class,
     ];
 
-    private const ULID_TYPES = [
+    private const array ULID_TYPES = [
         Uid\Ulid::class,
         Uid\NilUlid::class,
         Uid\MaxUlid::class,

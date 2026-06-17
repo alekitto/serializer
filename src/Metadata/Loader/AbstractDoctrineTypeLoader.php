@@ -26,7 +26,7 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
     /**
      * Map of doctrine 2 field types to Kcs\Serializer types.
      */
-    protected const FIELD_MAPPING = [
+    protected const array FIELD_MAPPING = [
         'ascii_string' => 'string',
         'string' => 'string',
         'text' => 'string',

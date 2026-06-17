@@ -14,13 +14,13 @@ use function substr;
 /** @extends AbstractLexer<UnitEnum|string|int, string> */
 final class Lexer extends AbstractLexer
 {
-    public const T_NONE = 1;
-    public const T_STRING = 2;
-    public const T_COMMA = 3;
-    public const T_CLOSED_BRACKET = 4;
-    public const T_OPEN_BRACKET = 5;
+    public const int T_NONE = 1;
+    public const int T_STRING = 2;
+    public const int T_COMMA = 3;
+    public const int T_CLOSED_BRACKET = 4;
+    public const int T_OPEN_BRACKET = 5;
 
-    public const T_IDENTIFIER = 100;
+    public const int T_IDENTIFIER = 100;
 
     /**
      * {@inheritDoc}

@@ -23,7 +23,7 @@ use function interface_exists;
  */
 abstract class GraphNavigator
 {
-    private const BUILTIN_TYPES = [
+    private const array BUILTIN_TYPES = [
         'NULL' => true,
         'string' => true,
         'integer' => true,

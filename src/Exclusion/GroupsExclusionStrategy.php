@@ -20,7 +20,7 @@ use function strpos;
 
 class GroupsExclusionStrategy implements ExclusionStrategyInterface
 {
-    public const DEFAULT_GROUP = 'Default';
+    public const string DEFAULT_GROUP = 'Default';
 
     /** @var array<string, mixed> */
     private array $groups;

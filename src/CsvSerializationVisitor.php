@@ -31,8 +31,8 @@ use function stream_get_contents;
 
 class CsvSerializationVisitor extends GenericSerializationVisitor
 {
-    private const FORMULAS_START_CHARS = ['=', '-', '+', '@'];
-    private const UTF8_BOM = "\xEF\xBB\xBF";
+    private const array FORMULAS_START_CHARS = ['=', '-', '+', '@'];
+    private const string UTF8_BOM = "\xEF\xBB\xBF";
     private ClassMetadata|null $rootMetadata = null;
 
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): mixed
