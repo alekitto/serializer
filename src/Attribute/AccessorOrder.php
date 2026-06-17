@@ -13,6 +13,7 @@ use Kcs\Serializer\Metadata\Access\Order;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class AccessorOrder
 {
+    /** @param string|string[] $custom */
     public function __construct(
         public Order $order,
         public string|array $custom = [],

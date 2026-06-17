@@ -105,13 +105,20 @@ abstract class AbstractDoctrineTypeLoader implements LoaderInterface
         return true;
     }
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     abstract protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void;
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     abstract protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool;
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     abstract protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void;
 
-    /** @phpstan-param class-string<object> $className */
+    /**
+     * @phpstan-param class-string<object> $className
+     *
+     * @return DoctrineClassMetadata<object>|null
+     */
     protected function tryLoadingDoctrineMetadata(string $className): DoctrineClassMetadata|null
     {
         $manager = $this->registry->getManagerForClass($className);

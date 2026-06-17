@@ -4,6 +4,6 @@ children:
     -
         errors:
             - 'Error of the child form'
-        children: {  }
+        children: {}
         name: bar
 name: foo

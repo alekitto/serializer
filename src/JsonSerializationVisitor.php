@@ -39,6 +39,7 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         $this->options = $options;
     }
 
+    /** @return array<array-key, mixed>|object */
     public function visitHash(mixed $data, Type $type, Context $context): array|object
     {
         $result = parent::visitHash($data, $type, $context);
@@ -52,6 +53,7 @@ class JsonSerializationVisitor extends GenericSerializationVisitor
         return $result;
     }
 
+    /** @return array<array-key, mixed>|object */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): array|object
     {
         $rs = parent::visitObject($metadata, $data, $type, $context, $objectConstructor);

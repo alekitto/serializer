@@ -62,6 +62,7 @@ class AttributesLoader implements LoaderInterface
         return true;
     }
 
+    /** @param ReflectionClass<object> $class */
     protected function isExcluded(ReflectionClass $class): bool
     {
         return count($class->getAttributes(Attribute\Exclude::class)) !== 0;

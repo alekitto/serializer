@@ -217,7 +217,11 @@ trait CompiledSerializationVisitorTrait
         return $this->serializeObjectFromCompiledPlan($plan, $value, $context);
     }
 
-    /** @param mixed[] $value */
+    /**
+     * @param array<array-key, mixed> $value
+     *
+     * @return array<array-key, mixed>|null
+     */
     private function serializeCompiledTypedArray(Type $type, array $value, Context $context, bool &$supported): array|null
     {
         $supported = true;

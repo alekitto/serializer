@@ -12,7 +12,6 @@ use Kcs\Serializer\Handler\InternalDeserializationHandler;
 use Kcs\Serializer\Handler\InternalSerializationHandler;
 use Kcs\Serializer\Handler\SerializationHandlerInterface;
 use Kcs\Serializer\Handler\SubscribingHandlerInterface;
-use ProxyManager\Proxy\ProxyInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -21,7 +20,6 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Throwable;
 
 use function call_user_func_array;
-use function class_exists;
 use function func_get_args;
 use function is_array;
 use function is_callable;
@@ -111,18 +109,17 @@ class TraceableHandlerRegistry implements HandlerRegistryInterface
         }
 
         $methodName = null;
+        $proxyInterface = 'ProxyManager\\Proxy\\ProxyInterface';
         if (is_array($callable)) {
             $reflClass = new ReflectionClass($callable[0]);
             $r = new ReflectionMethod($callable[0], $callable[1]);
-            $className = class_exists(ProxyInterface::class) &&
-                $reflClass->isSubclassOf(ProxyInterface::class) &&
+            $className = $reflClass->isSubclassOf($proxyInterface) &&
                 ($parent = $reflClass->getParentClass()) ? $parent->getName() : $reflClass->getName();
 
             $methodName = $className . '::' . $r->getName();
         } elseif (is_object($callable) && is_callable([$callable, '__invoke'])) {
             $reflClass = new ReflectionClass($callable);
-            $methodName = class_exists(ProxyInterface::class) &&
-                $reflClass->isSubclassOf(ProxyInterface::class) &&
+            $methodName = $reflClass->isSubclassOf($proxyInterface) &&
                 ($parent = $reflClass->getParentClass()) ? $parent->getShortName() : $reflClass->getShortName();
         } else {
             $r = new ReflectionFunction(Closure::fromCallable($callable));

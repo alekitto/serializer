@@ -18,11 +18,13 @@ use function sprintf;
  */
 class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
 {
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void
     {
         // Do nothing
     }
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool
     {
         assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);
@@ -32,6 +34,7 @@ class DoctrinePHPCRTypeLoader extends AbstractDoctrineTypeLoader
             || $doctrineMetadata->node === $propertyMetadata->name;
     }
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
         assert($doctrineMetadata instanceof \Doctrine\ODM\PHPCR\Mapping\ClassMetadata);

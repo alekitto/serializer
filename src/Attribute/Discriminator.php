@@ -12,6 +12,7 @@ use function is_string;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class Discriminator
 {
+    /** @var string[]|null */
     public array|null $groups = null;
 
     /**

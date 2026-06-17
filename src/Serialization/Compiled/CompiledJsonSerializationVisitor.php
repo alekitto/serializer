@@ -21,7 +21,11 @@ class CompiledJsonSerializationVisitor extends JsonSerializationVisitor implemen
         visitIterable as private visitCompiledIterable;
     }
 
-    /** @inheritDoc */
+    /**
+     * @param iterable<array-key, mixed> $data
+     *
+     * @return array<array-key, mixed>|object
+     */
     public function visitIterable(iterable $data, Type $type, Context $context): array|object
     {
         $rs = $this->visitCompiledIterable($data, $type, $context);
@@ -33,6 +37,7 @@ class CompiledJsonSerializationVisitor extends JsonSerializationVisitor implemen
         return $rs;
     }
 
+    /** @return array<array-key, mixed>|object */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): array|object
     {
         $rs = $this->visitCompiledObject($metadata, $data, $type, $context, $objectConstructor);

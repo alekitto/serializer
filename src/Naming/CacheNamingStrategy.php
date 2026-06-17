@@ -9,6 +9,7 @@ use SplObjectStorage;
 
 final class CacheNamingStrategy implements PropertyNamingStrategyInterface
 {
+    /** @var SplObjectStorage<PropertyMetadata, string> */
     private SplObjectStorage $cache;
 
     public function __construct(private PropertyNamingStrategyInterface $delegate)

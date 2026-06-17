@@ -10,6 +10,7 @@ use ReflectionClass;
 
 class MetadataFactory extends AbstractMetadataFactory
 {
+    /** @param ReflectionClass<object> $class */
     protected function createMetadata(ReflectionClass $class): ClassMetadataInterface
     {
         return new ClassMetadata($class);

@@ -43,6 +43,8 @@ class XmlSerializationVisitor extends AbstractVisitor
     private string $defaultVersion = '1.0';
     private string $defaultEncoding = 'UTF-8';
     private bool $attachNullNamespace = false;
+
+    /** @var SplStack<DOMNode[]|null> */
     protected SplStack $nodeStack;
 
     /** @var DOMNode[] */
@@ -59,9 +61,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         $this->defaultEncoding = $defaultEncoding;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitNull(mixed $data, Type $type, Context $context): array
     {
         $this->attachNullNamespace = true;
@@ -78,9 +78,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitString(mixed $data, Type $type, Context $context): array
     {
         $metadata = $context->getMetadataStack()->getCurrent();
@@ -88,41 +86,31 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = [$this->createTextNode((string) $data, $metadata->xmlElementCData ?? true)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitInteger(mixed $data, Type $type, Context $context): array
     {
         return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitBoolean(mixed $data, Type $type, Context $context): array
     {
         return $this->currentNodes = [$this->createTextNode($data ? 'true' : 'false')];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitDouble(mixed $data, Type $type, Context $context): array
     {
         return $this->currentNodes = [$this->createTextNode((string) $data)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitEnum(mixed $data, Type $type, Context $context): array
     {
         return $this->visitSimpleString($data instanceof BackedEnum ? (string) $data->value : $data->name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitObject(ClassMetadata $metadata, mixed $data, Type $type, Context $context, ObjectConstructorInterface|null $objectConstructor = null): array
     {
         $properties = $context->getNonSkippedProperties($metadata);
@@ -155,11 +143,13 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = array_merge(...$nodes ?: [[]]);
     }
 
+    /** @return DOMNode[]|null */
     protected function visitProperty(PropertyMetadata $metadata, mixed $data, Context $context): array|null
     {
         return $this->visitPropertyValue($metadata, $metadata->getValue($data), $context);
     }
 
+    /** @return DOMNode[]|null */
     protected function visitPropertyValue(PropertyMetadata $metadata, mixed $value, Context $context, string|null $serializedName = null): array|null
     {
         assert($context instanceof SerializationContext);
@@ -232,9 +222,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitHash(mixed $data, Type $type, Context $context): array
     {
         if ($this->document->documentElement === null && $this->nodeStack->count() === 1) {
@@ -271,9 +259,7 @@ class XmlSerializationVisitor extends AbstractVisitor
         return $this->currentNodes = $nodes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return DOMNode[] */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {
         if ($this->document->documentElement === null && $this->nodeStack->count() === 1) {

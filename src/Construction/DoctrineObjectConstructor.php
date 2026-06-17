@@ -21,7 +21,7 @@ use function is_array;
  */
 class DoctrineObjectConstructor implements ObjectConstructorInterface
 {
-    /** @var SplObjectStorage<ManagerRegistry> */
+    /** @var SplObjectStorage<ManagerRegistry, null> */
     private SplObjectStorage $managerRegistryCollection;
 
     /** @param ObjectConstructorInterface $fallbackConstructor Fallback object constructor */

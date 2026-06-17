@@ -11,10 +11,13 @@ use Traversable;
 
 use function array_pop;
 
+/** @implements IteratorAggregate<int, PropertyMetadata> */
 class MetadataStack implements IteratorAggregate, Countable
 {
     /** @var string[] */
     private array $currentPath;
+
+    /** @var SplStack<PropertyMetadata> */
     private SplStack $stack;
 
     public function __construct()
@@ -62,7 +65,7 @@ class MetadataStack implements IteratorAggregate, Countable
         return $this->stack->isEmpty() ? null : $this->stack->top();
     }
 
-    /** @return Traversable<PropertyMetadata> */
+    /** @return Traversable<int, PropertyMetadata> */
     public function getIterator(): Traversable
     {
         return $this->stack;

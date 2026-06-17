@@ -116,7 +116,7 @@ final class Type implements JsonSerializable
         return $this->params[$index];
     }
 
-    /** @inheritDoc */
+    /** @return array{name: string, params: mixed} */
     public function jsonSerialize(): array
     {
         return [

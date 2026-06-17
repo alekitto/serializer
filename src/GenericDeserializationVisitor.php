@@ -30,9 +30,7 @@ use const MB_CASE_LOWER;
  */
 class GenericDeserializationVisitor extends GenericSerializationVisitor
 {
-    /**
-     * {@inheritDoc}
-     */
+    /** @return array<array-key, mixed> */
     public function visitHash(mixed $data, Type $type, Context $context): array
     {
         if (! is_array($data)) {
@@ -81,9 +79,7 @@ class GenericDeserializationVisitor extends GenericSerializationVisitor
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return list<mixed> */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {
         if (! is_array($data)) {

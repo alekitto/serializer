@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Kcs\Serializer;
 
 use ArrayAccess;
+use InvalidArgumentException;
 
+use function is_string;
+
+/** @implements ArrayAccess<string, mixed> */
 class AttributesMap implements ArrayAccess
 {
     /** @var array<string, mixed> */
@@ -47,21 +51,37 @@ class AttributesMap implements ArrayAccess
 
     public function offsetExists(mixed $offset): bool
     {
+        if (! is_string($offset)) {
+            return false;
+        }
+
         return $this->has($offset);
     }
 
     public function offsetGet(mixed $offset): mixed
     {
+        if (! is_string($offset)) {
+            return null;
+        }
+
         return $this->get($offset);
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
+        if (! is_string($offset)) {
+            throw new InvalidArgumentException('Attribute key must be a string.');
+        }
+
         $this->set($offset, $value);
     }
 
     public function offsetUnset(mixed $offset): void
     {
+        if (! is_string($offset)) {
+            return;
+        }
+
         unset($this->map[$offset]);
     }
 }

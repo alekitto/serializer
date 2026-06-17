@@ -27,6 +27,8 @@ use function sprintf;
 class GenericSerializationVisitor extends AbstractVisitor
 {
     private GraphNavigator $navigator;
+
+    /** @var SplStack<mixed> */
     private SplStack $dataStack;
 
     /** @var array<string, mixed>|ArrayObject<string, mixed>|null */
@@ -96,9 +98,7 @@ class GenericSerializationVisitor extends AbstractVisitor
         return $this->data = $rs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @return list<mixed> */
     public function visitArray(mixed $data, Type $type, Context $context): array
     {
         $rs = [];

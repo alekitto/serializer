@@ -1,6 +1,4 @@
--
-    property_path: foo
-    message: 'Message of violation'
--
-    property_path: bar
-    message: 'Message of another violation'
+- property_path: foo
+  message: 'Message of violation'
+- property_path: bar
+  message: 'Message of another violation'

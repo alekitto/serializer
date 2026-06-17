@@ -63,6 +63,7 @@ class XmlLoader extends AttributesLoader
         return parent::loadClassMetadata($classMetadata);
     }
 
+    /** @param ReflectionClass<object> $class */
     protected function isExcluded(ReflectionClass $class): bool
     {
         $element = $this->getClassElement($class->name);

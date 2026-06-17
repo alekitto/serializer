@@ -1,10 +1,6 @@
 collection:
-    -
-        name: child1
-    -
-        name: child2
+    - name: child1
+    - name: child2
 another_collection:
-    -
-        name: child1
-    -
-        name: child2
+    - name: child1
+    - name: child2

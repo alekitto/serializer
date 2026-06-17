@@ -1,4 +1,2 @@
--
-    name: Foo
--
-    name: Bar
+- name: Foo
+- name: Bar

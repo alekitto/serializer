@@ -1,8 +1,6 @@
 author_list:
-    -
-        full_name: 'Johannes Schmitt'
-    -
-        full_name: 'John Doe'
+    - full_name: 'Johannes Schmitt'
+    - full_name: 'John Doe'
 comments:
     -
         author:

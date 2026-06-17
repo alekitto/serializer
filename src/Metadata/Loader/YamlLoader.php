@@ -60,6 +60,7 @@ class YamlLoader extends AttributesLoader
         return parent::loadClassMetadata($classMetadata);
     }
 
+    /** @param ReflectionClass<object> $class */
     protected function isExcluded(ReflectionClass $class): bool
     {
         $config = $this->getClassConfig($class->name);

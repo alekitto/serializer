@@ -20,7 +20,5 @@ author:
 publisher:
     pub_name: 'Bar Foo'
 tag:
-    -
-        name: tag1
-    -
-        name: tag2
+    - name: tag1
+    - name: tag2

@@ -1,10 +1,9 @@
 - foo
 - 1
 - true
--
-    foo: foo
-    moo: bar
-    camel_case: boo
+- foo: foo
+  moo: bar
+  camel_case: boo
 -
     - 1
     - 3

@@ -17,11 +17,13 @@ use function sprintf;
  */
 class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
 {
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     protected function hideProperty(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): bool
     {
         return false;
     }
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     protected function setDiscriminator(DoctrineClassMetadata $doctrineMetadata, ClassMetadata $classMetadata): void
     {
         assert($doctrineMetadata instanceof \Doctrine\ORM\Mapping\ClassMetadata);
@@ -41,6 +43,7 @@ class DoctrineTypeLoader extends AbstractDoctrineTypeLoader
         );
     }
 
+    /** @param DoctrineClassMetadata<object> $doctrineMetadata */
     protected function setPropertyType(DoctrineClassMetadata $doctrineMetadata, PropertyMetadata $propertyMetadata): void
     {
         assert($doctrineMetadata instanceof \Doctrine\ORM\Mapping\ClassMetadata);
